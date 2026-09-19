@@ -32,7 +32,7 @@ headers at the CDN or web-server layer.
 
 | Page or script | Request | Boundary |
 | --- | --- | --- |
-| Servers, `Website/static/js/servers.js:load` | Static `/data/servers.json`; Express `/api/v1/servers` | Both derive from `Website/servers/server.json`; the static build copies the raw source and the Express API adds normalized fields and `count` metadata |
+| Servers, `Website/static/js/servers.js:load` | `/data/servers.json` | The shared browser script always reads the raw `Website/servers/server.json` registry: the static build copies it to `dist/data/servers.json`, and Express serves the source file at the same public path |
 | Updates, `Website/static/js/updates.js:loadReleases` | Gitea `/api/v1/repos/Commonwealth-Online/Commonwealth-Online-Public/releases` | External Gitea |
 | Repository, `Website/static/js/repo.js:bootstrap` and helpers | Gitea repository, contents, commits, languages, raw-file APIs | External Gitea |
 | Repository, `Website/static/js/repo.js:loadIconTheme` | jsDelivr `material-icon-theme` JSON and SVGs | External CDN |
