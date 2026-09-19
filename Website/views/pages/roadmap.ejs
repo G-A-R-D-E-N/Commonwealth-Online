@@ -2,16 +2,169 @@
 <%- include("../partials/navbar") %>
 
       <main class="site-main">
-        <section class="section-panel" aria-labelledby="roadmap-title">
-          <p class="section-kicker">Development</p>
-          <h1 id="roadmap-title">Commonwealth Online roadmap</h1>
-          <p>
-            A view of what is complete, actively being built, next in line and planned for the Commonwealth Online
-            multiplayer framework.
+        <section class="roadmap-hero" aria-labelledby="roadmap-title">
+          <div class="roadmap-hero__terminal-feed" aria-hidden="true">
+            <span>&gt; CO_NODE // HANDSHAKE ACCEPTED // DEDICATED HOST</span>
+            <span>&gt; WORLDSPACE COMMONWEALTH // REMOTE ACTORS 02</span>
+            <span>&gt; REPLICATION CHANNEL // BASELINE LOCKED</span>
+            <span>&gt; COMBAT DISPATCH // CAPACITY CHECK ACTIVE</span>
+            <span>&gt; NEXT QUEUE // PLAYER CONTROL AND ADMINISTRATION</span>
+          </div>
+          <div class="roadmap-hero__terminal">
+            <span>VAULT-TEC DEVELOPMENT TERMINAL</span>
+            <span>CHANNEL: COMMONWEALTH ONLINE</span>
+          </div>
+          <p class="section-kicker">Field briefing // development status</p>
+          <h1 id="roadmap-title">The Commonwealth Online roadmap</h1>
+          <p class="roadmap-hero__lead">
+            A capability-based readout of the multiplayer framework: what is operational, what is under active fire,
+            what is queued for the next dispatch and what remains beyond the current horizon.
           </p>
+          <div class="roadmap-readout">
+            <div><span>CORE LINK</span><strong>ONLINE</strong></div>
+            <div><span>ACTIVE DISPATCH</span><strong>COMBAT / CAPACITY</strong></div>
+          </div>
         </section>
 
-        <%- include("../partials/roadmap") %>
+        <% const activePhase = page.roadmap.find((phase) => phase.status === "active"); %>
+        <% const nextPhase = page.roadmap.find((phase) => phase.status === "next"); %>
+        <% const longRangePhase = page.roadmap.find((phase) => phase.status === "future"); %>
+        <section class="roadmap-glance" aria-labelledby="roadmap-glance-title">
+          <div class="section-head">
+            <p class="section-kicker">Dispatch board</p>
+            <h2 id="roadmap-glance-title">Where the work is moving</h2>
+          </div>
+          <div class="roadmap-glance__grid">
+            <% [
+              { label: "Current", phase: activePhase },
+              { label: "Next", phase: nextPhase },
+              { label: "Long range", phase: longRangePhase },
+            ].forEach((item) => { %>
+            <article class="roadmap-glance__card is-<%= item.phase.status %>">
+              <p class="roadmap-glance__status"><span><%= item.label %></span> // <%= item.phase.statusLabel %></p>
+              <h3><%= item.phase.title %></h3>
+              <p><%= item.phase.summary %></p>
+              <a href="#<%= item.phase.id %>">Open phase brief <span aria-hidden="true">→</span></a>
+            </article>
+            <% }) %>
+          </div>
+        </section>
+
+        <section class="roadmap-legend" aria-labelledby="roadmap-legend-title">
+          <div>
+            <p class="section-kicker">Status codes</p>
+            <h2 id="roadmap-legend-title">Roadmap status</h2>
+          </div>
+          <p>
+            This public readout tracks user-visible capabilities, not every internal component migration. Status
+            describes the current project state: complete means the capability is working;
+            active means it is being refined; next is queued work; future is intentionally unscheduled exploration.
+          </p>
+          <ul class="roadmap-status-list" aria-label="Roadmap status legend">
+            <li class="is-complete"><span>Complete</span><small>Operational capability</small></li>
+            <li class="is-active"><span>Active</span><small>Current engineering focus</small></li>
+            <li class="is-next"><span>Next</span><small>Queued after active work</small></li>
+            <li class="is-future"><span>Future</span><small>Long-range direction</small></li>
+          </ul>
+        </section>
+
+        <section class="roadmap-gallery" aria-labelledby="roadmap-gallery-title">
+          <div class="section-head">
+            <p class="section-kicker">Multiplayer doctrine</p>
+            <h2 id="roadmap-gallery-title">The systems behind the spectacle</h2>
+          </div>
+          <div class="roadmap-gallery__grid">
+            <% page.roadmapArt.forEach((art) => { %>
+            <figure class="roadmap-art">
+              <div class="roadmap-art__image"><img src="<%= art.src %>" alt="<%= art.alt %>" loading="lazy" width="<%= art.width %>" height="<%= art.height %>" /></div>
+              <figcaption>
+                <span><%= art.kicker %></span>
+                <h3><%= art.title %></h3>
+                <p><%= art.copy %></p>
+              </figcaption>
+            </figure>
+            <% }) %>
+          </div>
+        </section>
+
+        <section class="roadmap-gates" aria-labelledby="roadmap-gates-title">
+          <div class="section-head">
+            <p class="section-kicker">Readiness audit</p>
+            <h2 id="roadmap-gates-title">Multiplayer gates before the next frontier</h2>
+          </div>
+          <p class="roadmap-gates__intro">
+            These are the engineering gates behind a credible multiplayer project. The public feature phases show what
+            players will feel; this audit shows what has to be true underneath before those features can scale.
+          </p>
+          <ol class="roadmap-gate-list">
+            <% page.multiplayerGates.forEach((gate) => { %>
+            <li class="roadmap-gate is-<%= gate.status %>">
+              <div class="roadmap-gate__status"><span><%= gate.statusLabel %></span></div>
+              <div>
+                <h3><%= gate.title %></h3>
+                <p><%= gate.summary %></p>
+              </div>
+            </li>
+            <% }) %>
+          </ol>
+        </section>
+
+        <section class="roadmap-phases" aria-labelledby="roadmap-phases-title">
+          <div class="section-head">
+            <p class="section-kicker">Operations log</p>
+            <h2 id="roadmap-phases-title">Milestones from the terminal archive</h2>
+          </div>
+          <ol class="roadmap-phase-list">
+            <% page.roadmap.forEach((phase) => { %>
+            <li id="<%= phase.id %>" class="roadmap-phase is-<%= phase.status %>">
+              <div class="roadmap-phase__marker" aria-hidden="true"><%= phase.number %></div>
+              <article class="roadmap-phase__card">
+                <header class="roadmap-phase__header">
+                  <div>
+                    <p class="roadmap-phase__status"><span><%= phase.statusLabel %></span> // PHASE <%= phase.number %></p>
+                    <h3><%= phase.title %></h3>
+                  </div>
+                  <span class="roadmap-phase__signal" aria-hidden="true"></span>
+                </header>
+                <p class="roadmap-phase__summary"><%= phase.summary %></p>
+                <div class="roadmap-phase__body">
+                  <div>
+                    <h4>Systems on the manifest</h4>
+                    <ul class="roadmap-system-list">
+                      <% phase.systems.forEach((system) => { %>
+                      <li>
+                        <strong><%= system.name %></strong>
+                        <span><%= system.detail %></span>
+                      </li>
+                      <% }) %>
+                    </ul>
+                  </div>
+                  <aside class="roadmap-phase__note">
+                    <span class="roadmap-phase__note-label">Definition of done</span>
+                    <p><%= phase.doneWhen %></p>
+                    <span class="roadmap-phase__note-label">Field note</span>
+                    <p><%= phase.note %></p>
+                  </aside>
+                </div>
+              </article>
+            </li>
+            <% }) %>
+          </ol>
+        </section>
+
+        <section class="roadmap-briefing section-panel" aria-labelledby="roadmap-briefing-title">
+          <p class="section-kicker">Operator briefing</p>
+          <h2 id="roadmap-briefing-title">The short version</h2>
+          <p>
+            The server, player replication, appearance and shared world-state foundation is already working. The
+            present push is combat fidelity and capacity. Settings, map, social systems, NPCs and persistent world
+            simulation follow as their ownership and compatibility rules become safe to ship.
+          </p>
+          <div class="hero__actions">
+            <a class="co-btn co-btn--primary" href="/servers">Check active servers</a>
+            <a class="co-btn co-btn--ghost" href="/updates">Read project updates</a>
+          </div>
+        </section>
       </main>
 
 <%- include("../partials/footer") %>

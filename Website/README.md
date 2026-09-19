@@ -23,7 +23,8 @@ Other scripts:
 ```bash
 npm run dev        # start with the Node file watcher
 npm run migrate    # apply pending database migrations and exit
-npm run build:static  # render public pages to dist/
+npm run build:static  # render the public pages to dist/
+npm run test:static   # verify generated pages and the backend boundary
 ```
 
 Copy `.env.example` to `.env` to override anything. Every value has a working
@@ -206,7 +207,7 @@ data model for the next phase.
 
 `GET /api/v1/health` is safe to point a load balancer or uptime check at.
 
-## Static hosting
+### Static hosting
 
 `npm run build:static` writes the public site to `dist/`:
 
@@ -224,13 +225,22 @@ dist/static/
 dist/data/servers.json
 ```
 
-The static host must serve directory indexes and redirect clean paths without
-trailing slashes to their directory URLs. It must also send the security
-headers configured by `src/app.js`. The generated `/apply/` page is only the
-chooser; `/apply/team`, `/apply/beta`, `/apply/thanks`, `/api/v1/*`, and future
-dynamic `/forum/*` requests must be reverse-proxied to Express before the static
-fallback. Changes to `servers/server.json` require rebuilding and redeploying
-the static snapshot.
+The static host must serve directory indexes, redirect `/media`, `/servers`,
+`/updates`, `/repo`, `/roadmap`, `/apply`, and `/forum` to their slash-terminated
+directory URLs, and redirect the legacy
+`/index.html`, `/media/index.html`, `/servers/index.html`, `/updates/index.html`,
+and `/repo/index.html` URLs to `/`, `/media/`, `/servers/`, `/updates/`, and
+`/repo/`. It must also send the security headers documented in
+`docs/code-notes/website-static-build.md`. Applications, Discord verification,
+SQLite, Mailcow, admin APIs, health, and future forum/account writes still
+require the Express backend.
+
+Static and backend traffic share the public origin as follows: the static host
+serves the generated pages, `/assets/*`, `/static/*`, and `/data/servers.json`;
+`/apply/team`, `/apply/beta`, `/apply/thanks`, `/api/v1/*`, and future dynamic
+`/forum/*` routes must be reverse-proxied to Express before the static fallback.
+The copied server registry is a deployment snapshot, so changes to
+`servers/server.json` require `npm run build:static` and a static redeploy.
 
 ## Next steps
 
