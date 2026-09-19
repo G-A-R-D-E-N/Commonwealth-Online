@@ -1,6 +1,5 @@
 (() => {
-  // Curated in servers/server.json, served by the Commonwealth Online API.
-  const DATA_URL = "/api/v1/servers";
+  const DATA_URL = "/data/servers.json";
 
   const els = {
     status: document.getElementById("servers-status"),

@@ -1,9 +1,7 @@
 # Commonwealth Online website
 
-The project site, served by Node.js with Express and EJS. It was previously a
-folder of static HTML pages; those pages now render as views from the same
-templates, with shared layout partials and a versioned API alongside them. The
-design, CSS and front-end behaviour are unchanged.
+The project site uses EJS templates for both Express rendering and the static
+public build. The design, CSS and front-end behaviour are unchanged.
 
 The website includes team and beta tester applications, with SQLite storage and
 a Discord forum review bot.
@@ -25,6 +23,7 @@ Other scripts:
 ```bash
 npm run dev        # start with the Node file watcher
 npm run migrate    # apply pending database migrations and exit
+npm run build:static  # render public pages to dist/
 ```
 
 Copy `.env.example` to `.env` to override anything. Every value has a working
@@ -51,7 +50,7 @@ src/
     rate-limit.js             in-memory limiter for submission endpoints
     errors.js                 404 + error handler (HTML and JSON)
   routes/
-    pages.js                  /, /media, /servers, /updates, /repo
+    pages.js                  /, /media, /roadmap, /servers, /updates, /repo
     forum.js                  /forum          (scaffold)
     applications.js           /apply, /apply/team, /apply/beta
     api/                      /api/v1/*
@@ -70,6 +69,7 @@ data/                         SQLite database (gitignored, created on first run)
 | --- | --- | --- |
 | Home | `/` | `views/pages/home.ejs` |
 | Media | `/media` | `views/pages/media.ejs` |
+| Roadmap | `/roadmap` | `views/pages/roadmap.ejs` |
 | Servers | `/servers` | `views/pages/servers.ejs` |
 | Updates | `/updates` | `views/pages/updates.ejs` |
 | Repository | `/repo` | `views/pages/repo.ejs` |
@@ -93,7 +93,7 @@ Base path `/api/v1`. `GET /api/v1` lists the endpoints.
 | Method | Endpoint | Notes |
 | --- | --- | --- |
 | GET | `/api/v1/health` | Uptime, environment, database and Discord bot status |
-| GET | `/api/v1/servers` | Public server list from `servers/server.json` (same shape as the file) |
+| GET | `/api/v1/servers` | Public server list from `servers/server.json`, normalized for the browser and returned with `count` |
 | GET | `/api/v1/forum/categories` | Categories from the database (read-only scaffold) |
 | POST | `/api/v1/applications` | Submit; body must include `type`: `team` or `beta` |
 | POST | `/api/v1/applications/team` | Submit a team application (`type` is set for you) |
@@ -205,6 +205,32 @@ data model for the next phase.
    `/assets` can also be served directly by nginx for speed.
 
 `GET /api/v1/health` is safe to point a load balancer or uptime check at.
+
+## Static hosting
+
+`npm run build:static` writes the public site to `dist/`:
+
+```
+dist/index.html
+dist/media/index.html
+dist/roadmap/index.html
+dist/servers/index.html
+dist/updates/index.html
+dist/repo/index.html
+dist/apply/index.html
+dist/forum/index.html
+dist/assets/
+dist/static/
+dist/data/servers.json
+```
+
+The static host must serve directory indexes and redirect clean paths without
+trailing slashes to their directory URLs. It must also send the security
+headers configured by `src/app.js`. The generated `/apply/` page is only the
+chooser; `/apply/team`, `/apply/beta`, `/apply/thanks`, `/api/v1/*`, and future
+dynamic `/forum/*` requests must be reverse-proxied to Express before the static
+fallback. Changes to `servers/server.json` require rebuilding and redeploying
+the static snapshot.
 
 ## Next steps
 

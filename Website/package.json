@@ -11,6 +11,7 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "migrate": "node scripts/migrate.js",
+    "build:static": "node scripts/build-static.js",
     "test": "node test/applications.test.js"
   },
   "dependencies": {
