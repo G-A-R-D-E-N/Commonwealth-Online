@@ -1,0 +1,39 @@
+      <header class="site-header" id="top" data-co-navbar>
+        <div class="site-header__inner">
+          <a class="site-brand" href="/" aria-label="Commonwealth Online Home">
+            <img
+              class="site-brand__logo"
+              src="/assets/branding/logo.svg"
+              alt="Commonwealth Online"
+              width="2783"
+              height="685"
+              decoding="async"
+            />
+          </a>
+
+          <button
+            class="site-nav-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+            aria-label="Open navigation"
+          >
+            <span class="site-nav-toggle__icon" aria-hidden="true">
+              <span class="site-nav-toggle__line"></span>
+              <span class="site-nav-toggle__line"></span>
+              <span class="site-nav-toggle__line"></span>
+            </span>
+            <span class="site-nav-toggle__text">Menu</span>
+          </button>
+
+          <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
+            <% navItems.forEach((item) => { %>
+              <% if (item.key === page.activeKey) { %>
+            <a href="<%= item.href %>" class="is-active" aria-current="page"<% if (item.external) { %> target="_blank" rel="noopener noreferrer"<% } %>><%= item.label %></a>
+              <% } else { %>
+            <a href="<%= item.href %>"<% if (item.external) { %> target="_blank" rel="noopener noreferrer"<% } %>><%= item.label %></a>
+              <% } %>
+            <% }) %>
+          </nav>
+        </div>
+      </header>

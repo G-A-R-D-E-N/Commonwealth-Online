@@ -1,0 +1,74 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section class="section-panel updates-hero" aria-labelledby="updates-title">
+          <div class="updates-hero__head">
+            <div>
+              <h1 id="updates-title">Release log</h1>
+              <p class="updates-hero__desc">
+                Release notes for Commonwealth Online builds for Fallout 4 Anniversary Edition and the original
+                release. Optional DLC, mods and Creation Club content are only needed when other
+                players have them.
+              </p>
+            </div>
+            <div class="updates-hero__actions">
+              <a
+                class="co-btn co-btn--primary"
+                id="updates-open-gitea"
+                href="<%= site.gitea.base %>/<%= site.gitea.owner %>/<%= site.gitea.repo %>/releases"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open releases
+              </a>
+              <a class="co-btn co-btn--ghost" href="#" data-co-link="repository">Browse source</a>
+            </div>
+          </div>
+
+          <p class="repo-status is-busy" id="updates-status" role="status">
+            <span class="status-pulse">Fetching releases</span><span class="blink-cursor" aria-hidden="true"></span>
+          </p>
+        </section>
+
+        <section class="section-panel updates-feed-panel" aria-labelledby="updates-feed-title">
+          <div class="section-head">
+            <h2 id="updates-feed-title">Latest updates</h2>
+          </div>
+
+          <div class="updates-feed" id="updates-feed" aria-busy="true">
+            <div class="repo-loading" data-loading="updates">
+              <p class="repo-loading__label">
+                <span class="status-pulse">Loading release notes</span><span class="blink-cursor" aria-hidden="true"></span>
+              </p>
+              <div class="updates-skel" aria-hidden="true">
+                <article class="updates-skel__card">
+                  <span class="repo-skel-line repo-skel-line--xs"></span>
+                  <span class="repo-skel-line repo-skel-line--title"></span>
+                  <span class="repo-skel-line repo-skel-line--sm"></span>
+                  <span class="repo-skel-line repo-skel-line--lg"></span>
+                  <span class="repo-skel-line repo-skel-line--md"></span>
+                </article>
+                <article class="updates-skel__card">
+                  <span class="repo-skel-line repo-skel-line--xs"></span>
+                  <span class="repo-skel-line repo-skel-line--title"></span>
+                  <span class="repo-skel-line repo-skel-line--sm"></span>
+                  <span class="repo-skel-line repo-skel-line--lg"></span>
+                  <span class="repo-skel-line repo-skel-line--md"></span>
+                </article>
+                <article class="updates-skel__card">
+                  <span class="repo-skel-line repo-skel-line--xs"></span>
+                  <span class="repo-skel-line repo-skel-line--title"></span>
+                  <span class="repo-skel-line repo-skel-line--sm"></span>
+                  <span class="repo-skel-line repo-skel-line--lg"></span>
+                  <span class="repo-skel-line repo-skel-line--md"></span>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+
+<%- include("../partials/scripts") %>

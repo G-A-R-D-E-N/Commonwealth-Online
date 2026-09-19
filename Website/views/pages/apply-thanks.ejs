@@ -1,0 +1,31 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section class="section-panel apply-hero" aria-labelledby="apply-thanks-title">
+          <div class="servers-hero__head">
+            <div>
+              <p class="section-kicker">Application received</p>
+              <h1 id="apply-thanks-title">Thanks — we have your application</h1>
+              <p class="servers-hero__desc">
+                The team will review it on Discord. If we need anything else, we will contact you by email and Discord.
+              </p>
+            </div>
+          </div>
+
+          <% if (reference) { %>
+          <p class="site-notice" role="status">
+            Your reference is <code><%= reference %></code>. Keep it if you need to follow up.
+          </p>
+          <% } %>
+
+          <div class="media-highlights__actions apply-thanks__actions">
+            <a class="co-btn co-btn--primary" href="#" data-co-link="discord">Join Discord</a>
+            <a class="co-btn co-btn--ghost" href="/">Back to home</a>
+          </div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+
+<%- include("../partials/scripts") %>

@@ -1,0 +1,147 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section class="section-panel apply-hero" aria-labelledby="apply-form-title">
+          <div class="servers-hero__head">
+            <div>
+              <p class="section-kicker"><%= form.kicker %></p>
+              <h1 id="apply-form-title"><%= form.title %></h1>
+              <p class="servers-hero__desc"><%= form.description %></p>
+            </div>
+            <div class="servers-hero__actions">
+              <a class="co-btn co-btn--ghost" href="/apply">All forms</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-panel apply-form-panel" aria-labelledby="apply-fields-title">
+          <div class="section-head">
+            <p class="section-kicker">Application</p>
+            <h2 id="apply-fields-title">Your details</h2>
+          </div>
+
+          <% if (notice) { %>
+          <p class="site-notice" role="alert"><strong><%= notice %></strong></p>
+          <% } %>
+
+          <form
+            class="apply-form"
+            id="apply-form"
+            data-apply-form
+            data-apply-type="<%= form.id %>"
+            action="/apply/<%= form.id %>"
+            method="post"
+            novalidate
+          >
+            <input type="hidden" name="type" value="<%= form.id %>" />
+            <input type="hidden" name="source" value="web" />
+            <div class="apply-hp" aria-hidden="true">
+              <label>
+                Website
+                <input type="text" name="website" tabindex="-1" autocomplete="off" />
+              </label>
+            </div>
+
+            <% form.fields.forEach((field) => { %>
+              <% const invalid = Boolean(errorMap[field.key]); %>
+              <% const fieldId = `field-${field.key}`; %>
+              <% if (field.type === "checkbox") { %>
+            <div class="apply-field apply-field--check<%= invalid ? " is-invalid" : "" %>">
+              <label class="apply-check" for="<%= fieldId %>">
+                <input
+                  id="<%= fieldId %>"
+                  type="checkbox"
+                  name="<%= field.key %>"
+                  value="true"
+                  <%= field.required ? "required" : "" %>
+                  <%= values[field.key] ? "checked" : "" %>
+                  aria-invalid="<%= invalid ? "true" : "false" %>"
+                  <% if (errorMap[field.key]) { %>aria-describedby="<%= fieldId %>-error"<% } %>
+                />
+                <span><%= field.label %><% if (field.required) { %> <abbr title="required">*</abbr><% } %></span>
+              </label>
+              <% if (errorMap[field.key]) { %>
+              <p class="apply-field__error" id="<%= fieldId %>-error"><%= errorMap[field.key] %></p>
+              <% } %>
+            </div>
+              <% } else { %>
+            <div class="apply-field<%= invalid ? " is-invalid" : "" %>">
+              <label class="apply-field__label" for="<%= fieldId %>">
+                <%= field.label %><% if (field.required) { %> <abbr title="required">*</abbr><% } %>
+              </label>
+              <% if (field.help) { %>
+              <p class="apply-field__help" id="<%= fieldId %>-help"><%= field.help %></p>
+              <% } %>
+              <% if (field.type === "select") { %>
+              <select
+                id="<%= fieldId %>"
+                name="<%= field.key %>"
+                <%= field.required ? "required" : "" %>
+                aria-invalid="<%= invalid ? "true" : "false" %>"
+                aria-describedby="<%= [field.help ? fieldId + "-help" : "", errorMap[field.key] ? fieldId + "-error" : ""].filter(Boolean).join(" ") %>"
+              >
+                <option value=""><%= field.placeholder || "Select…" %></option>
+                <% (field.options || []).forEach((option) => { %>
+                <option value="<%= option.value %>"<%= values[field.key] === option.value ? " selected" : "" %>><%= option.label %></option>
+                <% }) %>
+              </select>
+              <% } else if (field.type === "textarea") { %>
+              <textarea
+                id="<%= fieldId %>"
+                name="<%= field.key %>"
+                rows="<%= field.rows || 5 %>"
+                <%= field.required ? "required" : "" %>
+                <% if (field.min) { %>minlength="<%= field.min %>"<% } %>
+                <% if (field.max) { %>maxlength="<%= field.max %>" data-max="<%= field.max %>"<% } %>
+                aria-invalid="<%= invalid ? "true" : "false" %>"
+                aria-describedby="<%= [field.help ? fieldId + "-help" : "", errorMap[field.key] ? fieldId + "-error" : "", field.max ? fieldId + "-count" : ""].filter(Boolean).join(" ") %>"
+              ><%= values[field.key] || "" %></textarea>
+              <% if (field.max) { %>
+              <p class="apply-field__count" id="<%= fieldId %>-count" data-count-for="<%= fieldId %>"></p>
+              <% } %>
+              <% } else { %>
+              <input
+                id="<%= fieldId %>"
+                type="<%= field.type === "url" ? "text" : field.type %>"
+                name="<%= field.key %>"
+                value="<%= values[field.key] || "" %>"
+                <%= field.required ? "required" : "" %>
+                <% if (field.min) { %>minlength="<%= field.min %>"<% } %>
+                <% if (field.max) { %>maxlength="<%= field.max %>"<% } %>
+                <% if (field.autocomplete) { %>autocomplete="<%= field.autocomplete %>"<% } %>
+                aria-invalid="<%= invalid ? "true" : "false" %>"
+                aria-describedby="<%= [field.help ? fieldId + "-help" : "", errorMap[field.key] ? fieldId + "-error" : ""].filter(Boolean).join(" ") %>"
+              />
+              <% } %>
+              <% if (errorMap[field.key]) { %>
+              <p class="apply-field__error" id="<%= fieldId %>-error"><%= errorMap[field.key] %></p>
+              <% } %>
+              <% if (field.key === "discordHandle") { %>
+              <div class="apply-discord-status" id="discord-membership-status" hidden>
+                <span id="discord-membership-message" role="status" aria-live="polite"></span>
+                <a class="co-btn co-btn--ghost apply-discord-status__join" href="#" data-co-link="discord" hidden>Join Discord</a>
+              </div>
+              <% } %>
+            </div>
+              <% } %>
+            <% }) %>
+
+            <p class="apply-form__fineprint">
+              Required fields are marked with *. We will use your email and Discord details to follow up. Do not submit
+              passwords or other secrets.
+            </p>
+
+            <p class="apply-form__status" id="apply-status" role="status" hidden></p>
+
+            <div class="apply-form__actions">
+              <button class="co-btn co-btn--primary" type="submit" id="apply-submit"><%= form.submitLabel %></button>
+              <a class="co-btn co-btn--ghost" href="/apply">Cancel</a>
+            </div>
+          </form>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+
+<%- include("../partials/scripts") %>

@@ -1,0 +1,60 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section class="section-panel servers-hero" aria-labelledby="servers-title">
+          <div class="servers-hero__head">
+            <div>
+              <h1 id="servers-title">Public servers</h1>
+              <p class="servers-hero__desc">
+                Community and official servers listed for Commonwealth Online on Fallout 4 Anniversary Edition and the original release. DLC,
+                mods and Creation Club content are not required unless other players on that server have them.
+              </p>
+            </div>
+            <div class="servers-hero__actions">
+              <a class="co-btn co-btn--ghost" href="#" data-co-link="discord">Join Discord</a>
+            </div>
+          </div>
+
+          <ul class="servers-stats" id="servers-stats" aria-label="Server list summary" hidden>
+            <li><span>LISTED</span><strong id="stat-server-count">0</strong></li>
+            <li><span>UPDATED</span><strong id="stat-server-updated">-</strong></li>
+          </ul>
+
+          <p class="repo-status is-busy" id="servers-status" role="status">
+            <span class="status-pulse">Loading server list</span><span class="blink-cursor" aria-hidden="true"></span>
+          </p>
+        </section>
+
+        <section class="section-panel servers-list-panel" aria-labelledby="servers-list-title">
+          <div class="section-head">
+            <h2 id="servers-list-title">Server list</h2>
+          </div>
+
+          <div class="servers-feed" id="servers-feed" aria-busy="true">
+            <div class="repo-loading" data-loading="servers">
+              <p class="repo-loading__label">
+                <span class="status-pulse">Reading server list</span><span class="blink-cursor" aria-hidden="true"></span>
+              </p>
+              <div class="servers-skel" aria-hidden="true">
+                <article class="servers-skel__card">
+                  <span class="repo-skel-line repo-skel-line--xs"></span>
+                  <span class="repo-skel-line repo-skel-line--title"></span>
+                  <span class="repo-skel-line repo-skel-line--sm"></span>
+                  <span class="repo-skel-line repo-skel-line--lg"></span>
+                </article>
+                <article class="servers-skel__card">
+                  <span class="repo-skel-line repo-skel-line--xs"></span>
+                  <span class="repo-skel-line repo-skel-line--title"></span>
+                  <span class="repo-skel-line repo-skel-line--sm"></span>
+                  <span class="repo-skel-line repo-skel-line--md"></span>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+
+<%- include("../partials/scripts") %>

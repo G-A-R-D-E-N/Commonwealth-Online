@@ -1,0 +1,351 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main site-main--home">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero__media" aria-hidden="true">
+            <img
+              src="/assets/images/playerimages/UserOptcron-2.webp"
+              alt=""
+              width="1920"
+              height="1080"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </div>
+          <div class="hero__shade" aria-hidden="true"></div>
+          <div class="hero__content">
+            <div class="hero__inner">
+              <img
+                class="hero__brand"
+                src="/assets/branding/logo.svg"
+                alt="Commonwealth Online"
+                width="2783"
+                height="685"
+                decoding="async"
+              />
+              <h1 id="hero-title">Fallout 4 multiplayer, built from the ground up.</h1>
+              <p class="hero__tagline">
+                Connect to a dedicated server and share the Commonwealth with other players. Supports both Fallout 4
+                Anniversary Edition and the original release, with working servers, player sync and shared world state.
+              </p>
+              <div class="hero__actions">
+                <a class="co-btn co-btn--primary" href="#" data-co-link="discord">Join Discord</a>
+                <a class="co-btn co-btn--ghost" href="/media">Browse Media</a>
+              </div>
+            </div>
+          </div>
+          <span class="media-credit hero__credit">Supplied by Optcron on Discord</span>
+        </section>
+
+        <section class="site-section overview" id="overview">
+          <p class="section-kicker">Overview</p>
+          <h2>Shared-world Fallout, one system at a time</h2>
+          <p>
+            Commonwealth Online is a multiplayer framework for Fallout 4, supporting both the Anniversary Edition and
+            the original release. Multiple players connect to a dedicated server and share the Commonwealth while each
+            client continues to run its own copy of the game. The framework synchronises movement, appearance,
+            equipment, world time, weather and session data between those games.
+          </p>
+          <p>
+            The project has grown well beyond a prototype: dedicated servers, remote player replication, equipment
+            sync and shared world state are all functional and in active use. Independent fan project. Not affiliated
+            with Bethesda or Microsoft.
+          </p>
+          <ul class="overview__stack" aria-label="Runtime stack">
+            <li><span>Game</span><strong>Fallout 4 (Anniversary Edition &amp; original)</strong></li>
+            <li><span>Client</span><strong>F4SE plugin (per-player simulation)</strong></li>
+            <li><span>Server</span><strong>Dedicated server (JSON config, CLI)</strong></li>
+            <li><span>UI</span><strong>PrismaUI / HTML menus</strong></li>
+            <li><span>Status</span><strong>Actively developed, core multiplayer systems functional</strong></li>
+          </ul>
+        </section>
+
+        <section class="site-section requirements" id="requirements">
+          <p class="section-kicker">Requirements</p>
+          <h2>Anniversary Edition and the original release, both supported</h2>
+          <p>
+            Commonwealth Online runs on both Fallout 4 Anniversary Edition and the original release. You can join a
+            server from either version of the game, alongside players using the other.
+          </p>
+          <p>
+            DLC, mods and Creation Club content are not required to join or play. You only need optional content when
+            other players in the same session are using it. For example, so their apparel, weapons or world assets can
+            resolve on your client.
+          </p>
+        </section>
+
+        <section class="site-section features" id="features">
+          <div class="section-head">
+            <p class="section-kicker">Features</p>
+            <h2>Current, active and planned systems</h2>
+          </div>
+
+          <div class="feature-subsection">
+            <h3 class="feature-subsection__title">Current</h3>
+            <ul class="feature-list">
+              <li>
+                <span class="feature-list__name">Dedicated Multiplayer Servers</span>
+                <span class="feature-list__desc">External dedicated server with multiple clients, world-state sync, JSON config and local or remote hosting.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Visible Remote Players</span>
+                <span class="feature-list__desc">Runtime proxy actors with synchronised position, rotation, cell and worldspace transitions.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Movement &amp; Animation</span>
+                <span class="feature-list__desc">Idle and movement state, sprinting, sneaking, jumping, weapon-drawn state and teleports.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Character Appearance</span>
+                <span class="feature-list__desc">Body morphs, tints, hair, head parts, facial sliders and versioned optional data.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Clothing &amp; Equipment</span>
+                <span class="feature-list__desc">Equipped apparel mirrored across tracked slots, including changes while standing still.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Ranged Weapon Sync</span>
+                <span class="feature-list__desc">Right-hand weapons with local form resolution, proxy equipping and drawn/holstered state.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Shared Time &amp; Weather</span>
+                <span class="feature-list__desc">In-game time, days passed, exterior weather and corrections after menus and loading.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Server Browser</span>
+                <span class="feature-list__desc">Direct connect, browsable entries, LAN discovery, favourites, ping and controller support.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Custom Main Menu</span>
+                <span class="feature-list__desc">HTML menu via PrismaUI with multiplayer access, embedded browser, settings and input capture.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Server-Based Characters</span>
+                <span class="feature-list__desc">Per-server saves, in-game character creation and profile binding on reconnect.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Development &amp; Hosting Tools</span>
+                <span class="feature-list__desc">CLI server, graphical dev server, fake clients, weather controls and deployment scripts.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="feature-subsection">
+            <h3 class="feature-subsection__title">In active development</h3>
+            <ul class="feature-list">
+              <li>
+                <span class="feature-list__name">Expanded Player Capacity</span>
+                <span class="feature-list__desc">Architecture targets ~16 players long-term with better proxy allocation and performance.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Animation Refinement</span>
+                <span class="feature-list__desc">Armed locomotion, draw/holster transitions, firing, melee, strafing and jump recovery.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Weapon &amp; Combat Actions</span>
+                <span class="feature-list__desc">Firing, reloading, melee, grenades, aiming, hit reactions and death/revival events.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Multiplayer Settings</span>
+                <span class="feature-list__desc">Profile, voice, map/social, network and keybind options with persistent configuration.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Fallout 4 Settings Bridge</span>
+                <span class="feature-list__desc">Open original Scaleform settings over the Commonwealth Online UI.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Custom Pause Menu &amp; Map</span>
+                <span class="feature-list__desc">Zoom, pan, player markers and settings panels connected to live game data.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Server Administration</span>
+                <span class="feature-list__desc">Remote admin, logs, moderation, permissions and password-protected private servers.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="feature-subsection">
+            <h3 class="feature-subsection__title">Planned</h3>
+            <ul class="feature-list">
+              <li>
+                <span class="feature-list__name">Multiplayer Map &amp; Markers</span>
+                <span class="feature-list__desc">Local and remote players, friends, locations, quests and custom markers.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Player Profiles &amp; Gamertags</span>
+                <span class="feature-list__desc">Display names, icons, per-server characters, friends and optional account links.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Voice &amp; Text Chat</span>
+                <span class="feature-list__desc">Proximity voice, party channels, server text chat, DMs and muting.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Teams &amp; Social Features</span>
+                <span class="feature-list__desc">Parties, shared markers, invitations and group voice/text channels.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Interaction Sync</span>
+                <span class="feature-list__desc">Doors, containers, terminals, workbenches, pickups and dialogue with shared vs local rules.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Enemy &amp; NPC Sync</span>
+                <span class="feature-list__desc">Shared enemy positions, combat state, health, death, loot and basic AI coordination.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Quest &amp; World Progression</span>
+                <span class="feature-list__desc">Selected quest stages, discovery, cleared locations, workshops and world-state changes.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Settlement Building</span>
+                <span class="feature-list__desc">Cooperative construction with shared objects, resources, ownership and persistence.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Power Armour</span>
+                <span class="feature-list__desc">Enter/exit frames, equipped pieces, fusion cores, movement and repair sync.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Trading &amp; Inventory</span>
+                <span class="feature-list__desc">Player trading, transfers, dropped items, shared containers and validation.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Mod Compatibility</span>
+                <span class="feature-list__desc">Load-order checks, version negotiation and missing-content warnings when peers use DLC, mods or Creation Club assets you do not have.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Public Server Infrastructure</span>
+                <span class="feature-list__desc">Master listings, filtering, latency, regions and moderation tools.</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="site-section timeline" id="timeline">
+          <div class="section-head">
+            <p class="section-kicker">Timeline</p>
+            <h2>Current progression</h2>
+          </div>
+          <ol class="timeline-list" aria-label="Development timeline">
+            <li><span class="timeline-status is-complete">Complete</span><strong>Research &amp; Networking Foundation</strong></li>
+            <li><span class="timeline-status is-complete">Complete</span><strong>Dedicated Server Software</strong></li>
+            <li><span class="timeline-status is-complete">Complete</span><strong>Remote Player Proxies &amp; Movement</strong></li>
+            <li><span class="timeline-status is-complete">Complete</span><strong>Appearance &amp; Equipment Replication</strong></li>
+            <li><span class="timeline-status is-complete">Complete</span><strong>World-State &amp; Time/Weather Sync</strong></li>
+            <li><span class="timeline-status is-complete">Complete</span><strong>Persistent Server Profiles &amp; Characters</strong></li>
+            <li><span class="timeline-status is-complete">Complete</span><strong>Custom Main Menu &amp; Server Browser</strong></li>
+            <li><span class="timeline-status is-complete">Complete</span><strong>Anniversary Edition &amp; Original Release Support</strong></li>
+            <li><span class="timeline-status is-active">Active</span><strong>Animation &amp; Combat Systems</strong></li>
+            <li><span class="timeline-status is-active">Active</span><strong>Expanded Player Capacity</strong></li>
+            <li><span class="timeline-status is-next">Next</span><strong>Multiplayer Settings &amp; Pause Menu</strong></li>
+            <li><span class="timeline-status is-next">Next</span><strong>Server Administration Tools</strong></li>
+            <li><span class="timeline-status is-future">Future</span><strong>NPCs, Quests &amp; Settlements</strong></li>
+            <li><span class="timeline-status is-future">Future</span><strong>Voice Chat &amp; Social Systems</strong></li>
+            <li><span class="timeline-status is-future">Future</span><strong>Public Testing &amp; Server Infrastructure</strong></li>
+          </ol>
+        </section>
+
+        <section class="site-section media" id="media">
+          <div class="section-head">
+            <p class="section-kicker">Media</p>
+            <h2>Gameplay and multiplayer in action</h2>
+          </div>
+          <div class="media-grid">
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Remote Player Proxies">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/TwoPlayers.webp"
+                    alt="Two players standing together in the Commonwealth wasteland"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Remote Player Proxies</span>
+                <span class="preview-window__description">Two connected players share the wasteland, each rendered as a remote proxy actor.</span>
+              </figcaption>
+            </figure>
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Laser Musket">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/EquippedRifle.webp"
+                    alt="Remote player aiming a Laser Musket in the Commonwealth wasteland"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Laser Musket</span>
+                <span class="preview-window__description">Ranged weapon sync with a Laser Musket equipped and visible on a remote player.</span>
+              </figcaption>
+            </figure>
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Community Player">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/playerimages/UserOptcron-1.webp"
+                    alt="Community player character captured in-game"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span class="media-credit preview-window__credit">Supplied by Optcron on Discord</span>
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Community Player</span>
+                <span class="preview-window__description">A player character from the Commonwealth Online community, captured in-game.</span>
+              </figcaption>
+            </figure>
+          </div>
+          <div class="media-highlights__actions">
+            <a class="co-btn co-btn--primary" href="/media">Open Full Gallery</a>
+          </div>
+        </section>
+
+        <section class="site-section community" id="community">
+          <div class="section-head">
+            <p class="section-kicker">Community</p>
+            <h2>Follow development and contribute feedback</h2>
+          </div>
+          <p>
+            Commonwealth Online is a working multiplayer framework: dedicated servers, remote player replication,
+            appearance and equipment sync and shared world state are all in place, and both the Anniversary Edition and
+            the original release of Fallout 4 are supported. Combat, quests, NPCs, settlements, voice chat and
+            large-server performance are actively in development. DLC, mods and Creation Club content are not required
+            unless other players have them. Community feedback and testing interest help shape priorities as systems
+            mature.
+          </p>
+          <div class="community__actions">
+            <a class="co-btn co-btn--primary" href="#" data-co-link="discord" aria-label="Join the Commonwealth Online Discord community">Join Discord</a>
+            <a class="co-btn co-btn--ghost" href="#" data-co-link="repository" aria-label="Browse the Commonwealth Online source repository">Browse Source</a>
+          </div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+
+    <dialog class="media-lightbox" id="media-lightbox" aria-labelledby="media-lightbox-name">
+      <div class="media-lightbox__panel">
+        <div class="media-lightbox__chrome">
+          <p class="media-lightbox__label">Enlarged view</p>
+          <button class="media-lightbox__close" type="button" aria-label="Close enlarged image">
+            <span class="media-lightbox__close-glyph" aria-hidden="true">&times;</span>
+            <span class="media-lightbox__close-text">Close</span>
+          </button>
+        </div>
+        <figure class="media-lightbox__figure">
+          <div class="media-lightbox__image-wrap">
+            <img class="media-lightbox__image" id="media-lightbox-image" alt="" />
+          </div>
+          <figcaption class="media-lightbox__caption">
+            <span class="media-lightbox__name" id="media-lightbox-name"></span>
+            <span class="media-lightbox__description" id="media-lightbox-description"></span>
+          </figcaption>
+        </figure>
+      </div>
+    </dialog>
+
+<%- include("../partials/scripts") %>
