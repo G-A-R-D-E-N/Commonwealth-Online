@@ -35,6 +35,13 @@ jobs:
       - name: Apply database migrations
         run: supabase db push
 
+      - name: Configure Edge Function secrets
+        env:
+          APPLICATION_REVIEW_TOKEN: ${{ secrets.APPLICATION_REVIEW_TOKEN }}
+        run: |
+          test -n "$APPLICATION_REVIEW_TOKEN"
+          supabase secrets set APPLICATION_REVIEW_TOKEN="$APPLICATION_REVIEW_TOKEN"
+
       - name: Deploy Edge Functions
         run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF"
 

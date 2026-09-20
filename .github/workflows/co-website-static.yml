@@ -54,6 +54,18 @@ jobs:
         working-directory: Website
         run: npm test
 
+      - name: Validate Supabase browser configuration
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$SUPABASE_URL"
+          case "$SUPABASE_PUBLISHABLE_KEY" in
+            sb_publishable_*) ;;
+            *) echo "SUPABASE_PUBLISHABLE_KEY must be a publishable API key" >&2; exit 1 ;;
+          esac
+
       - name: Build static website
         working-directory: Website
         env:
