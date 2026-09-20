@@ -125,6 +125,7 @@ const run = async () => {
     const expressServers = await request(expressBase, "/data/servers.json");
     assert.equal(staticServers.text, expressServers.text, "raw server JSON parity");
 
+    const staticApply = await request(staticBase, "/apply/");
     const staticTeamForm = await request(staticBase, "/apply/team/");
     const staticBetaForm = await request(staticBase, "/apply/beta/");
     const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
@@ -134,6 +135,8 @@ const run = async () => {
     assert.match(staticTeamForm.text, /data-supabase-url/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
     assert.match(staticThanks.text, /data-application-reference/);
+    assert.match(staticApply.text, /href="\/apply\/team"/);
+    assert.match(staticApply.text, /href="\/apply\/beta"/);
 
     const teamForm = await request(expressBase, "/apply/team");
     const betaForm = await request(expressBase, "/apply/beta");

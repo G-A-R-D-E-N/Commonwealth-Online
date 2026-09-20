@@ -55,8 +55,13 @@ assert.match(submitApplication, /auth: "publishable"/);
 assert.match(submitApplication, /ctx\.supabaseAdmin/);
 assert.match(submitApplication, /DISCORD_BOT_TOKEN/);
 assert.match(submitApplication, /DISCORD_GUILD_ID/);
+assert.match(submitApplication, /method === "OPTIONS"/);
+assert.match(submitApplication, /Access-Control-Allow-Origin/);
+assert.match(submitApplication, /DISCORD_APPLICATION_WEBHOOK_URL/);
 assert.match(envExample, /^SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID=$/m);
 assert.match(envExample, /^SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET=$/m);
+assert.match(envExample, /^DISCORD_APPLICATION_WEBHOOK_URL=$/m);
+assert.match(envExample, /^APPLICATION_CORS_ORIGINS=/m);
 
 for (const [name, content] of [
   ["forum migration", migration],

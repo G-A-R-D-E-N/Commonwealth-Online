@@ -10,10 +10,7 @@
   const supabaseUrl = (form.dataset.supabaseUrl || "").replace(/\/+$/, "");
   const publishableKey = form.dataset.supabaseKey || "";
   const thanksUrl = form.dataset.thanksUrl || "/apply/thanks";
-  const submitUrl =
-    supabaseUrl && publishableKey
-      ? `${supabaseUrl}/functions/v1/submit-application`
-      : "/api/v1/applications";
+  const submitUrl = supabaseUrl && publishableKey ? `${supabaseUrl}/functions/v1/submit-application` : "";
 
   const setStatus = (message, isError = false) => {
     if (!statusEl) {
@@ -33,6 +30,13 @@
       input.setAttribute("aria-invalid", "false");
     });
   };
+
+  if (!submitUrl) {
+    setStatus("Applications are temporarily unavailable. Please try again later.", true);
+    if (submitBtn) {
+      submitBtn.disabled = true;
+    }
+  }
 
   const showFieldError = (name, message) => {
     const input = form.elements.namedItem(name);
@@ -90,6 +94,9 @@
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (!submitUrl) {
+      return;
+    }
     clearFieldErrors();
     setStatus("Sending application…");
 

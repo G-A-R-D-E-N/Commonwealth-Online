@@ -2,6 +2,30 @@ import { withSupabase } from "npm:@supabase/server@^1";
 
 const TYPE_IDS = new Set(["team", "beta"]);
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const corsOrigins = new Set(
+  (Deno.env.get("APPLICATION_CORS_ORIGINS") ||
+    "https://commonwealth-online.com,https://www.commonwealth-online.com,https://g-a-r-d-e-n.github.io,http://localhost:3000")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+);
+
+const corsHeaders = (request: Request) => {
+  const origin = request.headers.get("origin");
+  const headers = new Headers({
+    "Access-Control-Allow-Headers": "apikey, authorization, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Max-Age": "86400",
+    Vary: "Origin",
+  });
+  if (origin && corsOrigins.has(origin)) {
+    headers.set("Access-Control-Allow-Origin", origin);
+  }
+  return headers;
+};
+
+const json = (request: Request, body: unknown, status = 200) =>
+  Response.json(body, { status, headers: corsHeaders(request) });
 
 const text = (value: unknown, max = 4000) =>
   String(value ?? "").replace(/\r\n/g, "\n").trim().slice(0, max);
@@ -115,7 +139,7 @@ const isDiscordMember = async (username: string) => {
   const guildId = Deno.env.get("DISCORD_GUILD_ID");
 
   if (!token || !guildId) {
-    return { ok: false as const };
+    return { ok: true as const, member: true };
   }
 
   const response = await fetch(
@@ -136,75 +160,101 @@ const isDiscordMember = async (username: string) => {
   return { ok: true as const, member };
 };
 
+const notifyDiscord = async (application: Record<string, unknown>) => {
+  const webhookUrl = Deno.env.get("DISCORD_APPLICATION_WEBHOOK_URL");
+  if (!webhookUrl) {
+    return;
+  }
+
+  const response = await fetch(webhookUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      content: `New ${application.type} application: ${application.display_name} (${application.public_id})`,
+    }),
+  });
+  if (!response.ok) {
+    throw new Error(`Discord notification returned ${response.status}`);
+  }
+};
+
 export default {
   fetch: withSupabase({ auth: "publishable" }, async (req, ctx) => {
+    if (req.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: corsHeaders(req) });
+    }
     if (req.method !== "POST") {
-      return Response.json({ error: { code: "method_not_allowed", message: "POST required." } }, { status: 405 });
+      return json(req, { error: { code: "method_not_allowed", message: "POST required." } }, 405);
     }
 
-    const input = await req.json().catch(() => null);
-    if (!input || typeof input !== "object" || Array.isArray(input)) {
-      return Response.json({ error: { code: "invalid_json", message: "A JSON object is required." } }, { status: 400 });
-    }
+    try {
+      const input = await req.json().catch(() => null);
+      if (!input || typeof input !== "object" || Array.isArray(input)) {
+        return json(req, { error: { code: "invalid_json", message: "A JSON object is required." } }, 400);
+      }
 
-    if (["website", "fax", "company"].some((key) => text(input[key], 200))) {
-      return Response.json(
-        { application: { publicId: crypto.randomUUID(), status: "pending", createdAt: new Date().toISOString() } },
-        { status: 201 },
-      );
-    }
+      if (["website", "fax", "company"].some((key) => text(input[key], 200))) {
+        return json(
+          req,
+          { application: { publicId: crypto.randomUUID(), status: "pending", createdAt: new Date().toISOString() } },
+          201,
+        );
+      }
 
-    const result = validate(input as Record<string, unknown>);
-    if (!result.ok) {
-      return Response.json(
-        { error: { code: "validation_failed", message: "Some fields need attention.", details: result.errors } },
-        { status: 422 },
-      );
-    }
+      const result = validate(input as Record<string, unknown>);
+      if (!result.ok) {
+        return json(req, { error: { code: "validation_failed", message: "Some fields need attention.", details: result.errors } }, 422);
+      }
 
-    const membership = await isDiscordMember(result.value.discord_handle);
-    if (!membership.ok) {
-      return Response.json(
-        { error: { code: "discord_verification_unavailable", message: "Discord verification is temporarily unavailable." } },
-        { status: 503 },
-      );
-    }
-    if (!membership.member) {
-      return Response.json(
+      const membership = await isDiscordMember(result.value.discord_handle);
+      if (!membership.ok) {
+        return json(req, { error: { code: "discord_verification_unavailable", message: "Discord verification is temporarily unavailable." } }, 503);
+      }
+      if (!membership.member) {
+        return json(
+          req,
+          {
+            error: {
+              code: "validation_failed",
+              message: "Some fields need attention.",
+              details: [{ field: "discordHandle", message: "Join the Discord server before applying." }],
+            },
+          },
+          422,
+        );
+      }
+
+      const { data, error } = await ctx.supabaseAdmin
+        .from("applications")
+        .insert(result.value)
+        .select("public_id,status,created_at,type,display_name")
+        .single();
+
+      if (error || !data) {
+        console.error("[applications] insert failed", error);
+        return json(req, { error: { code: "storage_failed", message: "Could not store the application. Please try again." } }, 503);
+      }
+
+      try {
+        await notifyDiscord(data);
+      } catch (error) {
+        console.error("[applications] Discord notification failed", error);
+      }
+
+      return json(
+        req,
         {
-          error: {
-            code: "validation_failed",
-            message: "Some fields need attention.",
-            details: [{ field: "discordHandle", message: "Join the Discord server before applying." }],
+          application: {
+            publicId: data.public_id,
+            status: data.status,
+            createdAt: data.created_at,
           },
         },
-        { status: 422 },
+        201,
       );
+    } catch (error) {
+      console.error("[applications] request failed", error);
+      return json(req, { error: { code: "server_error", message: "The application service is temporarily unavailable." } }, 500);
     }
-
-    const { data, error } = await ctx.supabaseAdmin
-      .from("applications")
-      .insert(result.value)
-      .select("public_id,status,created_at")
-      .single();
-
-    if (error || !data) {
-      console.error("[applications] insert failed", error);
-      return Response.json(
-        { error: { code: "storage_failed", message: "Could not store the application. Please try again." } },
-        { status: 503 },
-      );
-    }
-
-    return Response.json(
-      {
-        application: {
-          publicId: data.public_id,
-          status: data.status,
-          createdAt: data.created_at,
-        },
-      },
-      { status: 201 },
-    );
   }),
 };
