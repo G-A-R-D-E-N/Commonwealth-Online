@@ -88,7 +88,7 @@ const run = async () => {
     const staticData = JSON.parse(fs.readFileSync(path.join(dist, "data/servers.json"), "utf8"));
     const sourceData = JSON.parse(fs.readFileSync(path.join(root, "servers/server.json"), "utf8"));
     assert.deepEqual(staticData, sourceData, "server data copied unchanged");
-    for (const image of ["server-browser-direct-connect.png", "server-browser-recent.png"]) {
+    for (const image of ["server-browser-direct-connect.webp", "server-browser-recent.webp"]) {
       assert.equal(fs.existsSync(path.join(dist, "assets/images", image)), true, `missing ${image}`);
     }
 
