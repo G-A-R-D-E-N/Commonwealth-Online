@@ -59,6 +59,8 @@ const pageLocals = (form, extras = {}) => ({
   errors: extras.errors || [],
   errorMap: toErrorMap(extras.errors || []),
   notice: extras.notice || null,
+  submitAction: extras.submitAction || `/apply/${form.id}`,
+  thanksUrl: extras.thanksUrl || "/apply/thanks",
   enabled: config.features.applications,
 });
 

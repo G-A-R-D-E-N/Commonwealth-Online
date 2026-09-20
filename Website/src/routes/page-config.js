@@ -433,7 +433,7 @@ const FORUM_PAGE = {
     description: "Community discussion for the Commonwealth Online multiplayer framework.",
     bodyClass: "co-forum-page",
     activeKey: "forum",
-    scripts: ["/static/js/links.js", "/static/js/navbar.js", "/static/js/script.js"],
+    scripts: ["/static/js/links.js", "/static/js/navbar.js", "/static/js/script.js", "/static/js/forum.js"],
   },
 };
 

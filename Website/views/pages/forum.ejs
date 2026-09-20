@@ -8,8 +8,8 @@
               <p class="section-kicker">Community</p>
               <h1 id="forum-title">Forum</h1>
               <p class="servers-hero__desc">
-                Community discussion for Commonwealth Online. Boards for development updates, bug reports, server
-                listings, mod compatibility and playtest feedback.
+                A public Commonwealth Online forum backed by Supabase, with Discord sign-in planned for posting and
+                moderation. Reading stays public and does not require a GitHub account.
               </p>
             </div>
             <div class="servers-hero__actions">
@@ -18,33 +18,53 @@
           </div>
 
           <p class="site-notice" role="status">
-            <strong>The forum is still being built.</strong>
-            The database schema, categories and routes are in place; threads and posting are next. Until then, Discord
-            is the place for discussion.
+            <strong>Backend preparation is in progress.</strong>
+            The public site already has the forum shell. Once a Supabase project is connected, this page can load
+            public boards directly from Postgres while writes remain protected by authentication and row-level security.
           </p>
         </section>
 
-        <section class="section-panel" aria-labelledby="forum-plan-title">
+        <section
+          class="section-panel"
+          aria-labelledby="forum-boards-title"
+          data-forum
+          data-supabase-url="<%= site.supabase?.url || "" %>"
+          data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+        >
           <div class="section-head">
-            <p class="section-kicker">Planned</p>
-            <h2 id="forum-plan-title">What will live here</h2>
+            <p class="section-kicker">Boards</p>
+            <h2 id="forum-boards-title">Community channels</h2>
+          </div>
+
+          <p class="site-notice" data-forum-status role="status">
+            Supabase is not connected yet. The forum will become live after the project URL and publishable key are
+            configured.
+          </p>
+
+          <ul class="feature-list" data-forum-categories hidden></ul>
+        </section>
+
+        <section class="section-panel" aria-labelledby="forum-access-title">
+          <div class="section-head">
+            <p class="section-kicker">Access model</p>
+            <h2 id="forum-access-title">No GitHub account required</h2>
           </div>
           <ul class="feature-list">
             <li>
-              <span class="feature-list__name">Threads &amp; Replies</span>
-              <span class="feature-list__desc">Browsable boards with categories, pinned posts, locking and edit history.</span>
+              <span class="feature-list__name">Public reading</span>
+              <span class="feature-list__desc">Anyone can browse categories, threads, posts and reactions.</span>
             </li>
             <li>
-              <span class="feature-list__name">Discord Accounts</span>
-              <span class="feature-list__desc">Sign in with Discord so forum identity matches the community server.</span>
+              <span class="feature-list__name">Discord sign-in</span>
+              <span class="feature-list__desc">Posting will use Supabase Auth with Discord rather than GitHub accounts.</span>
             </li>
             <li>
-              <span class="feature-list__name">Moderation Tools</span>
-              <span class="feature-list__desc">Roles, reports, soft deletes and an audit trail shared with the bot.</span>
+              <span class="feature-list__name">Database-enforced permissions</span>
+              <span class="feature-list__desc">Row Level Security controls posting, editing, reactions, reports and moderation.</span>
             </li>
             <li>
-              <span class="feature-list__name">Bot Bridge</span>
-              <span class="feature-list__desc">Discord threads and forum posts kept in sync through the public API.</span>
+              <span class="feature-list__name">Static hosting</span>
+              <span class="feature-list__desc">GitHub Pages serves the UI while Supabase hosts the managed data and authentication layer.</span>
             </li>
           </ul>
         </section>

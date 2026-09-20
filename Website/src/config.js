@@ -52,7 +52,16 @@ const config = {
   host,
   port,
   siteUrl: trimTrailingSlashes(process.env.SITE_URL) || `http://${host}:${port}`,
-  databasePath: path.resolve(ROOT_DIR, process.env.DATABASE_PATH || "data/commonwealth-online.sqlite"),
+  databasePath:
+    process.env.DATABASE_PATH === ":memory:"
+      ? ":memory:"
+      : path.resolve(ROOT_DIR, process.env.DATABASE_PATH || "data/commonwealth-online.sqlite"),
+
+  /** Public browser configuration. The publishable key is intentionally not a secret. */
+  supabase: {
+    url: trimTrailingSlashes(process.env.SUPABASE_URL),
+    publishableKey: String(process.env.SUPABASE_PUBLISHABLE_KEY || "").trim(),
+  },
 
   /** Toggle unfinished surfaces. Pages stay reachable, but stay out of the nav. */
   features: {

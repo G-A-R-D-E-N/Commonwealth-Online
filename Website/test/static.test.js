@@ -16,6 +16,9 @@ const expectedPages = [
   "updates/index.html",
   "repo/index.html",
   "apply/index.html",
+  "apply/team/index.html",
+  "apply/beta/index.html",
+  "apply/thanks/index.html",
   "forum/index.html",
 ];
 
@@ -121,6 +124,19 @@ const run = async () => {
     const staticServers = await request(staticBase, "/data/servers.json");
     const expressServers = await request(expressBase, "/data/servers.json");
     assert.equal(staticServers.text, expressServers.text, "raw server JSON parity");
+
+    const staticApply = await request(staticBase, "/apply/");
+    const staticTeamForm = await request(staticBase, "/apply/team/");
+    const staticBetaForm = await request(staticBase, "/apply/beta/");
+    const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
+    assert.equal(staticTeamForm.response.status, 200);
+    assert.equal(staticBetaForm.response.status, 200);
+    assert.equal(staticThanks.response.status, 200);
+    assert.match(staticTeamForm.text, /data-supabase-url/);
+    assert.match(staticBetaForm.text, /data-supabase-key/);
+    assert.match(staticThanks.text, /data-application-reference/);
+    assert.match(staticApply.text, /href="\/apply\/team"/);
+    assert.match(staticApply.text, /href="\/apply\/beta"/);
 
     const teamForm = await request(expressBase, "/apply/team");
     const betaForm = await request(expressBase, "/apply/beta");

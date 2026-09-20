@@ -7,6 +7,10 @@
   const statusEl = document.getElementById("apply-status");
   const submitBtn = document.getElementById("apply-submit");
   const type = form.getAttribute("data-apply-type") || "team";
+  const supabaseUrl = (form.dataset.supabaseUrl || "").replace(/\/+$/, "");
+  const publishableKey = form.dataset.supabaseKey || "";
+  const thanksUrl = form.dataset.thanksUrl || "/apply/thanks";
+  const submitUrl = supabaseUrl && publishableKey ? `${supabaseUrl}/functions/v1/submit-application` : "";
 
   const setStatus = (message, isError = false) => {
     if (!statusEl) {
@@ -26,6 +30,13 @@
       input.setAttribute("aria-invalid", "false");
     });
   };
+
+  if (!submitUrl) {
+    setStatus("Applications are temporarily unavailable. Please try again later.", true);
+    if (submitBtn) {
+      submitBtn.disabled = true;
+    }
+  }
 
   const showFieldError = (name, message) => {
     const input = form.elements.namedItem(name);
@@ -83,6 +94,9 @@
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (!submitUrl) {
+      return;
+    }
     clearFieldErrors();
     setStatus("Sending application…");
 
@@ -91,12 +105,17 @@
     }
 
     try {
-      const response = await fetch("/api/v1/applications", {
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      };
+      if (supabaseUrl && publishableKey) {
+        headers.apikey = publishableKey;
+      }
+
+      const response = await fetch(submitUrl, {
         method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(collectPayload()),
       });
       const body = await response.json().catch(() => null);
@@ -121,7 +140,7 @@
         return;
       }
 
-      window.location.assign(`/apply/thanks?ref=${encodeURIComponent(body.application.publicId)}`);
+      window.location.assign(`${thanksUrl}?ref=${encodeURIComponent(body.application.publicId)}`);
     } catch {
       setStatus("Could not reach the server. Check your connection and try again.", true);
     } finally {
