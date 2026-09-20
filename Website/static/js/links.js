@@ -4,6 +4,8 @@
   const CO_LINKS = {
     github: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",
     repository: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",
+    githubReleases: "https://github.com/G-A-R-D-E-N/Commonwealth-Online/releases",
+    nexus: "https://www.nexusmods.com/fallout4/mods/107542",
     discord: "https://discord.gg/GyfxYG2gzH",
     updates: "/updates",
     media: "/media",

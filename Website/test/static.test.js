@@ -90,13 +90,22 @@ const run = async () => {
     const sourceData = JSON.parse(fs.readFileSync(path.join(root, "servers/server.json"), "utf8"));
     assert.deepEqual(staticData, sourceData, "server data copied unchanged");
 
+    const changelogs = JSON.parse(fs.readFileSync(path.join(dist, "data/changelogs.json"), "utf8"));
+    assert.equal(changelogs.length > 0, true, "changelog data is populated");
+    assert.equal(changelogs[0].version, "1.1");
+    assert.equal(changelogs[0].date, "2026-09-20");
+    assert.match(changelogs[0].markdown, /server browser/i);
+
     const staticApply = await request(staticBase, "/apply/");
     const staticTeamForm = await request(staticBase, "/apply/team/");
     const staticBetaForm = await request(staticBase, "/apply/beta/");
     const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
+    const staticUpdates = await request(staticBase, "/updates/");
     assert.match(staticTeamForm.text, /data-supabase-url/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
     assert.match(staticThanks.text, /data-application-reference/);
+    assert.match(staticUpdates.text, /data-co-link="githubReleases"/);
+    assert.match(staticUpdates.text, /data-co-link="nexus"/);
     assert.match(staticApply.text, /href="\/apply\/team"/);
     assert.match(staticApply.text, /href="\/apply\/beta"/);
     assert.doesNotMatch(staticTeamForm.text, /discord-membership/);

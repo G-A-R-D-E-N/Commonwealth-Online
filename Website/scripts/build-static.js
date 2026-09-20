@@ -10,6 +10,7 @@ const { getType } = require("../src/lib/applications");
 const { PUBLIC_PAGES, STATIC_SHELL_PAGES } = require("../src/routes/page-config");
 
 const root = path.resolve(__dirname, "..");
+const changelogDir = path.resolve(root, "..", "changelogs");
 const dist = path.join(root, "dist");
 const staticBasePath = (process.env.STATIC_BASE_PATH || "").replace(/\/+$/, "");
 const site = {
@@ -33,6 +34,48 @@ const withStaticBasePath = (html) =>
   staticBasePath
     ? html.replace(/(\b(?:href|src|action|data-thanks-url)=")\/(?!\/)/g, `$1${staticBasePath}/`)
     : html;
+
+const readChangelogs = () => {
+  if (!fs.existsSync(changelogDir)) {
+    return [];
+  }
+
+  return fs
+    .readdirSync(changelogDir)
+    .filter((fileName) => fileName.endsWith(".md"))
+    .map((fileName) => {
+      const source = fs.readFileSync(path.join(changelogDir, fileName), "utf8");
+      const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+      if (!match) {
+        throw new Error(`Changelog is missing front matter: ${fileName}`);
+      }
+
+      const metadata = {};
+      for (const line of match[1].split(/\r?\n/).filter(Boolean)) {
+        const separator = line.indexOf(":");
+        if (separator < 1) {
+          throw new Error(`Invalid changelog metadata: ${fileName}`);
+        }
+        const key = line.slice(0, separator).trim();
+        const value = line.slice(separator + 1).trim().replace(/^("|')|("|')$/g, "");
+        metadata[key] = value;
+      }
+
+      if (!metadata.version || !metadata.date) {
+        throw new Error(`Changelog needs version and date: ${fileName}`);
+      }
+
+      return {
+        version: metadata.version,
+        date: metadata.date,
+        title: metadata.title || `Commonwealth Online ${metadata.version}`,
+        github: metadata.github || "",
+        nexus: metadata.nexus || "",
+        markdown: match[2].trim(),
+      };
+    })
+    .sort((left, right) => right.date.localeCompare(left.date));
+};
 
 fs.rmSync(dist, { recursive: true, force: true });
 fs.mkdirSync(dist, { recursive: true });
@@ -92,6 +135,7 @@ fs.cpSync(path.join(root, "assets"), path.join(dist, "assets"), { recursive: tru
 fs.cpSync(path.join(root, "static"), path.join(dist, "static"), { recursive: true });
 fs.mkdirSync(path.join(dist, "data"), { recursive: true });
 fs.copyFileSync(path.join(root, "servers", "server.json"), path.join(dist, "data", "servers.json"));
+fs.writeFileSync(path.join(dist, "data", "changelogs.json"), `${JSON.stringify(readChangelogs(), null, 2)}\n`);
 
 if (staticBasePath) {
   const linksPath = path.join(dist, "static", "js", "links.js");
@@ -109,6 +153,15 @@ if (staticBasePath) {
       `const DATA_URL = "${staticBasePath}/data/servers.json";`
     );
   fs.writeFileSync(serversPath, servers);
+
+  const updatesPath = path.join(dist, "static", "js", "updates.js");
+  const updates = fs
+    .readFileSync(updatesPath, "utf8")
+    .replace(
+      'const DATA_URL = "/data/changelogs.json";',
+      `const DATA_URL = "${staticBasePath}/data/changelogs.json";`
+    );
+  fs.writeFileSync(updatesPath, updates);
 }
 
 console.log(`Static website built at ${dist}`);

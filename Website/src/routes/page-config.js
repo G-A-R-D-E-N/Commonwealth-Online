@@ -4,7 +4,7 @@ const SERVER_FOOTER_COPY =
   "Independent fan project for Fallout 4 multiplayer framework research. Not affiliated with Bethesda or Microsoft. Supports both Fallout 4 Anniversary Edition and the original release. DLC, mods and Creation Club content are not required unless other players have them. Public server entries are curated in servers/server.json.";
 
 const UPDATES_FOOTER_COPY =
-  "Independent fan project for Fallout 4 multiplayer framework research. Not affiliated with Bethesda or Microsoft. Supports both Fallout 4 Anniversary Edition and the original release. DLC, mods and Creation Club content are not required unless other players have them. Updates are served live from the project Gitea releases.";
+  "Independent fan project for Fallout 4 multiplayer framework research. Not affiliated with Bethesda or Microsoft. Supports both Fallout 4 Anniversary Edition and the original release. DLC, mods and Creation Club content are not required unless other players have them. Updates are versioned in the repository and linked to GitHub and Nexus Mods.";
 
 const ROADMAP_PHASES = [
   {
@@ -357,7 +357,7 @@ const PUBLIC_PAGES = [
     page: {
       title: "Updates - Commonwealth Online",
       description:
-        "Project updates and release notes for Commonwealth Online (Fallout 4 multiplayer, Anniversary Edition and the original release) pulled live from Gitea releases.",
+        "Project updates and release notes for Commonwealth Online (Fallout 4 multiplayer, Anniversary Edition and the original release) maintained as Markdown changelogs in the public repository.",
       bodyClass: "co-updates-page",
       activeKey: "updates",
       scripts: [
