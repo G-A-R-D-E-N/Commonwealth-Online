@@ -2,8 +2,8 @@
   // Root-absolute hrefs: pages are served at clean URLs by the Node server
   // (/media, /servers, /updates, /repo) instead of nested index.html files.
   const CO_LINKS = {
-    github: "https://git.zambazosmedia.group/Commonwealth-Online",
-    repository: "https://git.zambazosmedia.group/Commonwealth-Online/Commonwealth-Online-Public",
+    github: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",
+    repository: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",
     discord: "https://discord.gg/GyfxYG2gzH",
     updates: "/updates",
     media: "/media",

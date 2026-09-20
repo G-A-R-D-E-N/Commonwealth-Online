@@ -20,8 +20,8 @@ const toBool = (value, fallback = false) => {
 const trimTrailingSlashes = (value) => String(value || "").replace(/\/+$/, "");
 
 const links = {
-  github: "https://git.zambazosmedia.group/Commonwealth-Online",
-  repository: "https://git.zambazosmedia.group/Commonwealth-Online/Commonwealth-Online-Public",
+  github: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",
+  repository: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",
   discord: "https://discord.gg/GyfxYG2gzH",
 };
 
