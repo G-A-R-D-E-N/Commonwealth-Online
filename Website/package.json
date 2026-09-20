@@ -5,7 +5,7 @@
   "description": "Commonwealth Online website - Express + EJS server with SQLite storage, prepared for forum, applications and API.",
   "main": "server.js",
   "engines": {
-    "node": ">=22"
+    "node": ">=24.21.0"
   },
   "scripts": {
     "start": "node server.js",
