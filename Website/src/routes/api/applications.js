@@ -62,12 +62,6 @@ const fakeSuccess = () => ({
   },
 });
 
-const membershipLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 30,
-  message: "Too many Discord checks. Please wait and try again.",
-});
-
 const intake = async (req, res, forcedType) => {
   const body = { ...(req.body || {}) };
   if (forcedType) {
