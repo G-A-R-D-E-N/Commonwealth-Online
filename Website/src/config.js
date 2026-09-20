@@ -20,8 +20,10 @@ const toBool = (value, fallback = false) => {
 const trimTrailingSlashes = (value) => String(value || "").replace(/\/+$/, "");
 
 const links = {
-  github: "https://git.zambazosmedia.group/Commonwealth-Online",
-  repository: "https://git.zambazosmedia.group/Commonwealth-Online/Commonwealth-Online-Public",
+  github: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",
+  repository: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",
+  githubReleases: "https://github.com/G-A-R-D-E-N/Commonwealth-Online/releases",
+  nexus: "https://www.nexusmods.com/fallout4/mods/107542",
   discord: "https://discord.gg/GyfxYG2gzH",
 };
 
@@ -37,11 +39,6 @@ const config = {
     applications: toBool(process.env.FEATURE_APPLICATIONS, true),
   },
 
-  gitea: {
-    base: trimTrailingSlashes(process.env.GITEA_BASE) || "https://git.zambazosmedia.group",
-    owner: process.env.GITEA_OWNER || "Commonwealth-Online",
-    repo: process.env.GITEA_REPO || "Commonwealth-Online-Public",
-  },
 
   links,
 

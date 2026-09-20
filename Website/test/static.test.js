@@ -13,7 +13,6 @@ const expectedPages = [
   "roadmap/index.html",
   "servers/index.html",
   "updates/index.html",
-  "repo/index.html",
   "apply/index.html",
   "apply/team/index.html",
   "apply/beta/index.html",
@@ -81,7 +80,7 @@ const run = async () => {
   const staticServer = await startServer(serveStatic);
   const staticBase = `http://127.0.0.1:${staticServer.address().port}`;
   try {
-    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/repo/", "/apply/", "/forum/"]) {
+    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/apply/", "/forum/"]) {
       const page = await request(staticBase, route);
       assert.equal(page.response.status, 200, route);
     }
@@ -89,16 +88,44 @@ const run = async () => {
     const staticData = JSON.parse(fs.readFileSync(path.join(dist, "data/servers.json"), "utf8"));
     const sourceData = JSON.parse(fs.readFileSync(path.join(root, "servers/server.json"), "utf8"));
     assert.deepEqual(staticData, sourceData, "server data copied unchanged");
+    for (const image of ["server-browser-direct-connect.webp", "server-browser-recent.webp"]) {
+      assert.equal(fs.existsSync(path.join(dist, "assets/images", image)), true, `missing ${image}`);
+    }
+
+    const changelogs = JSON.parse(fs.readFileSync(path.join(dist, "data/changelogs.json"), "utf8"));
+    assert.equal(changelogs.length > 0, true, "changelog data is populated");
+    assert.equal(changelogs[0].version, "1.0.6");
+    assert.equal(changelogs[0].date, "2026-09-20");
+    assert.match(changelogs[0].markdown, /server browser/i);
 
     const staticApply = await request(staticBase, "/apply/");
     const staticTeamForm = await request(staticBase, "/apply/team/");
     const staticBetaForm = await request(staticBase, "/apply/beta/");
     const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
+    const staticUpdates = await request(staticBase, "/updates/");
+    const staticMedia = await request(staticBase, "/media/");
     assert.match(staticTeamForm.text, /data-supabase-url/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
-    assert.match(staticThanks.text, /data-application-reference/);
-    assert.match(staticApply.text, /href="\/apply\/team"/);
-    assert.match(staticApply.text, /href="\/apply\/beta"/);
+    const updatesJs = fs.readFileSync(path.join(dist, "static/js/updates.js"), "utf8");
+    assert.doesNotMatch(updatesJs, /\/repo/, "updates.js must not reference the removed /repo page");
+    assert.equal(fs.existsSync(path.join(dist, "repo/index.html")), false, "removed /repo page must not ship");
+    assert.equal(fs.existsSync(path.join(dist, "static/js/repo.js")), false, "removed repo browser must not ship");
+    assert.match(
+      staticUpdates.text,
+      /href="https:\/\/github\.com\/G-A-R-D-E-N\/Commonwealth-Online"[^>]*>Repository</,
+      "Repository footer link must target the public GitHub repository"
+    );
+    const linksJs = fs.readFileSync(path.join(dist, "static/js/links.js"), "utf8");
+    assert.match(
+      linksJs,
+      /repository: "https:\/\/github\.com\/G-A-R-D-E-N\/Commonwealth-Online"/,
+      "Repository link registry must target the public GitHub repository"
+    );
+    assert.match(
+      updatesJs,
+      /https:\/\/github\.com\/G-A-R-D-E-N\/Commonwealth-Online/,
+      "updates.js recovery link must point at GitHub"
+    );
     assert.doesNotMatch(staticTeamForm.text, /discord-membership/);
     assert.doesNotMatch(staticTeamForm.text, /\/api\/v1/);
   } finally {

@@ -25,8 +25,7 @@ assert.equal(isSafeImage("data:image/svg+xml,<svg></svg>", "https://example.com/
 assert.equal(isSafeImage("data:image/png;base64,AA==", "https://example.com/"), true);
 
 const updatesSource = fs.readFileSync(path.join(__dirname, "../static/js/updates.js"), "utf8");
-const repoSource = fs.readFileSync(path.join(__dirname, "../static/js/repo.js"), "utf8");
-for (const source of [updatesSource, repoSource]) {
+for (const source of [updatesSource]) {
   assert.match(source, /allowedTags/);
   assert.match(source, /CoUrlPolicy/);
   assert.match(source, /removeAttribute\("target"\)/);
