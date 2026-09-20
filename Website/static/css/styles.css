@@ -753,6 +753,22 @@ body.co-site .site-nav a.is-active {
   border-bottom-color: var(--site-heading);
 }
 
+body.co-site .site-nav a.site-nav__donate,
+body.co-site .site-nav a.site-nav__donate:visited {
+  margin-left: 0.35rem;
+  padding: 0.45rem 0.8rem;
+  color: #1a1c18;
+  background: var(--site-btn-primary);
+  border: 1px solid var(--site-btn-primary-lo);
+}
+
+body.co-site .site-nav a.site-nav__donate:hover,
+body.co-site .site-nav a.site-nav__donate:focus-visible {
+  color: #1a1c18;
+  background: var(--site-btn-primary-hi);
+  border-color: var(--site-btn-primary-hi);
+}
+
 .site-nav-toggle {
   display: none;
   align-items: center;
@@ -1723,6 +1739,12 @@ a.co-btn--primary:active {
     border-left-color: var(--site-heading);
     border-bottom-color: transparent;
     background: var(--site-surface);
+  }
+
+  body.co-site .site-nav a.site-nav__donate {
+    width: calc(100% - (var(--site-gutter) * 2));
+    margin: 0.35rem var(--site-gutter) 0;
+    justify-content: center;
   }
 
   .feature-list,
