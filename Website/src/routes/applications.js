@@ -25,7 +25,7 @@ const {
   validateApplication,
   createApplication,
 } = require("../lib/applications");
-const { clientIp, rateLimit } = require("../middleware/rate-limit");
+const { rateLimit } = require("../middleware/rate-limit");
 const { APPLICATIONS_PAGE } = require("./page-config");
 
 const router = express.Router();
@@ -124,7 +124,6 @@ const handleHtmlSubmit = async (req, res, type) => {
   }
 
   const application = createApplication(result.value, {
-    ip: clientIp(req),
     userAgent: req.get("user-agent"),
   });
   const posted = await postApplication(application);
