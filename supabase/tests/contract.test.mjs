@@ -87,10 +87,12 @@ assert.match(securityMigration, /grant execute on function public\.is_forum_mode
 
 const mentionPayload = buildDiscordPayload({
   type: "team",
+  status: "pending",
   display_name: "@everyone",
   public_id: "application-reference",
 });
 assert.equal(mentionPayload.content.includes("@everyone"), true);
+assert.equal(mentionPayload.thread_name, "Pending - ＠everyone - application-reference");
 assert.deepEqual(mentionPayload.allowed_mentions, { parse: [] });
 
 let releaseFetch;
