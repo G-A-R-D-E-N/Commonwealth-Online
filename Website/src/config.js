@@ -39,11 +39,6 @@ const config = {
     applications: toBool(process.env.FEATURE_APPLICATIONS, true),
   },
 
-  gitea: {
-    base: trimTrailingSlashes(process.env.GITEA_BASE) || "https://git.zambazosmedia.group",
-    owner: process.env.GITEA_OWNER || "Commonwealth-Online",
-    repo: process.env.GITEA_REPO || "Commonwealth-Online-Public",
-  },
 
   links,
 

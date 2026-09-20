@@ -1,6 +1,6 @@
 (() => {
   // Root-absolute hrefs: pages are served at clean URLs by the Node server
-  // (/media, /servers, /updates, /repo) instead of nested index.html files.
+  // (/media, /servers, /updates) instead of nested index.html files.
   const CO_LINKS = {
     github: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",
     repository: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",

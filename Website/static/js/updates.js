@@ -188,8 +188,7 @@
   const renderEmpty = () => `
     <div class="updates-empty">
       <p class="repo-empty">
-        There are no changelogs yet. Add a versioned Markdown file to the repository's
-        <code>changelogs</code> folder and rebuild the site.
+        No release notes have been published yet. Check back soon.
       </p>
     </div>
   `;
@@ -217,6 +216,10 @@
     revealContent(els.feed);
   };
 
+  // The repository browser now lives on GitHub; resolve it from the shared
+  // link registry, falling back to the canonical URL when unavailable.
+  // The repository browser now lives on GitHub.
+  const repositoryUrl = "https://github.com/G-A-R-D-E-N/Commonwealth-Online";
   const loadReleases = async () => {
     setBusy(els.feed, true);
     setStatus("Loading changelogs", false, { busy: true });
@@ -244,8 +247,8 @@
       console.error(error);
       els.feed.innerHTML = `
         <p class="repo-empty">
-          Could not load the repository changelogs.
-          <a href="/repo">Open the repository</a> instead.
+          Could not load the release notes.
+          <a href="${repositoryUrl}">Open the repository on GitHub</a> instead.
         </p>
       `;
       setStatus("Release sync failed.", true);

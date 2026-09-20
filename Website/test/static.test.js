@@ -13,7 +13,6 @@ const expectedPages = [
   "roadmap/index.html",
   "servers/index.html",
   "updates/index.html",
-  "repo/index.html",
   "apply/index.html",
   "apply/team/index.html",
   "apply/beta/index.html",
@@ -81,7 +80,7 @@ const run = async () => {
   const staticServer = await startServer(serveStatic);
   const staticBase = `http://127.0.0.1:${staticServer.address().port}`;
   try {
-    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/repo/", "/apply/", "/forum/"]) {
+    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/apply/", "/forum/"]) {
       const page = await request(staticBase, route);
       assert.equal(page.response.status, 200, route);
     }
@@ -95,7 +94,7 @@ const run = async () => {
 
     const changelogs = JSON.parse(fs.readFileSync(path.join(dist, "data/changelogs.json"), "utf8"));
     assert.equal(changelogs.length > 0, true, "changelog data is populated");
-    assert.equal(changelogs[0].version, "1.1");
+    assert.equal(changelogs[0].version, "1.0.6");
     assert.equal(changelogs[0].date, "2026-09-20");
     assert.match(changelogs[0].markdown, /server browser/i);
 
@@ -107,13 +106,15 @@ const run = async () => {
     const staticMedia = await request(staticBase, "/media/");
     assert.match(staticTeamForm.text, /data-supabase-url/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
-    assert.match(staticThanks.text, /data-application-reference/);
-    assert.match(staticUpdates.text, /data-co-link="githubReleases"/);
-    assert.match(staticUpdates.text, /data-co-link="nexus"/);
-    assert.match(staticMedia.text, /server-browser-direct-connect\.png/);
-    assert.match(staticMedia.text, /server-browser-recent\.png/);
-    assert.match(staticApply.text, /href="\/apply\/team"/);
-    assert.match(staticApply.text, /href="\/apply\/beta"/);
+    // The /repo browser and its Gitea API client were removed; the changelog
+    // error path must not link to that dead route any more.
+    const updatesJs = fs.readFileSync(path.join(dist, "static/js/updates.js"), "utf8");
+    assert.doesNotMatch(updatesJs, /\/repo/, "updates.js must not reference the removed /repo page");
+    assert.match(
+      updatesJs,
+      /https:\/\/github\.com\/G-A-R-D-E-N\/Commonwealth-Online/,
+      "updates.js recovery link must point at GitHub"
+    );
     assert.doesNotMatch(staticTeamForm.text, /discord-membership/);
     assert.doesNotMatch(staticTeamForm.text, /\/api\/v1/);
   } finally {

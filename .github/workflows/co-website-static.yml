@@ -107,6 +107,32 @@ jobs:
           grep -q "\"${STATIC_BASE_PATH}/data/servers.json\"" Website/dist/static/js/servers.js
           grep -q "\"${STATIC_BASE_PATH}/updates\"" Website/dist/static/js/links.js
 
+      # Pull requests never run the Pages build above, so the base-path rewrite
+      # was previously unproven until after merge. Exercise the same deployment
+      # mode here with a representative project base path.
+      - name: Verify project base-path build on pull request
+        if: github.event_name == 'pull_request'
+        env:
+          STATIC_BASE_PATH: /Commonwealth-Online
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -euo pipefail
+          cd Website
+          npm run build:static
+          grep -q "\"${STATIC_BASE_PATH}/data/servers.json\"" dist/static/js/servers.js
+          grep -q "\"${STATIC_BASE_PATH}/data/changelogs.json\"" dist/static/js/updates.js
+          grep -q "\"${STATIC_BASE_PATH}/updates\"" dist/static/js/links.js
+          test -s dist/data/changelogs.json
+          # The /repo browser and its Gitea API client were removed.
+          test ! -e dist/repo/index.html
+          test ! -e dist/static/js/repo.js
+          if grep -q '/repo' dist/static/js/updates.js; then
+            echo "updates.js still references the removed /repo page" >&2
+            exit 1
+          fi
+          grep -q 'https://github.com/G-A-R-D-E-N/Commonwealth-Online' dist/static/js/updates.js
+
       - name: Upload GitHub Pages artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b

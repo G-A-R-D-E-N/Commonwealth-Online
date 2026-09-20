@@ -17,7 +17,6 @@ const site = {
   name: "Commonwealth Online",
   url: config.siteUrl,
   links: config.links,
-  gitea: config.gitea,
   supabase: config.supabase,
 };
 

@@ -17,7 +17,8 @@ npm test
 ```
 
 The generated site is written to `dist/`. It contains only HTML, CSS,
-JavaScript, assets, and the curated `data/servers.json` copy. This package has
+JavaScript, assets, the curated `data/servers.json` copy, and the generated
+`data/changelogs.json` release log. This package has
 no production server, local database, migration runner, or mail/Discord client.
 
 ## Structure
@@ -31,7 +32,8 @@ src/routes/page-config.js     public page definitions and content
 views/                        EJS page and partial templates
 assets/                       images, fonts, and branding
 static/                       browser JavaScript and CSS
-servers/server.json            curated public server data
+servers/server.json           curated public server data
+../changelogs/*.md            repo-level release changelog input
 ```
 
 ## Pages
@@ -64,7 +66,6 @@ Copy `.env.example` to `.env` when local build values are needed.
 | `SUPABASE_PUBLISHABLE_KEY` | Public Supabase browser key embedded in application forms |
 | `FEATURE_FORUM` | Show the forum link in navigation |
 | `FEATURE_APPLICATIONS` | Show the application link in navigation |
-| `GITEA_BASE`, `GITEA_OWNER`, `GITEA_REPO` | Repository and release links |
 
 Supabase private credentials, Discord webhook secrets, and database passwords
 belong in Supabase project secrets or deployment secret storage, never in this
