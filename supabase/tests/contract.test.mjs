@@ -9,6 +9,7 @@ import {
   buildReviewUpdatePayload,
   scheduleDiscordNotification,
 } from "../functions/submit-application/discord.mjs";
+import { createCors } from "../functions/submit-application/cors.mjs";
 import { validateApplication } from "../functions/submit-application/validation.mjs";
 
 const require = createRequire(import.meta.url);
@@ -30,6 +31,10 @@ const submitApplication = fs.readFileSync(
 );
 const reviewApplication = fs.readFileSync(
   path.join(root, "functions", "review-application", "index.ts"),
+  "utf8"
+);
+const corsImplementation = fs.readFileSync(
+  path.join(root, "functions", "submit-application", "cors.mjs"),
   "utf8"
 );
 const intakeControlsMigration = fs.readFileSync(
@@ -82,8 +87,10 @@ assert.match(submitApplication, /auth: "publishable"/);
 assert.match(submitApplication, /ctx\.supabaseAdmin/);
 assert.match(submitApplication, /DISCORD_BOT_TOKEN/);
 assert.match(submitApplication, /DISCORD_GUILD_ID/);
-assert.match(submitApplication, /method === "OPTIONS"/);
-assert.match(submitApplication, /Access-Control-Allow-Origin/);
+assert.match(corsImplementation, /Access-Control-Allow-Origin/);
+assert.match(corsImplementation, /request.method === "OPTIONS"/);
+assert.match(submitApplication, /cors: "disabled"/);
+assert.match(submitApplication, /fetch: withCors\(handler\)/);
 assert.match(submitApplication, /DISCORD_APPLICATION_WEBHOOK_URL/);
 assert.match(submitApplication, /scheduleDiscordNotification/);
 assert.match(submitApplication, /consume_application_rate_limit/);
@@ -94,6 +101,8 @@ assert.match(reviewApplication, /APPLICATION_REVIEW_TOKEN/);
 assert.match(reviewApplication, /review_note/);
 assert.match(reviewApplication, /more_info_requested/);
 assert.match(reviewApplication, /buildReviewUpdatePayload/);
+assert.match(reviewApplication, /cors: "disabled"/);
+assert.match(reviewApplication, /fetch: withCors\(handler\)/);
 assert.match(deployWorkflow, /APPLICATION_REVIEW_TOKEN: \$\{\{ secrets\.APPLICATION_REVIEW_TOKEN \}\}/);
 assert.match(deployWorkflow, /supabase secrets set APPLICATION_REVIEW_TOKEN=/);
 assert.doesNotMatch(deployWorkflow, /APPLICATION_REVIEW_TOKEN: \$\{\{ vars\./);
@@ -136,6 +145,63 @@ const reviewPayload = buildReviewUpdatePayload({
 });
 assert.match(reviewPayload.content, /Please provide your mod list/);
 assert.deepEqual(reviewPayload.allowed_mentions, { parse: [] });
+
+const submitCors = createCors(
+  "https://commonwealth-online.com,http://localhost:3000",
+  "POST, OPTIONS",
+  "apikey, authorization, content-type",
+);
+let authenticatedHandlerCalls = 0;
+const submitHandler = submitCors.wrap(async (request) => {
+  authenticatedHandlerCalls += 1;
+  return Response.json({ method: request.method });
+});
+
+const allowedPreflight = await submitHandler(new Request("https://example.test", {
+  method: "OPTIONS",
+  headers: { Origin: "http://localhost:3000" },
+}));
+assert.equal(allowedPreflight.status, 204);
+assert.equal(allowedPreflight.headers.get("Access-Control-Allow-Origin"), "http://localhost:3000");
+assert.equal(authenticatedHandlerCalls, 0);
+
+const blockedPreflight = await submitHandler(new Request("https://example.test", {
+  method: "OPTIONS",
+  headers: { Origin: "https://unapproved.example" },
+}));
+assert.equal(blockedPreflight.status, 204);
+assert.equal(blockedPreflight.headers.has("Access-Control-Allow-Origin"), false);
+assert.equal(authenticatedHandlerCalls, 0);
+
+const allowedPost = await submitHandler(new Request("https://example.test", {
+  method: "POST",
+  headers: { Origin: "http://localhost:3000" },
+}));
+assert.equal(allowedPost.headers.get("Access-Control-Allow-Origin"), "http://localhost:3000");
+
+const blockedPost = await submitHandler(new Request("https://example.test", {
+  method: "POST",
+  headers: { Origin: "https://unapproved.example" },
+}));
+assert.equal(blockedPost.headers.has("Access-Control-Allow-Origin"), false);
+
+const reviewCors = createCors(
+  "http://localhost:3000",
+  "GET, PATCH, OPTIONS",
+  "apikey, authorization, content-type, x-application-review-token",
+);
+const reviewHandler = reviewCors.wrap(async (request) => Response.json({ method: request.method }));
+const allowedPatch = await reviewHandler(new Request("https://example.test", {
+  method: "PATCH",
+  headers: { Origin: "http://localhost:3000" },
+}));
+assert.equal(allowedPatch.headers.get("Access-Control-Allow-Origin"), "http://localhost:3000");
+
+const blockedPatch = await reviewHandler(new Request("https://example.test", {
+  method: "PATCH",
+  headers: { Origin: "https://unapproved.example" },
+}));
+assert.equal(blockedPatch.headers.has("Access-Control-Allow-Origin"), false);
 
 const fieldValue = (field) => {
   if (field.type === "checkbox") return true;

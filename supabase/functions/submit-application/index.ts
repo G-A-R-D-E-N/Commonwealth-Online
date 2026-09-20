@@ -1,30 +1,15 @@
 import { withSupabase } from "npm:@supabase/server@^1";
+import { createCors } from "./cors.mjs";
 import { scheduleDiscordNotification } from "./discord.mjs";
 import { text, validateApplication } from "./validation.mjs";
 
 const APPLICATION_RATE_LIMIT = 5;
 const APPLICATION_RATE_WINDOW_SECONDS = 600;
-const corsOrigins = new Set(
-  (Deno.env.get("APPLICATION_CORS_ORIGINS") ||
-    "https://commonwealth-online.com,https://www.commonwealth-online.com,https://g-a-r-d-e-n.github.io,http://localhost:3000")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean),
+const { headers: corsHeaders, wrap: withCors } = createCors(
+  "https://commonwealth-online.com,https://www.commonwealth-online.com,https://g-a-r-d-e-n.github.io,http://localhost:3000",
+  "POST, OPTIONS",
+  "apikey, authorization, content-type",
 );
-
-const corsHeaders = (request: Request) => {
-  const origin = request.headers.get("origin");
-  const headers = new Headers({
-    "Access-Control-Allow-Headers": "apikey, authorization, content-type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Max-Age": "86400",
-    Vary: "Origin",
-  });
-  if (origin && corsOrigins.has(origin)) {
-    headers.set("Access-Control-Allow-Origin", origin);
-  }
-  return headers;
-};
 
 const json = (request: Request, body: unknown, status = 200) =>
   Response.json(body, { status, headers: corsHeaders(request) });
@@ -78,20 +63,16 @@ const consumeApplicationRateLimit = async (supabaseAdmin: any, request: Request)
   return { ok: !error, allowed: data === true };
 };
 
-export default {
-  fetch: withSupabase({ auth: "publishable" }, async (req, ctx) => {
-    if (req.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: corsHeaders(req) });
-    }
-    if (req.method !== "POST") {
-      return json(req, { error: { code: "method_not_allowed", message: "POST required." } }, 405);
-    }
+const handler = withSupabase({ auth: "publishable", cors: "disabled" }, async (req, ctx) => {
+  if (req.method !== "POST") {
+    return json(req, { error: { code: "method_not_allowed", message: "POST required." } }, 405);
+  }
 
-    try {
-      const input = await req.json().catch(() => null);
-      if (!input || typeof input !== "object" || Array.isArray(input)) {
-        return json(req, { error: { code: "invalid_json", message: "A JSON object is required." } }, 400);
-      }
+  try {
+    const input = await req.json().catch(() => null);
+    if (!input || typeof input !== "object" || Array.isArray(input)) {
+      return json(req, { error: { code: "invalid_json", message: "A JSON object is required." } }, 400);
+    }
 
       if (["website", "fax", "company"].some((key) => text(input[key], 200))) {
         return json(
@@ -182,5 +163,8 @@ export default {
       console.error("[applications] request failed", error);
       return json(req, { error: { code: "server_error", message: "The application service is temporarily unavailable." } }, 500);
     }
-  }),
+});
+
+export default {
+  fetch: withCors(handler),
 };

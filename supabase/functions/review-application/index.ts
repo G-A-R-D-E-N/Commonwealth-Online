@@ -1,29 +1,15 @@
 import { withSupabase } from "npm:@supabase/server@^1";
+import { createCors } from "../submit-application/cors.mjs";
 import { buildReviewUpdatePayload, postDiscordMessage } from "../submit-application/discord.mjs";
 import { text } from "../submit-application/validation.mjs";
 
 const STATUSES = new Set(["pending", "reviewing", "more_info_requested", "accepted", "rejected"]);
 const REVIEW_COLUMNS = "public_id,type,discord_handle,display_name,email,timezone,availability,experience,motivation,answers,status,source,created_at,updated_at,reviewed_by,reviewed_at,review_note,discord_thread_id";
-const corsOrigins = new Set(
-  (Deno.env.get("APPLICATION_CORS_ORIGINS") || "http://localhost:3000")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean),
+const { headers: corsHeaders, wrap: withCors } = createCors(
+  "http://localhost:3000",
+  "GET, PATCH, OPTIONS",
+  "apikey, authorization, content-type, x-application-review-token",
 );
-
-const corsHeaders = (request: Request) => {
-  const origin = request.headers.get("origin");
-  const headers = new Headers({
-    "Access-Control-Allow-Headers": "apikey, authorization, content-type, x-application-review-token",
-    "Access-Control-Allow-Methods": "GET, PATCH, OPTIONS",
-    "Access-Control-Max-Age": "86400",
-    Vary: "Origin",
-  });
-  if (origin && corsOrigins.has(origin)) {
-    headers.set("Access-Control-Allow-Origin", origin);
-  }
-  return headers;
-};
 
 const json = (request: Request, body: unknown, status = 200) =>
   Response.json(body, { status, headers: corsHeaders(request) });
@@ -49,17 +35,13 @@ const postReviewUpdate = async (application: Record<string, unknown>) => {
   await postDiscordMessage(webhook, buildReviewUpdatePayload(application), threadId);
 };
 
-export default {
-  fetch: withSupabase({ auth: "publishable" }, async (req, ctx) => {
-    if (req.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: corsHeaders(req) });
-    }
-    if (!isReviewer(req)) {
-      return json(req, { error: { code: "unauthorized", message: "Reviewer authorization required." } }, 401);
-    }
-    if (!["GET", "PATCH"].includes(req.method)) {
-      return json(req, { error: { code: "method_not_allowed", message: "GET or PATCH required." } }, 405);
-    }
+const handler = withSupabase({ auth: "publishable", cors: "disabled" }, async (req, ctx) => {
+  if (!isReviewer(req)) {
+    return json(req, { error: { code: "unauthorized", message: "Reviewer authorization required." } }, 401);
+  }
+  if (!["GET", "PATCH"].includes(req.method)) {
+    return json(req, { error: { code: "method_not_allowed", message: "GET or PATCH required." } }, 405);
+  }
 
     const publicId = publicIdFromRequest(req);
     if (req.method === "GET") {
@@ -137,5 +119,8 @@ export default {
     }
 
     return json(req, { application: data });
-  }),
+});
+
+export default {
+  fetch: withCors(handler),
 };
