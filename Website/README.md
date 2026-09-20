@@ -230,8 +230,8 @@ The static host must serve directory indexes, redirect `/media`, `/servers`,
 directory URLs, and redirect the legacy
 `/index.html`, `/media/index.html`, `/servers/index.html`, `/updates/index.html`,
 and `/repo/index.html` URLs to `/`, `/media/`, `/servers/`, `/updates/`, and
-`/repo/`. It must also send the security headers documented in
-`docs/code-notes/website-static-build.md`. Applications, Discord verification,
+`/repo/`. It must also preserve the Express security headers at the static
+host. Applications, Discord verification,
 SQLite, Mailcow, admin APIs, health, and future forum/account writes still
 require the Express backend.
 
