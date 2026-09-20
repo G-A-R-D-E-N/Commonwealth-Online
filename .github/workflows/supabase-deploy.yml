@@ -35,6 +35,9 @@ jobs:
       - name: Apply database migrations
         run: supabase db push
 
+      - name: Deploy Edge Functions
+        run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF"
+
       - name: Whitespace check
         if: always()
         run: git diff --check
