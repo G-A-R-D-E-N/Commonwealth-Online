@@ -19,3 +19,6 @@ enabled = true
 client_id = "env(SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID)"
 secret = "env(SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET)"
 redirect_uri = ""
+
+[functions.submit-application]
+verify_jwt = false
