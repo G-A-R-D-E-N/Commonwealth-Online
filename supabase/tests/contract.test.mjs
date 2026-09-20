@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   buildDiscordPayload,
+  buildReviewUpdatePayload,
   scheduleDiscordNotification,
 } from "../functions/submit-application/discord.mjs";
 import { validateApplication } from "../functions/submit-application/validation.mjs";
@@ -37,6 +38,10 @@ const intakeControlsMigration = fs.readFileSync(
 );
 const config = fs.readFileSync(path.join(root, "config.toml"), "utf8");
 const envExample = fs.readFileSync(path.join(root, ".env.example"), "utf8");
+const deployWorkflow = fs.readFileSync(
+  path.join(root, "..", ".github", "workflows", "supabase-deploy.yml"),
+  "utf8",
+);
 
 for (const table of [
   "profiles",
@@ -88,6 +93,10 @@ assert.doesNotMatch(reviewApplication, /\.select\("\*"/);
 assert.match(reviewApplication, /APPLICATION_REVIEW_TOKEN/);
 assert.match(reviewApplication, /review_note/);
 assert.match(reviewApplication, /more_info_requested/);
+assert.match(reviewApplication, /buildReviewUpdatePayload/);
+assert.match(deployWorkflow, /APPLICATION_REVIEW_TOKEN: \$\{\{ secrets\.APPLICATION_REVIEW_TOKEN \}\}/);
+assert.match(deployWorkflow, /supabase secrets set APPLICATION_REVIEW_TOKEN=/);
+assert.doesNotMatch(deployWorkflow, /APPLICATION_REVIEW_TOKEN: \$\{\{ vars\./);
 assert.match(intakeControlsMigration, /enable row level security/i);
 assert.match(intakeControlsMigration, /consume_application_rate_limit/);
 assert.match(intakeControlsMigration, /grant execute on function public\.consume_application_rate_limit.*service_role/i);
@@ -119,6 +128,14 @@ assert.equal(mentionPayload.embeds[0].title.includes("@everyone"), true);
 assert.equal(mentionPayload.content.includes("@everyone"), false);
 assert.equal(mentionPayload.thread_name, "Pending - ＠everyone - application-reference");
 assert.deepEqual(mentionPayload.allowed_mentions, { parse: [] });
+
+const reviewPayload = buildReviewUpdatePayload({
+  public_id: "application-reference",
+  status: "more_info_requested",
+  review_note: "Please provide your mod list and preferred testing schedule.",
+});
+assert.match(reviewPayload.content, /Please provide your mod list/);
+assert.deepEqual(reviewPayload.allowed_mentions, { parse: [] });
 
 const fieldValue = (field) => {
   if (field.type === "checkbox") return true;

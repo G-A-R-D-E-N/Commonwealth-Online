@@ -1,5 +1,5 @@
 import { withSupabase } from "npm:@supabase/server@^1";
-import { postDiscordMessage } from "../submit-application/discord.mjs";
+import { buildReviewUpdatePayload, postDiscordMessage } from "../submit-application/discord.mjs";
 import { text } from "../submit-application/validation.mjs";
 
 const STATUSES = new Set(["pending", "reviewing", "more_info_requested", "accepted", "rejected"]);
@@ -46,10 +46,7 @@ const postReviewUpdate = async (application: Record<string, unknown>) => {
     return;
   }
 
-  await postDiscordMessage(webhook, {
-    content: `Application ${application.public_id} is now ${application.status}.`,
-    allowed_mentions: { parse: [] },
-  }, threadId);
+  await postDiscordMessage(webhook, buildReviewUpdatePayload(application), threadId);
 };
 
 export default {

@@ -38,11 +38,14 @@ Reviewers use the `review-application` Edge Function with the `x-application-rev
    - `SUPABASE_PROJECT_REF`
    - `SUPABASE_URL`
    - `SUPABASE_PUBLISHABLE_KEY`
+8. Add GitHub Actions secrets:
    - `APPLICATION_REVIEW_TOKEN`
-8. Only if CLI deployment is used, add GitHub Actions secrets:
+9. Only if CLI deployment is used, add these additional GitHub Actions secrets:
    - `SUPABASE_ACCESS_TOKEN`
    - `SUPABASE_DB_PASSWORD`
-9. Keep the Discord client secret in Supabase Auth/provider configuration unless a deployment workflow specifically needs it.
+10. Keep the Discord client secret in Supabase Auth/provider configuration unless a deployment workflow specifically needs it.
+
+The Supabase deployment workflow copies `APPLICATION_REVIEW_TOKEN` into the Edge Function secrets before deploying the functions.
 
 The committed Discord provider configuration references environment variables rather than literal credentials.
 

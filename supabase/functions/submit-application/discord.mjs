@@ -45,6 +45,18 @@ export const buildDiscordPayload = (application) => ({
   allowed_mentions: { parse: [] },
 });
 
+export const buildReviewUpdatePayload = (application) => {
+  const status = cleanThreadPart(application.status, "updated");
+  const publicId = cleanThreadPart(application.public_id, "unknown");
+  const reviewNote = truncate(String(application.review_note ?? "").trim(), 1800);
+  return {
+    content: status === "more_info_requested"
+      ? `More information requested for application ${publicId}:\n\n${reviewNote}`
+      : `Application ${publicId} is now ${status}.`,
+    allowed_mentions: { parse: [] },
+  };
+};
+
 export const postDiscordMessage = async (webhookUrl, payload, threadId = "", fetchImpl = fetch) => {
   if (!webhookUrl) {
     return null;
