@@ -655,7 +655,7 @@
       "tr", "ul",
     ]);
     const allowedAttributes = {
-      a: new Set(["href", "rel", "target", "title"]),
+      a: new Set(["href", "title"]),
       code: new Set(["class"]),
       img: new Set(["alt", "height", "loading", "src", "title", "width"]),
       td: new Set(["align"]),
@@ -676,10 +676,17 @@
         }
       });
 
-      if (tag === "a" && node.hasAttribute("href")) {
-        const href = node.getAttribute("href") || "";
-        if (!globalThis.CoUrlPolicy?.isSafeLink(href, window.location.href)) {
-          node.removeAttribute("href");
+      if (tag === "a") {
+        node.removeAttribute("target");
+        node.removeAttribute("rel");
+        if (node.hasAttribute("href")) {
+          const href = node.getAttribute("href") || "";
+          if (!globalThis.CoUrlPolicy?.isSafeLink(href, window.location.href)) {
+            node.removeAttribute("href");
+          } else if (globalThis.CoUrlPolicy?.isExternalHttp(href, window.location.href)) {
+            node.setAttribute("target", "_blank");
+            node.setAttribute("rel", "noopener noreferrer");
+          }
         }
       }
 
@@ -702,7 +709,7 @@
     const baseDir = readmeDir ? `${readmeDir}/` : "";
 
     const resolveRepoPath = (value) => {
-      if (!value || /^(https?:|mailto:|data:|#)/i.test(value)) {
+      if (!value || /^(?:https?:|mailto:|data:|#|\/\/)/i.test(value)) {
         return null;
       }
       const cleaned = value.replace(/^\.\//, "");
@@ -733,9 +740,12 @@
         }
         return;
       }
-      if (/^https?:/i.test(href)) {
+      if (globalThis.CoUrlPolicy?.isExternalHttp(href, window.location.href)) {
         anchor.setAttribute("target", "_blank");
         anchor.setAttribute("rel", "noopener noreferrer");
+      } else {
+        anchor.removeAttribute("target");
+        anchor.removeAttribute("rel");
       }
     });
 
