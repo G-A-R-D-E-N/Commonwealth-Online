@@ -56,6 +56,9 @@ jobs:
 
       - name: Build static website
         working-directory: Website
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
         run: npm run build:static
 
       - name: Verify static website and backend boundary
@@ -72,6 +75,8 @@ jobs:
         working-directory: Website
         env:
           STATIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
         run: npm run build:static
 
       - name: Verify GitHub Pages paths
