@@ -8,7 +8,7 @@ a Discord forum review bot.
 
 ## Requirements
 
-- Node.js 20.12 or newer (tested on 24)
+- Node.js 22 or newer (tested on 24)
 - No other services; storage is a local SQLite file
 
 ## Quick start
