@@ -6,6 +6,7 @@ const ejs = require("ejs");
 
 const config = require("../src/config");
 const { FOOTER_LINKS, getNavItems } = require("../src/lib/nav");
+const { getType } = require("../src/lib/applications");
 const { PUBLIC_PAGES, STATIC_SHELL_PAGES } = require("../src/routes/page-config");
 
 const root = path.resolve(__dirname, "..");
@@ -30,20 +31,62 @@ const localsFor = (page) => ({
 const pages = [...PUBLIC_PAGES, ...STATIC_SHELL_PAGES];
 const withStaticBasePath = (html) =>
   staticBasePath
-    ? html.replace(/(\b(?:href|src|action)=")\/(?!\/)/g, `$1${staticBasePath}/`)
+    ? html.replace(/(\b(?:href|src|action|data-thanks-url)=")\/(?!\/)/g, `$1${staticBasePath}/`)
     : html;
 
 fs.rmSync(dist, { recursive: true, force: true });
 fs.mkdirSync(dist, { recursive: true });
 
-for (const definition of pages) {
-  const templatePath = path.join(root, "views", `${definition.template}.ejs`);
-  const outputPath = path.join(dist, definition.output);
+const writePage = (templateName, output, locals) => {
+  const templatePath = path.join(root, "views", `${templateName}.ejs`);
+  const outputPath = path.join(dist, output);
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   const template = fs.readFileSync(templatePath, "utf8");
-  const html = ejs.render(template, localsFor(definition.page), { filename: templatePath });
+  const html = ejs.render(template, locals, { filename: templatePath });
   fs.writeFileSync(outputPath, withStaticBasePath(html));
+};
+
+for (const definition of pages) {
+  writePage(definition.template, definition.output, localsFor(definition.page));
 }
+
+const applicationScripts = [
+  "/static/js/links.js",
+  "/static/js/navbar.js",
+  "/static/js/script.js",
+  "/static/js/applications.js",
+];
+
+for (const type of ["team", "beta"]) {
+  const form = getType(type);
+  writePage("pages/apply-form", `apply/${type}/index.html`, {
+    ...localsFor({
+      title: `${form.title} - Commonwealth Online`,
+      description: form.description,
+      bodyClass: "co-apply-page",
+      activeKey: "applications",
+      scripts: applicationScripts,
+    }),
+    form,
+    values: {},
+    errors: [],
+    errorMap: {},
+    notice: null,
+    submitAction: "#",
+    thanksUrl: "/apply/thanks/",
+  });
+}
+
+writePage("pages/apply-thanks", "apply/thanks/index.html", {
+  ...localsFor({
+    title: "Application received - Commonwealth Online",
+    description: "Your Commonwealth Online application has been received.",
+    bodyClass: "co-apply-page",
+    activeKey: "applications",
+    scripts: ["/static/js/links.js", "/static/js/navbar.js", "/static/js/script.js", "/static/js/apply-thanks.js"],
+  }),
+  reference: null,
+});
 
 fs.cpSync(path.join(root, "assets"), path.join(dist, "assets"), { recursive: true });
 fs.cpSync(path.join(root, "static"), path.join(dist, "static"), { recursive: true });
