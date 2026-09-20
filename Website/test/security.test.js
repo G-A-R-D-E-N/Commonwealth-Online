@@ -125,11 +125,12 @@ assert.match(workflow, /actions\/configure-pages@983d7736d9b0ae728b81ab479565c72
 assert.match(workflow, /actions\/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b/);
 assert.match(workflow, /actions\/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e/);
 
-const app = createApp();
-const server = http.createServer(app);
-const address = await listen(server);
+const run = async () => {
+  const app = createApp();
+  const server = http.createServer(app);
+  const address = await listen(server);
 
-try {
+  try {
   const home = await request(address, "/");
   assert.equal(home.status, 200);
   assert.match(home.text, /http-equiv="Content-Security-Policy"/);
@@ -192,9 +193,15 @@ try {
   assert.equal(healthBody.checks.database, "error");
   assert.equal(Object.hasOwn(healthBody, "environment"), false);
   assert.equal(Object.hasOwn(healthBody.checks, "discordBot"), false);
-} finally {
-  await close(server);
-  closeDb();
-}
+  } finally {
+    await close(server);
+    closeDb();
+  }
 
-console.log("security checks passed");
+  console.log("security checks passed");
+};
+
+run().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
