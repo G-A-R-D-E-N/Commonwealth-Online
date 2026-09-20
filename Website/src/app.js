@@ -34,7 +34,7 @@ const buildCsp = () =>
     "style-src 'self' 'unsafe-inline'",
     "script-src 'self'",
     "font-src 'self'",
-    `connect-src 'self' ${config.gitea.base}`,
+    `connect-src 'self' ${config.gitea.base} https://cdn.jsdelivr.net`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
