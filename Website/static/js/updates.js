@@ -150,7 +150,7 @@
       "tr", "ul",
     ]);
     const allowedAttributes = {
-      a: new Set(["href", "rel", "target", "title"]),
+      a: new Set(["href", "title"]),
       code: new Set(["class"]),
       img: new Set(["alt", "height", "loading", "src", "title", "width"]),
       td: new Set(["align"]),
@@ -171,13 +171,17 @@
         }
       });
 
-      if (tag === "a" && node.hasAttribute("href")) {
-        const href = node.getAttribute("href") || "";
-        if (!globalThis.CoUrlPolicy?.isSafeLink(href, window.location.href)) {
-          node.removeAttribute("href");
-        } else if (/^https?:/i.test(href)) {
-          node.setAttribute("target", "_blank");
-          node.setAttribute("rel", "noopener noreferrer");
+      if (tag === "a") {
+        node.removeAttribute("target");
+        node.removeAttribute("rel");
+        if (node.hasAttribute("href")) {
+          const href = node.getAttribute("href") || "";
+          if (!globalThis.CoUrlPolicy?.isSafeLink(href, window.location.href)) {
+            node.removeAttribute("href");
+          } else if (globalThis.CoUrlPolicy?.isExternalHttp(href, window.location.href)) {
+            node.setAttribute("target", "_blank");
+            node.setAttribute("rel", "noopener noreferrer");
+          }
         }
       }
 
