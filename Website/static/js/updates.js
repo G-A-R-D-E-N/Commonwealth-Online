@@ -144,29 +144,54 @@
     const template = document.createElement("template");
     template.innerHTML = html;
 
-    template.content.querySelectorAll("script, iframe, object, embed, form, link, meta").forEach((node) => {
-      node.remove();
-    });
+    const allowedTags = new Set([
+      "a", "blockquote", "br", "code", "del", "em", "h1", "h2", "h3", "h4", "h5", "h6",
+      "hr", "img", "li", "ol", "p", "pre", "strong", "table", "tbody", "td", "th", "thead",
+      "tr", "ul",
+    ]);
+    const allowedAttributes = {
+      a: new Set(["href", "title"]),
+      code: new Set(["class"]),
+      img: new Set(["alt", "height", "loading", "src", "title", "width"]),
+      td: new Set(["align"]),
+      th: new Set(["align"]),
+    };
 
     template.content.querySelectorAll("*").forEach((node) => {
+      const tag = node.tagName.toLowerCase();
+      if (!allowedTags.has(tag)) {
+        node.remove();
+        return;
+      }
+
+      const allowed = allowedAttributes[tag] || new Set();
       [...node.attributes].forEach((attr) => {
-        const name = attr.name.toLowerCase();
-        const value = attr.value.trim();
-        if (name.startsWith("on") || name === "srcdoc") {
-          node.removeAttribute(attr.name);
-          return;
-        }
-        if ((name === "href" || name === "src" || name === "xlink:href") && /^javascript:/i.test(value)) {
+        if (!allowed.has(attr.name.toLowerCase())) {
           node.removeAttribute(attr.name);
         }
       });
-    });
 
-    template.content.querySelectorAll("a[href]").forEach((anchor) => {
-      const href = anchor.getAttribute("href") || "";
-      if (/^https?:/i.test(href)) {
-        anchor.setAttribute("target", "_blank");
-        anchor.setAttribute("rel", "noopener noreferrer");
+      if (tag === "a") {
+        node.removeAttribute("target");
+        node.removeAttribute("rel");
+        if (node.hasAttribute("href")) {
+          const href = node.getAttribute("href") || "";
+          if (!globalThis.CoUrlPolicy?.isSafeLink(href, window.location.href)) {
+            node.removeAttribute("href");
+          } else if (globalThis.CoUrlPolicy?.isExternalHttp(href, window.location.href)) {
+            node.setAttribute("target", "_blank");
+            node.setAttribute("rel", "noopener noreferrer");
+          }
+        }
+      }
+
+      if (tag === "img" && node.hasAttribute("src")) {
+        const src = node.getAttribute("src") || "";
+        if (!globalThis.CoUrlPolicy?.isSafeImage(src, window.location.href)) {
+          node.removeAttribute("src");
+        } else {
+          node.setAttribute("loading", "lazy");
+        }
       }
     });
 

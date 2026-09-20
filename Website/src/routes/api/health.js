@@ -2,9 +2,7 @@
 
 const express = require("express");
 
-const config = require("../../config");
 const { getDb } = require("../../db");
-const { discordConfigured } = require("../../lib/discord");
 
 const router = express.Router();
 
@@ -13,20 +11,17 @@ router.get("/", (req, res) => {
   try {
     getDb().prepare("SELECT 1").get();
   } catch (error) {
-    database = `error: ${error.message}`;
+    database = "error";
+    console.error("[health] database check failed", error);
   }
 
   const healthy = database === "ok";
 
   res.status(healthy ? 200 : 503).json({
     status: healthy ? "ok" : "degraded",
-    environment: config.env,
     uptimeSeconds: Math.round(process.uptime()),
     time: new Date().toISOString(),
-    checks: {
-      database,
-      discordBot: discordConfigured() ? "configured" : "not configured",
-    },
+    checks: { database },
   });
 });
 

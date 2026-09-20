@@ -35,7 +35,7 @@ const {
   setApplicationStatus,
 } = require("../../lib/applications");
 const { requireAdminToken } = require("../../middleware/auth");
-const { clientIp, rateLimit } = require("../../middleware/rate-limit");
+const { rateLimit } = require("../../middleware/rate-limit");
 
 const router = express.Router();
 
@@ -60,12 +60,6 @@ const fakeSuccess = () => ({
     status: "pending",
     createdAt: new Date().toISOString().slice(0, 19).replace("T", " "),
   },
-});
-
-const membershipLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 30,
-  message: "Too many Discord checks. Please wait and try again.",
 });
 
 const intake = async (req, res, forcedType) => {
@@ -97,7 +91,6 @@ const intake = async (req, res, forcedType) => {
   }
 
   const application = createApplication(result.value, {
-    ip: clientIp(req),
     userAgent: req.get("user-agent"),
   });
   const posted = await postApplication(application);
@@ -115,16 +108,6 @@ const intake = async (req, res, forcedType) => {
     postedToDiscord: posted.ok,
   });
 };
-
-router.get("/discord-membership", membershipLimiter, async (req, res) => {
-  const membership = await isGuildMemberByUsername(String(req.query.username || ""));
-  if (!membership.ok) {
-    return res.status(503).json({
-      error: { code: "discord_verification_unavailable", message: "Discord verification is temporarily unavailable." },
-    });
-  }
-  return res.json({ member: membership.member });
-});
 
 const listForType = (req, res, forcedType) => {
   const type = forcedType || req.query.type;

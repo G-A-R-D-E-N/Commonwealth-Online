@@ -352,9 +352,6 @@ const buildFields = (type, record) => {
     .filter(Boolean);
 };
 
-const hashIp = (ip) =>
-  ip ? crypto.createHash("sha256").update(String(ip)).digest("hex").slice(0, 32) : null;
-
 const HONEYPOT_KEYS = ["website", "fax", "company"];
 
 const isHoneypot = (input = {}) =>
@@ -535,10 +532,10 @@ const createApplication = (value, meta = {}) => {
     .prepare(
       `INSERT INTO applications (
          public_id, type, discord_id, discord_handle, display_name, email, timezone,
-         availability, experience, motivation, answers, source, ip_hash, user_agent
+         availability, experience, motivation, answers, source, user_agent
        ) VALUES (
          @publicId, @type, @discordId, @discordHandle, @displayName, @email, @timezone,
-         @availability, @experience, @motivation, @answers, @source, @ipHash, @userAgent
+         @availability, @experience, @motivation, @answers, @source, @userAgent
        )`
     )
     .run({
@@ -554,7 +551,6 @@ const createApplication = (value, meta = {}) => {
       motivation: columns.motivation,
       answers: JSON.stringify(answers),
       source: columns.source,
-      ipHash: hashIp(meta.ip),
       userAgent,
     });
 

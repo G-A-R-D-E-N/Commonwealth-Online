@@ -5,18 +5,18 @@
   "description": "Commonwealth Online website - Express + EJS server with SQLite storage, prepared for forum, applications and API.",
   "main": "server.js",
   "engines": {
-    "node": ">=20.12"
+    "node": ">=24.21.0"
   },
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
     "migrate": "node scripts/migrate.js",
     "build:static": "node scripts/build-static.js",
-    "test": "node test/applications.test.js",
+    "test": "node test/applications.test.js && node test/security.test.js",
     "test:static": "node test/static.test.js"
   },
   "dependencies": {
-    "better-sqlite3": "^12.2.0",
+    "better-sqlite3": "^13.0.3",
     "discord.js": "^14.27.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",

@@ -30,14 +30,15 @@ const staticOptions = {
 const buildCsp = () =>
   [
     "default-src 'self'",
-    "img-src 'self' data: https://cdn.jsdelivr.net",
+    `img-src 'self' data: https://cdn.jsdelivr.net ${config.gitea.base}`,
     "style-src 'self' 'unsafe-inline'",
     "script-src 'self'",
     "font-src 'self'",
-    `connect-src 'self' ${config.gitea.base}`,
+    `connect-src 'self' ${config.gitea.base} https://cdn.jsdelivr.net`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
+    "frame-src 'none'",
     "frame-ancestors 'none'",
   ].join("; ");
 
