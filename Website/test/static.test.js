@@ -70,6 +70,12 @@ const run = async () => {
   for (const filePath of htmlFiles) {
     const html = fs.readFileSync(filePath, "utf8");
     assert.equal(/<%|<%=|<%-/.test(html), false, `unresolved EJS in ${filePath}`);
+    assert.match(html, /https:\/\/cdn\.jsdelivr\.net\/npm\/@widgetbot\/crate@3/);
+    assert.match(html, /src="\/static\/js\/widgetbot\.js"/);
+    assert.match(html, /script-src 'self' https:\/\/cdn\.jsdelivr\.net/);
+    assert.match(html, /frame-src https:\/\/e\.widgetbot\.io/);
+    assert.doesNotMatch(html, /script-src[^;]*unsafe-inline/);
+    assert.doesNotMatch(html, /frame-src[^;]*https:\/\/discord\.com/);
   }
 
   const staticServer = await startServer(serveStatic);

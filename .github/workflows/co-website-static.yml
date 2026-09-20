@@ -75,6 +75,9 @@ jobs:
 
       - name: Verify static website and backend boundary
         working-directory: Website
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
         run: npm run test:static
 
       - name: Configure GitHub Pages
