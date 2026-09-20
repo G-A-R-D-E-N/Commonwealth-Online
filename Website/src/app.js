@@ -34,7 +34,7 @@ const buildCsp = () =>
     "style-src 'self' 'unsafe-inline'",
     "script-src 'self'",
     "font-src 'self'",
-    `connect-src 'self' ${config.gitea.base} https://cdn.jsdelivr.net`,
+    `connect-src 'self' ${config.gitea.base} https://cdn.jsdelivr.net${config.supabase.url ? ` ${config.supabase.url}` : ""}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -73,6 +73,7 @@ const createApp = () => {
     url: config.siteUrl,
     links: config.links,
     gitea: config.gitea,
+    supabase: config.supabase,
   };
 
   app.use(securityHeaders);

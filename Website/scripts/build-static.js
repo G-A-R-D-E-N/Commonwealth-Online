@@ -16,6 +16,7 @@ const site = {
   url: config.siteUrl,
   links: config.links,
   gitea: config.gitea,
+  supabase: config.supabase,
 };
 
 const localsFor = (page) => ({
