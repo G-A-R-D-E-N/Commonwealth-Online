@@ -22,6 +22,9 @@ concurrency:
 
 jobs:
   website-static:
+    permissions:
+      contents: read
+      pages: read
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -58,6 +61,52 @@ jobs:
         working-directory: Website
         run: npm run test:static
 
+      - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request'
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build GitHub Pages artifact
+        if: github.event_name != 'pull_request'
+        working-directory: Website
+        env:
+          STATIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: npm run build:static
+
+      - name: Verify GitHub Pages paths
+        if: github.event_name != 'pull_request'
+        env:
+          STATIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: |
+          set -euo pipefail
+          grep -q "href=\"${STATIC_BASE_PATH}/" Website/dist/index.html
+          grep -q "src=\"${STATIC_BASE_PATH}/static/" Website/dist/index.html
+          grep -q "\"${STATIC_BASE_PATH}/data/servers.json\"" Website/dist/static/js/servers.js
+          grep -q "\"${STATIC_BASE_PATH}/updates\"" Website/dist/static/js/links.js
+
+      - name: Upload GitHub Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: Website/dist
+
       - name: Whitespace check
         if: always()
         run: git diff --check
+
+  deploy-pages:
+    if: github.event_name != 'pull_request'
+    needs: website-static
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
