@@ -30,7 +30,10 @@
             id="apply-form"
             data-apply-form
             data-apply-type="<%= form.id %>"
-            action="/apply/<%= form.id %>"
+            data-supabase-url="<%= site.supabase?.url || "" %>"
+            data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+            data-thanks-url="<%= thanksUrl || "/apply/thanks" %>"
+            action="<%= submitAction || `/apply/${form.id}` %>"
             method="post"
             novalidate
           >
