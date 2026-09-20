@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const migration = fs.readFileSync(path.join(root, "migrations", "20260920000000_forum.sql"), "utf8");
 const config = fs.readFileSync(path.join(root, "config.toml"), "utf8");
 const envExample = fs.readFileSync(path.join(root, ".env.example"), "utf8");
