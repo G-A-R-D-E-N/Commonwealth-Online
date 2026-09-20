@@ -44,6 +44,7 @@ jobs:
           command -v npm >/dev/null
           node --version
           npm --version
+          test "$(node --version)" = "v24.21.0"
 
       - name: Install website dependencies
         working-directory: Website
