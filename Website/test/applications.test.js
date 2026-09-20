@@ -1,6 +1,8 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const { TYPES, TYPE_IDS, getType } = require("../src/lib/applications");
 
 assert.deepEqual(Object.keys(TYPES), TYPE_IDS);
@@ -21,5 +23,9 @@ for (const typeId of TYPE_IDS) {
 assert.equal(getType("missing"), null);
 assert.ok(TYPES.team.fields.some((field) => field.key === "role" && field.options.length > 0));
 assert.ok(TYPES.beta.fields.some((field) => field.key === "gameEdition" && field.options.length > 0));
+assert.match(
+  fs.readFileSync(path.join(__dirname, "../static/js/applications.js"), "utf8"),
+  /form\.checkValidity\(\)/
+);
 
 console.log("application form checks passed");

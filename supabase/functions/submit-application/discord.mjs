@@ -3,6 +3,11 @@ const cleanThreadPart = (value, fallback) => {
   return cleaned || fallback;
 };
 
+const truncate = (value, max) => {
+  const text = String(value ?? "");
+  return text.length > max ? `${text.slice(0, max - 1)}…` : text;
+};
+
 const buildThreadName = (application) => {
   const status = cleanThreadPart(application.status, "pending");
   const displayName = cleanThreadPart(application.display_name, "Application");
@@ -14,25 +19,58 @@ const buildThreadName = (application) => {
 };
 
 export const buildDiscordPayload = (application) => ({
-  content: `New ${application.type} application: ${application.display_name} (${application.public_id})`,
+  content: "New application received.",
   thread_name: buildThreadName(application),
+  embeds: [{
+    title: `${application.type} application — ${truncate(application.display_name, 70)}`,
+    color: 0xd9a441,
+    timestamp: application.created_at || new Date().toISOString(),
+    fields: [
+      { name: "Reference", value: truncate(application.public_id, 1024), inline: true },
+      { name: "Type", value: truncate(application.type, 1024), inline: true },
+      { name: "Status", value: truncate(application.status, 1024), inline: true },
+      { name: "Email", value: truncate(application.email, 1024), inline: true },
+      { name: "Discord username", value: truncate(application.discord_handle, 1024), inline: true },
+      { name: "Timezone", value: truncate(application.timezone || "Not provided", 1024), inline: true },
+      { name: "Availability", value: truncate(application.availability || "Not provided", 1024), inline: false },
+      { name: "Experience", value: truncate(application.experience, 1024), inline: false },
+      { name: "Motivation", value: truncate(application.motivation, 1024), inline: false },
+      ...Object.entries(application.answers || {}).map(([key, value]) => ({
+        name: key,
+        value: truncate(typeof value === "boolean" ? (value ? "Yes" : "No") : value, 1024),
+        inline: true,
+      })),
+    ].slice(0, 25),
+  }],
   allowed_mentions: { parse: [] },
 });
 
-export const notifyDiscord = async (application, webhookUrl, fetchImpl = fetch) => {
+export const postDiscordMessage = async (webhookUrl, payload, threadId = "", fetchImpl = fetch) => {
   if (!webhookUrl) {
-    return;
+    return null;
   }
 
-  const response = await fetchImpl(webhookUrl, {
+  const url = new URL(webhookUrl);
+  url.searchParams.set("wait", "true");
+  if (threadId) {
+    url.searchParams.set("thread_id", threadId);
+  }
+  const response = await fetchImpl(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(buildDiscordPayload(application)),
+    body: JSON.stringify(payload),
   });
   if (!response.ok) {
     throw new Error(`Discord notification returned ${response.status}`);
   }
+  if (typeof response.json !== "function") {
+    return null;
+  }
+  return response.json().catch(() => null);
 };
+
+export const notifyDiscord = async (application, webhookUrl, fetchImpl = fetch) =>
+  postDiscordMessage(webhookUrl, buildDiscordPayload(application), "", fetchImpl);
 
 export const scheduleDiscordNotification = (
   application,
@@ -40,8 +78,9 @@ export const scheduleDiscordNotification = (
   waitUntil,
   fetchImpl = fetch,
   onError = console.error,
+  onSuccess = () => {},
 ) => {
-  const task = notifyDiscord(application, webhookUrl, fetchImpl).catch(onError);
+  const task = notifyDiscord(application, webhookUrl, fetchImpl).then(onSuccess).catch(onError);
   if (waitUntil) {
     waitUntil(task);
   } else {

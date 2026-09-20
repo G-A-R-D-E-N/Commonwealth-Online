@@ -97,6 +97,10 @@
     if (!submitUrl) {
       return;
     }
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
     clearFieldErrors();
     setStatus("Sending application…");
 

@@ -74,6 +74,7 @@ package or the generated browser files.
 
 The team and beta forms are rendered into the static artifact. Browser-side
 validation and submission live in `static/js/applications.js`. The Edge
-Function validates and persists the application in Supabase, then performs
-Discord delivery in the background. Discord forum thread creation and review
-workflow are backend concerns and are not part of this website package.
+Function validates, rate-limits, and persists the application in Supabase, then
+performs Discord delivery in the background. Reviewers use the separate
+`review-application` Edge Function; its token and Discord webhook remain
+Supabase secrets and are not part of this website package.

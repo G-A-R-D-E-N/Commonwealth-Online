@@ -22,6 +22,10 @@ Never commit:
 
 The website only needs `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`. Both are public browser configuration and remain constrained by Postgres grants and Row Level Security.
 
+Application submissions are rate limited to five attempts per address per ten minutes by the `consume_application_rate_limit` function. The address is hashed with the service key before storage, and the rate-limit table is inaccessible to browser roles.
+
+Reviewers use the `review-application` Edge Function with the `x-application-review-token` header. The token is stored as the `APPLICATION_REVIEW_TOKEN` Supabase secret. `GET` lists or retrieves applications, and `PATCH /<public_id>` accepts `pending`, `reviewing`, `more_info_requested`, `accepted`, or `rejected`; a review note is required for `more_info_requested`. Status updates are recorded in Supabase and posted to the application Discord thread when one exists.
+
 ## When the Supabase project exists
 
 1. Create the managed Supabase project.
@@ -34,6 +38,7 @@ The website only needs `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`. Both are p
    - `SUPABASE_PROJECT_REF`
    - `SUPABASE_URL`
    - `SUPABASE_PUBLISHABLE_KEY`
+   - `APPLICATION_REVIEW_TOKEN`
 8. Only if CLI deployment is used, add GitHub Actions secrets:
    - `SUPABASE_ACCESS_TOKEN`
    - `SUPABASE_DB_PASSWORD`
