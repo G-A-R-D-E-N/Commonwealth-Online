@@ -116,16 +116,6 @@ const intake = async (req, res, forcedType) => {
   });
 };
 
-router.get("/discord-membership", membershipLimiter, async (req, res) => {
-  const membership = await isGuildMemberByUsername(String(req.query.username || ""));
-  if (!membership.ok) {
-    return res.status(503).json({
-      error: { code: "discord_verification_unavailable", message: "Discord verification is temporarily unavailable." },
-    });
-  }
-  return res.json({ member: membership.member });
-});
-
 const listForType = (req, res, forcedType) => {
   const type = forcedType || req.query.type;
   if (type && !TYPE_IDS.includes(String(type))) {
