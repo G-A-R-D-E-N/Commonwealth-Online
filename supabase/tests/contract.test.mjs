@@ -3,14 +3,19 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import {
+  buildDiscordPayload,
+  scheduleDiscordNotification,
+} from "../functions/submit-application/discord.mjs";
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const migration = fs.readFileSync(path.join(root, "migrations", "20260920000000_forum.sql"), "utf8");
+const migration = fs.readFileSync(path.join(root, "migrations", "20260920032942_forum.sql"), "utf8");
 const applicationMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260920010000_applications.sql"),
+  path.join(root, "migrations", "20260920032951_applications.sql"),
   "utf8"
 );
 const securityMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260920020000_security_hardening.sql"),
+  path.join(root, "migrations", "20260920033039_security_hardening.sql"),
   "utf8"
 );
 const submitApplication = fs.readFileSync(
@@ -62,6 +67,7 @@ assert.match(submitApplication, /DISCORD_GUILD_ID/);
 assert.match(submitApplication, /method === "OPTIONS"/);
 assert.match(submitApplication, /Access-Control-Allow-Origin/);
 assert.match(submitApplication, /DISCORD_APPLICATION_WEBHOOK_URL/);
+assert.match(submitApplication, /scheduleDiscordNotification/);
 assert.match(envExample, /^SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID=$/m);
 assert.match(envExample, /^SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET=$/m);
 assert.match(envExample, /^DISCORD_APPLICATION_WEBHOOK_URL=$/m);
@@ -78,6 +84,37 @@ for (const index of [
 assert.match(securityMigration, /revoke all on function public\.handle_new_user\(\) from public/i);
 assert.match(securityMigration, /grant execute on function public\.handle_new_user\(\) to service_role/i);
 assert.match(securityMigration, /grant execute on function public\.is_forum_moderator\(\) to authenticated, service_role/i);
+
+const mentionPayload = buildDiscordPayload({
+  type: "team",
+  display_name: "@everyone",
+  public_id: "application-reference",
+});
+assert.equal(mentionPayload.content.includes("@everyone"), true);
+assert.deepEqual(mentionPayload.allowed_mentions, { parse: [] });
+
+let releaseFetch;
+const delayedFetch = new Promise((resolve) => {
+  releaseFetch = resolve;
+});
+let trackedNotification;
+let notificationStarted = false;
+scheduleDiscordNotification(
+  { type: "team", display_name: "Applicant", public_id: "application-reference" },
+  "https://discord.example/webhook",
+  (promise) => {
+    trackedNotification = promise;
+  },
+  () => {
+    notificationStarted = true;
+    return delayedFetch;
+  },
+  () => {},
+);
+assert.equal(notificationStarted, true);
+assert.equal(trackedNotification instanceof Promise, true);
+releaseFetch({ ok: true });
+await trackedNotification;
 
 for (const [name, content] of [
   ["forum migration", migration],

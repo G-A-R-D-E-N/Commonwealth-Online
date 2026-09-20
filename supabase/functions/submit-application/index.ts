@@ -1,4 +1,5 @@
 import { withSupabase } from "npm:@supabase/server@^1";
+import { scheduleDiscordNotification } from "./discord.mjs";
 
 const TYPE_IDS = new Set(["team", "beta"]);
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -160,24 +161,6 @@ const isDiscordMember = async (username: string) => {
   return { ok: true as const, member };
 };
 
-const notifyDiscord = async (application: Record<string, unknown>) => {
-  const webhookUrl = Deno.env.get("DISCORD_APPLICATION_WEBHOOK_URL");
-  if (!webhookUrl) {
-    return;
-  }
-
-  const response = await fetch(webhookUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      content: `New ${application.type} application: ${application.display_name} (${application.public_id})`,
-    }),
-  });
-  if (!response.ok) {
-    throw new Error(`Discord notification returned ${response.status}`);
-  }
-};
-
 export default {
   fetch: withSupabase({ auth: "publishable" }, async (req, ctx) => {
     if (req.method === "OPTIONS") {
@@ -235,11 +218,16 @@ export default {
         return json(req, { error: { code: "storage_failed", message: "Could not store the application. Please try again." } }, 503);
       }
 
-      try {
-        await notifyDiscord(data);
-      } catch (error) {
-        console.error("[applications] Discord notification failed", error);
-      }
+      const edgeRuntime = (globalThis as typeof globalThis & {
+        EdgeRuntime?: { waitUntil: (promise: Promise<unknown>) => void };
+      }).EdgeRuntime;
+      scheduleDiscordNotification(
+        data,
+        Deno.env.get("DISCORD_APPLICATION_WEBHOOK_URL"),
+        edgeRuntime?.waitUntil?.bind(edgeRuntime),
+        fetch,
+        (error) => console.error("[applications] Discord notification failed", error),
+      );
 
       return json(
         req,
