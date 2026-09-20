@@ -216,9 +216,6 @@
     revealContent(els.feed);
   };
 
-  // The repository browser now lives on GitHub; resolve it from the shared
-  // link registry, falling back to the canonical URL when unavailable.
-  // The repository browser now lives on GitHub.
   const repositoryUrl = "https://github.com/G-A-R-D-E-N/Commonwealth-Online";
   const loadReleases = async () => {
     setBusy(els.feed, true);

@@ -106,10 +106,21 @@ const run = async () => {
     const staticMedia = await request(staticBase, "/media/");
     assert.match(staticTeamForm.text, /data-supabase-url/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
-    // The /repo browser and its Gitea API client were removed; the changelog
-    // error path must not link to that dead route any more.
     const updatesJs = fs.readFileSync(path.join(dist, "static/js/updates.js"), "utf8");
     assert.doesNotMatch(updatesJs, /\/repo/, "updates.js must not reference the removed /repo page");
+    assert.equal(fs.existsSync(path.join(dist, "repo/index.html")), false, "removed /repo page must not ship");
+    assert.equal(fs.existsSync(path.join(dist, "static/js/repo.js")), false, "removed repo browser must not ship");
+    assert.match(
+      staticUpdates.text,
+      /href="https:\/\/github\.com\/G-A-R-D-E-N\/Commonwealth-Online"[^>]*>Repository</,
+      "Repository footer link must target the public GitHub repository"
+    );
+    const linksJs = fs.readFileSync(path.join(dist, "static/js/links.js"), "utf8");
+    assert.match(
+      linksJs,
+      /repository: "https:\/\/github\.com\/G-A-R-D-E-N\/Commonwealth-Online"/,
+      "Repository link registry must target the public GitHub repository"
+    );
     assert.match(
       updatesJs,
       /https:\/\/github\.com\/G-A-R-D-E-N\/Commonwealth-Online/,
