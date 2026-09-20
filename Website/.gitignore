@@ -9,9 +9,3 @@ npm-debug.log*
 .env
 .env.*
 !.env.example
-
-# SQLite database and sidecar files
-data/*.sqlite
-data/*.sqlite-journal
-data/*.sqlite-wal
-data/*.sqlite-shm

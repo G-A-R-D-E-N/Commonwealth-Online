@@ -6,7 +6,9 @@ on:
     paths:
       - "supabase/**"
       - "Website/src/config.js"
-      - "Website/src/app.js"
+      - "Website/src/lib/applications.js"
+      - "Website/src/lib/nav.js"
+      - "Website/src/routes/page-config.js"
       - "Website/scripts/build-static.js"
       - "Website/views/pages/forum.ejs"
       - "Website/static/js/forum.js"
@@ -17,7 +19,9 @@ on:
     paths:
       - "supabase/**"
       - "Website/src/config.js"
-      - "Website/src/app.js"
+      - "Website/src/lib/applications.js"
+      - "Website/src/lib/nav.js"
+      - "Website/src/routes/page-config.js"
       - "Website/scripts/build-static.js"
       - "Website/views/pages/forum.ejs"
       - "Website/static/js/forum.js"
