@@ -195,52 +195,42 @@ The schema covers `accounts`, `forum_categories`, `forum_threads`,
 account tables are intentionally unused by the current routes — they are the
 data model for the next phase.
 
-## Deploying
+## Production architecture
 
-1. `npm ci --omit=dev`
-2. Set `NODE_ENV=production`, `SITE_URL`, `HOST=0.0.0.0`, plus `TRUST_PROXY=true`
-   when behind a proxy
-3. `npm start`, with `data/` on a persistent volume and a process manager
-   (systemd, pm2 or similar) keeping it alive
-4. Reverse-proxy `/` to the Node port. Static assets under `/static` and
-   `/assets` can also be served directly by nginx for speed.
+Production is a static build plus managed Supabase services. Do not deploy `server.js`,
+SQLite, or the Express API as a production web server.
 
-`GET /api/v1/health` is safe to point a load balancer or uptime check at.
+`npm run build:static` produces the frontend artifact in `dist/`. The browser talks
+directly to Supabase using the public project URL and publishable key. Database writes,
+authentication and authorization are enforced by Supabase Auth, Postgres grants and Row
+Level Security. Operations that require private credentials must run in Supabase Edge
+Functions, with their secrets stored in Supabase rather than in the browser or repository.
 
-### Static hosting
+The existing Express/SQLite code remains temporarily for local development, migration
+comparison and tests while application workflows are moved to Supabase. It is not part of
+the target production deployment.
 
-`npm run build:static` writes the public site to `dist/`:
+### Frontend hosting
 
-```
-dist/index.html
-dist/media/index.html
-dist/roadmap/index.html
-dist/servers/index.html
-dist/updates/index.html
-dist/repo/index.html
-dist/apply/index.html
-dist/forum/index.html
-dist/assets/
-dist/static/
-dist/data/servers.json
-```
+Supabase currently does not provide supported general-purpose static HTML hosting:
+Storage serves HTML as plain text, and Edge Functions are intended for API/data work rather
+than frontend hosting. Until a supported Supabase frontend host exists, the generated
+`dist/` artifact must remain on a static frontend host. GitHub Pages remains the temporary
+host during this migration so the public site stays online.
 
-The static host must serve directory indexes, redirect `/media`, `/servers`,
-`/updates`, `/repo`, `/roadmap`, `/apply`, and `/forum` to their slash-terminated
-directory URLs, and redirect the legacy
-`/index.html`, `/media/index.html`, `/servers/index.html`, `/updates/index.html`,
-and `/repo/index.html` URLs to `/`, `/media/`, `/servers/`, `/updates/`, and
-`/repo/`. It must also preserve the Express security headers at the static
-host. Applications, Discord verification,
-SQLite, Mailcow, admin APIs, health, and future forum/account writes still
-require the Express backend.
+### Supabase configuration
 
-Static and backend traffic share the public origin as follows: the static host
-serves the generated pages, `/assets/*`, `/static/*`, and `/data/servers.json`;
-`/apply/team`, `/apply/beta`, `/apply/thanks`, `/api/v1/*`, and future dynamic
-`/forum/*` routes must be reverse-proxied to Express before the static fallback.
-The copied server registry is a deployment snapshot, so changes to
-`servers/server.json` require `npm run build:static` and a static redeploy.
+The static build consumes only public browser values:
+
+- `SUPABASE_URL`
+- `SUPABASE_PUBLISHABLE_KEY`
+
+For GitHub builds, store those under repository **Actions Variables**, not Secrets.
+
+Private deployment credentials such as `SUPABASE_ACCESS_TOKEN`,
+`SUPABASE_DB_PASSWORD`, Discord client secrets, SMTP credentials and Supabase secret keys
+must be stored in GitHub Actions Secrets or Supabase project secrets and must never be
+committed.
 
 ## Next steps
 
