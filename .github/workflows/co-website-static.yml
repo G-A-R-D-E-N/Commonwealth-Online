@@ -1,0 +1,63 @@
+name: Commonwealth Online Website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Website/**"
+      - ".github/workflows/co-website-static.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "Website/**"
+      - ".github/workflows/co-website-static.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  website-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24"
+
+      - name: Verify Node tools
+        run: |
+          set -euo pipefail
+          command -v node >/dev/null
+          command -v npm >/dev/null
+          node --version
+          npm --version
+
+      - name: Install website dependencies
+        working-directory: Website
+        run: npm ci
+
+      - name: Run website tests
+        working-directory: Website
+        run: npm test
+
+      - name: Build static website
+        working-directory: Website
+        run: npm run build:static
+
+      - name: Verify static website and backend boundary
+        working-directory: Website
+        run: npm run test:static
+
+      - name: Whitespace check
+        if: always()
+        run: git diff --check

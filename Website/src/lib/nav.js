@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { key: "home", label: "Home", href: "/" },
   { key: "media", label: "Media", href: "/media" },
   { key: "servers", label: "Servers", href: "/servers" },
+  { key: "roadmap", label: "Roadmap", href: "/roadmap" },
   { key: "forum", label: "Forum", href: "/forum", feature: "forum" },
   { key: "applications", label: "Apply", href: "/apply", feature: "applications" },
   { key: "repository", label: "Repository", href: config.links.repository, external: true },
@@ -31,6 +32,7 @@ const FOOTER_LINKS = [
   { label: "Apply", key: "applications" },
   { label: "Media", key: "media" },
   { label: "Servers", key: "servers" },
+  { label: "Roadmap", href: "/roadmap" },
   { label: "Updates", key: "updates" },
 ];
 

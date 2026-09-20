@@ -14,18 +14,13 @@
 const express = require("express");
 
 const config = require("../config");
+const { FORUM_PAGE } = require("./page-config");
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.render("pages/forum", {
-    page: {
-      title: "Forum - Commonwealth Online",
-      description: "Community discussion for the Commonwealth Online multiplayer framework.",
-      bodyClass: "co-forum-page",
-      activeKey: "forum",
-      scripts: ["/static/js/links.js", "/static/js/navbar.js", "/static/js/script.js"],
-    },
+  res.render(FORUM_PAGE.template, {
+    page: FORUM_PAGE.page,
     enabled: config.features.forum,
   });
 });

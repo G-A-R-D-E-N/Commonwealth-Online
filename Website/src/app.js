@@ -88,6 +88,7 @@ const createApp = () => {
 
   app.use("/static", express.static(config.paths.static, staticOptions));
   app.use("/assets", express.static(config.paths.assets, staticOptions));
+  app.get("/data/servers.json", (req, res) => res.sendFile(config.paths.serversJson));
 
   app.use("/api/v1", require("./routes/api"));
   app.use("/", require("./routes/pages"));

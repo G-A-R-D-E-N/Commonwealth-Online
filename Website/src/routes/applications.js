@@ -26,6 +26,7 @@ const {
   createApplication,
 } = require("../lib/applications");
 const { clientIp, rateLimit } = require("../middleware/rate-limit");
+const { APPLICATIONS_PAGE } = require("./page-config");
 
 const router = express.Router();
 
@@ -62,14 +63,8 @@ const pageLocals = (form, extras = {}) => ({
 });
 
 router.get("/", (req, res) => {
-  res.render("pages/applications", {
-    page: {
-      title: "Apply - Commonwealth Online",
-      description: "Apply to join the Commonwealth Online team or become a beta tester.",
-      bodyClass: "co-apply-page",
-      activeKey: "applications",
-      scripts: ["/static/js/links.js", "/static/js/navbar.js", "/static/js/script.js"],
-    },
+  res.render(APPLICATIONS_PAGE.template, {
+    page: APPLICATIONS_PAGE.page,
     enabled: config.features.applications,
   });
 });
