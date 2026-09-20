@@ -6,16 +6,30 @@
     root.CoUrlPolicy = api;
   }
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
-  const protocolOf = (value, base) => {
+  const parseUrl = (value, base) => {
     try {
-      return new URL(String(value || ""), base || "https://example.invalid/").protocol.toLowerCase();
+      return new URL(String(value || ""), base || "https://example.invalid/");
     } catch {
-      return "";
+      return null;
     }
   };
 
+  const protocolOf = (value, base) =>
+    parseUrl(value, base)?.protocol.toLowerCase() || "";
+
   const isSafeLink = (value, base) =>
     ["http:", "https:", "mailto:"].includes(protocolOf(value, base));
+
+  const isExternalHttp = (value, base) => {
+    const url = parseUrl(value, base);
+    const origin = parseUrl(base);
+    return Boolean(
+      url &&
+        origin &&
+        ["http:", "https:"].includes(url.protocol.toLowerCase()) &&
+        url.origin !== origin.origin
+    );
+  };
 
   const isSafeImage = (value, base) => {
     const raw = String(value || "").trim();
@@ -25,5 +39,5 @@
     return ["http:", "https:"].includes(protocolOf(raw, base));
   };
 
-  return { isSafeImage, isSafeLink, protocolOf };
+  return { isExternalHttp, isSafeImage, isSafeLink, protocolOf };
 });
