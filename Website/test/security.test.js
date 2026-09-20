@@ -15,7 +15,7 @@ const { createApp } = require("../src/app");
 const { closeDb, getDb } = require("../src/db");
 const { createApplication, TYPES, validateApplication } = require("../src/lib/applications");
 const { clientIp, rateLimit } = require("../src/middleware/rate-limit");
-const { isSafeImage, isSafeLink, protocolOf } = require("../static/js/url-policy");
+const { isExternalHttp, isSafeImage, isSafeLink, protocolOf } = require("../static/js/url-policy");
 
 const listen = (server) =>
   new Promise((resolve, reject) => {
@@ -106,6 +106,8 @@ for (const unsafe of [
 assert.equal(protocolOf("java\nscript:alert(1)", "https://example.com/"), "javascript:");
 assert.equal(isSafeLink("/relative", "https://example.com/"), true);
 assert.equal(isSafeLink("mailto:test@example.com", "https://example.com/"), true);
+assert.equal(isExternalHttp("//attacker.example/path", "https://example.com/"), true);
+assert.equal(isExternalHttp("/local/path", "https://example.com/"), false);
 assert.equal(isSafeImage("data:image/svg+xml,<svg></svg>", "https://example.com/"), false);
 assert.equal(isSafeImage("data:image/png;base64,AA==", "https://example.com/"), true);
 
@@ -114,6 +116,10 @@ const repoSource = fs.readFileSync(path.join(__dirname, "../static/js/repo.js"),
 for (const source of [updatesSource, repoSource]) {
   assert.match(source, /allowedTags/);
   assert.match(source, /CoUrlPolicy/);
+  assert.match(source, /removeAttribute\("target"\)/);
+  assert.match(source, /removeAttribute\("rel"\)/);
+  assert.match(source, /isExternalHttp/);
+  assert.doesNotMatch(source, /a: new Set\(\["href", "rel", "target"/);
   assert.doesNotMatch(source, /\^javascript:/);
 }
 
