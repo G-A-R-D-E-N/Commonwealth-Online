@@ -9,6 +9,10 @@ const applicationMigration = fs.readFileSync(
   path.join(root, "migrations", "20260920010000_applications.sql"),
   "utf8"
 );
+const securityMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260920020000_security_hardening.sql"),
+  "utf8"
+);
 const submitApplication = fs.readFileSync(
   path.join(root, "functions", "submit-application", "index.ts"),
   "utf8"
@@ -62,11 +66,24 @@ assert.match(envExample, /^SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID=$/m);
 assert.match(envExample, /^SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET=$/m);
 assert.match(envExample, /^DISCORD_APPLICATION_WEBHOOK_URL=$/m);
 assert.match(envExample, /^APPLICATION_CORS_ORIGINS=/m);
+for (const index of [
+  "forum_threads_author_idx",
+  "forum_posts_author_idx",
+  "forum_reactions_user_idx",
+  "forum_reports_post_idx",
+  "forum_reports_reporter_idx",
+]) {
+  assert.match(securityMigration, new RegExp(`create index if not exists ${index}`, "i"));
+}
+assert.match(securityMigration, /revoke all on function public\.handle_new_user\(\) from public/i);
+assert.match(securityMigration, /grant execute on function public\.handle_new_user\(\) to service_role/i);
+assert.match(securityMigration, /grant execute on function public\.is_forum_moderator\(\) to authenticated, service_role/i);
 
 for (const [name, content] of [
   ["forum migration", migration],
   ["application migration", applicationMigration],
   ["submit function", submitApplication],
+  ["security migration", securityMigration],
   ["config", config],
   ["env example", envExample],
 ]) {
