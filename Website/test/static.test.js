@@ -71,6 +71,8 @@ const run = async () => {
   for (const filePath of htmlFiles) {
     const html = fs.readFileSync(filePath, "utf8");
     assert.equal(/<%|<%=|<%-/.test(html), false, `unresolved EJS in ${filePath}`);
+    assert.match(html, /https:\/\/cdn\.jsdelivr\.net\/npm\/@widgetbot\/crate@3/);
+    assert.match(html, /\/static\/js\/widgetbot\.js/);
   }
 
   const staticServer = await startServer(serveStatic);

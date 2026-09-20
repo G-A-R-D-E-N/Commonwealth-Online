@@ -140,7 +140,13 @@ const run = async () => {
   const home = await request(address, "/");
   assert.equal(home.status, 200);
   assert.match(home.text, /http-equiv="Content-Security-Policy"/);
-  assert.match(String(home.headers["content-security-policy"] || ""), /script-src 'self'/);
+  const csp = String(home.headers["content-security-policy"] || "");
+  assert.match(csp, /script-src 'self' https:\/\/cdn\.jsdelivr\.net 'unsafe-eval'/);
+  assert.match(csp, /frame-src https:\/\/e\.widgetbot\.io/);
+  assert.doesNotMatch(csp, /script-src[^;]*https:\/\/e\.widgetbot\.io/);
+  assert.doesNotMatch(csp, /frame-src[^;]*https:\/\/example\.com/);
+  assert.match(home.text, /https:\/\/cdn\.jsdelivr\.net\/npm\/@widgetbot\/crate@3/);
+  assert.match(home.text, /\/static\/js\/widgetbot\.js/);
 
   const membership = await request(
     address,

@@ -32,13 +32,13 @@ const buildCsp = () =>
     "default-src 'self'",
     `img-src 'self' data: https://cdn.jsdelivr.net ${config.gitea.base}`,
     "style-src 'self' 'unsafe-inline'",
-    "script-src 'self'",
+    "script-src 'self' https://cdn.jsdelivr.net 'unsafe-eval'",
     "font-src 'self'",
     `connect-src 'self' ${config.gitea.base} https://cdn.jsdelivr.net${config.supabase.url ? ` ${config.supabase.url}` : ""}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-src 'none'",
+    "frame-src https://e.widgetbot.io",
     "frame-ancestors 'none'",
   ].join("; ");
 
