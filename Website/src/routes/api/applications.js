@@ -35,7 +35,7 @@ const {
   setApplicationStatus,
 } = require("../../lib/applications");
 const { requireAdminToken } = require("../../middleware/auth");
-const { clientIp, rateLimit } = require("../../middleware/rate-limit");
+const { rateLimit } = require("../../middleware/rate-limit");
 
 const router = express.Router();
 
@@ -97,7 +97,6 @@ const intake = async (req, res, forcedType) => {
   }
 
   const application = createApplication(result.value, {
-    ip: clientIp(req),
     userAgent: req.get("user-agent"),
   });
   const posted = await postApplication(application);
