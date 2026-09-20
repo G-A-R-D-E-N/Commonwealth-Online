@@ -140,7 +140,8 @@ const run = async () => {
     address,
     "/api/v1/applications/discord-membership?username=example"
   );
-  assert.equal(membership.status, 404);
+  assert.equal(membership.status, 401);
+  assert.doesNotMatch(membership.text, /"member"/);
 
   const noToken = await request(address, "/api/v1/applications");
   assert.equal(noToken.status, 401);
