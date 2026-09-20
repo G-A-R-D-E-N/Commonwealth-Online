@@ -5,6 +5,14 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const migration = fs.readFileSync(path.join(root, "migrations", "20260920000000_forum.sql"), "utf8");
+const applicationMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260920010000_applications.sql"),
+  "utf8"
+);
+const submitApplication = fs.readFileSync(
+  path.join(root, "functions", "submit-application", "index.ts"),
+  "utf8"
+);
 const config = fs.readFileSync(path.join(root, "config.toml"), "utf8");
 const envExample = fs.readFileSync(path.join(root, ".env.example"), "utf8");
 
@@ -39,11 +47,21 @@ for (const fragment of [
 assert.match(config, /\[auth\.external\.discord\]/);
 assert.match(config, /client_id = "env\(SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID\)"/);
 assert.match(config, /secret = "env\(SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET\)"/);
+assert.match(config, /\[functions\.submit-application\]/);
+assert.match(config, /verify_jwt = false/);
+assert.match(applicationMigration, /alter table public\.applications enable row level security;/i);
+assert.match(applicationMigration, /revoke all on public\.applications from anon, authenticated;/i);
+assert.match(submitApplication, /auth: "publishable"/);
+assert.match(submitApplication, /ctx\.supabaseAdmin/);
+assert.match(submitApplication, /DISCORD_BOT_TOKEN/);
+assert.match(submitApplication, /DISCORD_GUILD_ID/);
 assert.match(envExample, /^SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID=$/m);
 assert.match(envExample, /^SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET=$/m);
 
 for (const [name, content] of [
-  ["migration", migration],
+  ["forum migration", migration],
+  ["application migration", applicationMigration],
+  ["submit function", submitApplication],
   ["config", config],
   ["env example", envExample],
 ]) {
