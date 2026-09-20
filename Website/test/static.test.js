@@ -89,6 +89,9 @@ const run = async () => {
     const staticData = JSON.parse(fs.readFileSync(path.join(dist, "data/servers.json"), "utf8"));
     const sourceData = JSON.parse(fs.readFileSync(path.join(root, "servers/server.json"), "utf8"));
     assert.deepEqual(staticData, sourceData, "server data copied unchanged");
+    for (const image of ["server-browser-direct-connect.png", "server-browser-recent.png"]) {
+      assert.equal(fs.existsSync(path.join(dist, "assets/images", image)), true, `missing ${image}`);
+    }
 
     const changelogs = JSON.parse(fs.readFileSync(path.join(dist, "data/changelogs.json"), "utf8"));
     assert.equal(changelogs.length > 0, true, "changelog data is populated");
@@ -101,11 +104,14 @@ const run = async () => {
     const staticBetaForm = await request(staticBase, "/apply/beta/");
     const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
     const staticUpdates = await request(staticBase, "/updates/");
+    const staticMedia = await request(staticBase, "/media/");
     assert.match(staticTeamForm.text, /data-supabase-url/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
     assert.match(staticThanks.text, /data-application-reference/);
     assert.match(staticUpdates.text, /data-co-link="githubReleases"/);
     assert.match(staticUpdates.text, /data-co-link="nexus"/);
+    assert.match(staticMedia.text, /server-browser-direct-connect\.png/);
+    assert.match(staticMedia.text, /server-browser-recent\.png/);
     assert.match(staticApply.text, /href="\/apply\/team"/);
     assert.match(staticApply.text, /href="\/apply\/beta"/);
     assert.doesNotMatch(staticTeamForm.text, /discord-membership/);
