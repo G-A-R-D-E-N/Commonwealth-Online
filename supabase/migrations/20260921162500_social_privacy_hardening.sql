@@ -36,11 +36,16 @@ as $function$
       else null
     end as joined_at,
     case
-      when d.show_presence then pr.status
+      when d.show_presence
+        and not private.users_blocked(p.id, auth.uid())
+      then pr.status
       else null
     end as presence_status,
     case
-      when d.show_presence and pr.status = 'in_game' then pr.current_server
+      when d.show_presence
+        and pr.status = 'in_game'
+        and not private.users_blocked(p.id, auth.uid())
+      then pr.current_server
       else null
     end as current_server
   from public.profiles p
