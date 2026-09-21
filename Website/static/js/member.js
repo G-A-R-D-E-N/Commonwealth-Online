@@ -96,6 +96,27 @@
     return { data: await response.json(), error: null };
   };
 
+  const resolveFactionSlug = async (id) => {
+    if (!id) return null;
+
+    if (client) {
+      const { data, error } = await client
+        .from("factions")
+        .select("slug")
+        .eq("id", id)
+        .maybeSingle();
+      return error ? null : data?.slug || null;
+    }
+
+    const endpoint = new URL(url + "/rest/v1/factions");
+    endpoint.searchParams.set("select", "slug");
+    endpoint.searchParams.set("id", "eq." + id);
+    const response = await fetch(endpoint, { headers: restHeaders });
+    if (!response.ok) return null;
+    const rows = await response.json();
+    return Array.isArray(rows) && rows.length === 1 ? rows[0]?.slug || null : null;
+  };
+
   const renderFriendButton = () => {
     if (!els.friend) return;
 
@@ -402,11 +423,17 @@
     els.bio.textContent = member.bio || "No bio provided.";
     els.faction.replaceChildren();
     if (member.faction_id && member.faction_name) {
-      const factionLink = document.createElement("a");
-      factionLink.href = assetBase + "/faction/?id=" + encodeURIComponent(member.faction_id);
-      factionLink.textContent =
-        member.faction_name + (member.faction_tag ? " [" + member.faction_tag + "]" : "");
-      els.faction.append(factionLink);
+      const factionSlug = await resolveFactionSlug(member.faction_id);
+      if (factionSlug) {
+        const factionLink = document.createElement("a");
+        factionLink.href = assetBase + "/faction/?slug=" + encodeURIComponent(factionSlug);
+        factionLink.textContent =
+          member.faction_name + (member.faction_tag ? " [" + member.faction_tag + "]" : "");
+        els.faction.append(factionLink);
+      } else {
+        els.faction.textContent =
+          member.faction_name + (member.faction_tag ? " [" + member.faction_tag + "]" : "");
+      }
     } else {
       els.faction.textContent = "Not set";
     }

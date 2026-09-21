@@ -42,7 +42,16 @@
     }
 
     if (decision === "approved" && data) {
-      window.location.assign(assetBase + "/faction/?id=" + encodeURIComponent(data));
+      const { data: createdFaction } = await client
+        .from("factions")
+        .select("slug")
+        .eq("id", data)
+        .maybeSingle();
+      window.location.assign(
+        createdFaction?.slug
+          ? assetBase + "/faction/?slug=" + encodeURIComponent(createdFaction.slug)
+          : assetBase + "/factions/"
+      );
       return true;
     }
 

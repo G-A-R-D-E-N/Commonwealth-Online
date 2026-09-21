@@ -18,7 +18,10 @@
   const client = window.coSupabase || window.supabase.createClient(url, key);
   window.coSupabase = client;
 
-  const factionId = new URLSearchParams(window.location.search).get("id");
+  const params = new URLSearchParams(window.location.search);
+  const factionSlug = params.get("slug");
+  const legacyFactionId = params.get("id");
+  let factionId = legacyFactionId || null;
   let currentUser = null;
   let faction = null;
   let membership = null;
@@ -35,23 +38,28 @@
       .replaceAll("_", " ")
       .replace(/\b\w/g, (character) => character.toUpperCase());
 
-  if (!factionId) {
+  if (!factionSlug && !legacyFactionId) {
     setStatus("Faction not found.", true);
     return;
   }
 
   const loadFaction = async () => {
-    const { data, error } = await client
+    let query = client
       .from("factions")
-      .select("id,name,tag,summary,lore,focus,recruitment,status")
-      .eq("id", factionId)
-      .single();
+      .select("id,slug,name,tag,summary,lore,focus,recruitment,status");
+
+    query = factionSlug
+      ? query.eq("slug", factionSlug)
+      : query.eq("id", legacyFactionId);
+
+    const { data, error } = await query.single();
 
     if (error || !data) {
       setStatus("Faction not found.", true);
       return null;
     }
 
+    factionId = data.id;
     root.querySelector("[data-faction-name]").textContent = data.name;
     root.querySelector("[data-faction-tag]").textContent = data.tag;
     root.querySelector("[data-faction-summary]").textContent = data.summary;
@@ -59,6 +67,11 @@
     root.querySelector("[data-faction-focus]").textContent = label(data.focus);
     root.querySelector("[data-faction-recruitment]").textContent = label(data.recruitment);
     document.title = data.name + " - Commonwealth Online";
+    window.history?.replaceState(
+      null,
+      "",
+      assetBase + "/faction/?slug=" + encodeURIComponent(data.slug)
+    );
     faction = data;
     return data;
   };
@@ -99,7 +112,8 @@
 
       const item = document.createElement("a");
       item.className = "profile-social-row";
-      item.href = assetBase + "/member/?id=" + encodeURIComponent(row.user.id);
+      item.href =
+        assetBase + "/member/?username=" + encodeURIComponent(row.user.display_name);
 
       const identity = document.createElement("span");
       identity.className = "profile-social-row__identity";
@@ -242,7 +256,8 @@
           .maybeSingle();
 
         if (role?.can_manage_members || role?.can_manage_roles || role?.can_edit_faction) {
-          manageLink.href = assetBase + "/faction/manage/?id=" + encodeURIComponent(factionId);
+          manageLink.href =
+            assetBase + "/faction/manage/?slug=" + encodeURIComponent(faction.slug);
           manageLink.hidden = false;
         }
       }

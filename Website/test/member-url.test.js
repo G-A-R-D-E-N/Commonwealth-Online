@@ -38,6 +38,7 @@ let resolvedUsername = "";
 let canonicalUrl = "";
 let restProfileLookup = "";
 let restRpcCall = "";
+let restFactionLookup = "";
 
 const emptyQuery = {
   select() { return this; },
@@ -76,9 +77,9 @@ const client = {
           display_name: "Nomad",
           avatar_url: "/assets/profile-icons/armorer.png",
           bio: "",
-          faction_id: null,
-          faction_name: null,
-          faction_tag: null,
+          faction_id: "11111111-2222-3333-4444-555555555555",
+          faction_name: "Commonwealth Rangers",
+          faction_tag: "CR",
           playstyle: "",
           joined_at: null,
           presence_status: null,
@@ -128,15 +129,24 @@ vm.runInNewContext(source, {
             display_name: "Nomad",
             avatar_url: "/assets/profile-icons/armorer.png",
             bio: "",
-            faction_id: null,
-            faction_name: null,
-            faction_tag: null,
+            faction_id: "11111111-2222-3333-4444-555555555555",
+            faction_name: "Commonwealth Rangers",
+            faction_tag: "CR",
             playstyle: "",
             joined_at: null,
             presence_status: null,
             current_server: null,
             show_friends: false,
           }];
+        },
+      };
+    }
+    if (requestUrl.includes("/rest/v1/factions")) {
+      restFactionLookup = requestUrl;
+      return {
+        ok: true,
+        async json() {
+          return [{ slug: "commonwealth-rangers" }];
         },
       };
     }
@@ -156,6 +166,12 @@ setImmediate(() => {
     assert.match(restRpcCall, /get_public_member_profile/);
     assert.equal(canonicalUrl, "/member/?username=Nomad");
     assert.doesNotMatch(canonicalUrl, /\?id=/);
+    assert.match(restFactionLookup, /id=eq\.11111111-2222-3333-4444-555555555555/);
+    assert.equal(
+      nodes.get("[data-member-faction]").children[0]?.href,
+      "/faction/?slug=commonwealth-rangers"
+    );
+    assert.doesNotMatch(nodes.get("[data-member-faction]").children[0]?.href || "", /\?id=/);
     assert.equal(nodes.get("[data-member-name]").textContent, "Nomad");
     console.log("member public URL checks passed");
   } catch (error) {
