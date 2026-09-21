@@ -80,6 +80,7 @@ for (const fragment of [
   assert.ok(migration.toLowerCase().includes(fragment.toLowerCase()), `missing security contract: ${fragment}`);
 }
 
+assert.match(config, /^enable_manual_linking = true$/m);
 assert.match(config, /\[auth\.external\.discord\]/);
 assert.match(config, /client_id = "env\(SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID\)"/);
 assert.match(config, /secret = "env\(SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET\)"/);
