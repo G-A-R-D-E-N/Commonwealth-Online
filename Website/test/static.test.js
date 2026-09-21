@@ -110,8 +110,11 @@ const run = async () => {
     assert.match(staticBetaForm.text, /data-supabase-key/);
     assert.match(staticAccount.text, /data-account/);
     assert.match(staticAccount.text, /data-account-nav[^>]*>Login \/ Sign Up<\/a>/);
-    assert.match(staticAccount.text, /https:\/\/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js@2\.105\.0/);
-    assert.equal((staticAccount.text.match(/@supabase\/supabase-js@2\.105\.0/g) || []).length, 1);
+    const supabaseConfigured =
+      /data-supabase-url="[^"]+"/.test(staticAccount.text) &&
+      /data-supabase-key="[^"]+"/.test(staticAccount.text);
+    const supabaseClientCount = (staticAccount.text.match(/@supabase\/supabase-js@2\.105\.0/g) || []).length;
+    assert.equal(supabaseClientCount, supabaseConfigured ? 1 : 0);
     assert.doesNotMatch(staticAccount.text, /supabase\.min\.js/);
     assert.match(staticAccount.text, /data-discord-link/);
     assert.doesNotMatch(staticAccount.text, /type="file"/);
@@ -143,6 +146,7 @@ const run = async () => {
     assert.match(accountJs, /\/auth\/v1\/settings/);
     assert.match(accountJs, /settings\.external\?\.discord/);
     assert.match(accountJs, /settings\.disable_signup/);
+    assert.match(accountJs, /Account services are temporarily unavailable\./);
     assert.ok(accountJs.includes("/assets/profile-icons/armorer.png"));
     assert.doesNotMatch(accountJs, /Fallout_Perk_Planner/);
     assert.ok(accountJs.includes('new URL(`${assetBase}/account/`, window.location.origin).href'));
