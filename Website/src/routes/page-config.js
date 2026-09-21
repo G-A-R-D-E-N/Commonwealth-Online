@@ -386,7 +386,6 @@ const PUBLIC_PAGES = [
         "/static/js/links.js",
         "/static/js/navbar.js",
         "/static/js/script.js",
-        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0",
         "/static/js/account.js",
       ],
     },
