@@ -6,6 +6,7 @@
   const key = root.dataset.supabaseKey || "";
   const form = root.querySelector("[data-community-profile-form]");
   const friendsList = root.querySelector("[data-friends-list]");
+  const blocksList = root.querySelector("[data-blocks-list]");
   const notificationsList = root.querySelector("[data-notifications-list]");
   const markRead = root.querySelector("[data-mark-notifications-read]");
   const status = root.querySelector("[data-profile-status]");
@@ -151,6 +152,79 @@
     }
   };
 
+  const loadBlocks = async () => {
+    if (!blocksList) return;
+
+    const { data, error } = await client
+      .from("user_blocks")
+      .select("blocker_id,blocked_id,created_at,blocked:profiles!user_blocks_blocked_id_fkey(id,display_name,avatar_url)")
+      .order("created_at", { ascending: false });
+
+    blocksList.replaceChildren();
+
+    if (error) {
+      blocksList.textContent = "Blocked members are temporarily unavailable.";
+      return;
+    }
+
+    const rows = data || [];
+    if (!rows.length) {
+      blocksList.textContent = "No blocked members.";
+      return;
+    }
+
+    for (const row of rows) {
+      const person = row.blocked;
+      if (!person) continue;
+
+      const item = document.createElement("div");
+      item.className = "profile-social-row";
+
+      const identity = document.createElement("a");
+      identity.className = "profile-social-row__identity";
+      identity.href = profileHref(person.id);
+
+      const avatar = document.createElement("img");
+      avatar.src = assetBase + person.avatar_url;
+      avatar.alt = "";
+      avatar.width = 40;
+      avatar.height = 40;
+
+      const copy = document.createElement("span");
+      const name = document.createElement("strong");
+      const detail = document.createElement("small");
+      name.textContent = person.display_name;
+      detail.textContent = "Blocked";
+      copy.append(name, detail);
+      identity.append(avatar, copy);
+
+      const unblock = document.createElement("button");
+      unblock.className = "co-btn co-btn--ghost";
+      unblock.type = "button";
+      unblock.textContent = "Unblock";
+      unblock.addEventListener("click", async () => {
+        unblock.disabled = true;
+        const { error: deleteError } = await client
+          .from("user_blocks")
+          .delete()
+          .eq("blocker_id", user.id)
+          .eq("blocked_id", person.id);
+
+        if (deleteError) {
+          unblock.disabled = false;
+          setStatus("Could not unblock member.", true);
+          return;
+        }
+
+        setStatus("");
+        await loadBlocks();
+      });
+
+      item.append(identity, unblock);
+      blocksList.append(item);
+    }
+  };
+
   const loadNotifications = async () => {
     if (!notificationsList) return;
 
@@ -237,6 +311,7 @@
     await Promise.all([
       loadDetails(),
       loadFriends(),
+      loadBlocks(),
       loadNotifications(),
     ]);
   };
