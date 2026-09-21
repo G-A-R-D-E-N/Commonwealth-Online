@@ -219,6 +219,9 @@ const run = async () => {
     assert.match(profileSocialJs, /user_profile_details/);
     assert.match(profileSocialJs, /user_friendships/);
     assert.match(profileSocialJs, /user_notifications/);
+    assert.match(profileSocialJs, /Decline/);
+    assert.match(profileSocialJs, /status: "declined"/);
+    assert.match(profileSocialJs, /Cancel request/);
     assert.match(profileSocialJs, /Promise\.all/);
     assert.match(membersJs, /user_profile_details!inner/);
     assert.match(membersJs, /user_presence/);
