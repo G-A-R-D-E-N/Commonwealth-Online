@@ -1,0 +1,49 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main member-main">
+        <section
+          class="member-shell"
+          data-member
+          data-supabase-url="<%= site.supabase?.url || "" %>"
+          data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          aria-labelledby="member-title"
+        >
+          <p class="site-notice" data-member-status role="status">Loading profile…</p>
+
+          <article class="member-profile" data-member-profile hidden>
+            <header class="member-profile__header">
+              <img data-member-avatar src="/assets/profile-icons/armorer.png" alt="" width="112" height="112" />
+              <div>
+                <p class="section-kicker">Commonwealth Online Member</p>
+                <h1 id="member-title" data-member-name>Member</h1>
+                <p data-member-presence></p>
+              </div>
+            </header>
+
+            <div class="member-profile__grid">
+              <section class="member-card">
+                <h2>About</h2>
+                <p data-member-bio>No bio provided.</p>
+                <dl class="member-meta">
+                  <div><dt>Faction</dt><dd data-member-faction>Not set</dd></div>
+                  <div><dt>Playstyle</dt><dd data-member-playstyle>Not set</dd></div>
+                  <div data-member-joined-row><dt>Joined</dt><dd data-member-joined>Hidden</dd></div>
+                </dl>
+              </section>
+
+              <section class="member-card" data-member-actions-card hidden>
+                <h2>Social</h2>
+                <div class="member-actions">
+                  <button class="co-btn co-btn--primary" type="button" data-friend-action>Add friend</button>
+                  <button class="co-btn co-btn--ghost" type="button" data-block-action>Block</button>
+                </div>
+                <p class="member-action-status" data-member-action-status></p>
+              </section>
+            </div>
+          </article>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/scripts") %>
