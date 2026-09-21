@@ -65,24 +65,31 @@
 
 .profile-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
+  gap: 0.85rem;
   align-items: start;
+}
+
+.profile-column {
+  display: grid;
+  min-width: 0;
+  gap: 0.85rem;
+  align-content: start;
 }
 
 .profile-card {
   min-width: 0;
-  padding: 1.5rem;
+  padding: 1.25rem;
   border: 1px solid var(--site-border-soft);
   background: var(--site-surface);
 }
 
-.profile-card--wide {
-  grid-row: span 2;
+.profile-column--side .profile-card {
+  padding: 1.1rem;
 }
 
 .profile-card__head {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.9rem;
 }
 
 .profile-card__head h2 {
@@ -209,7 +216,9 @@
 
 .profile-actions {
   display: flex;
+  gap: 0.55rem;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .profile-connection {
@@ -250,9 +259,6 @@ body.co-site .co-btn--discord:focus-visible {
     grid-template-columns: 1fr;
   }
 
-  .profile-card--wide {
-    grid-row: auto;
-  }
 }
 
 @media (max-width: 620px) {
