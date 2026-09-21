@@ -89,6 +89,10 @@ const usernameHistoryMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921163500_username_history.sql"),
   "utf8"
 );
+const userBadgesMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921164500_user_badges.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -298,6 +302,20 @@ assert.match(usernameHistoryMigration, /create or replace function public\.get_p
 assert.match(usernameHistoryMigration, /d\.show_username_history/i);
 assert.match(usernameHistoryMigration, /limit 10/i);
 assert.match(usernameHistoryMigration, /revoke all on function public\.get_public_username_history\(uuid\) from public/i);
+assert.match(userBadgesMigration, /create table if not exists public\.user_badges/i);
+assert.match(userBadgesMigration, /create table if not exists public\.user_badge_assignments/i);
+assert.match(userBadgesMigration, /alter table public\.user_badges enable row level security/i);
+assert.match(userBadgesMigration, /alter table public\.user_badge_assignments enable row level security/i);
+assert.match(userBadgesMigration, /grant select \(user_id, badge_id, is_displayed, display_order\)[\s\S]*to anon, authenticated/i);
+assert.doesNotMatch(userBadgesMigration, /grant select on public\.user_badge_assignments to anon, authenticated/i);
+assert.match(userBadgesMigration, /grant update \(is_displayed, display_order\)[\s\S]*to authenticated/i);
+assert.match(userBadgesMigration, /grant all on public\.user_badge_assignments to service_role/i);
+assert.match(userBadgesMigration, /create trigger guard_badge_display_limit/i);
+assert.match(userBadgesMigration, /displayed_count >= 3/i);
+assert.match(userBadgesMigration, /auth\.uid\(\) = user_id/i);
+for (const slug of ["beta-tester", "contributor", "mod-author", "server-host", "moderator", "developer", "founder"]) {
+  assert.ok(userBadgesMigration.includes(`'${slug}'`), `missing seeded badge: ${slug}`);
+}
 for (const table of [
   "factions",
   "faction_roles",
