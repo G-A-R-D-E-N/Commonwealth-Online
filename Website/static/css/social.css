@@ -1,176 +1,89 @@
 .co-members-page {
-  background:
-    linear-gradient(180deg, rgba(7, 10, 7, 0.7), rgba(7, 10, 7, 0.96) 38rem),
-    url("/assets/images/TwoPlayers.webp") center top / cover fixed no-repeat,
-    var(--site-bg);
+  background: var(--site-bg);
 }
 
 .members-main,
 .member-main {
-  width: min(var(--site-max), calc(100% - (var(--site-gutter) * 2)));
+  width: min(1120px, calc(100% - (var(--site-gutter) * 2)));
   margin: 0 auto;
   padding: 1.5rem 0 4rem;
 }
 
-.members-shell,
+.members-page,
 .member-shell {
   display: grid;
   gap: 1rem;
 }
 
 .members-hero {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 25rem;
+  display: flex;
   align-items: end;
-  gap: 2rem;
-  min-height: 24rem;
-  padding: clamp(1.4rem, 3vw, 2.5rem);
-  overflow: hidden;
-  border: 1px solid rgba(201, 168, 74, 0.42);
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid var(--site-border-soft);
   background:
-    linear-gradient(90deg, rgba(7, 10, 7, 0.97) 0%, rgba(7, 10, 7, 0.84) 48%, rgba(7, 10, 7, 0.34) 100%),
-    url("/assets/images/TwoPlayers.webp") center 42% / cover no-repeat;
-  box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.28);
+    linear-gradient(90deg, rgba(7, 9, 7, 0.96) 0%, rgba(7, 9, 7, 0.78) 46%, rgba(7, 9, 7, 0.18) 100%),
+    url("https://res.cloudinary.com/dewzjk72j/image/authenticated/s--siXH2HO6--/c_crop%2Cw_1860%2Ch_1900%2Cg_center%2Cx_850%2Cy_90/c_scale%2Cw_800/f_auto%3Aimage%2Cq_auto/FO4_ART_AnniversaryEdition_16x9_GUN_Clean_mnt65i") center 38% / cover no-repeat;
+  box-shadow: 0 1.2rem 2.8rem rgba(0, 0, 0, 0.28);
 }
 
-.members-hero::before,
-.members-hero::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-}
-
-.members-hero::before {
-  inset: 0;
-  background: repeating-linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.018) 0,
-    rgba(255, 255, 255, 0.018) 1px,
-    transparent 1px,
-    transparent 4px
-  );
-}
-
-.members-hero::after {
-  inset: 0.75rem;
-  border: 1px solid rgba(201, 168, 74, 0.14);
-}
-
-.members-hero__content,
-.members-directory-meta {
-  position: relative;
-  z-index: 1;
+.members-hero__copy {
+  max-width: 38rem;
 }
 
 .members-hero h1,
 .member-profile h1 {
-  margin: 0.2rem 0 0.55rem;
+  margin: 0.15rem 0 0.45rem;
   color: var(--site-heading);
   font-family: var(--site-font-display);
-  font-size: clamp(2.5rem, 6vw, 5.25rem);
-  line-height: 0.92;
-  letter-spacing: 0.01em;
+  font-size: clamp(3rem, 8vw, 5.8rem);
+  line-height: 0.9;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
-.members-hero__lede {
-  max-width: 44rem;
+.members-hero__copy > p:last-child {
   color: var(--site-text);
   font-size: 1rem;
-  line-height: 1.65;
+  line-height: 1.55;
 }
 
-.members-hero__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 1.2rem;
-}
-
-.members-hero__tags span,
-.members-results__status {
-  padding: 0.28rem 0.55rem;
-  border: 1px solid rgba(201, 168, 74, 0.35);
-  background: rgba(8, 11, 8, 0.72);
-  color: var(--site-brand-gold);
-  font-family: var(--site-font-display);
-  font-size: 0.64rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.members-directory-meta {
-  display: grid;
-  width: 11rem;
+.members-menu {
   padding: 1rem;
-  border: 1px solid rgba(201, 168, 74, 0.35);
-  background: rgba(8, 11, 8, 0.86);
-  backdrop-filter: blur(4px);
-}
-
-.members-directory-meta strong {
-  margin: 0.3rem 0;
-  color: var(--site-heading);
-  font-family: var(--site-font-display);
-  font-size: 2.8rem;
-  line-height: 1;
-}
-
-.members-directory-meta span {
-  color: var(--site-text-muted);
-  font-size: 0.7rem;
-  line-height: 1.4;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.members-directory-meta .members-directory-meta__label {
-  color: var(--site-brand-gold);
-  font-family: var(--site-font-display);
-  font-weight: 600;
-}
-
-.members-console,
-.members-results {
   border: 1px solid var(--site-border-soft);
-  background: rgba(12, 16, 12, 0.94);
-  box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.16);
+  background: var(--site-surface);
 }
 
-.members-console__bar {
+.members-menu__topline {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.5rem 0.8rem;
+  margin: -1rem -1rem 1rem;
+  padding: 0.55rem 0.75rem;
   border-bottom: 1px solid var(--site-border-soft);
   background: var(--site-bg-inset);
   color: var(--site-brand-gold);
   font-family: var(--site-mono);
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.members-toolbar {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem;
+.members-menu__topline strong {
+  color: var(--site-heading);
+  font: inherit;
 }
 
 .members-search {
   display: grid;
   gap: 0.35rem;
-  width: min(100%, 34rem);
+  max-width: 34rem;
 }
 
 .members-search span {
   color: var(--site-heading);
   font-family: var(--site-font-display);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -178,10 +91,10 @@
 .members-search input,
 .profile-field textarea {
   width: 100%;
-  padding: 0.78rem 0.85rem;
+  padding: 0.8rem 0.85rem;
   border: 1px solid var(--site-border);
   border-radius: var(--site-radius);
-  background: #080b08;
+  background: var(--site-bg-inset);
   color: var(--site-text);
   font: inherit;
 }
@@ -189,82 +102,17 @@
 .members-search input:focus-visible {
   outline: none;
   border-color: var(--site-brand-gold);
-  box-shadow: 0 0 0 1px rgba(201, 168, 74, 0.28), 0 0 1rem rgba(201, 168, 74, 0.07);
-}
-
-.members-toolbar__hint {
-  max-width: 24rem;
-  margin: 0 0 0.15rem;
-  color: var(--site-text-faint);
-  font-size: 0.8rem;
-  line-height: 1.45;
-}
-
-.members-results {
-  padding: 1rem;
-}
-
-.members-results__heading {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.9rem;
-  padding-bottom: 0.8rem;
-  border-bottom: 1px solid var(--site-border-soft);
-}
-
-.members-results__heading h2 {
-  margin-top: 0.15rem;
-  color: var(--site-heading);
-  font-family: var(--site-font-display);
-  font-size: 1.3rem;
-  text-transform: uppercase;
-}
-
-.members-results__status {
-  color: var(--site-good);
-  border-color: rgba(153, 190, 109, 0.35);
+  box-shadow: 0 0 0 1px rgba(201, 168, 74, 0.28);
 }
 
 .members-state {
-  position: relative;
-  margin: 0;
-  min-height: 11rem;
-  padding: 4.5rem 1rem 1rem;
-  border: 1px dashed var(--site-border);
-  background:
-    linear-gradient(rgba(8, 11, 8, 0.82), rgba(8, 11, 8, 0.92)),
-    url("/assets/images/Vault109Exit.webp") center 56% / cover no-repeat;
+  margin: 1rem 0 0;
+  padding: 1rem 0;
+  border-top: 1px solid var(--site-border-soft);
   color: var(--site-text-muted);
-  text-align: center;
-}
-
-.members-state::before {
-  content: "NO ACTIVE SIGNALS";
-  position: absolute;
-  top: 2.4rem;
-  left: 50%;
-  transform: translateX(-50%);
-  color: var(--site-brand-gold);
-  font-family: var(--site-font-display);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  white-space: nowrap;
-}
-
-.members-state[data-tone="loading"]::before {
-  content: "SCANNING NETWORK";
 }
 
 .members-state[data-tone="error"] {
-  border-color: rgba(188, 77, 70, 0.5);
-  color: var(--site-bad);
-}
-
-.members-state[data-tone="error"]::before {
-  content: "RELAY ERROR";
   color: var(--site-bad);
 }
 
@@ -272,40 +120,29 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.7rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--site-border-soft);
 }
 
 body.co-site a.member-tile {
-  position: relative;
   display: grid;
   grid-template-columns: 64px minmax(0, 1fr);
   align-items: center;
   gap: 0.85rem;
-  min-height: 5.6rem;
+  min-height: 5.5rem;
   padding: 0.85rem;
-  overflow: hidden;
   border: 1px solid var(--site-border-soft);
-  background: linear-gradient(135deg, rgba(24, 31, 22, 0.96), rgba(12, 16, 12, 0.98));
+  background: var(--site-surface-alt);
   color: var(--site-text);
   text-decoration: none;
-  transition: border-color var(--site-ease), transform var(--site-ease), background var(--site-ease);
-}
-
-body.co-site a.member-tile::after {
-  content: "PROFILE";
-  position: absolute;
-  right: 0.7rem;
-  bottom: 0.5rem;
-  color: var(--site-text-faint);
-  font-family: var(--site-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.08em;
+  transition: border-color var(--site-ease), background var(--site-ease);
 }
 
 body.co-site a.member-tile:hover,
 body.co-site a.member-tile:focus-visible {
-  transform: translateY(-2px);
   border-color: var(--site-brand-gold);
-  background: linear-gradient(135deg, rgba(31, 40, 27, 0.98), rgba(14, 19, 13, 0.98));
+  background: #1b2218;
   text-decoration: none;
 }
 
@@ -315,10 +152,6 @@ body.co-site a.member-tile:focus-visible {
   border-radius: 50%;
   object-fit: cover;
   background: var(--site-bg-inset);
-}
-
-.member-tile img {
-  border: 1px solid rgba(201, 168, 74, 0.34);
 }
 
 .member-tile__copy {
@@ -345,17 +178,6 @@ body.co-site a.member-tile:focus-visible {
 }
 
 @media (max-width: 820px) {
-  .members-hero {
-    grid-template-columns: 1fr;
-    align-items: end;
-    min-height: 21rem;
-  }
-
-  .members-directory-meta {
-    width: auto;
-    max-width: 14rem;
-  }
-
   .members-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -366,43 +188,22 @@ body.co-site a.member-tile:focus-visible {
 }
 
 @media (max-width: 620px) {
-  .co-members-page {
-    background-attachment: scroll;
-  }
-
   .members-main,
   .member-main {
-    width: min(var(--site-max), calc(100% - 1.2rem));
-    padding-top: 0.6rem;
+    width: min(100% - 1rem, 1120px);
+    padding-top: 0.5rem;
   }
 
   .members-hero {
-    min-height: 25rem;
-    padding: 1rem;
-    background-position: 62% center;
+    min-height: 22rem;
+    padding: 1.1rem;
+    background-position: 58% center;
   }
 
-  .members-hero h1 {
-    font-size: clamp(2.6rem, 16vw, 4.4rem);
-  }
-
-  .members-toolbar,
-  .members-results__heading {
-    display: grid;
-  }
-
-  .members-console__bar {
+  .members-menu__topline {
     align-items: flex-start;
     flex-direction: column;
     gap: 0.2rem;
-  }
-
-  .members-toolbar__hint {
-    margin: 0;
-  }
-
-  .members-results__status {
-    justify-self: start;
   }
 
   .members-grid {

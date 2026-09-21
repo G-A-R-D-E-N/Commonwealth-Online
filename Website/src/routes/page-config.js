@@ -422,7 +422,7 @@ const PUBLIC_PAGES = [
       description: "Browse public Commonwealth Online member profiles.",
       bodyClass: "co-members-page",
       activeKey: "members",
-      styles: ["/static/css/social.css"],
+      styles: ["/static/css/social.css?v=20260921-2"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
