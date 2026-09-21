@@ -221,6 +221,10 @@ body.co-site a.member-tile:focus-visible {
   gap: 1rem;
 }
 
+.member-profile[hidden] {
+  display: none;
+}
+
 .member-profile__header {
   display: flex;
   align-items: center;
