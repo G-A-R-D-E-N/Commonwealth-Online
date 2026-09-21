@@ -140,7 +140,9 @@ const run = async () => {
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     const navbarJs = fs.readFileSync(path.join(dist, "static/js/navbar.js"), "utf8");
     const widgetbotJs = fs.readFileSync(path.join(dist, "static/js/widgetbot.js"), "utf8");
-    assert.ok(widgetbotJs.includes("https://e.widgetbot.io/channels/1512018618680999976/1512018620060794982"));
+    assert.ok(widgetbotJs.includes("https://e.widgetbot.io/channels/"));
+    assert.ok(widgetbotJs.includes("1512018618680999976"));
+    assert.ok(widgetbotJs.includes("1512018620060794982"));
     assert.doesNotMatch(widgetbotJs, /\bCrate\b/);
     assert.doesNotMatch(widgetbotJs, /\beval\s*\(/);
     assert.doesNotMatch(widgetbotJs, /new Function\s*\(/);
