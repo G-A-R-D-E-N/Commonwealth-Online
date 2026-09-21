@@ -52,7 +52,8 @@
     return;
   }
 
-  const client = window.supabase.createClient(url, key);
+  const client = window.coSupabase || window.supabase.createClient(url, key);
+  window.coSupabase = client;
   let discordAvailable = false;
 
   const loadAuthSettings = async () => {
