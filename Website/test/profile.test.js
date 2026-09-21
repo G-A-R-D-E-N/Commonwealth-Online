@@ -65,6 +65,10 @@ const avatarRadios = [
   "/assets/profile-icons/medic.png",
   "/assets/profile-icons/scrapper.png",
   "/assets/profile-icons/cap_collector.png",
+  "/assets/profile-images/Icon__Brotherhood.png",
+  "/assets/profile-images/Icon__Institute.png",
+  "/assets/profile-images/Icon__Minutemen.png",
+  "/assets/profile-images/Icon__Railroad.png",
 ].map((value) => ({ value, checked: false }));
 avatarRadios[0].checked = true;
 
@@ -286,15 +290,31 @@ const run = async () => {
   assert.equal(profileName.textContent, "Nomad");
   assert.match(status.textContent, /Check your new email address/);
 
+  username.value = "Sentinel";
+  email.value = "nomad@example.test";
+  avatarRadios.forEach((radio) => {
+    radio.checked = radio.value === "/assets/profile-images/Icon__Brotherhood.png";
+  });
+
+  await profileSubmit({ preventDefault() {} });
+
+  assert.equal(profileUpdates[1].display_name, "Sentinel");
+  assert.equal(profileUpdates[1].avatar_url, "/assets/profile-images/Icon__Brotherhood.png");
+  assert.equal(authUpdates[1].payload.data.avatar_url, "/assets/profile-images/Icon__Brotherhood.png");
+  assert.equal(authUpdates[1].options, undefined);
+  assert.equal(profileAvatar.src, "/assets/profile-images/Icon__Brotherhood.png");
+  assert.equal(profileName.textContent, "Sentinel");
+  assert.equal(status.textContent, "Profile saved.");
+
   currentPassword.value = "old-password";
   newPassword.value = "new-password";
   confirmPassword.value = "new-password";
 
   await passwordSubmit({ preventDefault() {} });
 
-  assert.equal(authUpdates[1].payload.password, "new-password");
-  assert.equal(authUpdates[1].payload.currentPassword, "old-password");
-  assert.equal(authUpdates[1].options, undefined);
+  assert.equal(authUpdates[2].payload.password, "new-password");
+  assert.equal(authUpdates[2].payload.currentPassword, "old-password");
+  assert.equal(authUpdates[2].options, undefined);
   assert.equal(passwordReset, true);
   assert.equal(status.textContent, "Password updated.");
   assert.equal(typeof discordClick, "function");

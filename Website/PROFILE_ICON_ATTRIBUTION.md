@@ -17,4 +17,13 @@ Source repository:
 
 `scripts/fetch-profile-icons.js` downloads the six images during the static build, verifies each download against its exact Git blob SHA, and places the verified PNGs in `assets/profile-icons/` for local deployment. The source binaries are intentionally not committed to this repository and users cannot upload replacement profile images.
 
-The Fallout 4 artwork and Vault Boy imagery remain the property of Bethesda Softworks / ZeniMax Media. Commonwealth Online does not claim ownership of that artwork and is not affiliated with or endorsed by Bethesda Softworks or ZeniMax Media.
+The selector also offers four Fallout 4 faction icons committed to this repository:
+
+- Brotherhood of Steel (`assets/profile-images/Icon__Brotherhood.png`)
+- Institute (`assets/profile-images/Icon__Institute.png`)
+- Minutemen (`assets/profile-images/Icon__Minutemen.png`)
+- Railroad (`assets/profile-images/Icon__Railroad.png`)
+
+These committed images are copied into the static build by `scripts/build-static.js` and served from `/assets/profile-images/`.
+
+The Fallout 4 artwork, Vault Boy imagery, and faction emblems remain the property of Bethesda Softworks / ZeniMax Media. Commonwealth Online does not claim ownership of that artwork and is not affiliated with or endorsed by Bethesda Softworks or ZeniMax Media.

@@ -11,6 +11,10 @@
     "/assets/profile-icons/medic.png",
     "/assets/profile-icons/scrapper.png",
     "/assets/profile-icons/cap_collector.png",
+    "/assets/profile-images/Icon__Brotherhood.png",
+    "/assets/profile-images/Icon__Institute.png",
+    "/assets/profile-images/Icon__Minutemen.png",
+    "/assets/profile-images/Icon__Railroad.png",
   ];
 
   const toggle = mount.querySelector(".site-nav-toggle");

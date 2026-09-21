@@ -157,6 +157,14 @@ const run = async () => {
       assert.deepEqual([...fs.readFileSync(iconPath).subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
     }
     assert.doesNotMatch(staticProfile.text, /profile-icons\/[^"]+\.svg/);
+    const factionIcons = ["Brotherhood", "Institute", "Minutemen", "Railroad"];
+    for (const name of factionIcons) {
+      const icon = `Icon__${name}.png`;
+      assert.ok(staticProfile.text.includes(`/assets/profile-images/${icon}`), `missing faction icon ${icon}`);
+      const iconPath = path.join(dist, "assets/profile-images", icon);
+      assert.equal(fs.existsSync(iconPath), true, `missing deployed faction icon ${icon}`);
+      assert.deepEqual([...fs.readFileSync(iconPath).subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+    }
     const iconFetcher = fs.readFileSync(path.join(root, "scripts/fetch-profile-icons.js"), "utf8");
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
@@ -197,6 +205,11 @@ const run = async () => {
     assert.match(accountJs, /settings\.disable_signup/);
     assert.match(accountJs, /Account services are temporarily unavailable\./);
     assert.ok(profileJs.includes("/assets/profile-icons/armorer.png"));
+    for (const name of factionIcons) {
+      const icon = `/assets/profile-images/Icon__${name}.png`;
+      assert.ok(profileJs.includes(icon), `profile.js missing faction icon ${icon}`);
+      assert.ok(navbarJs.includes(icon), `navbar.js missing faction icon ${icon}`);
+    }
     assert.doesNotMatch(accountJs, /Fallout_Perk_Planner/);
     assert.doesNotMatch(profileJs, /Fallout_Perk_Planner/);
     assert.ok(accountJs.includes('new URL(`${assetBase}/account/`, window.location.origin).href'));

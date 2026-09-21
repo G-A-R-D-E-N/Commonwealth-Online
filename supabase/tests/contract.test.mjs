@@ -53,6 +53,10 @@ const localProfileIconsMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921040009_local_profile_icons.sql"),
   "utf8"
 );
+const factionProfileIconsMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921050000_faction_profile_icons.sql"),
+  "utf8"
+);
 const config = fs.readFileSync(path.join(root, "config.toml"), "utf8");
 const confirmationTemplate = fs.readFileSync(path.join(root, "templates", "confirmation.html"), "utf8");
 const envExample = fs.readFileSync(path.join(root, ".env.example"), "utf8");
@@ -168,6 +172,20 @@ for (const icon of ["armorer.png", "hacker.png", "rifleman.png", "medic.png", "s
   assert.ok(localProfileIconsMigration.includes(`/assets/profile-icons/${icon}`), `missing local profile icon contract: ${icon}`);
 }
 assert.doesNotMatch(localProfileIconsMigration, /nullif\(new\.raw_user_meta_data ->> 'picture'/i);
+assert.match(factionProfileIconsMigration, /profiles_avatar_url_allowed/i);
+for (const icon of ["armorer.png", "hacker.png", "rifleman.png", "medic.png", "scrapper.png", "cap_collector.png"]) {
+  assert.ok(
+    factionProfileIconsMigration.includes(`/assets/profile-icons/${icon}`),
+    `faction profile icons must preserve existing icon: ${icon}`,
+  );
+}
+for (const icon of ["Brotherhood", "Institute", "Minutemen", "Railroad"]) {
+  assert.ok(
+    factionProfileIconsMigration.includes(`/assets/profile-images/Icon__${icon}.png`),
+    `missing faction profile icon contract: ${icon}`,
+  );
+}
+assert.doesNotMatch(factionProfileIconsMigration, /nullif\(new\.raw_user_meta_data ->> 'picture'/i);
 
 const mentionPayload = buildDiscordPayload({
   type: "team",
@@ -310,6 +328,7 @@ for (const [name, content] of [
   ["account profiles migration", accountProfilesMigration],
   ["real profile icons migration", realProfileIconsMigration],
   ["local profile icons migration", localProfileIconsMigration],
+  ["faction profile icons migration", factionProfileIconsMigration],
   ["config", config],
   ["confirmation template", confirmationTemplate],
   ["env example", envExample],
