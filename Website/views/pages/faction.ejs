@@ -1,0 +1,57 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section
+          class="section-panel faction-shell"
+          data-faction
+          data-supabase-url="<%= site.supabase?.url || "" %>"
+          data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          aria-labelledby="faction-title"
+        >
+          <p class="site-notice" data-faction-status role="status" hidden></p>
+
+          <header class="faction-profile-head">
+            <div>
+              <p class="section-kicker" data-faction-tag>Faction</p>
+              <h1 id="faction-title" data-faction-name>Faction</h1>
+              <p class="servers-hero__desc" data-faction-summary></p>
+            </div>
+            <a class="co-btn co-btn--ghost" href="/factions/">All factions</a>
+          </header>
+
+          <div class="faction-profile-grid">
+            <section class="profile-card faction-profile-card">
+              <div class="profile-card__head">
+                <p class="section-kicker">Lore</p>
+                <h2>Faction history</h2>
+              </div>
+              <p class="faction-lore" data-faction-lore></p>
+            </section>
+
+            <section class="profile-card">
+              <div class="profile-card__head">
+                <p class="section-kicker">Status</p>
+                <h2>Operations</h2>
+              </div>
+              <dl class="faction-facts">
+                <div><dt>Focus</dt><dd data-faction-focus>—</dd></div>
+                <div><dt>Recruitment</dt><dd data-faction-recruitment>—</dd></div>
+              </dl>
+            </section>
+
+            <section class="profile-card faction-profile-card" aria-labelledby="faction-roster-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Roster</p>
+                <h2 id="faction-roster-title">Members</h2>
+              </div>
+              <div class="profile-social-list" data-faction-members>
+                <p class="account-help">Loading roster…</p>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/scripts") %>
