@@ -306,12 +306,12 @@ for (const table of [
 ]) {
   assert.match(
     factionFoundationMigration,
-    new RegExp(`create table public\\\\.${table}`, "i"),
+    new RegExp(`create table public\\.${table}`, "i"),
     `missing faction table: ${table}`
   );
   assert.match(
     factionFoundationMigration,
-    new RegExp(`alter table public\\\\.${table} enable row level security`, "i"),
+    new RegExp(`alter table public\\.${table} enable row level security`, "i"),
     `RLS must be enabled on ${table}`
   );
 }
@@ -323,9 +323,9 @@ assert.match(factionFoundationMigration, /insert into public\.faction_members/i)
 assert.match(factionFoundationMigration, /grant select on public\.factions to anon, authenticated/i);
 assert.match(factionFoundationMigration, /grant select, insert, update on public\.faction_applications to authenticated/i);
 assert.match(factionFoundationMigration, /revoke all on function public\.review_faction_application\(uuid, text, text\) from public, anon/i);
-assert.doesNotMatch(
+assert.match(
   factionFoundationMigration,
-  /create policy "active factions are public"[\s\S]*public\.is_forum_moderator\(\)[\s\S]*create policy "staff and founders read nonpublic factions"/i
+  /create policy "active factions are public"\s+on public\.factions\s+for select\s+using \(status = 'active'\);/i
 );
 
 assert.match(registerAccount, /consume_signup_rate_limit/);
