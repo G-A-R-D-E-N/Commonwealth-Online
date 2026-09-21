@@ -77,6 +77,10 @@ const socialFoundationMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921162000_user_social_foundation.sql"),
   "utf8"
 );
+const socialPrivacyMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921162500_social_privacy_hardening.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -259,6 +263,19 @@ assert.match(socialFoundationMigration, /grant usage, select on sequence public\
 assert.match(socialFoundationMigration, /grant all on public\.user_presence to service_role/i);
 assert.doesNotMatch(socialFoundationMigration, /grant insert, update, delete on public\.user_presence to authenticated/i);
 assert.doesNotMatch(socialFoundationMigration, /grant insert on public\.user_notifications to authenticated/i);
+assert.match(socialPrivacyMigration, /revoke select on public\.profiles from anon, authenticated/i);
+assert.match(
+  socialPrivacyMigration,
+  /grant select \(id, display_name, avatar_url, role\)\s+on public\.profiles\s+to anon, authenticated/i
+);
+assert.match(socialPrivacyMigration, /create or replace function public\.get_public_member_profile\(p_user_id uuid\)/i);
+assert.match(socialPrivacyMigration, /when d\.show_joined_at then p\.created_at/i);
+assert.match(socialPrivacyMigration, /when d\.show_presence then pr\.status/i);
+assert.match(socialPrivacyMigration, /create or replace function public\.get_public_member_friends\(p_user_id uuid\)/i);
+assert.match(socialPrivacyMigration, /owner_details\.show_friends/i);
+assert.match(socialPrivacyMigration, /friend_details\.is_public/i);
+assert.match(socialPrivacyMigration, /revoke all on function public\.get_public_member_profile\(uuid\) from public/i);
+assert.match(socialPrivacyMigration, /revoke all on function public\.get_public_member_friends\(uuid\) from public/i);
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
 assert.match(registerAccount, /website/);
