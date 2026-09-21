@@ -140,6 +140,8 @@ const run = async () => {
     assert.doesNotMatch(staticAccount.text, /name="avatar_url"/);
     assert.doesNotMatch(staticAccount.text, /type="file"/);
     assert.match(staticProfile.text, /data-profile/);
+    assert.match(staticProfile.text, /class="profile-column profile-column--main"/);
+    assert.match(staticProfile.text, /class="profile-column profile-column--side"/);
     assert.match(staticProfile.text, /data-profile-form/);
     assert.match(staticProfile.text, /data-password-form/);
     assert.match(staticProfile.text, /data-community-profile-form/);
