@@ -1,4 +1,4 @@
-      <header class="site-header" id="top" data-co-navbar data-supabase-url="<%= site.supabase?.url || "" %>" data-supabase-key="<%= site.supabase?.publishableKey || "" %>">
+<header class="site-header" id="top" data-co-navbar data-supabase-url="<%= site.supabase?.url || "" %>" data-supabase-key="<%= site.supabase?.publishableKey || "" %>">
         <div class="site-header__inner">
           <a class="site-brand" href="/" aria-label="Commonwealth Online Home">
             <img
@@ -27,12 +27,40 @@
           </button>
 
           <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
-            <% navItems.filter((item) => item.key !== "account").forEach((item) => { %>
-            <a
-              href="<%= item.href %>"
-              <% if (item.key === page.activeKey) { %>class="is-active" aria-current="page"<% } %>
-              <% if (item.external) { %>target="_blank" rel="noopener noreferrer"<% } %>
-            ><%= item.label %></a>
+            <% navItems.forEach((item) => { if (item.key === "account") return; %>
+              <% if (item.children) { %>
+                <div class="site-nav__group" data-nav-group>
+                  <button
+                    class="site-nav__trigger<%= item.children.some((child) => child.key === page.activeKey) ? " is-active" : "" %>"
+                    type="button"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    data-nav-trigger
+                  >
+                    <span class="site-nav__trigger-label"><%= item.label %></span>
+                    <svg class="site-nav__caret" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+                      <path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                  <div class="site-nav__menu" data-nav-menu>
+                    <% item.children.forEach((child) => { %>
+                    <a
+                      href="<%= child.href %>"
+                      class="site-nav__link<%= page.activeKey === child.key ? " is-active" : "" %>"
+                      <% if (page.activeKey === child.key) { %>aria-current="page"<% } %>
+                      <% if (child.external) { %>target="_blank" rel="noopener noreferrer"<% } %>
+                    ><%= child.label %></a>
+                    <% }) %>
+                  </div>
+                </div>
+              <% } else { %>
+                <a
+                  href="<%= item.href %>"
+                  class="site-nav__link<%= page.activeKey === item.key ? " is-active" : "" %>"
+                  <% if (page.activeKey === item.key) { %>aria-current="page"<% } %>
+                  <% if (item.external) { %>target="_blank" rel="noopener noreferrer"<% } %>
+                ><%= item.label %></a>
+              <% } %>
             <% }) %>
             <a class="site-nav__donate" href="https://ko-fi.com/commonwealth_online" target="_blank" rel="noopener noreferrer">Donate</a>
             <a
@@ -41,8 +69,11 @@
               <% if (page.activeKey === "account") { %>aria-current="page"<% } %>
               data-account-nav
               aria-label="Login or sign up"
+              title="Login or sign up"
             >
-              <span class="site-nav__account-label" data-account-nav-label>Login / Sign Up</span>
+              <svg class="site-nav__account-icon" data-account-nav-icon viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm0 2.25c-3.45 0-6.75 1.77-6.75 4.5v1.5h13.5v-1.5c0-2.73-3.3-4.5-6.75-4.5Z"/>
+              </svg>
               <img
                 class="site-nav__profile-avatar"
                 data-account-nav-avatar

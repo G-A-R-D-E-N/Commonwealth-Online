@@ -49,7 +49,7 @@ const accountLink = element({
     accountAttributes.delete(name);
   },
 });
-const accountLabel = element({ textContent: "Login / Sign Up" });
+const accountIcon = element({ hidden: false });
 const accountAvatar = element({ hidden: true });
 const notificationBadge = element({
   hidden: true,
@@ -68,10 +68,16 @@ const mount = element({
       [".site-nav-toggle", toggle],
       [".site-nav", nav],
       ["[data-account-nav]", accountLink],
-      ["[data-account-nav-label]", accountLabel],
+      ["[data-account-nav-icon]", accountIcon],
       ["[data-account-nav-avatar]", accountAvatar],
       ["[data-account-nav-notifications]", notificationBadge],
     ]).get(selector) || null;
+  },
+  querySelectorAll(selector) {
+    if (selector === "[data-nav-group]") {
+      return [];
+    }
+    return [];
   },
 });
 
@@ -165,7 +171,7 @@ const run = async () => {
   await flush();
 
   assert.equal(accountLink.href, "/profile/");
-  assert.equal(accountLabel.hidden, true);
+  assert.equal(accountIcon.hidden, true);
   assert.equal(accountAvatar.hidden, false);
   assert.equal(accountAvatar.src, "/assets/profile-icons/rifleman.png");
   assert.equal(accountAttributes.get("aria-label"), "Nomad profile");
@@ -186,6 +192,9 @@ const run = async () => {
 
   authHandler("SIGNED_OUT", null);
   await flush();
+  assert.equal(accountIcon.hidden, false);
+  assert.equal(accountAvatar.hidden, true);
+  assert.equal(accountAttributes.get("aria-label"), "Login or sign up");
   assert.equal(notificationBadge.hidden, true);
   assert.equal(notificationBadge.textContent, "");
 

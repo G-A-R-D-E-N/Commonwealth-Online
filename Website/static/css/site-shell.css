@@ -6,7 +6,9 @@ body.co-site::before {
   content: none;
 }
 
+body.co-site .site-nav a.site-nav__account,
 body.co-site .site-nav a.site-nav__profile {
+  position: relative;
   width: 2.5rem;
   height: 2.5rem;
   margin-left: 0.35rem;
@@ -17,11 +19,35 @@ body.co-site .site-nav a.site-nav__profile {
   background: var(--site-surface);
 }
 
+body.co-site .site-nav a.site-nav__account:hover,
+body.co-site .site-nav a.site-nav__account:focus-visible,
+body.co-site .site-nav a.site-nav__account.is-active,
 body.co-site .site-nav a.site-nav__profile:hover,
 body.co-site .site-nav a.site-nav__profile:focus-visible,
 body.co-site .site-nav a.site-nav__profile.is-active {
   border-color: var(--site-heading);
   background: var(--site-surface-alt);
+}
+
+.site-nav__account-icon {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: var(--site-text);
+  transition: color var(--site-ease);
+}
+
+body.co-site .site-nav a.site-nav__account:hover .site-nav__account-icon,
+body.co-site .site-nav a.site-nav__account:focus-visible .site-nav__account-icon,
+body.co-site .site-nav a.site-nav__account.is-active .site-nav__account-icon {
+  color: var(--site-heading);
+}
+
+.site-nav__account-icon[hidden],
+.site-nav__profile-avatar[hidden],
+.site-nav__notification-badge[hidden] {
+  display: none;
 }
 
 .site-nav__profile-avatar {
@@ -31,12 +57,6 @@ body.co-site .site-nav a.site-nav__profile.is-active {
   border-radius: 50%;
   object-fit: cover;
   background: var(--site-bg-inset);
-}
-
-.site-nav__profile-avatar[hidden],
-.site-nav__account-label[hidden],
-.site-nav__notification-badge[hidden] {
-  display: none;
 }
 
 .site-nav__notification-badge {
@@ -58,11 +78,115 @@ body.co-site .site-nav a.site-nav__profile.is-active {
   line-height: 1;
 }
 
-body.co-site .site-nav a.site-nav__profile {
+/* ── Disclosure menus ─────────────────────────────────────────── */
+
+.site-nav__group {
   position: relative;
 }
 
+body.co-site .site-nav__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--site-font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: inherit;
+  text-transform: uppercase;
+  color: var(--site-text);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+  transition: color var(--site-ease), border-color var(--site-ease);
+}
+
+body.co-site .site-nav__trigger:hover,
+body.co-site .site-nav__trigger:focus-visible,
+body.co-site .site-nav__trigger.is-active {
+  color: var(--site-heading);
+  outline: none;
+  border-bottom-color: var(--site-heading);
+}
+
+.site-nav__caret {
+  width: 0.6rem;
+  height: 0.6rem;
+  flex-shrink: 0;
+  color: var(--site-text-faint);
+  transition: transform var(--site-ease), color var(--site-ease);
+}
+
+.site-nav__group.is-open .site-nav__caret,
+.site-nav__trigger[aria-expanded="true"] .site-nav__caret {
+  transform: rotate(180deg);
+}
+
+.site-nav__group:hover .site-nav__caret,
+.site-nav__group:focus-within .site-nav__caret,
+.site-nav__group.is-open .site-nav__caret {
+  color: var(--site-heading);
+}
+
+.site-nav__menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 13rem;
+  padding: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  border: 1px solid var(--site-border);
+  border-radius: var(--site-radius);
+  background: var(--site-surface);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition: opacity var(--site-ease), transform var(--site-ease), visibility var(--site-ease);
+  z-index: 30;
+}
+
+@media (min-width: 761px) {
+  .site-nav__group:hover .site-nav__menu,
+  .site-nav__group:focus-within .site-nav__menu,
+  .site-nav__group.is-open .site-nav__menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+body.co-site .site-nav .site-nav__menu a.site-nav__link {
+  display: flex;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 0;
+  border-left: 2px solid transparent;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+body.co-site .site-nav .site-nav__menu a.site-nav__link:hover,
+body.co-site .site-nav .site-nav__menu a.site-nav__link:focus-visible {
+  color: var(--site-heading);
+  background: var(--site-surface-alt);
+  border-left-color: var(--site-rule);
+  text-decoration: none;
+}
+
+body.co-site .site-nav .site-nav__menu a.site-nav__link.is-active {
+  color: var(--site-heading);
+  border-left-color: var(--site-heading);
+}
+
 @media (max-width: 760px) {
+  body.co-site .site-nav a.site-nav__account,
   body.co-site .site-nav a.site-nav__profile {
     width: 3rem;
     height: 3rem;
@@ -73,5 +197,58 @@ body.co-site .site-nav a.site-nav__profile {
   .site-nav__profile-avatar {
     width: 2.35rem;
     height: 2.35rem;
+  }
+
+  .site-nav__account-icon {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+
+  .site-nav__group {
+    width: 100%;
+  }
+
+  body.co-site .site-nav__trigger {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0.8rem var(--site-gutter);
+    border-bottom: 0;
+    border-left: 2px solid transparent;
+    font-size: 0.86rem;
+  }
+
+  body.co-site .site-nav__trigger.is-active {
+    border-left-color: var(--site-heading);
+    background: var(--site-surface);
+  }
+
+  .site-nav__menu {
+    position: static;
+    display: none;
+    width: 100%;
+    padding: 0 0 0.25rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .site-nav__group.is-open .site-nav__menu {
+    display: flex;
+  }
+
+  body.co-site .site-nav .site-nav__menu a.site-nav__link {
+    padding: 0.65rem calc(var(--site-gutter) + 1.1rem);
+    font-size: 0.84rem;
+  }
+
+  body.co-site .site-nav .site-nav__menu a.site-nav__link:hover,
+  body.co-site .site-nav .site-nav__menu a.site-nav__link:focus-visible {
+    background: transparent;
+    border-left-color: transparent;
   }
 }
