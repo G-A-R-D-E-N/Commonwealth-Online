@@ -72,7 +72,6 @@
     submit.disabled = true;
 
     const payload = {
-      applicant_id: user.id,
       proposed_name: form.elements.proposed_name.value.trim(),
       proposed_tag: form.elements.proposed_tag.value.trim().toUpperCase(),
       summary: form.elements.summary.value.trim(),
@@ -90,7 +89,7 @@
           .eq("id", activeApplication.id)
       : client
           .from("faction_applications")
-          .insert(payload);
+          .insert({ applicant_id: user.id, ...payload });
 
     const { error } = await query;
 

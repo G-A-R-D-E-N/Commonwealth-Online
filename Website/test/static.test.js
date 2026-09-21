@@ -19,6 +19,7 @@ const expectedPages = [
   "member/index.html",
   "factions/index.html",
   "faction/index.html",
+  "faction/manage/index.html",
   "factions/apply/index.html",
   "apply/index.html",
   "apply/team/index.html",
@@ -90,7 +91,7 @@ const run = async () => {
   const staticServer = await startServer(serveStatic);
   const staticBase = `http://127.0.0.1:${staticServer.address().port}`;
   try {
-    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/factions/", "/faction/?id=test", "/factions/apply/", "/apply/", "/forum/"]) {
+    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/factions/", "/faction/?id=test", "/faction/manage/?id=test", "/factions/apply/", "/apply/", "/forum/"]) {
       const page = await request(staticBase, route);
       assert.equal(page.response.status, 200, route);
     }
@@ -286,6 +287,8 @@ const run = async () => {
     assert.match(factionsJs, /\.from\("factions"\)/);
     assert.match(factionJs, /\.from\("faction_members"\)/);
     assert.match(factionApplyJs, /\.from\("faction_applications"\)/);
+    assert.match(factionApplyJs, /\.insert\(\{ applicant_id: user\.id, \.\.\.payload \}\)/);
+    assert.doesNotMatch(factionApplyJs, /const payload = \{[^}]*applicant_id:/);
     assert.match(factionApplyJs, /changes_requested/);
     assert.doesNotMatch(factionsJs, /setInterval|setTimeout/);
     assert.doesNotMatch(factionJs, /setInterval|setTimeout/);
