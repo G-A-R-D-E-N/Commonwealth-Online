@@ -70,9 +70,10 @@ const run = async () => {
   for (const filePath of htmlFiles) {
     const html = fs.readFileSync(filePath, "utf8");
     assert.equal(/<%|<%=|<%-/.test(html), false, `unresolved EJS in ${filePath}`);
-    assert.match(html, /href="\/static\/css\/widgetbot\.css"/);
-    assert.match(html, /src="\/static\/js\/widgetbot\.js"/);
+    assert.match(html, /href="\/static\/css\/discord-link\.css\?v=20260921-1"/);
+    assert.match(html, /src="\/static\/js\/discord-link\.js\?v=20260921-1"/);
     assert.doesNotMatch(html, /@widgetbot\/crate/);
+    assert.doesNotMatch(html, /\/static\/(?:js|css)\/widgetbot\./);
     assert.match(html, /script-src 'self' https:\/\/cdn\.jsdelivr\.net/);
     assert.doesNotMatch(html, /frame-src[^;]*e\.widgetbot\.io/);
     assert.doesNotMatch(html, /script-src[^;]*unsafe-inline/);
@@ -138,14 +139,16 @@ const run = async () => {
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     const navbarJs = fs.readFileSync(path.join(dist, "static/js/navbar.js"), "utf8");
-    const widgetbotJs = fs.readFileSync(path.join(dist, "static/js/widgetbot.js"), "utf8");
-    assert.ok(widgetbotJs.includes("https://discord.gg/GyfxYG2gzH"));
-    assert.match(widgetbotJs, /noopener noreferrer/);
-    assert.doesNotMatch(widgetbotJs, /e\.widgetbot\.io/);
-    assert.doesNotMatch(widgetbotJs, /createElement\("iframe"\)/);
-    assert.doesNotMatch(widgetbotJs, /\bCrate\b/);
-    assert.doesNotMatch(widgetbotJs, /\beval\s*\(/);
-    assert.doesNotMatch(widgetbotJs, /new Function\s*\(/);
+    const discordLinkJs = fs.readFileSync(path.join(dist, "static/js/discord-link.js"), "utf8");
+    assert.ok(discordLinkJs.includes("https://discord.gg/GyfxYG2gzH"));
+    assert.match(discordLinkJs, /noopener noreferrer/);
+    assert.equal(fs.existsSync(path.join(dist, "static/js/widgetbot.js")), false);
+    assert.equal(fs.existsSync(path.join(dist, "static/css/widgetbot.css")), false);
+    assert.doesNotMatch(discordLinkJs, /e\.widgetbot\.io/);
+    assert.doesNotMatch(discordLinkJs, /createElement\("iframe"\)/);
+    assert.doesNotMatch(discordLinkJs, /\bCrate\b/);
+    assert.doesNotMatch(discordLinkJs, /\beval\s*\(/);
+    assert.doesNotMatch(discordLinkJs, /new Function\s*\(/);
     assert.match(navbarJs, /getSession\(\)/);
     assert.match(navbarJs, /onAuthStateChange/);
     assert.ok(navbarJs.includes('signedIn ? "Account" : "Login / Sign Up"'));
