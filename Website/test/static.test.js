@@ -14,6 +14,7 @@ const expectedPages = [
   "servers/index.html",
   "updates/index.html",
   "account/index.html",
+  "profile/index.html",
   "apply/index.html",
   "apply/team/index.html",
   "apply/beta/index.html",
@@ -83,7 +84,7 @@ const run = async () => {
   const staticServer = await startServer(serveStatic);
   const staticBase = `http://127.0.0.1:${staticServer.address().port}`;
   try {
-    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/apply/", "/forum/"]) {
+    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/apply/", "/forum/"]) {
       const page = await request(staticBase, route);
       assert.equal(page.response.status, 200, route);
     }
@@ -103,6 +104,7 @@ const run = async () => {
 
     const staticApply = await request(staticBase, "/apply/");
     const staticAccount = await request(staticBase, "/account/");
+    const staticProfile = await request(staticBase, "/profile/");
     const staticTeamForm = await request(staticBase, "/apply/team/");
     const staticBetaForm = await request(staticBase, "/apply/beta/");
     const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
@@ -111,15 +113,30 @@ const run = async () => {
     assert.match(staticTeamForm.text, /data-supabase-url/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
     assert.match(staticAccount.text, /data-account/);
-    assert.match(staticAccount.text, /data-account-nav[^>]*>Login \/ Sign Up<\/a>/);
+    assert.match(staticAccount.text, /data-account-nav/);
+    assert.match(staticAccount.text, /data-account-nav-avatar/);
+    assert.match(staticAccount.text, />Your Commonwealth starts here\.</);
+    assert.doesNotMatch(staticAccount.text, />\s*[^<]*Supabase[^<]*</i);
+    assert.doesNotMatch(staticAccount.text, /data-profile-form/);
+    assert.doesNotMatch(staticAccount.text, /data-discord-link/);
+    assert.doesNotMatch(staticAccount.text, /name="avatar_url"/);
+    assert.doesNotMatch(staticAccount.text, /type="file"/);
+    assert.match(staticProfile.text, /data-profile/);
+    assert.match(staticProfile.text, /data-profile-form/);
+    assert.match(staticProfile.text, /data-password-form/);
+    assert.match(staticProfile.text, /data-discord-link/);
+    assert.match(staticProfile.text, /name="username"/);
+    assert.match(staticProfile.text, /name="email"/);
+    assert.match(staticProfile.text, /name="current_password"/);
+    assert.match(staticProfile.text, /name="new_password"/);
+    assert.match(staticProfile.text, /name="confirm_password"/);
+    assert.doesNotMatch(staticProfile.text, />\s*[^<]*Supabase[^<]*</i);
     const supabaseConfigured =
       /data-supabase-url="[^"]+"/.test(staticAccount.text) &&
       /data-supabase-key="[^"]+"/.test(staticAccount.text);
     const supabaseClientCount = (staticAccount.text.match(/@supabase\/supabase-js@2\.105\.0/g) || []).length;
     assert.equal(supabaseClientCount, supabaseConfigured ? 1 : 0);
     assert.doesNotMatch(staticAccount.text, /supabase\.min\.js/);
-    assert.match(staticAccount.text, /data-discord-link/);
-    assert.doesNotMatch(staticAccount.text, /type="file"/);
     const profileIcons = [
       "armorer.png",
       "hacker.png",
@@ -129,16 +146,18 @@ const run = async () => {
       "cap_collector.png",
     ];
     for (const icon of profileIcons) {
-      assert.ok(staticAccount.text.includes(`/assets/profile-icons/${icon}`), `missing real perk icon ${icon}`);
+      assert.ok(staticProfile.text.includes(`/assets/profile-icons/${icon}`), `missing real perk icon ${icon}`);
       const iconPath = path.join(dist, "assets/profile-icons", icon);
       assert.equal(fs.existsSync(iconPath), true, `missing fetched perk icon ${icon}`);
       assert.deepEqual([...fs.readFileSync(iconPath).subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
     }
-    assert.doesNotMatch(staticAccount.text, /profile-icons\/[^"]+\.svg/);
+    assert.doesNotMatch(staticProfile.text, /profile-icons\/[^"]+\.svg/);
     const iconFetcher = fs.readFileSync(path.join(root, "scripts/fetch-profile-icons.js"), "utf8");
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
+    const profileJs = fs.readFileSync(path.join(dist, "static/js/profile.js"), "utf8");
     const navbarJs = fs.readFileSync(path.join(dist, "static/js/navbar.js"), "utf8");
+    const siteShellCss = fs.readFileSync(path.join(dist, "static/css/site-shell.css"), "utf8");
     const discordLinkJs = fs.readFileSync(path.join(dist, "static/js/discord-link.js"), "utf8");
     assert.ok(discordLinkJs.includes("https://discord.gg/GyfxYG2gzH"));
     assert.match(discordLinkJs, /noopener noreferrer/);
@@ -151,16 +170,30 @@ const run = async () => {
     assert.doesNotMatch(discordLinkJs, /new Function\s*\(/);
     assert.match(navbarJs, /getSession\(\)/);
     assert.match(navbarJs, /onAuthStateChange/);
-    assert.ok(navbarJs.includes('signedIn ? "Account" : "Login / Sign Up"'));
+    assert.match(navbarJs, /site-nav__profile/);
+    assert.match(navbarJs, /data-account-nav-avatar/);
+    assert.match(navbarJs, /\/profile\//);
     assert.match(navbarJs, /window\.coSupabase/);
     assert.match(accountJs, /window\.coSupabase/);
-    assert.match(accountJs, /linkIdentity/);
+    assert.ok(accountJs.includes("emailRedirectTo: accountUrl"));
+    assert.ok(accountJs.includes("options: { redirectTo: accountUrl }"));
+    assert.doesNotMatch(accountJs, /linkIdentity/);
+    assert.doesNotMatch(accountJs, /\.from\("profiles"\)/);
+    assert.match(profileJs, /linkIdentity/);
+    assert.ok(profileJs.includes("options: { redirectTo: accountUrl }"));
+    assert.match(profileJs, /updateUser/);
+    assert.match(profileJs, /currentPassword/);
+    assert.match(profileJs, /\.from\("profiles"\)/);
+    assert.match(siteShellCss, /body\.co-site\s*\{\s*background: #0d0e0f;/);
+    assert.match(siteShellCss, /body\.co-site::before\s*\{\s*content: none;/);
+    assert.doesNotMatch(siteShellCss, /radial-gradient|fractalNoise/);
     assert.match(accountJs, /\/auth\/v1\/settings/);
     assert.match(accountJs, /settings\.external\?\.discord/);
     assert.match(accountJs, /settings\.disable_signup/);
     assert.match(accountJs, /Account services are temporarily unavailable\./);
-    assert.ok(accountJs.includes("/assets/profile-icons/armorer.png"));
+    assert.ok(profileJs.includes("/assets/profile-icons/armorer.png"));
     assert.doesNotMatch(accountJs, /Fallout_Perk_Planner/);
+    assert.doesNotMatch(profileJs, /Fallout_Perk_Planner/);
     assert.ok(accountJs.includes('new URL(`${assetBase}/account/`, window.location.origin).href'));
     assert.doesNotMatch(accountJs, /new URL\("\\.", window\.location\.href\)/);
     assert.doesNotMatch(accountJs, /storage\.from/);

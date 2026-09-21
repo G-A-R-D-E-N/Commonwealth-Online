@@ -7,6 +7,8 @@ const vm = require("node:vm");
 
 const source = fs.readFileSync(path.join(__dirname, "..", "static", "js", "account.js"), "utf8");
 
+let registerHandler;
+let signUpCalls = 0;
 let resolveSettings;
 const settingsResponse = new Promise((resolve) => {
   resolveSettings = resolve;
@@ -16,9 +18,6 @@ const element = (overrides = {}) => ({
   hidden: false,
   disabled: false,
   textContent: "",
-  value: "",
-  src: "",
-  dataset: {},
   classList: { toggle() {} },
   addEventListener() {},
   querySelector() {
@@ -31,43 +30,30 @@ const element = (overrides = {}) => ({
 });
 
 const status = element({ hidden: true });
-const signedOut = element();
-const signedIn = element({ hidden: true });
 const registerSubmit = element();
 const registerForm = element({
   querySelector(selector) {
     return selector === 'button[type="submit"]' ? registerSubmit : null;
   },
+  addEventListener(type, handler) {
+    if (type === "submit") {
+      registerHandler = handler;
+    }
+  },
+  checkValidity() {
+    return true;
+  },
+  reportValidity() {},
+  reset() {},
 });
 const signInForm = element();
-const profileName = element();
-const profileEmail = element();
-const profileRole = element();
-const profileAvatar = element();
-const discordState = element({ textContent: "Checking linked identities…" });
-const discordLink = element({ disabled: true });
-const discordSignIn = element({ disabled: true });
-const signOut = element();
-const displayName = element();
-const profileForm = element({
-  elements: { display_name: displayName },
-});
+const discordSignIn = element({ hidden: false, disabled: true });
 
 const elements = new Map([
   ["[data-account-status]", status],
-  ["[data-account-signed-out]", signedOut],
-  ["[data-account-signed-in]", signedIn],
   ["[data-register-form]", registerForm],
   ["[data-signin-form]", signInForm],
-  ["[data-profile-form]", profileForm],
-  ["[data-profile-avatar]", profileAvatar],
-  ["[data-profile-name]", profileName],
-  ["[data-profile-email]", profileEmail],
-  ["[data-profile-role]", profileRole],
-  ["[data-discord-state]", discordState],
-  ["[data-discord-link]", discordLink],
   ["[data-discord-sign-in]", discordSignIn],
-  ["[data-sign-out]", signOut],
 ]);
 
 const root = element({
@@ -80,49 +66,32 @@ const root = element({
   },
 });
 
+let assignedUrl = "";
 const client = {
   auth: {
     async getSession() {
-      return {
-        data: {
-          session: {
-            user: { id: "user-1", email: "member@example.test" },
-          },
-        },
-      };
+      return { data: { session: null } };
     },
-    async getUserIdentities() {
-      return { data: { identities: [] } };
+    async signUp() {
+      signUpCalls += 1;
+      return { data: { session: null }, error: null };
     },
-    onAuthStateChange() {
-      return { data: { subscription: { unsubscribe() {} } } };
-    },
-  },
-  from() {
-    return {
-      select() {
-        return this;
-      },
-      eq() {
-        return this;
-      },
-      async single() {
-        return {
-          data: {
-            display_name: "Member",
-            avatar_url: "/assets/profile-icons/armorer.png",
-            role: "member",
-          },
-          error: null,
-        };
-      },
-    };
   },
 };
 
-let settingsRequest;
 const context = {
   URL,
+  FormData: class {
+    get(name) {
+      if (name === "username") {
+        return "   ";
+      }
+      if (name === "email") {
+        return "member@example.test";
+      }
+      return "password123";
+    }
+  },
   document: {
     querySelector(selector) {
       if (selector === "[data-account]") {
@@ -134,14 +103,15 @@ const context = {
       return null;
     },
   },
-  fetch(url, options) {
-    settingsRequest = { url, options };
+  fetch() {
     return settingsResponse;
   },
   window: {
-    location: { origin: "https://commonwealth-online.com" },
-    setTimeout(callback) {
-      callback();
+    location: {
+      origin: "https://commonwealth-online.com",
+      assign(url) {
+        assignedUrl = url;
+      },
     },
     supabase: {
       createClient() {
@@ -151,14 +121,15 @@ const context = {
   },
 };
 
-vm.runInNewContext(source, context, { filename: "account.js" });
-
 const flush = () => new Promise((resolve) => setImmediate(resolve));
 
 const run = async () => {
+  vm.runInNewContext(source, context, { filename: "account.js" });
   await flush();
-  assert.equal(settingsRequest.url, "https://project.example/auth/v1/settings");
-  assert.equal(discordState.textContent, "Checking linked identities…");
+
+  assert.equal(registerSubmit.disabled, false);
+  assert.equal(discordSignIn.disabled, true);
+  assert.equal(assignedUrl, "");
 
   resolveSettings({
     ok: true,
@@ -173,11 +144,17 @@ const run = async () => {
   await flush();
   await flush();
 
-  assert.equal(discordState.textContent, "Not linked");
-  assert.equal(discordLink.disabled, false);
-  assert.equal(discordLink.hidden, false);
-  assert.equal(discordSignIn.disabled, false);
   assert.equal(registerSubmit.disabled, false);
+  assert.equal(discordSignIn.disabled, false);
+  assert.equal(discordSignIn.hidden, false);
+  assert.equal(assignedUrl, "");
+  assert.equal(typeof registerHandler, "function");
+
+  await registerHandler({ preventDefault() {} });
+
+  assert.equal(signUpCalls, 0);
+  assert.equal(status.textContent, "Enter a username.");
+  assert.equal(status.hidden, false);
 
   console.log("account auth initialization checks passed");
 };

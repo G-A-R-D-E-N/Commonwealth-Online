@@ -1,39 +1,34 @@
 <%- include("../partials/head") %>
 <%- include("../partials/navbar") %>
 
-      <main class="site-main">
-        <section class="section-panel account-hero" aria-labelledby="account-title">
-          <div class="servers-hero__head">
-            <div>
-              <p class="section-kicker">Commonwealth ID</p>
-              <h1 id="account-title">Register your Commonwealth Online account</h1>
-              <p class="servers-hero__desc">
-                Create one account for the website and community services. Discord can be used to sign in or linked
-                later to an email account. Profile pictures are limited to a curated set of real Fallout 4 perk icons.
-              </p>
-            </div>
-          </div>
-        </section>
-
+      <main class="site-main account-main">
         <section
           class="account-shell"
           data-account
           data-supabase-url="<%= site.supabase?.url || "" %>"
           data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          aria-labelledby="account-title"
         >
+          <header class="account-intro">
+            <p class="section-kicker">Commonwealth Online</p>
+            <h1 id="account-title">Your Commonwealth starts here.</h1>
+            <p>Create an account or sign in to access your Commonwealth Online profile and member features.</p>
+          </header>
+
           <p class="site-notice account-status" data-account-status role="status" hidden></p>
 
-          <div class="account-auth-grid" data-account-signed-out>
-            <section class="section-panel account-panel" aria-labelledby="register-title">
-              <div class="section-head">
-                <p class="section-kicker">New resident</p>
+          <div class="account-auth-grid">
+            <section class="account-card" aria-labelledby="register-title">
+              <div class="account-card__head">
+                <p class="section-kicker">New member</p>
                 <h2 id="register-title">Create account</h2>
+                <p>Choose your username and secure your account.</p>
               </div>
 
               <form class="account-form" data-register-form>
                 <label class="account-field">
-                  <span>Display name</span>
-                  <input name="display_name" type="text" minlength="1" maxlength="80" autocomplete="nickname" required />
+                  <span>Username</span>
+                  <input name="username" type="text" minlength="1" maxlength="80" autocomplete="nickname" required />
                 </label>
 
                 <label class="account-field">
@@ -46,38 +41,20 @@
                   <input name="password" type="password" minlength="8" autocomplete="new-password" required />
                 </label>
 
-                <fieldset class="account-avatar-fieldset">
-                  <legend>Profile icon</legend>
-                  <p>Choose one Fallout 4 perk icon. Custom uploads are disabled.</p>
-                  <div class="account-avatar-grid">
-                    <% [
-                      ["Armorer", "/assets/profile-icons/armorer.png"],
-                      ["Hacker", "/assets/profile-icons/hacker.png"],
-                      ["Rifleman", "/assets/profile-icons/rifleman.png"],
-                      ["Medic", "/assets/profile-icons/medic.png"],
-                      ["Scrapper", "/assets/profile-icons/scrapper.png"],
-                      ["Cap Collector", "/assets/profile-icons/cap_collector.png"]
-                    ].forEach(([label, src], index) => { %>
-                    <label class="account-avatar-option">
-                      <input type="radio" name="avatar_url" value="<%= src %>"<%= index === 0 ? " checked" : "" %> />
-                      <img src="<%= src %>" alt="" width="96" height="96" loading="lazy" referrerpolicy="no-referrer" />
-                      <span><%= label %></span>
-                    </label>
-                    <% }) %>
-                  </div>
-                </fieldset>
-
                 <button class="co-btn co-btn--primary" type="submit">Create account</button>
               </form>
 
               <div class="account-divider"><span>or</span></div>
-              <button class="co-btn co-btn--discord" type="button" data-discord-sign-in disabled>Discord sign-in unavailable</button>
+              <button class="co-btn co-btn--discord account-discord-button" type="button" data-discord-sign-in disabled>
+                Continue with Discord
+              </button>
             </section>
 
-            <section class="section-panel account-panel" aria-labelledby="signin-title">
-              <div class="section-head">
-                <p class="section-kicker">Returning resident</p>
+            <section class="account-card" aria-labelledby="signin-title">
+              <div class="account-card__head">
+                <p class="section-kicker">Welcome back</p>
                 <h2 id="signin-title">Sign in</h2>
+                <p>Continue to your Commonwealth Online profile.</p>
               </div>
 
               <form class="account-form" data-signin-form>
@@ -95,68 +72,10 @@
               </form>
 
               <p class="account-help">
-                Email registration and sign-in work independently. Discord sign-in becomes available automatically
-                after the provider is configured in Supabase.
+                After signing in, use your profile icon in the navigation to manage your account.
               </p>
             </section>
           </div>
-
-          <section class="section-panel account-panel account-profile" data-account-signed-in hidden aria-labelledby="profile-title">
-            <div class="section-head account-profile__head">
-              <div>
-                <p class="section-kicker">Resident record</p>
-                <h2 id="profile-title">Profile</h2>
-              </div>
-              <button class="co-btn co-btn--ghost" type="button" data-sign-out>Sign out</button>
-            </div>
-
-            <div class="account-profile__identity">
-              <img data-profile-avatar src="/assets/profile-icons/armorer.png" alt="" width="128" height="128" referrerpolicy="no-referrer" />
-              <div>
-                <strong data-profile-name>Member</strong>
-                <span data-profile-email></span>
-                <span data-profile-role></span>
-              </div>
-            </div>
-
-            <form class="account-form" data-profile-form>
-              <label class="account-field">
-                <span>Display name</span>
-                <input name="display_name" type="text" minlength="1" maxlength="80" autocomplete="nickname" required />
-              </label>
-
-              <fieldset class="account-avatar-fieldset">
-                <legend>Profile icon</legend>
-                <p>Only the curated Fallout 4 perk icons can be selected.</p>
-                <div class="account-avatar-grid">
-                  <% [
-                    ["Armorer", "/assets/profile-icons/armorer.png"],
-                    ["Hacker", "/assets/profile-icons/hacker.png"],
-                    ["Rifleman", "/assets/profile-icons/rifleman.png"],
-                    ["Medic", "/assets/profile-icons/medic.png"],
-                    ["Scrapper", "/assets/profile-icons/scrapper.png"],
-                    ["Cap Collector", "/assets/profile-icons/cap_collector.png"]
-                  ].forEach(([label, src]) => { %>
-                  <label class="account-avatar-option">
-                    <input type="radio" name="avatar_url" value="<%= src %>" />
-                    <img src="<%= src %>" alt="" width="96" height="96" loading="lazy" referrerpolicy="no-referrer" />
-                    <span><%= label %></span>
-                  </label>
-                  <% }) %>
-                </div>
-              </fieldset>
-
-              <button class="co-btn co-btn--primary" type="submit">Save profile</button>
-            </form>
-
-            <div class="account-discord">
-              <div>
-                <strong>Discord</strong>
-                <span data-discord-state>Checking linked identities…</span>
-              </div>
-              <button class="co-btn co-btn--discord" type="button" data-discord-link disabled>Link Discord</button>
-            </div>
-          </section>
         </section>
       </main>
 
