@@ -34,8 +34,16 @@ class FakeElement {
 }
 
 const source = fs.readFileSync(path.join(__dirname, "..", "static", "js", "members.js"), "utf8");
+const templateSource = fs.readFileSync(path.join(__dirname, "..", "views", "pages", "members.ejs"), "utf8");
+const socialCss = fs.readFileSync(path.join(__dirname, "..", "static", "css", "social.css"), "utf8");
 
 const run = async () => {
+  assert.match(templateSource, /class="members-hero"/);
+  assert.match(templateSource, /Survivor roster/);
+  assert.match(socialCss, /url\("\/assets\/images\/TwoPlayers\.webp"\)/);
+  assert.match(socialCss, /url\("\/assets\/images\/Vault109Exit\.webp"\)/);
+  assert.match(socialCss, /\.members-console/);
+
   const root = new FakeElement();
   root.dataset.supabaseUrl = "https://example.supabase.co";
   root.dataset.supabaseKey = "sb_publishable_test";

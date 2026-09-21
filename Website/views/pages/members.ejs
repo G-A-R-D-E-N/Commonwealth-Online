@@ -9,28 +9,49 @@
           data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
           aria-labelledby="members-title"
         >
-          <header class="members-intro">
-            <div>
-              <p class="section-kicker">Community directory</p>
+          <header class="members-hero">
+            <div class="members-hero__content">
+              <p class="section-kicker">Commonwealth network // public roster</p>
               <h1 id="members-title">Members</h1>
-              <p>Find public player profiles, see faction affiliation, and open a member profile without digging through account pages.</p>
+              <p class="members-hero__lede">Track public survivors across the Commonwealth, check faction affiliation, and open the profiles broadcasting to the network.</p>
+              <div class="members-hero__tags" aria-label="Directory features">
+                <span>Public profiles</span>
+                <span>Faction intel</span>
+                <span>Presence status</span>
+              </div>
             </div>
             <div class="members-directory-meta" aria-live="polite">
+              <span class="members-directory-meta__label">Network count</span>
               <strong data-members-count>—</strong>
-              <span>Public profiles</span>
+              <span>Public profiles detected</span>
             </div>
           </header>
 
-          <div class="members-toolbar">
-            <label class="members-search">
-              <span>Search directory</span>
-              <input type="search" data-members-search placeholder="Search by username" autocomplete="off" />
-            </label>
-            <p class="members-toolbar__hint">Only profiles marked public are listed.</p>
-          </div>
+          <section class="members-console" aria-label="Member directory controls">
+            <div class="members-console__bar">
+              <span>Network search</span>
+              <span>Channel: public</span>
+            </div>
+            <div class="members-toolbar">
+              <label class="members-search">
+                <span>Search survivor records</span>
+                <input type="search" data-members-search placeholder="Enter username" autocomplete="off" />
+              </label>
+              <p class="members-toolbar__hint">Only profiles marked public are transmitted to this directory.</p>
+            </div>
+          </section>
 
-          <p class="members-state" data-members-status data-tone="loading" role="status">Loading member directory…</p>
-          <div class="members-grid" data-members-list hidden></div>
+          <section class="members-results" aria-label="Public member profiles">
+            <div class="members-results__heading">
+              <div>
+                <p class="section-kicker">Detected signals</p>
+                <h2>Survivor roster</h2>
+              </div>
+              <span class="members-results__status">Commonwealth relay online</span>
+            </div>
+            <p class="members-state" data-members-status data-tone="loading" role="status">Scanning Commonwealth network…</p>
+            <div class="members-grid" data-members-list hidden></div>
+          </section>
         </section>
       </main>
 
