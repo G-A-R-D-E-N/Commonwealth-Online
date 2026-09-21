@@ -1,31 +1,37 @@
 <%- include("../partials/head") %>
 <%- include("../partials/navbar") %>
 
-      <main class="site-main">
+      <main class="site-main factions-main">
         <section
-          class="section-panel faction-shell"
+          class="faction-shell"
           data-factions
           data-supabase-url="<%= site.supabase?.url || "" %>"
           data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
           aria-labelledby="factions-title"
         >
-          <div class="servers-hero__head">
-            <div>
+          <header class="factions-hero">
+            <div class="factions-hero__copy">
               <p class="section-kicker">Community factions</p>
-              <h1 id="factions-title">Build a place in the Commonwealth</h1>
-              <p class="servers-hero__desc">
-                Browse approved player factions, read their lore and recruitment status, or apply to establish your own.
-              </p>
-            </div>
-            <div class="servers-hero__actions">
+              <h1 id="factions-title">Factions</h1>
+              <p>Find player-run groups, read their lore, check recruitment status, or establish your own place in the Commonwealth.</p>
               <a class="co-btn co-btn--primary" href="/factions/apply/">Apply for a faction</a>
             </div>
-          </div>
+          </header>
 
-          <p class="site-notice" data-factions-status role="status" hidden></p>
-          <div class="faction-grid" data-factions-list>
-            <p class="account-help">Loading factions…</p>
-          </div>
+          <section class="factions-directory" aria-labelledby="factions-directory-title">
+            <div class="factions-directory__bar">
+              <div>
+                <p class="section-kicker">Approved groups</p>
+                <h2 id="factions-directory-title">Faction directory</h2>
+              </div>
+              <span>Community registry</span>
+            </div>
+
+            <p class="site-notice" data-factions-status role="status" hidden></p>
+            <div class="faction-grid" data-factions-list>
+              <p class="faction-empty">Loading factions…</p>
+            </div>
+          </section>
         </section>
       </main>
 
