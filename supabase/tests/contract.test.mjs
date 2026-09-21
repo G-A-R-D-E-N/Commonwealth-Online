@@ -73,6 +73,10 @@ const signupCleanupFixMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921151049_fix_signup_cleanup_return_types.sql"),
   "utf8"
 );
+const socialFoundationMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921162000_user_social_foundation.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -226,6 +230,32 @@ assert.match(signupAbuseMigration, /prune_flagged_unconfirmed_accounts/i);
 assert.match(signupAbuseMigration, /p_dry_run boolean default true/i);
 assert.match(signupCleanupFixMigration, /u\.email::text/i);
 assert.match(signupCleanupFixMigration, /p_older_than < interval '24 hours'/i);
+for (const table of [
+  "user_profile_details",
+  "user_friendships",
+  "user_blocks",
+  "user_presence",
+  "user_notifications",
+]) {
+  assert.match(
+    socialFoundationMigration,
+    new RegExp(`create table public\\.${table}|create table if not exists public\\.${table}`, "i"),
+    `missing social table: ${table}`
+  );
+  assert.match(
+    socialFoundationMigration,
+    new RegExp(`alter table public\\.${table} enable row level security`, "i"),
+    `RLS must be enabled on ${table}`
+  );
+}
+assert.match(socialFoundationMigration, /is_public boolean not null default false/i);
+assert.match(socialFoundationMigration, /show_presence boolean not null default true/i);
+assert.match(socialFoundationMigration, /private\.users_blocked/i);
+assert.match(socialFoundationMigration, /create trigger create_social_profile_rows/i);
+assert.match(socialFoundationMigration, /create trigger notify_friendship_change/i);
+assert.match(socialFoundationMigration, /create trigger remove_friendship_on_block/i);
+assert.match(socialFoundationMigration, /grant update \(read_at\) on public\.user_notifications/i);
+assert.doesNotMatch(socialFoundationMigration, /grant insert on public\.user_notifications to authenticated/i);
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
 assert.match(registerAccount, /website/);
@@ -380,6 +410,7 @@ for (const [name, content] of [
   ["user accounts lock migration", userAccountsLockMigration],
   ["signup abuse migration", signupAbuseMigration],
   ["signup cleanup fix migration", signupCleanupFixMigration],
+  ["social foundation migration", socialFoundationMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],
