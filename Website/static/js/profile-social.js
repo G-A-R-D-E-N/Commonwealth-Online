@@ -38,7 +38,6 @@
     if (error || !data) return;
 
     form.elements.bio.value = data.bio || "";
-    form.elements.faction.value = data.faction || "";
     form.elements.playstyle.value = data.playstyle || "";
     form.elements.is_public.checked = data.is_public;
     form.elements.show_presence.checked = data.show_presence;
@@ -375,7 +374,6 @@
 
     const payload = {
       bio: form.elements.bio.value.trim(),
-      faction: form.elements.faction.value.trim() || null,
       playstyle: form.elements.playstyle.value.trim() || null,
       is_public: form.elements.is_public.checked,
       show_presence: form.elements.show_presence.checked,
