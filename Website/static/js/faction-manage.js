@@ -14,8 +14,11 @@
   const backLink = root.querySelector("[data-faction-manage-back]");
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
-  const factionId = new URLSearchParams(window.location.search).get("id");
-  if (!url || !key || !factionId || !window.supabase?.createClient) {
+  const params = new URLSearchParams(window.location.search);
+  const factionSlug = params.get("slug");
+  const legacyFactionId = params.get("id");
+  let factionId = legacyFactionId || null;
+  if (!url || !key || (!factionSlug && !legacyFactionId) || !window.supabase?.createClient) {
     status.textContent = "Faction management is unavailable.";
     return;
   }
@@ -24,7 +27,8 @@
   window.coSupabase = client;
   let user = null;
 
-  const profileHref = (id) => assetBase + "/member/?id=" + encodeURIComponent(id);
+  const profileHref = (username) =>
+    assetBase + "/member/?username=" + encodeURIComponent(username);
 
   const setStatus = (message, error = false) => {
     status.hidden = !message;
@@ -35,7 +39,7 @@
   const createIdentity = (person, detail) => {
     const identity = document.createElement("a");
     identity.className = "profile-social-row__identity";
-    identity.href = profileHref(person.id);
+    identity.href = profileHref(person.display_name);
 
     const avatar = document.createElement("img");
     avatar.src = assetBase + person.avatar_url;
@@ -239,22 +243,31 @@
       return;
     }
 
-    const [factionResult, membershipResult] = await Promise.all([
-      client
-        .from("factions")
-        .select("id,name,tag")
-        .eq("id", factionId)
-        .single(),
-      client
-        .from("faction_members")
-        .select("role_id,status")
-        .eq("faction_id", factionId)
-        .eq("user_id", user.id)
-        .eq("status", "active")
-        .maybeSingle(),
-    ]);
+    let factionQuery = client
+      .from("factions")
+      .select("id,slug,name,tag");
 
-    if (factionResult.error || !factionResult.data || !membershipResult.data?.role_id) {
+    factionQuery = factionSlug
+      ? factionQuery.eq("slug", factionSlug)
+      : factionQuery.eq("id", legacyFactionId);
+
+    const factionResult = await factionQuery.single();
+    if (factionResult.error || !factionResult.data) {
+      setStatus("You do not have permission to manage this faction.", true);
+      return;
+    }
+
+    factionId = factionResult.data.id;
+
+    const membershipResult = await client
+      .from("faction_members")
+      .select("role_id,status")
+      .eq("faction_id", factionId)
+      .eq("user_id", user.id)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (!membershipResult.data?.role_id) {
       setStatus("You do not have permission to manage this faction.", true);
       return;
     }
@@ -272,7 +285,13 @@
     }
 
     factionName.textContent = factionResult.data.name + " [" + factionResult.data.tag + "]";
-    backLink.href = assetBase + "/faction/?id=" + encodeURIComponent(factionId);
+    backLink.href =
+      assetBase + "/faction/?slug=" + encodeURIComponent(factionResult.data.slug);
+    window.history?.replaceState(
+      null,
+      "",
+      assetBase + "/faction/manage/?slug=" + encodeURIComponent(factionResult.data.slug)
+    );
     setStatus("");
     contentRoot.hidden = false;
 

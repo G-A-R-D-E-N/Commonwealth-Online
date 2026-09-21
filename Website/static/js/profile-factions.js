@@ -14,7 +14,7 @@
   let user = null;
   let primaryFactionId = null;
 
-  const factionHref = (id) => assetBase + "/faction/?id=" + encodeURIComponent(id);
+  const factionHref = (slug) => assetBase + "/faction/?slug=" + encodeURIComponent(slug);
   const label = (value) => String(value || "").replaceAll("_", " ");
 
   const actionButton = (text, handler, primary = false) => {
@@ -40,7 +40,7 @@
         .single(),
       client
         .from("faction_members")
-        .select("faction_id,status,joined_at,faction:factions!faction_members_faction_id_fkey(id,name,tag,recruitment)")
+        .select("faction_id,status,joined_at,faction:factions!faction_members_faction_id_fkey(id,slug,name,tag,recruitment)")
         .eq("user_id", user.id)
         .in("status", ["active", "pending", "invited"])
         .order("created_at", { ascending: true }),
@@ -69,7 +69,7 @@
 
       const identity = document.createElement("a");
       identity.className = "profile-social-row__identity";
-      identity.href = factionHref(row.faction.id);
+      identity.href = factionHref(row.faction.slug);
 
       const copy = document.createElement("span");
       const name = document.createElement("strong");
