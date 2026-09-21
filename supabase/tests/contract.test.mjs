@@ -339,7 +339,10 @@ assert.match(factionFoundationMigration, /role in \('moderator', 'admin'\)/i);
 assert.match(factionFoundationMigration, /insert into public\.faction_roles/i);
 assert.match(factionFoundationMigration, /insert into public\.faction_members/i);
 assert.match(factionFoundationMigration, /grant select on public\.factions to anon, authenticated/i);
-assert.match(factionFoundationMigration, /grant select, insert, update on public\.faction_applications to authenticated/i);
+assert.match(factionFoundationMigration, /grant select on public\.faction_applications to authenticated/i);
+assert.match(factionFoundationMigration, /grant insert \([\s\S]*proposed_name[\s\S]*status[\s\S]*\) on public\.faction_applications to authenticated/i);
+assert.match(factionFoundationMigration, /grant update \([\s\S]*proposed_name[\s\S]*updated_at[\s\S]*\) on public\.faction_applications to authenticated/i);
+assert.doesNotMatch(factionFoundationMigration, /grant (?:insert|update) on public\.faction_applications to authenticated/i);
 assert.match(factionFoundationMigration, /revoke all on function public\.review_faction_application\(uuid, text, text\) from public, anon/i);
 assert.match(
   factionFoundationMigration,
