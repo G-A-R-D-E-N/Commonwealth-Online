@@ -1,0 +1,165 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section class="section-panel account-hero" aria-labelledby="account-title">
+          <div class="servers-hero__head">
+            <div>
+              <p class="section-kicker">Commonwealth ID</p>
+              <h1 id="account-title">Register your Commonwealth Online account</h1>
+              <p class="servers-hero__desc">
+                Create one account for the website and community services. Discord can be used to sign in or linked
+                later to an email account. Profile pictures are limited to the built-in Fallout 4 themed icon set.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="account-shell"
+          data-account
+          data-supabase-url="<%= site.supabase?.url || "" %>"
+          data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+        >
+          <p class="site-notice account-status" data-account-status role="status" hidden></p>
+
+          <div class="account-auth-grid" data-account-signed-out>
+            <section class="section-panel account-panel" aria-labelledby="register-title">
+              <div class="section-head">
+                <p class="section-kicker">New resident</p>
+                <h2 id="register-title">Create account</h2>
+              </div>
+
+              <form class="account-form" data-register-form>
+                <label class="account-field">
+                  <span>Display name</span>
+                  <input name="display_name" type="text" minlength="1" maxlength="80" autocomplete="nickname" required />
+                </label>
+
+                <label class="account-field">
+                  <span>Email</span>
+                  <input name="email" type="email" maxlength="254" autocomplete="email" required />
+                </label>
+
+                <label class="account-field">
+                  <span>Password</span>
+                  <input name="password" type="password" minlength="8" autocomplete="new-password" required />
+                </label>
+
+                <fieldset class="account-avatar-fieldset">
+                  <legend>Profile icon</legend>
+                  <p>Choose one built-in icon. Custom uploads are disabled.</p>
+                  <div class="account-avatar-grid">
+                    <% [
+                      ["Vault Dweller", "/assets/profile-icons/vault-dweller.svg"],
+                      ["Minuteman", "/assets/profile-icons/minuteman.svg"],
+                      ["Ranger", "/assets/profile-icons/ranger.svg"],
+                      ["Scribe", "/assets/profile-icons/scribe.svg"],
+                      ["Scavenger", "/assets/profile-icons/scavenger.svg"],
+                      ["Atom Cat", "/assets/profile-icons/atom-cat.svg"]
+                    ].forEach(([label, src], index) => { %>
+                    <label class="account-avatar-option">
+                      <input type="radio" name="avatar_url" value="<%= src %>"<%= index === 0 ? " checked" : "" %> />
+                      <img src="<%= src %>" alt="" width="96" height="96" />
+                      <span><%= label %></span>
+                    </label>
+                    <% }) %>
+                  </div>
+                </fieldset>
+
+                <button class="co-btn co-btn--primary" type="submit">Create account</button>
+              </form>
+
+              <div class="account-divider"><span>or</span></div>
+              <button class="co-btn co-btn--discord" type="button" data-discord-sign-in>Continue with Discord</button>
+            </section>
+
+            <section class="section-panel account-panel" aria-labelledby="signin-title">
+              <div class="section-head">
+                <p class="section-kicker">Returning resident</p>
+                <h2 id="signin-title">Sign in</h2>
+              </div>
+
+              <form class="account-form" data-signin-form>
+                <label class="account-field">
+                  <span>Email</span>
+                  <input name="email" type="email" maxlength="254" autocomplete="email" required />
+                </label>
+
+                <label class="account-field">
+                  <span>Password</span>
+                  <input name="password" type="password" autocomplete="current-password" required />
+                </label>
+
+                <button class="co-btn co-btn--primary" type="submit">Sign in</button>
+              </form>
+
+              <p class="account-help">
+                Discord sign-in uses the same Supabase account when the provider identity is already linked or can be
+                linked safely by Supabase.
+              </p>
+            </section>
+          </div>
+
+          <section class="section-panel account-panel account-profile" data-account-signed-in hidden aria-labelledby="profile-title">
+            <div class="section-head account-profile__head">
+              <div>
+                <p class="section-kicker">Resident record</p>
+                <h2 id="profile-title">Profile</h2>
+              </div>
+              <button class="co-btn co-btn--ghost" type="button" data-sign-out>Sign out</button>
+            </div>
+
+            <div class="account-profile__identity">
+              <img data-profile-avatar src="/assets/profile-icons/vault-dweller.svg" alt="" width="128" height="128" />
+              <div>
+                <strong data-profile-name>Member</strong>
+                <span data-profile-email></span>
+                <span data-profile-role></span>
+              </div>
+            </div>
+
+            <form class="account-form" data-profile-form>
+              <label class="account-field">
+                <span>Display name</span>
+                <input name="display_name" type="text" minlength="1" maxlength="80" autocomplete="nickname" required />
+              </label>
+
+              <fieldset class="account-avatar-fieldset">
+                <legend>Profile icon</legend>
+                <p>Only the built-in Fallout 4 themed icons can be selected.</p>
+                <div class="account-avatar-grid">
+                  <% [
+                    ["Vault Dweller", "/assets/profile-icons/vault-dweller.svg"],
+                    ["Minuteman", "/assets/profile-icons/minuteman.svg"],
+                    ["Ranger", "/assets/profile-icons/ranger.svg"],
+                    ["Scribe", "/assets/profile-icons/scribe.svg"],
+                    ["Scavenger", "/assets/profile-icons/scavenger.svg"],
+                    ["Atom Cat", "/assets/profile-icons/atom-cat.svg"]
+                  ].forEach(([label, src]) => { %>
+                  <label class="account-avatar-option">
+                    <input type="radio" name="avatar_url" value="<%= src %>" />
+                    <img src="<%= src %>" alt="" width="96" height="96" />
+                    <span><%= label %></span>
+                  </label>
+                  <% }) %>
+                </div>
+              </fieldset>
+
+              <button class="co-btn co-btn--primary" type="submit">Save profile</button>
+            </form>
+
+            <div class="account-discord">
+              <div>
+                <strong>Discord</strong>
+                <span data-discord-state>Checking linked identities…</span>
+              </div>
+              <button class="co-btn co-btn--discord" type="button" data-discord-link>Link Discord</button>
+            </div>
+          </section>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+
+<%- include("../partials/scripts") %>
