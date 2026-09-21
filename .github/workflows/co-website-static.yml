@@ -61,15 +61,19 @@ jobs:
         env:
           SUPABASE_URL: ""
           SUPABASE_PUBLISHABLE_KEY: ""
+          CAPTCHA_PROVIDER: ""
+          CAPTCHA_SITE_KEY: ""
         run: |
           set -euo pipefail
           npm run build:static
           npm run test:static
 
-      - name: Validate Supabase browser configuration
+      - name: Validate browser configuration
         env:
           SUPABASE_URL: ${{ vars.SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          CAPTCHA_PROVIDER: ${{ vars.CAPTCHA_PROVIDER }}
+          CAPTCHA_SITE_KEY: ${{ vars.CAPTCHA_SITE_KEY }}
         run: |
           set -euo pipefail
           test -n "$SUPABASE_URL"
@@ -77,12 +81,18 @@ jobs:
             sb_publishable_*) ;;
             *) echo "SUPABASE_PUBLISHABLE_KEY must be a publishable API key" >&2; exit 1 ;;
           esac
+          if [ -n "$CAPTCHA_PROVIDER" ]; then
+            test "$CAPTCHA_PROVIDER" = "turnstile"
+            test -n "$CAPTCHA_SITE_KEY"
+          fi
 
       - name: Build static website
         working-directory: Website
         env:
           SUPABASE_URL: ${{ vars.SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          CAPTCHA_PROVIDER: ${{ vars.CAPTCHA_PROVIDER }}
+          CAPTCHA_SITE_KEY: ${{ vars.CAPTCHA_SITE_KEY }}
         run: npm run build:static
 
       - name: Verify static website and backend boundary
@@ -90,6 +100,8 @@ jobs:
         env:
           SUPABASE_URL: ${{ vars.SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          CAPTCHA_PROVIDER: ${{ vars.CAPTCHA_PROVIDER }}
+          CAPTCHA_SITE_KEY: ${{ vars.CAPTCHA_SITE_KEY }}
         run: npm run test:static
 
       - name: Configure GitHub Pages
@@ -104,6 +116,8 @@ jobs:
           STATIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           SUPABASE_URL: ${{ vars.SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          CAPTCHA_PROVIDER: ${{ vars.CAPTCHA_PROVIDER }}
+          CAPTCHA_SITE_KEY: ${{ vars.CAPTCHA_SITE_KEY }}
         run: npm run build:static
 
       - name: Verify GitHub Pages paths
@@ -126,6 +140,8 @@ jobs:
           STATIC_BASE_PATH: /Commonwealth-Online
           SUPABASE_URL: ${{ vars.SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          CAPTCHA_PROVIDER: ${{ vars.CAPTCHA_PROVIDER }}
+          CAPTCHA_SITE_KEY: ${{ vars.CAPTCHA_SITE_KEY }}
         run: |
           set -euo pipefail
           cd Website
