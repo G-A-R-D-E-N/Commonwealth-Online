@@ -17,6 +17,9 @@ const expectedPages = [
   "profile/index.html",
   "members/index.html",
   "member/index.html",
+  "factions/index.html",
+  "faction/index.html",
+  "factions/apply/index.html",
   "apply/index.html",
   "apply/team/index.html",
   "apply/beta/index.html",
@@ -87,7 +90,7 @@ const run = async () => {
   const staticServer = await startServer(serveStatic);
   const staticBase = `http://127.0.0.1:${staticServer.address().port}`;
   try {
-    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/apply/", "/forum/"]) {
+    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/factions/", "/faction/?id=test", "/factions/apply/", "/apply/", "/forum/"]) {
       const page = await request(staticBase, route);
       assert.equal(page.response.status, 200, route);
     }
@@ -110,6 +113,9 @@ const run = async () => {
     const staticProfile = await request(staticBase, "/profile/");
     const staticMembers = await request(staticBase, "/members/");
     const staticMember = await request(staticBase, "/member/?id=test");
+    const staticFactions = await request(staticBase, "/factions/");
+    const staticFaction = await request(staticBase, "/faction/?id=test");
+    const staticFactionApply = await request(staticBase, "/factions/apply/");
     const staticTeamForm = await request(staticBase, "/apply/team/");
     const staticBetaForm = await request(staticBase, "/apply/beta/");
     const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
@@ -192,6 +198,9 @@ const run = async () => {
     const profileSocialJs = fs.readFileSync(path.join(dist, "static/js/profile-social.js"), "utf8");
     const membersJs = fs.readFileSync(path.join(dist, "static/js/members.js"), "utf8");
     const memberJs = fs.readFileSync(path.join(dist, "static/js/member.js"), "utf8");
+    const factionsJs = fs.readFileSync(path.join(dist, "static/js/factions.js"), "utf8");
+    const factionJs = fs.readFileSync(path.join(dist, "static/js/faction.js"), "utf8");
+    const factionApplyJs = fs.readFileSync(path.join(dist, "static/js/faction-apply.js"), "utf8");
     const navbarJs = fs.readFileSync(path.join(dist, "static/js/navbar.js"), "utf8");
     const siteShellCss = fs.readFileSync(path.join(dist, "static/css/site-shell.css"), "utf8");
     const discordLinkJs = fs.readFileSync(path.join(dist, "static/js/discord-link.js"), "utf8");
@@ -242,6 +251,13 @@ const run = async () => {
     assert.match(memberJs, /status === "declined"/);
     assert.doesNotMatch(membersJs, /setInterval|setTimeout/);
     assert.doesNotMatch(memberJs, /setInterval/);
+    assert.match(factionsJs, /\.from\("factions"\)/);
+    assert.match(factionJs, /\.from\("faction_members"\)/);
+    assert.match(factionApplyJs, /\.from\("faction_applications"\)/);
+    assert.match(factionApplyJs, /changes_requested/);
+    assert.doesNotMatch(factionsJs, /setInterval|setTimeout/);
+    assert.doesNotMatch(factionJs, /setInterval|setTimeout/);
+    assert.doesNotMatch(factionApplyJs, /setInterval|setTimeout/);
     assert.match(siteShellCss, /body\.co-site\s*\{\s*background: #0d0e0f;/);
     assert.match(siteShellCss, /body\.co-site::before\s*\{\s*content: none;/);
     assert.doesNotMatch(siteShellCss, /radial-gradient|fractalNoise/);
