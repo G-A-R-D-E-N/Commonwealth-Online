@@ -205,6 +205,7 @@ const run = async () => {
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     const profileJs = fs.readFileSync(path.join(dist, "static/js/profile.js"), "utf8");
     const profileSocialJs = fs.readFileSync(path.join(dist, "static/js/profile-social.js"), "utf8");
+    const profileNotificationsJs = fs.readFileSync(path.join(dist, "static/js/profile-notifications.js"), "utf8");
     const profileBadgesJs = fs.readFileSync(path.join(dist, "static/js/profile-badges.js"), "utf8");
     const profileServersJs = fs.readFileSync(path.join(dist, "static/js/profile-servers.js"), "utf8");
     const profileCharactersJs = fs.readFileSync(path.join(dist, "static/js/profile-characters.js"), "utf8");
@@ -246,7 +247,8 @@ const run = async () => {
     assert.match(profileJs, /\.from\("profiles"\)/);
     assert.match(profileSocialJs, /user_profile_details/);
     assert.match(profileSocialJs, /user_friendships/);
-    assert.match(profileSocialJs, /user_notifications/);
+    assert.doesNotMatch(profileSocialJs, /user_notifications/);
+    assert.match(profileNotificationsJs, /user_notifications/);
     assert.match(profileSocialJs, /user_username_history/);
     assert.match(profileSocialJs, /show_username_history/);
     assert.match(profileBadgesJs, /user_badge_assignments/);
@@ -263,9 +265,10 @@ const run = async () => {
     assert.match(profileSocialJs, /Decline/);
     assert.match(profileSocialJs, /status: "declined"/);
     assert.match(profileSocialJs, /Cancel request/);
-    assert.match(profileSocialJs, /row\.actor\?\.avatar_url/);
-    assert.match(profileSocialJs, /co:notifications-cleared/);
-    assert.match(profileSocialJs, /window\.location\.assign\(item\.href\)/);
+    assert.match(profileNotificationsJs, /row\.actor\?\.avatar_url/);
+    assert.match(profileNotificationsJs, /co:notifications-cleared/);
+    assert.match(profileNotificationsJs, /window\.location\.assign\(item\.href\)/);
+    assert.match(profileSocialJs, /co:notifications-refresh/);
     assert.match(profileSocialJs, /Promise\.all/);
     assert.match(membersJs, /user_profile_details!inner/);
     assert.match(membersJs, /user_presence/);
