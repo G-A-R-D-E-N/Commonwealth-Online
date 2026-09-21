@@ -744,6 +744,7 @@ for (const [name, content] of [
   ["public profile default migration", publicProfileDefaultMigration],
   ["public faction slug links migration", publicFactionSlugLinksMigration],
   ["member username notification links migration", memberUsernameNotificationLinksMigration],
+  ["faction application delete migration", factionApplicationDeleteMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],
