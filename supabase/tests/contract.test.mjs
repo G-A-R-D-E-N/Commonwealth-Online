@@ -42,7 +42,7 @@ const intakeControlsMigration = fs.readFileSync(
   "utf8"
 );
 const accountProfilesMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260920223000_account_profiles.sql"),
+  path.join(root, "migrations", "20260921031102_account_profiles.sql"),
   "utf8"
 );
 const config = fs.readFileSync(path.join(root, "config.toml"), "utf8");
