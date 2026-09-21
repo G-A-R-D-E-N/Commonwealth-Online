@@ -16,7 +16,7 @@ const NAV_ITEMS = [
   { key: "roadmap", label: "Roadmap", href: "/roadmap" },
   { key: "forum", label: "Forum", href: "/forum", feature: "forum" },
   { key: "applications", label: "Apply", href: "/apply", feature: "applications" },
-  { key: "account", label: "Account", href: "/account" },
+  { key: "account", label: "Login / Sign Up", href: "/account" },
   { key: "repository", label: "Repository", href: config.links.repository, external: true },
   { key: "updates", label: "Updates", href: "/updates" },
 ];
