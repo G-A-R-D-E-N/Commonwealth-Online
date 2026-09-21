@@ -26,6 +26,12 @@ as $function$
   );
 $function$;
 
+create policy "faction managers read membership queue"
+on public.faction_members
+for select
+to authenticated
+using (private.can_manage_faction_members(faction_id));
+
 create or replace function public.request_faction_membership(p_faction_id uuid)
 returns text
 language plpgsql
@@ -252,6 +258,24 @@ begin
     status = 'invited',
     joined_at = null,
     updated_at = now();
+
+  insert into public.user_notifications (
+    user_id,
+    actor_id,
+    type,
+    title,
+    body,
+    target_url
+  )
+  select
+    p_user_id,
+    auth.uid(),
+    'system',
+    'Faction invitation',
+    'You were invited to join ' || f.name || '.',
+    '/faction/?id=' || f.id::text
+  from public.factions f
+  where f.id = p_faction_id;
 end;
 $function$;
 
