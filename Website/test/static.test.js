@@ -15,6 +15,8 @@ const expectedPages = [
   "updates/index.html",
   "account/index.html",
   "profile/index.html",
+  "members/index.html",
+  "member/index.html",
   "apply/index.html",
   "apply/team/index.html",
   "apply/beta/index.html",
@@ -85,7 +87,7 @@ const run = async () => {
   const staticServer = await startServer(serveStatic);
   const staticBase = `http://127.0.0.1:${staticServer.address().port}`;
   try {
-    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/apply/", "/forum/"]) {
+    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/apply/", "/forum/"]) {
       const page = await request(staticBase, route);
       assert.equal(page.response.status, 200, route);
     }
@@ -106,6 +108,8 @@ const run = async () => {
     const staticApply = await request(staticBase, "/apply/");
     const staticAccount = await request(staticBase, "/account/");
     const staticProfile = await request(staticBase, "/profile/");
+    const staticMembers = await request(staticBase, "/members/");
+    const staticMember = await request(staticBase, "/member/?id=test");
     const staticTeamForm = await request(staticBase, "/apply/team/");
     const staticBetaForm = await request(staticBase, "/apply/beta/");
     const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
@@ -131,6 +135,14 @@ const run = async () => {
     assert.match(staticProfile.text, /data-profile/);
     assert.match(staticProfile.text, /data-profile-form/);
     assert.match(staticProfile.text, /data-password-form/);
+    assert.match(staticProfile.text, /data-community-profile-form/);
+    assert.match(staticProfile.text, /data-friends-list/);
+    assert.match(staticProfile.text, /data-notifications-list/);
+    assert.match(staticMembers.text, /data-members/);
+    assert.match(staticMembers.text, /data-members-search/);
+    assert.match(staticMember.text, /data-member/);
+    assert.match(staticMember.text, /data-friend-action/);
+    assert.match(staticMember.text, /data-block-action/);
     assert.doesNotMatch(staticProfile.text, /data-discord-link/);
     assert.doesNotMatch(staticProfile.text, />Link Discord</);
     assert.doesNotMatch(staticAccount.text, />Continue with Discord</);
@@ -173,6 +185,9 @@ const run = async () => {
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     const profileJs = fs.readFileSync(path.join(dist, "static/js/profile.js"), "utf8");
+    const profileSocialJs = fs.readFileSync(path.join(dist, "static/js/profile-social.js"), "utf8");
+    const membersJs = fs.readFileSync(path.join(dist, "static/js/members.js"), "utf8");
+    const memberJs = fs.readFileSync(path.join(dist, "static/js/member.js"), "utf8");
     const navbarJs = fs.readFileSync(path.join(dist, "static/js/navbar.js"), "utf8");
     const siteShellCss = fs.readFileSync(path.join(dist, "static/css/site-shell.css"), "utf8");
     const discordLinkJs = fs.readFileSync(path.join(dist, "static/js/discord-link.js"), "utf8");
@@ -200,6 +215,16 @@ const run = async () => {
     assert.match(profileJs, /updateUser/);
     assert.match(profileJs, /currentPassword/);
     assert.match(profileJs, /\.from\("profiles"\)/);
+    assert.match(profileSocialJs, /user_profile_details/);
+    assert.match(profileSocialJs, /user_friendships/);
+    assert.match(profileSocialJs, /user_notifications/);
+    assert.match(profileSocialJs, /Promise\.all/);
+    assert.match(membersJs, /user_profile_details!inner/);
+    assert.match(membersJs, /user_presence/);
+    assert.match(memberJs, /user_friendships/);
+    assert.match(memberJs, /user_blocks/);
+    assert.doesNotMatch(membersJs, /setInterval|setTimeout/);
+    assert.doesNotMatch(memberJs, /setInterval/);
     assert.match(siteShellCss, /body\.co-site\s*\{\s*background: #0d0e0f;/);
     assert.match(siteShellCss, /body\.co-site::before\s*\{\s*content: none;/);
     assert.doesNotMatch(siteShellCss, /radial-gradient|fractalNoise/);
