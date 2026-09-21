@@ -10,6 +10,7 @@
   const membershipCopy = root.querySelector("[data-faction-membership-copy]");
   const membershipAction = root.querySelector("[data-faction-membership-action]");
   const membershipSecondary = root.querySelector("[data-faction-membership-secondary]");
+  const manageLink = root.querySelector("[data-faction-manage-link]");
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
   if (!url || !key || !window.supabase?.createClient) return;
@@ -232,6 +233,20 @@
     }
 
     if (membership.status === "active") {
+      if (manageLink && membership.role_id) {
+        const { data: role } = await client
+          .from("faction_roles")
+          .select("can_manage_members,can_manage_roles,can_edit_faction")
+          .eq("id", membership.role_id)
+          .eq("faction_id", factionId)
+          .maybeSingle();
+
+        if (role?.can_manage_members || role?.can_manage_roles || role?.can_edit_faction) {
+          manageLink.href = assetBase + "/faction/manage/?id=" + encodeURIComponent(factionId);
+          manageLink.hidden = false;
+        }
+      }
+
       membershipCopy.textContent = "You are an active member of this faction.";
       membershipAction.textContent = "Member";
       membershipAction.disabled = true;
