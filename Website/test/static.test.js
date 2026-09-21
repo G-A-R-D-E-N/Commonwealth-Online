@@ -126,7 +126,7 @@ const run = async () => {
     }
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     assert.match(accountJs, /linkIdentity/);
-    assert.match(accountJs, /assetBase}\\/account\\//);
+    assert.ok(accountJs.includes('new URL(`${assetBase}/account/`, window.location.origin).href'));
     assert.doesNotMatch(accountJs, /new URL\("\\.", window\.location\.href\)/);
     assert.doesNotMatch(accountJs, /storage\.from/);
     const updatesJs = fs.readFileSync(path.join(dist, "static/js/updates.js"), "utf8");
