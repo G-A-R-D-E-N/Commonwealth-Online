@@ -94,17 +94,10 @@
                   <textarea name="bio" maxlength="500" rows="4" placeholder="Tell other players a little about yourself."></textarea>
                 </label>
 
-                <div class="profile-fields">
-                  <label class="profile-field">
-                    <span>Faction</span>
-                    <input name="faction" type="text" maxlength="40" placeholder="Minutemen, Brotherhood, Railroad…" />
-                  </label>
-
-                  <label class="profile-field">
-                    <span>Playstyle</span>
-                    <input name="playstyle" type="text" maxlength="80" placeholder="Co-op, survival, roleplay…" />
-                  </label>
-                </div>
+                <label class="profile-field">
+                  <span>Playstyle</span>
+                  <input name="playstyle" type="text" maxlength="80" placeholder="Co-op, survival, roleplay…" />
+                </label>
 
                 <div class="profile-privacy">
                   <label><input name="is_public" type="checkbox" /> Public profile</label>
@@ -139,6 +132,21 @@
               </div>
               <div class="profile-social-list" data-server-history-list>
                 <p class="account-help">Loading server history…</p>
+              </div>
+            </section>
+
+            <section class="profile-card profile-card--wide" aria-labelledby="factions-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Factions</p>
+                <h2 id="factions-title">Faction membership</h2>
+                <p>Your primary faction appears on your public profile and can be used by future official servers.</p>
+              </div>
+              <div class="profile-social-list" data-profile-factions-list>
+                <p class="account-help">Loading factions…</p>
+              </div>
+              <div class="profile-actions">
+                <a class="co-btn co-btn--ghost" href="/factions/">Browse factions</a>
+                <a class="co-btn co-btn--ghost" href="/factions/apply/">Create a faction</a>
               </div>
             </section>
 
