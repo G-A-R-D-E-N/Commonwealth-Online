@@ -97,6 +97,10 @@ const userServerIdentityMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921165500_user_server_identity.sql"),
   "utf8"
 );
+const userCharactersMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921170500_user_characters.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -334,6 +338,19 @@ assert.match(userServerIdentityMigration, /create or replace function public\.ge
 assert.match(userServerIdentityMigration, /d\.show_recent_servers/i);
 assert.match(userServerIdentityMigration, /private\.users_blocked\(h\.user_id, auth\.uid\(\)\)/i);
 assert.match(userServerIdentityMigration, /limit 5/i);
+assert.match(userCharactersMigration, /add column if not exists show_characters boolean not null default false/i);
+assert.match(userCharactersMigration, /create table if not exists public\.user_characters/i);
+assert.match(userCharactersMigration, /alter table public\.user_characters enable row level security/i);
+assert.match(userCharactersMigration, /grant select on public\.user_characters to authenticated/i);
+assert.match(userCharactersMigration, /grant all on public\.user_characters to service_role/i);
+assert.doesNotMatch(userCharactersMigration, /grant (insert|update|delete).*public\.user_characters to authenticated/i);
+assert.match(userCharactersMigration, /create or replace function public\.upsert_user_character/i);
+assert.match(userCharactersMigration, /revoke all on function public\.upsert_user_character[\s\S]*from public, anon, authenticated/i);
+assert.match(userCharactersMigration, /grant execute on function public\.upsert_user_character[\s\S]*to service_role/i);
+assert.match(userCharactersMigration, /create or replace function public\.get_public_user_characters\(p_user_id uuid\)/i);
+assert.match(userCharactersMigration, /d\.show_characters/i);
+assert.match(userCharactersMigration, /private\.users_blocked\(c\.user_id, auth\.uid\(\)\)/i);
+assert.match(userCharactersMigration, /limit 10/i);
 for (const table of [
   "factions",
   "faction_roles",
