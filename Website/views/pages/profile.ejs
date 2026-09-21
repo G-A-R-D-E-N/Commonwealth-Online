@@ -31,7 +31,8 @@
           </header>
 
           <div class="profile-grid">
-            <section class="profile-card profile-card--wide" aria-labelledby="profile-settings-title">
+            <div class="profile-column profile-column--main">
+            <section class="profile-card" aria-labelledby="profile-settings-title">
               <div class="profile-card__head">
                 <p class="section-kicker">Identity</p>
                 <h2 id="profile-settings-title">Profile settings</h2>
@@ -81,7 +82,7 @@
               </form>
             </section>
 
-            <section class="profile-card profile-card--wide" aria-labelledby="community-profile-title">
+            <section class="profile-card" aria-labelledby="community-profile-title">
               <div class="profile-card__head">
                 <p class="section-kicker">Community</p>
                 <h2 id="community-profile-title">Public profile</h2>
@@ -116,7 +117,7 @@
               </form>
             </section>
 
-            <section class="profile-card profile-card--wide" aria-labelledby="characters-title">
+            <section class="profile-card" aria-labelledby="characters-title">
               <div class="profile-card__head">
                 <p class="section-kicker">Multiplayer</p>
                 <h2 id="characters-title">Characters</h2>
@@ -127,6 +128,23 @@
               </div>
             </section>
 
+            <section class="profile-card" aria-labelledby="factions-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Factions</p>
+                <h2 id="factions-title">Faction membership</h2>
+                <p>Your primary faction appears on your public profile and can be used by future official servers.</p>
+              </div>
+              <div class="profile-social-list" data-profile-factions-list>
+                <p class="account-help">Loading factions…</p>
+              </div>
+              <div class="profile-actions">
+                <a class="co-btn co-btn--ghost" href="/factions/">Browse factions</a>
+                <a class="co-btn co-btn--ghost" href="/factions/apply/">Create a faction</a>
+              </div>
+            </section>
+            </div>
+
+            <div class="profile-column profile-column--side">
             <section class="profile-card" aria-labelledby="server-favorites-title">
               <div class="profile-card__head">
                 <p class="section-kicker">Multiplayer</p>
@@ -144,21 +162,6 @@
               </div>
               <div class="profile-social-list" data-server-history-list>
                 <p class="account-help">Loading server history…</p>
-              </div>
-            </section>
-
-            <section class="profile-card profile-card--wide" aria-labelledby="factions-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Factions</p>
-                <h2 id="factions-title">Faction membership</h2>
-                <p>Your primary faction appears on your public profile and can be used by future official servers.</p>
-              </div>
-              <div class="profile-social-list" data-profile-factions-list>
-                <p class="account-help">Loading factions…</p>
-              </div>
-              <div class="profile-actions">
-                <a class="co-btn co-btn--ghost" href="/factions/">Browse factions</a>
-                <a class="co-btn co-btn--ghost" href="/factions/apply/">Create a faction</a>
               </div>
             </section>
 
@@ -239,6 +242,7 @@
                 <button class="co-btn co-btn--primary" type="submit">Update password</button>
               </form>
             </section>
+            </div>
 
           </div>
         </section>
