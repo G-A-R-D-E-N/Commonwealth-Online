@@ -264,6 +264,7 @@ assert.match(socialFoundationMigration, /grant all on public\.user_presence to s
 assert.doesNotMatch(socialFoundationMigration, /grant insert, update, delete on public\.user_presence to authenticated/i);
 assert.doesNotMatch(socialFoundationMigration, /grant insert on public\.user_notifications to authenticated/i);
 assert.match(socialPrivacyMigration, /revoke select on public\.profiles from anon, authenticated/i);
+assert.doesNotMatch(socialPrivacyMigration, /grant select on public\.profiles to anon, authenticated/i);
 assert.match(
   socialPrivacyMigration,
   /grant select \(id, display_name, avatar_url, role\)\s+on public\.profiles\s+to anon, authenticated/i
