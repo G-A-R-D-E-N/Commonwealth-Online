@@ -14,10 +14,10 @@
   const loadBadges = async () => {
     const { data, error } = await client
       .from("user_badge_assignments")
-      .select("badge_id,is_displayed,display_order,assigned_at,badge:user_badges!user_badge_assignments_badge_id_fkey(slug,name,description)")
+      .select("badge_id,is_displayed,display_order,badge:user_badges!user_badge_assignments_badge_id_fkey(slug,name,description)")
       .eq("user_id", user.id)
       .order("display_order", { ascending: true })
-      .order("assigned_at", { ascending: true });
+      .order("badge_id", { ascending: true });
 
     list.replaceChildren();
 
