@@ -51,7 +51,7 @@ create table public.faction_members (
   primary key (faction_id, user_id),
   foreign key (role_id, faction_id)
     references public.faction_roles(id, faction_id)
-    on delete set null (role_id)
+    on delete restrict
 );
 
 create table public.faction_applications (
