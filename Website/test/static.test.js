@@ -150,6 +150,10 @@ const run = async () => {
     assert.match(staticMembers.text, /data-members/);
     assert.match(staticMembers.text, /data-members-search/);
     assert.match(staticFactions.text, /class="factions-hero"/);
+    assert.match(staticFactionApply.text, /class="faction-apply-hero"/);
+    assert.match(staticFactionApply.text, /class="faction-application-panel"/);
+    assert.match(staticFactionApply.text, /<fieldset class="faction-form-section">/);
+    assert.doesNotMatch(staticFactionApply.text, /section-panel faction-shell/);
     assert.match(staticFactions.text, /class="factions-directory"/);
     assert.match(staticFactions.text, />Faction directory</);
     assert.doesNotMatch(staticFactions.text, /section-panel faction-shell/);

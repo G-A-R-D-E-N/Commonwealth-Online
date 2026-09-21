@@ -262,3 +262,202 @@
     grid-column: auto;
   }
 }
+
+.faction-apply-main {
+  width: min(1120px, calc(100% - (var(--site-gutter) * 2)));
+  margin: 0 auto;
+  padding: 1.5rem 0 4rem;
+}
+
+.faction-apply-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.faction-apply-hero {
+  min-height: 20rem;
+  display: flex;
+  align-items: end;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid var(--site-border-soft);
+  background:
+    linear-gradient(90deg, rgba(7, 9, 7, 0.97) 0%, rgba(7, 9, 7, 0.82) 52%, rgba(7, 9, 7, 0.22) 100%),
+    url("https://res.cloudinary.com/dewzjk72j/image/authenticated/s--siXH2HO6--/c_crop%2Cw_1860%2Ch_1900%2Cg_center%2Cx_850%2Cy_90/c_scale%2Cw_800/f_auto%3Aimage%2Cq_auto/FO4_ART_AnniversaryEdition_16x9_GUN_Clean_mnt65i") center 48% / cover no-repeat;
+  box-shadow: 0 1.2rem 2.8rem rgba(0, 0, 0, 0.28);
+}
+
+.faction-apply-hero__copy {
+  max-width: 44rem;
+}
+
+.faction-apply-hero h1 {
+  margin: 0.15rem 0 0.5rem;
+  color: var(--site-heading);
+  font-family: var(--site-font-display);
+  font-size: clamp(2.7rem, 7vw, 5rem);
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.faction-apply-hero__copy > p:not(.section-kicker) {
+  color: var(--site-text);
+  line-height: 1.6;
+}
+
+.faction-apply-hero .co-btn {
+  margin-top: 1rem;
+}
+
+.faction-application-panel {
+  border: 1px solid var(--site-border-soft);
+  background: var(--site-surface);
+}
+
+.faction-application-panel__bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid var(--site-border-soft);
+  background: var(--site-bg-inset);
+  color: var(--site-brand-gold);
+  font-family: var(--site-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.faction-application-status {
+  margin: 1rem 1rem 0;
+}
+
+.faction-application-form {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  max-width: none;
+}
+
+.faction-application-form[hidden] {
+  display: none;
+}
+
+.faction-form-section {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--site-border-soft);
+  background: var(--site-surface-alt);
+}
+
+.faction-form-section legend {
+  padding: 0 0.45rem;
+  color: var(--site-heading);
+  font-family: var(--site-font-display);
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.faction-form-section__help {
+  margin: 0;
+  color: var(--site-text-faint);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.faction-form-grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.faction-form-grid--two {
+  grid-template-columns: minmax(0, 1.35fr) minmax(12rem, 0.65fr);
+}
+
+.faction-form-field {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.faction-form-field > span {
+  color: var(--site-brand-gold);
+  font-family: var(--site-font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.faction-application-form input,
+.faction-application-form textarea,
+.faction-application-form select {
+  width: 100%;
+  min-height: 2.7rem;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid var(--site-border);
+  border-radius: 0;
+  background: #090c09;
+  color: var(--site-text);
+  font: inherit;
+}
+
+.faction-application-form textarea {
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.faction-application-form select {
+  color-scheme: dark;
+}
+
+.faction-application-form input::placeholder,
+.faction-application-form textarea::placeholder {
+  color: var(--site-text-faint);
+}
+
+.faction-application-form input:focus-visible,
+.faction-application-form textarea:focus-visible,
+.faction-application-form select:focus-visible {
+  outline: none;
+  border-color: var(--site-brand-gold);
+  box-shadow: 0 0 0 1px rgba(201, 168, 74, 0.28);
+}
+
+.faction-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  padding-top: 0.2rem;
+}
+
+@media (max-width: 760px) {
+  .faction-apply-main {
+    width: min(100% - 1rem, 1120px);
+    padding-top: 0.5rem;
+  }
+
+  .faction-apply-hero {
+    min-height: 19rem;
+    padding: 1.1rem;
+    background-position: 58% center;
+  }
+
+  .faction-application-panel__bar,
+  .faction-form-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .faction-form-grid--two {
+    grid-template-columns: 1fr;
+  }
+
+  .faction-form-actions .co-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
