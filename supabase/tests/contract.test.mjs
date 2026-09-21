@@ -125,6 +125,10 @@ const publicProfileDefaultMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921204600_public_profiles_default.sql"),
   "utf8"
 );
+const factionApplicationDeleteMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921220000_faction_application_admin_delete.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -525,6 +529,27 @@ assert.doesNotMatch(
   /update public\.user_profile_details/i
 );
 
+assert.match(
+  factionApplicationDeleteMigration,
+  /create or replace function private\.delete_faction_application\(p_application_id uuid\)/i
+);
+assert.match(
+  factionApplicationDeleteMigration,
+  /role = 'admin'/i
+);
+assert.match(
+  factionApplicationDeleteMigration,
+  /delete from public\.faction_applications[\s\S]*where id = p_application_id/i
+);
+assert.match(
+  factionApplicationDeleteMigration,
+  /revoke all on function public\.delete_faction_application\(uuid\) from public, anon/i
+);
+assert.match(
+  factionApplicationDeleteMigration,
+  /grant execute on function public\.delete_faction_application\(uuid\) to authenticated, service_role/i
+);
+
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
 assert.match(registerAccount, /website/);
@@ -686,6 +711,7 @@ for (const [name, content] of [
   ["faction review guards migration", factionReviewGuardsMigration],
   ["faction status notifications migration", factionStatusNotificationsMigration],
   ["public profile default migration", publicProfileDefaultMigration],
+  ["faction application delete migration", factionApplicationDeleteMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],

@@ -51,6 +51,23 @@
     return true;
   };
 
+  const deleteApplication = async (application) => {
+    if (!window.confirm("Delete this faction application permanently?")) return false;
+
+    const { error } = await client.rpc("delete_faction_application", {
+      p_application_id: application.id,
+    });
+
+    if (error) {
+      setStatus(error.message || "Could not delete the faction application.", true);
+      return false;
+    }
+
+    setStatus("Faction application deleted.");
+    await loadApplications();
+    return true;
+  };
+
   const createButton = (labelText, className, handler) => {
     const button = document.createElement("button");
     button.className = className;
@@ -139,11 +156,30 @@
       facts.append(row);
     }
 
+    if (application.reviewed_at) {
+      const reviewed = document.createElement("div");
+      const term = document.createElement("dt");
+      const detail = document.createElement("dd");
+      term.textContent = "Reviewed";
+      detail.textContent =
+        new Date(application.reviewed_at).toLocaleString() +
+        (application.reviewer?.display_name ? " by " + application.reviewer.display_name : "");
+      reviewed.append(term, detail);
+      facts.append(reviewed);
+    }
+
     const actionable =
       application.status === "submitted" || application.status === "reviewing";
 
     if (!actionable) {
       appendReviewNote(facts, application);
+      const closedActions = document.createElement("div");
+      closedActions.className = "profile-actions faction-review-actions";
+      closedActions.append(
+        createButton("Delete application", "co-btn co-btn--ghost", () =>
+          deleteApplication(application)
+        )
+      );
       card.append(head, facts);
 
       if (application.status === "changes_requested") {
@@ -158,6 +194,7 @@
         card.append(waiting);
       }
 
+      card.append(closedActions);
       return card;
     }
 
@@ -204,7 +241,10 @@
         }
         if (!window.confirm("Reject this faction application?")) return false;
         return review(application, "rejected", message);
-      })
+      }),
+      createButton("Delete application", "co-btn co-btn--ghost", () =>
+        deleteApplication(application)
+      )
     );
 
     card.append(head, facts, noteField, actions);
@@ -215,7 +255,7 @@
     let query = client
       .from("faction_applications")
       .select(
-        "id,applicant_id,proposed_name,proposed_tag,summary,lore,goals,focus,recruitment,status,review_note,created_at,applicant:profiles!faction_applications_applicant_id_fkey(id,display_name,avatar_url)"
+        "id,applicant_id,proposed_name,proposed_tag,summary,lore,goals,focus,recruitment,status,review_note,reviewed_at,created_at,applicant:profiles!faction_applications_applicant_id_fkey(id,display_name,avatar_url),reviewer:profiles!faction_applications_reviewed_by_fkey(display_name)"
       )
       .order("created_at", { ascending: true });
 

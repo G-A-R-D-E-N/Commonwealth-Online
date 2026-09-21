@@ -496,7 +496,7 @@ const PUBLIC_PAGES = [
       description: "Apply to establish a persistent player faction in Commonwealth Online.",
       bodyClass: "co-faction-apply-page",
       activeKey: "factions",
-      styles: ["/static/css/profile.css", "/static/css/factions.css?v=20260921-3"],
+      styles: ["/static/css/profile.css", "/static/css/factions.css?v=20260921-3", "/static/css/faction-history.css"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -532,7 +532,7 @@ const PUBLIC_PAGES = [
       description: "Review pending Commonwealth Online faction applications.",
       bodyClass: "co-faction-review-page",
       activeKey: "factions",
-      styles: ["/static/css/profile.css", "/static/css/social.css", "/static/css/factions.css?v=20260921-4"],
+      styles: ["/static/css/profile.css", "/static/css/social.css", "/static/css/factions.css?v=20260921-4", "/static/css/faction-history.css"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",

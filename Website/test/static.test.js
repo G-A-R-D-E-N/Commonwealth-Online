@@ -156,6 +156,8 @@ const run = async () => {
     assert.match(staticFactionApply.text, /class="faction-application-panel"/);
     assert.match(staticFactionApply.text, /data-faction-application-state/);
     assert.match(staticFactionApply.text, /data-faction-application-review-note/);
+    assert.match(staticFactionApply.text, /data-faction-application-history/);
+    assert.match(staticFactionApply.text, /data-faction-application-history-list/);
     assert.match(staticFactionApply.text, /<fieldset class="faction-form-section">/);
     assert.doesNotMatch(staticFactionApply.text, /section-panel faction-shell/);
     assert.match(staticFactions.text, /data-faction-review-link/);
@@ -315,10 +317,17 @@ const run = async () => {
     assert.match(factionApplyJs, /"Changes needed"/);
     assert.match(factionApplyJs, /Start a new application/);
     assert.match(factionApplyJs, /reviewed_at,created_at,updated_at/);
+    assert.match(factionApplyJs, /renderHistory/);
+    assert.match(factionApplyJs, /rows\.slice\(1\)/);
     assert.doesNotMatch(factionApplyJs, /\.in\("status", \["draft", "submitted", "reviewing", "changes_requested"\]\)/);
     assert.match(factionsJs, /profile\?\.role !== "admin"/);
     assert.match(factionReviewJs, /profile\?\.role !== "admin"/);
     assert.match(factionReviewJs, /review_faction_application/);
+    assert.match(factionReviewJs, /delete_faction_application/);
+    assert.match(factionReviewJs, /Delete application/);
+    assert.match(factionReviewJs, /Delete this faction application permanently\?/);
+    assert.match(factionReviewJs, /reviewed_at/);
+    assert.match(factionReviewJs, /reviewer:profiles!faction_applications_reviewed_by_fkey/);
     assert.match(factionReviewJs, /"approved"/);
     assert.match(factionReviewJs, /"changes_requested"/);
     assert.match(factionReviewJs, /"rejected"/);
