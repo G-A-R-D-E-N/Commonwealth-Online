@@ -257,6 +257,8 @@ assert.match(socialFoundationMigration, /show_presence boolean not null default 
 assert.match(socialFoundationMigration, /private\.users_blocked/i);
 assert.match(socialFoundationMigration, /create trigger create_social_profile_rows/i);
 assert.match(socialFoundationMigration, /create trigger notify_friendship_change/i);
+assert.match(socialFoundationMigration, /'\/member\/\?id=' \|\| new\.requester_id::text/i);
+assert.match(socialFoundationMigration, /'\/member\/\?id=' \|\| new\.addressee_id::text/i);
 assert.match(socialFoundationMigration, /create trigger remove_friendship_on_block/i);
 assert.match(socialFoundationMigration, /grant update \(read_at\) on public\.user_notifications/i);
 assert.match(socialFoundationMigration, /grant usage, select on sequence public\.user_friendships_id_seq to authenticated/i);
