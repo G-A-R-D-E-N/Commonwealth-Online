@@ -74,35 +74,35 @@ const signupCleanupFixMigration = fs.readFileSync(
   "utf8"
 );
 const socialFoundationMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260921162000_user_social_foundation.sql"),
+  path.join(root, "migrations", "20260921181152_user_social_foundation.sql"),
   "utf8"
 );
 const socialPrivacyMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260921162500_social_privacy_hardening.sql"),
+  path.join(root, "migrations", "20260921181157_social_privacy_hardening.sql"),
   "utf8"
 );
 const factionFoundationMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260921173000_faction_foundation.sql"),
+  path.join(root, "migrations", "20260921181243_faction_foundation.sql"),
   "utf8"
 );
 const factionMembershipMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260921180000_faction_membership.sql"),
+  path.join(root, "migrations", "20260921181247_faction_membership.sql"),
   "utf8"
 );
 const usernameHistoryMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260921163500_username_history.sql"),
+  path.join(root, "migrations", "20260921181222_username_history.sql"),
   "utf8"
 );
 const userBadgesMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260921164500_user_badges.sql"),
+  path.join(root, "migrations", "20260921181227_user_badges.sql"),
   "utf8"
 );
 const userServerIdentityMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260921165500_user_server_identity.sql"),
+  path.join(root, "migrations", "20260921181232_user_server_identity.sql"),
   "utf8"
 );
 const userCharactersMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260921170500_user_characters.sql"),
+  path.join(root, "migrations", "20260921181238_user_characters.sql"),
   "utf8"
 );
 const registerAccount = fs.readFileSync(
