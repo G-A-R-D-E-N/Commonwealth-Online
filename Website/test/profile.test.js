@@ -9,7 +9,9 @@ const source = fs.readFileSync(path.join(__dirname, "..", "static", "js", "profi
 
 let profileSubmit;
 let passwordSubmit;
+let discordClick;
 let authStateHandler;
+let linkArgs;
 const authUpdates = [];
 const profileUpdates = [];
 const callOrder = [];
@@ -41,7 +43,14 @@ const profileAvatar = element();
 const profileName = element();
 const profileEmail = element();
 const discordState = element();
-const discordLink = element({ disabled: true });
+const discordLink = element({
+  disabled: true,
+  addEventListener(type, handler) {
+    if (type === "click") {
+      discordClick = handler;
+    }
+  },
+});
 const signOut = element();
 const username = element();
 const email = element();
@@ -150,8 +159,12 @@ const client = {
         error: null,
       };
     },
-    async linkIdentity() {
-      return { error: null };
+    async linkIdentity(args) {
+      linkArgs = args;
+      return {
+        data: { url: "https://discord.com/oauth2/authorize?client_id=link-test" },
+        error: null,
+      };
     },
     async signOut() {
       return { error: null };
@@ -284,7 +297,14 @@ const run = async () => {
   assert.equal(authUpdates[1].options, undefined);
   assert.equal(passwordReset, true);
   assert.equal(status.textContent, "Password updated.");
-  assert.equal(assignedUrl, "");
+  assert.equal(typeof discordClick, "function");
+
+  await discordClick();
+
+  assert.equal(linkArgs.provider, "discord");
+  assert.equal(linkArgs.options.redirectTo, "https://commonwealth-online.com/account/");
+  assert.equal(linkArgs.options.skipBrowserRedirect, true);
+  assert.equal(assignedUrl, "https://discord.com/oauth2/authorize?client_id=link-test");
 
   console.log("profile settings checks passed");
 };

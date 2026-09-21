@@ -144,16 +144,30 @@
 
   discordSignIn?.addEventListener("click", async () => {
     if (!discordAvailable) {
+      setStatus("Discord sign-in is currently unavailable.", true);
       return;
     }
 
-    const { error } = await client.auth.signInWithOAuth({
+    setStatus("Opening Discord…");
+    const { data, error } = await client.auth.signInWithOAuth({
       provider: "discord",
-      options: { redirectTo: accountUrl },
+      options: {
+        redirectTo: accountUrl,
+        skipBrowserRedirect: true,
+      },
     });
+
     if (error) {
       setStatus(error.message || "Could not start Discord sign-in.", true);
+      return;
     }
+
+    if (!data?.url) {
+      setStatus("Discord sign-in did not return an authorization URL.", true);
+      return;
+    }
+
+    window.location.assign(data.url);
   });
 
   const initialize = async () => {

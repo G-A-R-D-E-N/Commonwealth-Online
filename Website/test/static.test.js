@@ -176,11 +176,11 @@ const run = async () => {
     assert.match(navbarJs, /window\.coSupabase/);
     assert.match(accountJs, /window\.coSupabase/);
     assert.ok(accountJs.includes("emailRedirectTo: accountUrl"));
-    assert.ok(accountJs.includes("options: { redirectTo: accountUrl }"));
+    assert.match(accountJs, /redirectTo: accountUrl,[\s\S]*skipBrowserRedirect: true/);
     assert.doesNotMatch(accountJs, /linkIdentity/);
     assert.doesNotMatch(accountJs, /\.from\("profiles"\)/);
     assert.match(profileJs, /linkIdentity/);
-    assert.ok(profileJs.includes("options: { redirectTo: accountUrl }"));
+    assert.match(profileJs, /redirectTo: accountUrl,[\s\S]*skipBrowserRedirect: true/);
     assert.match(profileJs, /updateUser/);
     assert.match(profileJs, /currentPassword/);
     assert.match(profileJs, /\.from\("profiles"\)/);

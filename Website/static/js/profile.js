@@ -230,16 +230,30 @@
 
   discordLink?.addEventListener("click", async () => {
     if (!discordAvailable) {
+      setStatus("Discord linking is currently unavailable.", true);
       return;
     }
 
-    const { error } = await client.auth.linkIdentity({
+    setStatus("Opening Discord…");
+    const { data, error } = await client.auth.linkIdentity({
       provider: "discord",
-      options: { redirectTo: accountUrl },
+      options: {
+        redirectTo: accountUrl,
+        skipBrowserRedirect: true,
+      },
     });
+
     if (error) {
       setStatus(error.message || "Could not link Discord.", true);
+      return;
     }
+
+    if (!data?.url) {
+      setStatus("Discord linking did not return an authorization URL.", true);
+      return;
+    }
+
+    window.location.assign(data.url);
   });
 
   signOut?.addEventListener("click", async () => {

@@ -8,7 +8,9 @@ const vm = require("node:vm");
 const source = fs.readFileSync(path.join(__dirname, "..", "static", "js", "account.js"), "utf8");
 
 let registerHandler;
+let discordHandler;
 let signUpCalls = 0;
+let oauthArgs;
 let resolveSettings;
 const settingsResponse = new Promise((resolve) => {
   resolveSettings = resolve;
@@ -47,7 +49,15 @@ const registerForm = element({
   reset() {},
 });
 const signInForm = element();
-const discordSignIn = element({ hidden: false, disabled: true });
+const discordSignIn = element({
+  hidden: false,
+  disabled: true,
+  addEventListener(type, handler) {
+    if (type === "click") {
+      discordHandler = handler;
+    }
+  },
+});
 
 const elements = new Map([
   ["[data-account-status]", status],
@@ -75,6 +85,13 @@ const client = {
     async signUp() {
       signUpCalls += 1;
       return { data: { session: null }, error: null };
+    },
+    async signInWithOAuth(args) {
+      oauthArgs = args;
+      return {
+        data: { url: "https://discord.com/oauth2/authorize?client_id=test" },
+        error: null,
+      };
     },
   },
 };
@@ -155,6 +172,14 @@ const run = async () => {
   assert.equal(signUpCalls, 0);
   assert.equal(status.textContent, "Enter a username.");
   assert.equal(status.hidden, false);
+  assert.equal(typeof discordHandler, "function");
+
+  await discordHandler();
+
+  assert.equal(oauthArgs.provider, "discord");
+  assert.equal(oauthArgs.options.redirectTo, "https://commonwealth-online.com/account/");
+  assert.equal(oauthArgs.options.skipBrowserRedirect, true);
+  assert.equal(assignedUrl, "https://discord.com/oauth2/authorize?client_id=test");
 
   console.log("account auth initialization checks passed");
 };
