@@ -39,10 +39,12 @@ const socialCss = fs.readFileSync(path.join(__dirname, "..", "static", "css", "s
 
 const run = async () => {
   assert.match(templateSource, /class="members-hero"/);
-  assert.match(templateSource, /Survivor roster/);
-  assert.match(socialCss, /url\("\/assets\/images\/TwoPlayers\.webp"\)/);
-  assert.match(socialCss, /url\("\/assets\/images\/Vault109Exit\.webp"\)/);
-  assert.match(socialCss, /\.members-console/);
+  assert.match(templateSource, /class="members-menu"/);
+  assert.equal((templateSource.match(/<h1\b/g) || []).length, 1);
+  assert.doesNotMatch(templateSource, /Survivor roster|Detected signals|Network search|Presence status/);
+  assert.match(socialCss, /res\.cloudinary\.com\/dewzjk72j/);
+  assert.doesNotMatch(socialCss, /TwoPlayers\.webp|Vault109Exit\.webp/);
+  assert.equal((socialCss.match(/res\.cloudinary\.com\/dewzjk72j/g) || []).length, 1);
 
   const root = new FakeElement();
   root.dataset.supabaseUrl = "https://example.supabase.co";
