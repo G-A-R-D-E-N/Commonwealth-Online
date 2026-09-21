@@ -78,6 +78,10 @@ const run = async () => {
   for (const filePath of htmlFiles) {
     const html = fs.readFileSync(filePath, "utf8");
     assert.equal(/<%|<%=|<%-/.test(html), false, `unresolved EJS in ${filePath}`);
+    if (/http-equiv="refresh"/.test(html)) {
+      assert.doesNotMatch(html, /data-supabase-url|supabase-js|data-faction-review|data-faction-manage/);
+      continue;
+    }
     assert.match(html, /href="\/static\/css\/discord-link\.css\?v=20260921-1"/);
     assert.match(html, /src="\/static\/js\/discord-link\.js\?v=20260921-1"/);
     assert.doesNotMatch(html, /@widgetbot\/crate/);
@@ -117,6 +121,7 @@ const run = async () => {
     const staticMember = await request(staticBase, "/member/?id=test");
     const staticFactions = await request(staticBase, "/factions/");
     const staticFaction = await request(staticBase, "/faction/?id=test");
+    const staticFactionManage = await request(staticBase, "/faction/manage/?id=test");
     const staticFactionApply = await request(staticBase, "/factions/apply/");
     const staticFactionReview = await request(staticBase, "/factions/review/");
     const staticTeamForm = await request(staticBase, "/apply/team/");
@@ -156,13 +161,23 @@ const run = async () => {
     assert.match(staticFactionApply.text, /class="faction-application-panel"/);
     assert.match(staticFactionApply.text, /data-faction-application-state/);
     assert.match(staticFactionApply.text, /data-faction-application-review-note/);
+    assert.match(staticFactionApply.text, /data-faction-application-history/);
+    assert.match(staticFactionApply.text, /data-faction-application-history-list/);
     assert.match(staticFactionApply.text, /<fieldset class="faction-form-section">/);
     assert.doesNotMatch(staticFactionApply.text, /section-panel faction-shell/);
     assert.match(staticFactions.text, /data-faction-review-link/);
-    assert.match(staticFactionReview.text, /data-faction-review/);
-    assert.match(staticFactionReview.text, /data-faction-review-toolbar/);
-    assert.match(staticFactionReview.text, /data-faction-review-filter/);
-    assert.match(staticFactionReview.text, /data-faction-review-list/);
+    assert.match(staticProfile.text, /data-faction-review/);
+    assert.match(staticProfile.text, /data-faction-review-toolbar/);
+    assert.match(staticProfile.text, /data-faction-review-filter/);
+    assert.match(staticProfile.text, /data-faction-review-list/);
+    assert.match(staticProfile.text, /data-faction-manage/);
+    assert.match(staticProfile.text, /data-faction-manage-content/);
+    assert.match(staticFactionManage.text, /http-equiv="refresh"/);
+    assert.match(staticFactionManage.text, /\/profile\//);
+    assert.doesNotMatch(staticFactionManage.text, /data-faction-manage|data-supabase-url|supabase-js/);
+    assert.match(staticFactionReview.text, /http-equiv="refresh"/);
+    assert.match(staticFactionReview.text, /\/profile\/\?staff=factions/);
+    assert.doesNotMatch(staticFactionReview.text, /data-faction-review|data-supabase-url|supabase-js/);
     assert.match(staticFactions.text, /class="factions-directory"/);
     assert.match(staticFactions.text, />Faction directory</);
     assert.doesNotMatch(staticFactions.text, /section-panel faction-shell/);
