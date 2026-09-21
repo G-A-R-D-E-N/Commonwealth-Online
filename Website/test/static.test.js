@@ -13,6 +13,7 @@ const expectedPages = [
   "roadmap/index.html",
   "servers/index.html",
   "updates/index.html",
+  "account/index.html",
   "apply/index.html",
   "apply/team/index.html",
   "apply/beta/index.html",
@@ -80,7 +81,7 @@ const run = async () => {
   const staticServer = await startServer(serveStatic);
   const staticBase = `http://127.0.0.1:${staticServer.address().port}`;
   try {
-    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/apply/", "/forum/"]) {
+    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/apply/", "/forum/"]) {
       const page = await request(staticBase, route);
       assert.equal(page.response.status, 200, route);
     }
@@ -99,6 +100,7 @@ const run = async () => {
     assert.match(changelogs[0].markdown, /server browser/i);
 
     const staticApply = await request(staticBase, "/apply/");
+    const staticAccount = await request(staticBase, "/account/");
     const staticTeamForm = await request(staticBase, "/apply/team/");
     const staticBetaForm = await request(staticBase, "/apply/beta/");
     const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
@@ -106,6 +108,24 @@ const run = async () => {
     const staticMedia = await request(staticBase, "/media/");
     assert.match(staticTeamForm.text, /data-supabase-url/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
+    assert.match(staticAccount.text, /data-account/);
+    assert.match(staticAccount.text, /@supabase\/supabase-js@2\.105\.0/);
+    assert.match(staticAccount.text, /data-discord-link/);
+    assert.doesNotMatch(staticAccount.text, /type="file"/);
+    for (const icon of [
+      "vault-dweller.svg",
+      "minuteman.svg",
+      "ranger.svg",
+      "scribe.svg",
+      "scavenger.svg",
+      "atom-cat.svg",
+    ]) {
+      assert.match(staticAccount.text, new RegExp(icon.replace(".", "\\.")));
+      assert.equal(fs.existsSync(path.join(dist, "assets/profile-icons", icon)), true, `missing ${icon}`);
+    }
+    const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
+    assert.match(accountJs, /linkIdentity/);
+    assert.doesNotMatch(accountJs, /storage\.from/);
     const updatesJs = fs.readFileSync(path.join(dist, "static/js/updates.js"), "utf8");
     assert.doesNotMatch(updatesJs, /\/repo/, "updates.js must not reference the removed /repo page");
     assert.equal(fs.existsSync(path.join(dist, "repo/index.html")), false, "removed /repo page must not ship");
