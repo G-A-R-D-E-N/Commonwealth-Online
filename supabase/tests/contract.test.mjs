@@ -271,7 +271,7 @@ assert.match(
 );
 assert.match(socialPrivacyMigration, /create or replace function public\.get_public_member_profile\(p_user_id uuid\)/i);
 assert.match(socialPrivacyMigration, /when d\.show_joined_at then p\.created_at/i);
-assert.match(socialPrivacyMigration, /when d\.show_presence then pr\.status/i);
+assert.match(socialPrivacyMigration, /when d\.show_presence[\s\S]*private\.users_blocked\(p\.id, auth\.uid\(\)\)[\s\S]*then pr\.status/i);
 assert.match(socialPrivacyMigration, /create or replace function public\.get_public_member_friends\(p_user_id uuid\)/i);
 assert.match(socialPrivacyMigration, /owner_details\.show_friends/i);
 assert.match(socialPrivacyMigration, /friend_details\.is_public/i);
