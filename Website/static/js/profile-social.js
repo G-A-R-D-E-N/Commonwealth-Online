@@ -292,7 +292,18 @@
     for (const row of rows) {
       const item = document.createElement(row.target_url ? "a" : "div");
       item.className = "profile-social-row";
-      if (row.target_url) item.href = row.target_url.startsWith("/") ? assetBase + row.target_url : row.target_url;
+      if (row.target_url) {
+        item.href = row.target_url.startsWith("/") ? assetBase + row.target_url : row.target_url;
+      }
+
+      if (row.actor?.avatar_url) {
+        const avatar = document.createElement("img");
+        avatar.src = assetBase + row.actor.avatar_url;
+        avatar.alt = "";
+        avatar.width = 40;
+        avatar.height = 40;
+        item.append(avatar);
+      }
 
       const copy = document.createElement("span");
       const title = document.createElement("strong");
@@ -301,6 +312,18 @@
       body.textContent = row.body || new Date(row.created_at).toLocaleString();
       copy.append(title, body);
       item.append(copy);
+
+      if (row.target_url && !row.read_at) {
+        item.addEventListener("click", async (event) => {
+          event.preventDefault();
+          await client
+            .from("user_notifications")
+            .update({ read_at: new Date().toISOString() })
+            .eq("id", row.id);
+          window.location.assign(item.href);
+        });
+      }
+
       notificationsList.append(item);
     }
   };
@@ -340,7 +363,11 @@
       .eq("user_id", user.id)
       .is("read_at", null);
 
-    if (error) setStatus("Could not update notifications.", true);
+    if (error) {
+      setStatus("Could not update notifications.", true);
+    } else {
+      document.dispatchEvent(new CustomEvent("co:notifications-cleared"));
+    }
     await loadNotifications();
     markRead.disabled = false;
   });
