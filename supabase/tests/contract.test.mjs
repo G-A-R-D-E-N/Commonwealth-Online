@@ -41,6 +41,10 @@ const intakeControlsMigration = fs.readFileSync(
   path.join(root, "migrations", "20260920052401_application_intake_controls.sql"),
   "utf8"
 );
+const accountProfilesMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260920223000_account_profiles.sql"),
+  "utf8"
+);
 const config = fs.readFileSync(path.join(root, "config.toml"), "utf8");
 const envExample = fs.readFileSync(path.join(root, ".env.example"), "utf8");
 const deployWorkflow = fs.readFileSync(
@@ -126,6 +130,11 @@ for (const index of [
 assert.match(securityMigration, /revoke all on function public\.handle_new_user\(\) from public/i);
 assert.match(securityMigration, /grant execute on function public\.handle_new_user\(\) to service_role/i);
 assert.match(securityMigration, /grant execute on function public\.is_forum_moderator\(\) to authenticated, service_role/i);
+assert.match(accountProfilesMigration, /profiles_avatar_url_allowed/i);
+assert.match(accountProfilesMigration, /vault-dweller\.svg/i);
+assert.match(accountProfilesMigration, /atom-cat\.svg/i);
+assert.match(accountProfilesMigration, /new\.raw_user_meta_data ->> 'display_name'/i);
+assert.doesNotMatch(accountProfilesMigration, /nullif\(new\.raw_user_meta_data ->> 'picture'/i);
 
 const mentionPayload = buildDiscordPayload({
   type: "team",
