@@ -26,6 +26,20 @@
 
             <p class="site-notice faction-application-status" data-faction-apply-status role="status" hidden></p>
 
+            <section class="faction-application-state" data-faction-application-state hidden aria-live="polite">
+              <div class="faction-application-state__head">
+                <span class="faction-status" data-faction-application-badge>Application</span>
+                <span class="faction-application-state__date" data-faction-application-date></span>
+              </div>
+              <h2 data-faction-application-title>Application status</h2>
+              <p data-faction-application-copy></p>
+              <div class="faction-application-review-note" data-faction-application-review-note-wrap hidden>
+                <strong>Review note</strong>
+                <p data-faction-application-review-note></p>
+              </div>
+              <div class="faction-form-actions" data-faction-application-actions></div>
+            </section>
+
             <form class="faction-application-form" data-faction-apply-form>
               <fieldset class="faction-form-section">
                 <legend>Identity</legend>

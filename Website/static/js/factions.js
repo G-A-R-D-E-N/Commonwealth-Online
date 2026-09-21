@@ -6,6 +6,7 @@
   const key = root.dataset.supabaseKey || "";
   const list = root.querySelector("[data-factions-list]");
   const status = root.querySelector("[data-factions-status]");
+  const reviewLink = root.querySelector("[data-faction-review-link]");
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
   if (!url || !key || !list || !window.supabase?.createClient) return;
@@ -62,6 +63,22 @@
     return card;
   };
 
+  const loadAdminActions = async () => {
+    if (!reviewLink) return;
+
+    const { data: sessionData } = await client.auth.getSession();
+    const user = sessionData.session?.user || null;
+    if (!user) return;
+
+    const { data: profile, error } = await client
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    reviewLink.hidden = Boolean(error) || profile?.role !== "admin";
+  };
+
   const load = async () => {
     const { data, error } = await client
       .from("factions")
@@ -84,5 +101,5 @@
     for (const faction of data) list.append(renderFaction(faction));
   };
 
-  load();
+  Promise.all([load(), loadAdminActions()]);
 })();

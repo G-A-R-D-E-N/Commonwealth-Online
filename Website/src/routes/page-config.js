@@ -523,6 +523,24 @@ const PUBLIC_PAGES = [
       ],
     },
   },
+  {
+    route: "/factions/review",
+    template: "pages/faction-review",
+    output: "factions/review/index.html",
+    page: {
+      title: "Review Factions - Commonwealth Online",
+      description: "Review pending Commonwealth Online faction applications.",
+      bodyClass: "co-faction-review-page",
+      activeKey: "factions",
+      styles: ["/static/css/profile.css", "/static/css/social.css", "/static/css/factions.css?v=20260921-4"],
+      scripts: [
+        "/static/js/links.js",
+        "/static/js/navbar.js",
+        "/static/js/script.js",
+        "/static/js/faction-review.js",
+      ],
+    },
+  },
 ];
 
 const LEGACY_REDIRECTS = {

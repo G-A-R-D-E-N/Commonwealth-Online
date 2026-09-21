@@ -21,6 +21,7 @@ const expectedPages = [
   "faction/index.html",
   "faction/manage/index.html",
   "factions/apply/index.html",
+  "factions/review/index.html",
   "apply/index.html",
   "apply/team/index.html",
   "apply/beta/index.html",
@@ -91,7 +92,7 @@ const run = async () => {
   const staticServer = await startServer(serveStatic);
   const staticBase = `http://127.0.0.1:${staticServer.address().port}`;
   try {
-    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/factions/", "/faction/?id=test", "/faction/manage/?id=test", "/factions/apply/", "/apply/", "/forum/"]) {
+    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/factions/", "/faction/?id=test", "/faction/manage/?id=test", "/factions/apply/", "/factions/review/", "/apply/", "/forum/"]) {
       const page = await request(staticBase, route);
       assert.equal(page.response.status, 200, route);
     }
@@ -117,6 +118,7 @@ const run = async () => {
     const staticFactions = await request(staticBase, "/factions/");
     const staticFaction = await request(staticBase, "/faction/?id=test");
     const staticFactionApply = await request(staticBase, "/factions/apply/");
+    const staticFactionReview = await request(staticBase, "/factions/review/");
     const staticTeamForm = await request(staticBase, "/apply/team/");
     const staticBetaForm = await request(staticBase, "/apply/beta/");
     const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
@@ -152,8 +154,15 @@ const run = async () => {
     assert.match(staticFactions.text, /class="factions-hero"/);
     assert.match(staticFactionApply.text, /class="faction-apply-hero"/);
     assert.match(staticFactionApply.text, /class="faction-application-panel"/);
+    assert.match(staticFactionApply.text, /data-faction-application-state/);
+    assert.match(staticFactionApply.text, /data-faction-application-review-note/);
     assert.match(staticFactionApply.text, /<fieldset class="faction-form-section">/);
     assert.doesNotMatch(staticFactionApply.text, /section-panel faction-shell/);
+    assert.match(staticFactions.text, /data-faction-review-link/);
+    assert.match(staticFactionReview.text, /data-faction-review/);
+    assert.match(staticFactionReview.text, /data-faction-review-toolbar/);
+    assert.match(staticFactionReview.text, /data-faction-review-filter/);
+    assert.match(staticFactionReview.text, /data-faction-review-list/);
     assert.match(staticFactions.text, /class="factions-directory"/);
     assert.match(staticFactions.text, />Faction directory</);
     assert.doesNotMatch(staticFactions.text, /section-panel faction-shell/);
@@ -229,6 +238,7 @@ const run = async () => {
     const factionsJs = fs.readFileSync(path.join(dist, "static/js/factions.js"), "utf8");
     const factionJs = fs.readFileSync(path.join(dist, "static/js/faction.js"), "utf8");
     const factionApplyJs = fs.readFileSync(path.join(dist, "static/js/faction-apply.js"), "utf8");
+    const factionReviewJs = fs.readFileSync(path.join(dist, "static/js/faction-review.js"), "utf8");
     const navbarJs = fs.readFileSync(path.join(dist, "static/js/navbar.js"), "utf8");
     const siteShellCss = fs.readFileSync(path.join(dist, "static/css/site-shell.css"), "utf8");
     const discordLinkJs = fs.readFileSync(path.join(dist, "static/js/discord-link.js"), "utf8");
@@ -300,6 +310,29 @@ const run = async () => {
     assert.match(factionApplyJs, /\.insert\(\{ applicant_id: user\.id, \.\.\.payload \}\)/);
     assert.doesNotMatch(factionApplyJs, /const payload = \{[^}]*applicant_id:/);
     assert.match(factionApplyJs, /changes_requested/);
+    assert.match(factionApplyJs, /"approved"/);
+    assert.match(factionApplyJs, /"rejected"/);
+    assert.match(factionApplyJs, /"Changes needed"/);
+    assert.match(factionApplyJs, /Start a new application/);
+    assert.match(factionApplyJs, /reviewed_at,created_at,updated_at/);
+    assert.doesNotMatch(factionApplyJs, /\.in\("status", \["draft", "submitted", "reviewing", "changes_requested"\]\)/);
+    assert.match(factionsJs, /profile\?\.role !== "admin"/);
+    assert.match(factionReviewJs, /profile\?\.role !== "admin"/);
+    assert.match(factionReviewJs, /review_faction_application/);
+    assert.match(factionReviewJs, /"approved"/);
+    assert.match(factionReviewJs, /"changes_requested"/);
+    assert.match(factionReviewJs, /"rejected"/);
+    assert.match(factionReviewJs, /window\.confirm\("Approve this faction and create it\?"\)/);
+    assert.match(factionReviewJs, /window\.confirm\("Reject this faction application\?"\)/);
+    assert.match(factionReviewJs, /selected === "closed"/);
+    assert.match(factionReviewJs, /application\.status === "submitted" \|\| application\.status === "reviewing"/);
+    assert.match(factionReviewJs, /Waiting for the applicant to resubmit changes\./);
+    assert.match(factionReviewJs, /querySelectorAll\("button"\)/);
+    assert.match(factionReviewJs, /\/member\/\?username=/);
+    assert.match(factionReviewJs, /window\.location\.assign/);
+    assert.doesNotMatch(factionReviewJs, /is_forum_moderator/);
+    assert.doesNotMatch(factionReviewJs, /\.from\("factions"\)\.insert/);
+    assert.doesNotMatch(factionsJs, /is_forum_moderator/);
     assert.doesNotMatch(factionsJs, /setInterval|setTimeout/);
     assert.doesNotMatch(factionJs, /setInterval|setTimeout/);
     assert.doesNotMatch(factionApplyJs, /setInterval|setTimeout/);

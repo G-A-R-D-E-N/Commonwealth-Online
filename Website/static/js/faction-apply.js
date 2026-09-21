@@ -6,6 +6,14 @@
   const key = root.dataset.supabaseKey || "";
   const form = root.querySelector("[data-faction-apply-form]");
   const status = root.querySelector("[data-faction-apply-status]");
+  const state = root.querySelector("[data-faction-application-state]");
+  const badge = root.querySelector("[data-faction-application-badge]");
+  const stateTitle = root.querySelector("[data-faction-application-title]");
+  const stateCopy = root.querySelector("[data-faction-application-copy]");
+  const stateDate = root.querySelector("[data-faction-application-date]");
+  const reviewNoteWrap = root.querySelector("[data-faction-application-review-note-wrap]");
+  const reviewNote = root.querySelector("[data-faction-application-review-note]");
+  const stateActions = root.querySelector("[data-faction-application-actions]");
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
   if (!url || !key || !form || !window.supabase?.createClient) return;
@@ -21,12 +29,127 @@
     status.classList.toggle("is-error", error);
   };
 
+  const stateLabels = {
+    draft: ["Draft", "Application draft", "Finish the application below and submit it for review."],
+    submitted: ["Submitted", "Application submitted", "Your faction application is waiting for administrator review."],
+    reviewing: ["In review", "Application under review", "An administrator is currently reviewing your faction application."],
+    changes_requested: ["Changes needed", "Changes requested", "Update the application below, then resubmit it for review."],
+    approved: ["Approved", "Faction approved", "Your faction application was approved and the faction has been created."],
+    rejected: ["Denied", "Application denied", "This faction application was not approved."],
+  };
+
+  const clearStateActions = () => {
+    stateActions?.replaceChildren();
+  };
+
+  const addStateLink = (label, href, primary = false) => {
+    if (!stateActions) return;
+    const link = document.createElement("a");
+    link.className = primary ? "co-btn co-btn--primary" : "co-btn co-btn--ghost";
+    link.href = href;
+    link.textContent = label;
+    stateActions.append(link);
+  };
+
+  const addNewApplicationButton = () => {
+    if (!stateActions) return;
+    const button = document.createElement("button");
+    button.className = "co-btn co-btn--primary";
+    button.type = "button";
+    button.textContent = "Start a new application";
+    button.addEventListener("click", () => {
+      activeApplication = null;
+      form.reset();
+      form.hidden = false;
+      state.hidden = true;
+      setStatus("");
+      form.querySelector("input, textarea, select")?.focus();
+    });
+    stateActions.append(button);
+  };
+
+  const renderState = (application) => {
+    if (!state || !application) {
+      if (state) state.hidden = true;
+      return;
+    }
+
+    const [label, title, copy] = stateLabels[application.status] || [
+      "Application",
+      "Application status",
+      "Your faction application status has been updated.",
+    ];
+
+    badge.textContent = label;
+    stateTitle.textContent = title;
+    stateCopy.textContent = copy;
+    stateDate.textContent = application.reviewed_at || application.updated_at || application.created_at
+      ? "Updated " + new Date(application.reviewed_at || application.updated_at || application.created_at).toLocaleString()
+      : "";
+
+    const note = String(application.review_note || "").trim();
+    reviewNoteWrap.hidden = !note;
+    reviewNote.textContent = note;
+
+    clearStateActions();
+
+    if (application.status === "approved") {
+      addStateLink("Browse factions", assetBase + "/factions/", true);
+      addStateLink("View profile", assetBase + "/profile/");
+    } else if (application.status === "rejected") {
+      addNewApplicationButton();
+    }
+
+    state.hidden = false;
+  };
+
+  const fillForm = (application) => {
+    for (const name of ["proposed_name", "proposed_tag", "summary", "lore", "goals", "focus", "recruitment"]) {
+      form.elements[name].value = application[name] || "";
+    }
+  };
+
+  const loadApplication = async () => {
+    const { data: existing, error } = await client
+      .from("faction_applications")
+      .select("id,status,review_note,reviewed_at,created_at,updated_at,proposed_name,proposed_tag,summary,lore,goals,focus,recruitment")
+      .eq("applicant_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      setStatus("Could not load your faction application.", true);
+      return;
+    }
+
+    if (!existing) {
+      activeApplication = null;
+      state.hidden = true;
+      form.hidden = false;
+      return;
+    }
+
+    renderState(existing);
+
+    if (existing.status === "draft" || existing.status === "changes_requested") {
+      activeApplication = existing;
+      fillForm(existing);
+      form.hidden = false;
+      return;
+    }
+
+    activeApplication = null;
+    form.hidden = true;
+  };
+
   const initialize = async () => {
     const { data } = await client.auth.getSession();
     user = data.session?.user || null;
 
     if (!user) {
       form.hidden = true;
+      if (state) state.hidden = true;
       setStatus("Sign in before submitting a faction application.", true);
 
       const link = document.createElement("a");
@@ -37,31 +160,7 @@
       return;
     }
 
-    const { data: existing } = await client
-      .from("faction_applications")
-      .select("id,status,review_note,proposed_name,proposed_tag,summary,lore,goals,focus,recruitment")
-      .eq("applicant_id", user.id)
-      .in("status", ["draft", "submitted", "reviewing", "changes_requested"])
-      .maybeSingle();
-
-    if (!existing) return;
-
-    activeApplication = existing;
-
-    if (existing.status === "changes_requested" || existing.status === "draft") {
-      for (const name of ["proposed_name", "proposed_tag", "summary", "lore", "goals", "focus", "recruitment"]) {
-        form.elements[name].value = existing[name] || "";
-      }
-      setStatus(
-        existing.review_note
-          ? "Staff requested changes: " + existing.review_note
-          : "Continue editing your faction application."
-      );
-      return;
-    }
-
-    form.hidden = true;
-    setStatus("You already have an active faction application (" + existing.status.replaceAll("_", " ") + ").");
+    await loadApplication();
   };
 
   form.addEventListener("submit", async (event) => {
@@ -105,10 +204,10 @@
       return;
     }
 
-    activeApplication = null;
     form.reset();
-    form.hidden = true;
-    setStatus("Faction application submitted for review.");
+    setStatus("");
+    await loadApplication();
+    submit.disabled = false;
   });
 
   initialize();

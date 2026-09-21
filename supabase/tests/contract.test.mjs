@@ -113,6 +113,18 @@ const factionPolicyExecutionMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921194214_fix_faction_manager_policy_execution.sql"),
   "utf8"
 );
+const factionReviewGuardsMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921204500_admin_faction_review_guards.sql"),
+  "utf8"
+);
+const factionStatusNotificationsMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921204530_faction_application_status_notifications.sql"),
+  "utf8"
+);
+const publicProfileDefaultMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921204600_public_profiles_default.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -466,6 +478,53 @@ assert.match(
   /grant execute on function private\.can_manage_faction_members\(uuid\) to authenticated, service_role/i
 );
 
+assert.match(
+  factionReviewGuardsMigration,
+  /create policy "users and admins read faction applications"[\s\S]*p\.role = 'admin'/i
+);
+assert.match(
+  factionReviewGuardsMigration,
+  /create or replace function private\.review_faction_application\([\s\S]*role = 'admin'/i
+);
+assert.doesNotMatch(
+  factionReviewGuardsMigration,
+  /role in \('moderator', 'admin'\)/i
+);
+assert.match(
+  factionReviewGuardsMigration,
+  /application_row\.status not in \('submitted', 'reviewing'\)/i
+);
+assert.match(
+  factionReviewGuardsMigration,
+  /p_decision in \('changes_requested', 'rejected'\)[\s\S]*review note required/i
+);
+
+assert.match(
+  factionStatusNotificationsMigration,
+  /create or replace function private\.notify_faction_application_status\(\)/i
+);
+assert.match(
+  factionStatusNotificationsMigration,
+  /when 'reviewing'[\s\S]*when 'changes_requested'[\s\S]*when 'approved'[\s\S]*when 'rejected'/i
+);
+assert.match(
+  factionStatusNotificationsMigration,
+  /insert into public\.user_notifications[\s\S]*'system'[\s\S]*'\/factions\/apply\/'/i
+);
+assert.match(
+  factionStatusNotificationsMigration,
+  /create trigger notify_faction_application_status[\s\S]*after update of status on public\.faction_applications/i
+);
+
+assert.match(
+  publicProfileDefaultMigration,
+  /alter table public\.user_profile_details[\s\S]*alter column is_public set default true/i
+);
+assert.doesNotMatch(
+  publicProfileDefaultMigration,
+  /update public\.user_profile_details/i
+);
+
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
 assert.match(registerAccount, /website/);
@@ -624,6 +683,9 @@ for (const [name, content] of [
   ["faction foundation migration", factionFoundationMigration],
   ["RPC hardening migration", rpcHardeningMigration],
   ["faction policy execution migration", factionPolicyExecutionMigration],
+  ["faction review guards migration", factionReviewGuardsMigration],
+  ["faction status notifications migration", factionStatusNotificationsMigration],
+  ["public profile default migration", publicProfileDefaultMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],
