@@ -85,6 +85,6 @@ Supabase secrets and are not part of this website package.
 
 The `/account` page uses Supabase Auth for email/password registration, sign-in, Discord OAuth and manual Discord identity linking. Profiles are stored in `public.profiles`.
 
-Profile pictures are not uploaded. The browser and database only accept six real Fallout 4 perk images from the pinned public source documented in `PROFILE_ICON_ATTRIBUTION.md`. The database constraint is the enforcement boundary, so direct API requests cannot store arbitrary avatar URLs.
+Profile pictures are not uploaded. The static build fetches six real Fallout 4 perk images from the pinned public source documented in `PROFILE_ICON_ATTRIBUTION.md`, verifies their Git blob SHAs, and deploys them locally. The browser and database only accept those six local paths. The database constraint is the enforcement boundary, so direct API requests cannot store arbitrary avatar URLs.
 
 Discord OAuth still requires provider credentials and manual identity linking to be enabled in the hosted Supabase Auth configuration.
