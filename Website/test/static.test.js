@@ -113,19 +113,23 @@ const run = async () => {
     assert.doesNotMatch(staticAccount.text, /supabase\.min\.js/);
     assert.match(staticAccount.text, /data-discord-link/);
     assert.doesNotMatch(staticAccount.text, /type="file"/);
+    const perkIconSource =
+      "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/";
     for (const icon of [
-      "vault-dweller.svg",
-      "minuteman.svg",
-      "ranger.svg",
-      "scribe.svg",
-      "scavenger.svg",
-      "atom-cat.svg",
+      "armorer.png",
+      "hacker.png",
+      "rifleman.png",
+      "medic.png",
+      "scrapper.png",
+      "cap_collector.png",
     ]) {
-      assert.match(staticAccount.text, new RegExp(icon.replace(".", "\\.")));
-      assert.equal(fs.existsSync(path.join(dist, "assets/profile-icons", icon)), true, `missing ${icon}`);
+      assert.ok(staticAccount.text.includes(`${perkIconSource}${icon}`), `missing real perk icon ${icon}`);
     }
+    assert.doesNotMatch(staticAccount.text, /\/assets\/profile-icons\//);
+    assert.equal(fs.existsSync(path.join(dist, "assets/profile-icons")), false, "fake local profile icon assets must not ship");
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     assert.match(accountJs, /linkIdentity/);
+    assert.ok(accountJs.includes(perkIconSource));
     assert.ok(accountJs.includes('new URL(`${assetBase}/account/`, window.location.origin).href'));
     assert.doesNotMatch(accountJs, /new URL\("\\.", window\.location\.href\)/);
     assert.doesNotMatch(accountJs, /storage\.from/);
