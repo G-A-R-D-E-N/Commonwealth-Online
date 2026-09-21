@@ -28,7 +28,7 @@
   const discordLink = root.querySelector("[data-discord-link]");
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
-  const redirectTo = new URL(".", window.location.href).href;
+  const redirectTo = new URL(`${assetBase}/account/`, window.location.origin).href;
 
   const setStatus = (message, error = false) => {
     if (!status) {
