@@ -28,6 +28,8 @@
     playstyle: root.querySelector("[data-member-playstyle]"),
     joined: root.querySelector("[data-member-joined]"),
     joinedRow: root.querySelector("[data-member-joined-row]"),
+    friendsCard: root.querySelector("[data-member-friends-card]"),
+    friendsList: root.querySelector("[data-member-friends-list]"),
     actionsCard: root.querySelector("[data-member-actions-card]"),
     friend: root.querySelector("[data-friend-action]"),
     block: root.querySelector("[data-block-action]"),
@@ -37,6 +39,8 @@
   let currentUser = null;
   let friendship = null;
   let blocked = false;
+
+  const profileHref = (id) => assetBase + "/member/?id=" + encodeURIComponent(id);
 
   const renderFriendButton = () => {
     if (!els.friend) return;
@@ -48,7 +52,7 @@
 
     els.friend.hidden = false;
 
-    if (!friendship) {
+    if (!friendship || friendship.status === "declined") {
       els.friend.textContent = "Add friend";
       els.friend.disabled = false;
       return;
@@ -98,11 +102,74 @@
     renderFriendButton();
   };
 
+  const loadPublicFriends = async (visible) => {
+    if (!els.friendsCard || !els.friendsList || !visible) {
+      if (els.friendsCard) els.friendsCard.hidden = true;
+      return;
+    }
+
+    const { data, error } = await client.rpc("get_public_member_friends", {
+      p_user_id: memberId,
+    });
+
+    els.friendsCard.hidden = false;
+    els.friendsList.replaceChildren();
+
+    if (error) {
+      els.friendsList.textContent = "Friends are temporarily unavailable.";
+      return;
+    }
+
+    const rows = Array.isArray(data) ? data : [];
+    if (!rows.length) {
+      els.friendsList.textContent = "No public friends to show.";
+      return;
+    }
+
+    for (const row of rows) {
+      const item = document.createElement("a");
+      item.className = "profile-social-row";
+      item.href = profileHref(row.id);
+
+      const avatar = document.createElement("img");
+      avatar.src = assetBase + row.avatar_url;
+      avatar.alt = "";
+      avatar.width = 40;
+      avatar.height = 40;
+
+      const name = document.createElement("strong");
+      name.textContent = row.display_name;
+
+      item.append(avatar, name);
+      els.friendsList.append(item);
+    }
+  };
+
+  const resetDeclinedFriendship = async () => {
+    if (!friendship || friendship.status !== "declined") return true;
+
+    const { error } = await client
+      .from("user_friendships")
+      .delete()
+      .eq("id", friendship.id);
+
+    if (error) return false;
+    friendship = null;
+    return true;
+  };
+
   els.friend?.addEventListener("click", async () => {
     if (!currentUser) return;
     els.friend.disabled = true;
 
-    if (!friendship) {
+    if (!friendship || friendship.status === "declined") {
+      const reset = await resetDeclinedFriendship();
+      if (!reset) {
+        els.actionStatus.textContent = "Could not reset the previous friend request.";
+        els.friend.disabled = false;
+        return;
+      }
+
       const { data, error } = await client
         .from("user_friendships")
         .insert({ requester_id: currentUser.id, addressee_id: memberId })
@@ -170,47 +237,46 @@
 
   const initialize = async () => {
     const [memberResult, sessionResult] = await Promise.all([
-      client
-        .from("profiles")
-        .select("id,display_name,avatar_url,created_at,user_profile_details!inner(bio,faction,playstyle,is_public,show_presence,show_friends,show_joined_at),user_presence(status,current_server,last_seen_at)")
-        .eq("id", memberId)
-        .eq("user_profile_details.is_public", true)
-        .maybeSingle(),
+      client.rpc("get_public_member_profile", { p_user_id: memberId }),
       client.auth.getSession(),
     ]);
 
-    const member = memberResult.data;
+    const member = Array.isArray(memberResult.data)
+      ? memberResult.data[0]
+      : memberResult.data;
     if (memberResult.error || !member) {
       status.textContent = "This profile is private or unavailable.";
       return;
     }
 
     currentUser = sessionResult.data.session?.user || null;
-    const details = member.user_profile_details?.[0] || {};
-    const presence = member.user_presence?.[0];
 
     els.avatar.src = assetBase + member.avatar_url;
     els.name.textContent = member.display_name;
-    els.bio.textContent = details.bio || "No bio provided.";
-    els.faction.textContent = details.faction || "Not set";
-    els.playstyle.textContent = details.playstyle || "Not set";
-    els.joinedRow.hidden = !details.show_joined_at;
-    els.joined.textContent = details.show_joined_at
-      ? new Date(member.created_at).toLocaleDateString()
+    els.bio.textContent = member.bio || "No bio provided.";
+    els.faction.textContent = member.faction || "Not set";
+    els.playstyle.textContent = member.playstyle || "Not set";
+    els.joinedRow.hidden = !member.joined_at;
+    els.joined.textContent = member.joined_at
+      ? new Date(member.joined_at).toLocaleDateString()
       : "Hidden";
 
-    if (details.show_presence && presence) {
+    if (member.presence_status) {
       els.presence.textContent =
-        presence.status === "in_game" && presence.current_server
-          ? "In game · " + presence.current_server
-          : String(presence.status || "").replace("_", " ");
+        member.presence_status === "in_game" && member.current_server
+          ? "In game · " + member.current_server
+          : String(member.presence_status).replace("_", " ");
     } else {
       els.presence.textContent = "";
     }
 
     status.hidden = true;
     profile.hidden = false;
-    await loadRelationship();
+
+    await Promise.all([
+      loadRelationship(),
+      loadPublicFriends(Boolean(member.show_friends)),
+    ]);
   };
 
   initialize();
