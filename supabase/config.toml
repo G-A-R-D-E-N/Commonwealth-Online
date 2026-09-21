@@ -18,6 +18,10 @@ additional_redirect_urls = [
   "https://commonwealth-online.com/account/"
 ]
 
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+
 [auth.external.discord]
 enabled = true
 client_id = "env(SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID)"
