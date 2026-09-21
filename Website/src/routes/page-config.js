@@ -460,7 +460,7 @@ const PUBLIC_PAGES = [
       description: "Browse approved Commonwealth Online player factions, lore, focus, and recruitment status.",
       bodyClass: "co-factions-page",
       activeKey: "factions",
-      styles: ["/static/css/social.css", "/static/css/factions.css"],
+      styles: ["/static/css/social.css", "/static/css/factions.css?v=20260921-2"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",

@@ -149,6 +149,10 @@ const run = async () => {
     assert.match(staticProfile.text, /data-notifications-list/);
     assert.match(staticMembers.text, /data-members/);
     assert.match(staticMembers.text, /data-members-search/);
+    assert.match(staticFactions.text, /class="factions-hero"/);
+    assert.match(staticFactions.text, /class="factions-directory"/);
+    assert.match(staticFactions.text, />Faction directory</);
+    assert.doesNotMatch(staticFactions.text, /section-panel faction-shell/);
     assert.match(staticMember.text, /data-member/);
     assert.match(staticMember.text, /data-friend-action/);
     assert.match(staticMember.text, /data-block-action/);
