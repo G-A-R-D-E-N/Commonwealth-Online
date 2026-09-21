@@ -8,6 +8,7 @@ max_rows = 1000
 
 [auth]
 enabled = true
+enable_manual_linking = true
 site_url = "http://127.0.0.1:3000"
 additional_redirect_urls = [
   "http://127.0.0.1:3000/forum",
