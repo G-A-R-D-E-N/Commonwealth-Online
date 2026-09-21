@@ -108,7 +108,13 @@ alter table public.faction_applications enable row level security;
 create policy "active factions are public"
 on public.factions
 for select
-using (status = 'active' or public.is_forum_moderator() or created_by = auth.uid());
+using (status = 'active');
+
+create policy "staff and founders read nonpublic factions"
+on public.factions
+for select
+to authenticated
+using (created_by = auth.uid() or public.is_forum_moderator());
 
 create policy "active faction roles are public"
 on public.faction_roles
@@ -118,9 +124,15 @@ using (
     select 1
     from public.factions f
     where f.id = faction_roles.faction_id
-      and (f.status = 'active' or public.is_forum_moderator() or f.created_by = auth.uid())
+      and f.status = 'active'
   )
 );
+
+create policy "staff read nonpublic faction roles"
+on public.faction_roles
+for select
+to authenticated
+using (public.is_forum_moderator());
 
 create policy "active faction members are public"
 on public.faction_members
@@ -133,9 +145,13 @@ using (
     where f.id = faction_members.faction_id
       and f.status = 'active'
   )
-  or user_id = auth.uid()
-  or public.is_forum_moderator()
 );
+
+create policy "members and staff read own faction memberships"
+on public.faction_members
+for select
+to authenticated
+using (user_id = auth.uid() or public.is_forum_moderator());
 
 create policy "users submit faction applications"
 on public.faction_applications
