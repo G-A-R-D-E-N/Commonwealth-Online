@@ -28,6 +28,8 @@
     playstyle: root.querySelector("[data-member-playstyle]"),
     joined: root.querySelector("[data-member-joined]"),
     joinedRow: root.querySelector("[data-member-joined-row]"),
+    usernameHistoryCard: root.querySelector("[data-member-username-history-card]"),
+    usernameHistoryList: root.querySelector("[data-member-username-history-list]"),
     friendsCard: root.querySelector("[data-member-friends-card]"),
     friendsList: root.querySelector("[data-member-friends-list]"),
     actionsCard: root.querySelector("[data-member-actions-card]"),
@@ -100,6 +102,43 @@
     els.actionsCard.hidden = false;
     els.block.textContent = blocked ? "Unblock" : "Block";
     renderFriendButton();
+  };
+
+  const loadPublicUsernameHistory = async () => {
+    if (!els.usernameHistoryCard || !els.usernameHistoryList) return;
+
+    const { data, error } = await client.rpc("get_public_username_history", {
+      p_user_id: memberId,
+    });
+
+    els.usernameHistoryList.replaceChildren();
+
+    if (error) {
+      els.usernameHistoryCard.hidden = true;
+      return;
+    }
+
+    const rows = Array.isArray(data) ? data : [];
+    if (!rows.length) {
+      els.usernameHistoryCard.hidden = true;
+      return;
+    }
+
+    for (const row of rows) {
+      const item = document.createElement("div");
+      item.className = "profile-social-row";
+
+      const copy = document.createElement("span");
+      const name = document.createElement("strong");
+      const changed = document.createElement("small");
+      name.textContent = row.username;
+      changed.textContent = new Date(row.changed_at).toLocaleDateString();
+      copy.append(name, changed);
+      item.append(copy);
+      els.usernameHistoryList.append(item);
+    }
+
+    els.usernameHistoryCard.hidden = false;
   };
 
   const loadPublicFriends = async (visible) => {
@@ -275,6 +314,7 @@
 
     await Promise.all([
       loadRelationship(),
+      loadPublicUsernameHistory(),
       loadPublicFriends(Boolean(member.show_friends)),
     ]);
   };
