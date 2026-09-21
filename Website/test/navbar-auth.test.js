@@ -77,6 +77,7 @@ const mount = element({
 
 let authHandler;
 let notificationQueries = 0;
+const documentHandlers = new Map();
 const signedInSession = {
   user: {
     id: "user-1",
@@ -134,7 +135,9 @@ const context = {
       }
       return null;
     },
-    addEventListener() {},
+    addEventListener(name, callback) {
+      documentHandlers.set(name, callback);
+    },
   },
   window: {
     matchMedia() {
@@ -176,6 +179,10 @@ const run = async () => {
   authHandler("TOKEN_REFRESHED", signedInSession);
   await flush();
   assert.equal(notificationQueries, 1, "auth refresh must not repeat notification query");
+
+  documentHandlers.get("co:notifications-cleared")();
+  assert.equal(notificationBadge.hidden, true);
+  assert.equal(notificationBadge.textContent, "");
 
   authHandler("SIGNED_OUT", null);
   await flush();
