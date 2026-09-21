@@ -137,6 +137,8 @@ const run = async () => {
     assert.match(navbarJs, /getSession\(\)/);
     assert.match(navbarJs, /onAuthStateChange/);
     assert.ok(navbarJs.includes('signedIn ? "Account" : "Login / Sign Up"'));
+    assert.match(navbarJs, /window\.coSupabase/);
+    assert.match(accountJs, /window\.coSupabase/);
     assert.match(accountJs, /linkIdentity/);
     assert.match(accountJs, /\/auth\/v1\/settings/);
     assert.match(accountJs, /settings\.external\?\.discord/);
