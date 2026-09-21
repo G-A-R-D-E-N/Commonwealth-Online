@@ -378,7 +378,7 @@ const PUBLIC_PAGES = [
     page: {
       title: "Account - Commonwealth Online",
       description:
-        "Register or sign in to a Commonwealth Online account, link Discord, and select a built-in Fallout 4 themed profile icon.",
+        "Register or sign in to a Commonwealth Online account, link Discord, and select a curated Fallout 4 perk profile icon.",
       bodyClass: "co-account-page",
       activeKey: "account",
       styles: ["/static/css/account.css"],
