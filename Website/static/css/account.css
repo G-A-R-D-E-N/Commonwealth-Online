@@ -1,0 +1,233 @@
+.co-account-page .site-main {
+  width: min(var(--site-max), calc(100% - (var(--site-gutter) * 2)));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.account-hero {
+  margin-bottom: 1.5rem;
+}
+
+.account-shell,
+.account-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.account-auth-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 1.25rem;
+}
+
+.account-panel,
+.account-status {
+  margin: 0;
+}
+
+.account-status.is-error {
+  border-color: rgba(210, 115, 90, 0.6);
+  color: #e6a08d;
+}
+
+.account-field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.account-field > span,
+.account-avatar-fieldset legend {
+  font-family: var(--site-font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--site-heading);
+}
+
+.account-field input {
+  width: 100%;
+  min-height: 2.9rem;
+  border: 1px solid var(--site-border);
+  border-radius: var(--site-radius);
+  background: #0b0f0b;
+  color: var(--site-text);
+  padding: 0.7rem 0.8rem;
+  font: inherit;
+}
+
+.account-field input:focus {
+  outline: 2px solid rgba(62, 207, 74, 0.35);
+  outline-offset: 1px;
+  border-color: var(--site-link);
+}
+
+.account-avatar-fieldset {
+  min-width: 0;
+  border: 0;
+}
+
+.account-avatar-fieldset > p {
+  margin: 0.2rem 0 0.75rem;
+  color: var(--site-text-muted);
+  font-size: 0.9rem;
+}
+
+.account-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(92px, 1fr));
+  gap: 0.65rem;
+}
+
+.account-avatar-option {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem;
+  border: 1px solid var(--site-border-soft);
+  background: rgba(5, 6, 5, 0.55);
+  cursor: pointer;
+}
+
+.account-avatar-option:hover {
+  border-color: var(--site-border);
+}
+
+.account-avatar-option:has(input:checked) {
+  border-color: var(--site-heading);
+  box-shadow: inset 0 0 0 1px rgba(201, 168, 74, 0.3);
+}
+
+.account-avatar-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.account-avatar-option input:focus-visible + img {
+  outline: 2px solid var(--site-link);
+  outline-offset: 3px;
+}
+
+.account-avatar-option img {
+  width: 72px;
+  height: 72px;
+  border: 1px solid rgba(62, 207, 74, 0.28);
+  background: #060906;
+}
+
+.account-avatar-option span {
+  font-size: 0.78rem;
+  color: var(--site-text-muted);
+  text-align: center;
+}
+
+.account-avatar-option:has(input:checked) span {
+  color: var(--site-heading);
+}
+
+.account-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1rem 0;
+  color: var(--site-text-faint);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.account-divider::before,
+.account-divider::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--site-border-soft);
+}
+
+body.co-site .co-btn--discord,
+body.co-site .co-btn--discord:visited {
+  color: #f2f3f5;
+  background: #5865f2;
+  border-color: #4752c4;
+}
+
+body.co-site .co-btn--discord:hover,
+body.co-site .co-btn--discord:focus-visible {
+  color: #fff;
+  background: #4752c4;
+  border-color: #6875f5;
+  text-decoration: none;
+}
+
+.account-help {
+  margin-top: 1rem;
+  color: var(--site-text-muted);
+  font-size: 0.9rem;
+}
+
+.account-profile__head,
+.account-discord {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.account-profile__identity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+  padding: 1rem;
+  border: 1px solid var(--site-border-soft);
+  background: rgba(5, 6, 5, 0.45);
+}
+
+.account-profile__identity img {
+  width: 96px;
+  height: 96px;
+  border: 1px solid var(--site-border);
+  background: #060906;
+}
+
+.account-profile__identity div,
+.account-discord > div {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.account-profile__identity strong {
+  font-family: var(--site-font-display);
+  font-size: 1.3rem;
+  color: var(--site-heading);
+}
+
+.account-profile__identity span,
+.account-discord span {
+  color: var(--site-text-muted);
+}
+
+.account-discord {
+  align-items: center;
+  margin-top: 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--site-border-soft);
+}
+
+@media (max-width: 820px) {
+  .account-auth-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-avatar-grid {
+    grid-template-columns: repeat(2, minmax(92px, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .account-profile__identity,
+  .account-discord {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
