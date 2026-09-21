@@ -12,7 +12,7 @@ enable_manual_linking = true
 site_url = "http://127.0.0.1:3000"
 additional_redirect_urls = [
   "http://127.0.0.1:3000/forum",
-  "http://127.0.0.1:3000/account",
+  "http://127.0.0.1:3000/account/",
   "https://g-a-r-d-e-n.github.io/Commonwealth-Online/forum/",
   "https://g-a-r-d-e-n.github.io/Commonwealth-Online/account/",
   "https://commonwealth-online.com/account/"
