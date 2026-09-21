@@ -170,7 +170,7 @@
 
     setStatus("Signing in…");
     const form = new FormData(signInForm);
-    const { error } = await client.auth.signInWithPassword({
+    const { data, error } = await client.auth.signInWithPassword({
       email: String(form.get("email") || "").trim(),
       password: String(form.get("password") || ""),
     });
@@ -180,8 +180,14 @@
       return;
     }
 
+    const user = data.session?.user;
+    if (!user) {
+      setStatus("Sign-in succeeded but no session was created. Try again.", true);
+      return;
+    }
+
     setStatus("");
-    await refresh();
+    await loadProfile(user);
   });
 
   discordSignIn?.addEventListener("click", async () => {
