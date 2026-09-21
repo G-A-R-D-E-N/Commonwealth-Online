@@ -89,6 +89,9 @@ for (const fragment of [
 }
 
 assert.match(config, /^enable_manual_linking = true$/m);
+assert.match(config, /\[auth\.email\]/);
+assert.match(config, /^enable_signup = true$/m);
+assert.match(config, /^enable_confirmations = true$/m);
 assert.match(config, /http:\/\/127\.0\.0\.1:3000\/account\//);
 assert.match(config, /https:\/\/g-a-r-d-e-n\.github\.io\/Commonwealth-Online\/account\//);
 assert.match(config, /https:\/\/commonwealth-online\.com\/account\//);
