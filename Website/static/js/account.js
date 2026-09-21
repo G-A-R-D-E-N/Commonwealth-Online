@@ -26,6 +26,8 @@
   const profileRole = root.querySelector("[data-profile-role]");
   const discordState = root.querySelector("[data-discord-state]");
   const discordLink = root.querySelector("[data-discord-link]");
+  const discordSignIn = root.querySelector("[data-discord-sign-in]");
+  const registerSubmit = registerForm?.querySelector('button[type="submit"]');
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
   const redirectTo = new URL(`${assetBase}/account/`, window.location.origin).href;
@@ -51,6 +53,39 @@
   }
 
   const client = window.supabase.createClient(url, key);
+  let discordAvailable = false;
+
+  const loadAuthSettings = async () => {
+    try {
+      const response = await fetch(`${url}/auth/v1/settings`, {
+        headers: { apikey: key },
+      });
+      if (!response.ok) {
+        return;
+      }
+
+      const settings = await response.json();
+      discordAvailable = Boolean(settings.external?.discord);
+      if (discordSignIn) {
+        discordSignIn.disabled = !discordAvailable;
+        discordSignIn.textContent = discordAvailable ? "Continue with Discord" : "Discord sign-in unavailable";
+      }
+      if (discordLink && !signedIn.hidden) {
+        discordLink.disabled = !discordAvailable;
+      }
+      if (registerSubmit) {
+        const emailSignupAvailable = !settings.disable_signup && settings.external?.email !== false;
+        registerSubmit.disabled = !emailSignupAvailable;
+        if (!emailSignupAvailable) {
+          setStatus("Email registration is currently disabled.", true);
+        }
+      }
+    } catch {
+      if (discordSignIn) {
+        discordSignIn.disabled = true;
+      }
+    }
+  };
 
   const loadProfile = async (user) => {
     const { data: profile, error } = await client
@@ -78,8 +113,9 @@
 
     const { data: identityData } = await client.auth.getUserIdentities();
     const linked = Boolean(identityData?.identities?.some((identity) => identity.provider === "discord"));
-    discordState.textContent = linked ? "Linked" : "Not linked";
+    discordState.textContent = linked ? "Linked" : discordAvailable ? "Not linked" : "Available after Discord is configured";
     discordLink.hidden = linked;
+    discordLink.disabled = !discordAvailable;
   };
 
   const refresh = async () => {
@@ -147,7 +183,10 @@
     await refresh();
   });
 
-  root.querySelector("[data-discord-sign-in]")?.addEventListener("click", async () => {
+  discordSignIn?.addEventListener("click", async () => {
+    if (!discordAvailable) {
+      return;
+    }
     const { error } = await client.auth.signInWithOAuth({
       provider: "discord",
       options: { redirectTo },
@@ -158,6 +197,9 @@
   });
 
   discordLink?.addEventListener("click", async () => {
+    if (!discordAvailable) {
+      return;
+    }
     const { error } = await client.auth.linkIdentity({
       provider: "discord",
       options: { redirectTo },
@@ -212,5 +254,6 @@
     window.setTimeout(refresh, 0);
   });
 
+  loadAuthSettings();
   refresh();
 })();
