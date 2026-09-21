@@ -28,7 +28,9 @@ revoke all on public.user_badges from anon, authenticated;
 revoke all on public.user_badge_assignments from anon, authenticated;
 
 grant select on public.user_badges to anon, authenticated;
-grant select on public.user_badge_assignments to anon, authenticated;
+grant select (user_id, badge_id, is_displayed, display_order)
+  on public.user_badge_assignments
+  to anon, authenticated;
 grant update (is_displayed, display_order)
   on public.user_badge_assignments
   to authenticated;
