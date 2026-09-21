@@ -96,6 +96,10 @@ create index faction_applications_applicant_created_idx
 create index faction_applications_status_created_idx
   on public.faction_applications (status, created_at desc);
 
+create unique index faction_applications_open_per_user
+  on public.faction_applications (applicant_id)
+  where status in ('draft', 'submitted', 'reviewing', 'changes_requested');
+
 alter table public.factions enable row level security;
 alter table public.faction_roles enable row level security;
 alter table public.faction_members enable row level security;
