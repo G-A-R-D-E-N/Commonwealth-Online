@@ -67,7 +67,10 @@ const client = {
           session: {
             user: {
               id: "user-1",
-              user_metadata: {},
+              user_metadata: {
+                display_name: "Nomad",
+                avatar_url: "/assets/profile-icons/rifleman.png",
+              },
             },
           },
         },
@@ -78,22 +81,7 @@ const client = {
     },
   },
   from() {
-    return {
-      select() {
-        return this;
-      },
-      eq() {
-        return this;
-      },
-      async single() {
-        return {
-          data: {
-            display_name: "Nomad",
-            avatar_url: "/assets/profile-icons/rifleman.png",
-          },
-        };
-      },
-    };
+    throw new Error("navbar must not query profile storage");
   },
 };
 

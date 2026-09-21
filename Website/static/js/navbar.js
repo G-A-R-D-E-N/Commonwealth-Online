@@ -89,20 +89,9 @@
   const client = window.coSupabase || window.supabase.createClient(url, key);
   window.coSupabase = client;
 
-  const showSignedIn = async (user) => {
-    let displayName = user.user_metadata?.display_name || "Profile";
+  const showSignedIn = (user) => {
+    const displayName = user.user_metadata?.display_name || "Profile";
     let avatar = user.user_metadata?.avatar_url || AVATARS[0];
-
-    const { data: profile } = await client
-      .from("profiles")
-      .select("display_name,avatar_url")
-      .eq("id", user.id)
-      .single();
-
-    if (profile) {
-      displayName = profile.display_name || displayName;
-      avatar = profile.avatar_url || avatar;
-    }
 
     if (!AVATARS.includes(avatar)) {
       avatar = AVATARS[0];
@@ -121,12 +110,12 @@
     }
   };
 
-  const renderSession = async (session) => {
+  const renderSession = (session) => {
     if (!session?.user) {
       showSignedOut();
       return;
     }
-    await showSignedIn(session.user);
+    showSignedIn(session.user);
   };
 
   client.auth.getSession().then(({ data }) => {

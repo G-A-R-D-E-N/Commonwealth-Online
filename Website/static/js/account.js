@@ -22,7 +22,6 @@
   const profileUrl = new URL(`${assetBase}/profile/`, window.location.origin).href;
   const registerUrl = `${url}/functions/v1/register-account`;
 
-  let discordAvailable = false;
   let emailSignupAvailable = true;
   let registerPending = false;
   let captchaToken = "";
@@ -96,35 +95,6 @@
 
   const client = window.coSupabase || window.supabase.createClient(url, key);
   window.coSupabase = client;
-
-  const loadAuthSettings = async () => {
-    try {
-      const response = await fetch(`${url}/auth/v1/settings`, {
-        headers: { apikey: key },
-      });
-      if (!response.ok) {
-        return;
-      }
-
-      const settings = await response.json();
-      discordAvailable = Boolean(settings.external?.discord);
-      if (discordSignIn) {
-        discordSignIn.disabled = !discordAvailable;
-        discordSignIn.hidden = !discordAvailable;
-      }
-
-      emailSignupAvailable = !settings.disable_signup && settings.external?.email !== false;
-      syncRegisterState();
-      if (!emailSignupAvailable) {
-        setStatus("Account registration is currently unavailable.", true);
-      }
-    } catch {
-      if (discordSignIn) {
-        discordSignIn.disabled = true;
-        discordSignIn.hidden = true;
-      }
-    }
-  };
 
   registerForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -251,34 +221,6 @@
     goToProfile();
   });
 
-  discordSignIn?.addEventListener("click", async () => {
-    if (!discordAvailable) {
-      setStatus("Discord sign-in is currently unavailable.", true);
-      return;
-    }
-
-    setStatus("Opening Discord…");
-    const { data, error } = await client.auth.signInWithOAuth({
-      provider: "discord",
-      options: {
-        redirectTo: accountUrl,
-        skipBrowserRedirect: true,
-      },
-    });
-
-    if (error) {
-      setStatus(error.message || "Could not start Discord sign-in.", true);
-      return;
-    }
-
-    if (!data?.url) {
-      setStatus("Discord sign-in did not return an authorization URL.", true);
-      return;
-    }
-
-    window.location.assign(data.url);
-  });
-
   const initialize = async () => {
     const { data } = await client.auth.getSession();
     if (data.session?.user) {
@@ -286,7 +228,6 @@
       return;
     }
 
-    await loadAuthSettings();
     renderCaptcha();
   };
 

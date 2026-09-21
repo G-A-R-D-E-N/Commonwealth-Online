@@ -261,8 +261,6 @@ const run = async () => {
   assert.equal(username.value, "Resident");
   assert.equal(email.value, "member@example.test");
   assert.equal(profileAvatar.src, "/assets/profile-icons/armorer.png");
-  assert.equal(discordState.textContent, "Not connected");
-  assert.equal(discordLink.disabled, false);
   assert.equal(typeof authStateHandler, "function");
 
   username.value = "   ";
@@ -317,14 +315,6 @@ const run = async () => {
   assert.equal(authUpdates[2].options, undefined);
   assert.equal(passwordReset, true);
   assert.equal(status.textContent, "Password updated.");
-  assert.equal(typeof discordClick, "function");
-
-  await discordClick();
-
-  assert.equal(linkArgs.provider, "discord");
-  assert.equal(linkArgs.options.redirectTo, "https://commonwealth-online.com/account/");
-  assert.equal(linkArgs.options.skipBrowserRedirect, true);
-  assert.equal(assignedUrl, "https://discord.com/oauth2/authorize?client_id=link-test");
 
   console.log("profile settings checks passed");
 };

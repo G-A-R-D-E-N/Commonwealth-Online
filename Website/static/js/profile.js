@@ -33,7 +33,6 @@
   const accountUrl = new URL(`${assetBase}/account/`, window.location.origin).href;
 
   let currentUser = null;
-  let discordAvailable = false;
 
   const setStatus = (message, error = false) => {
     status.hidden = !message;
@@ -59,21 +58,6 @@
 
   const client = window.coSupabase || window.supabase.createClient(url, key);
   window.coSupabase = client;
-
-  const loadAuthSettings = async () => {
-    try {
-      const response = await fetch(`${url}/auth/v1/settings`, {
-        headers: { apikey: key },
-      });
-      if (!response.ok) {
-        return;
-      }
-      const settings = await response.json();
-      discordAvailable = Boolean(settings.external?.discord);
-    } catch {
-      discordAvailable = false;
-    }
-  };
 
   const renderProfile = (user, profile) => {
     const avatar = AVATARS.includes(profile.avatar_url) ? profile.avatar_url : AVATARS[0];
@@ -103,32 +87,6 @@
 
     renderProfile(user, profile);
     return true;
-  };
-
-  const loadDiscord = async () => {
-    if (!discordState || !discordLink) {
-      return;
-    }
-
-    if (!discordAvailable) {
-      discordState.textContent = "Unavailable";
-      discordLink.hidden = true;
-      discordLink.disabled = true;
-      return;
-    }
-
-    const { data, error } = await client.auth.getUserIdentities();
-    if (error) {
-      discordState.textContent = "Could not check connection";
-      discordLink.hidden = true;
-      discordLink.disabled = true;
-      return;
-    }
-
-    const linked = Boolean(data?.identities?.some((identity) => identity.provider === "discord"));
-    discordState.textContent = linked ? "Connected" : "Not connected";
-    discordLink.hidden = linked;
-    discordLink.disabled = linked;
   };
 
   profileForm?.addEventListener("submit", async (event) => {
@@ -236,34 +194,6 @@
     setStatus("Password updated.");
   });
 
-  discordLink?.addEventListener("click", async () => {
-    if (!discordAvailable) {
-      setStatus("Discord linking is currently unavailable.", true);
-      return;
-    }
-
-    setStatus("Opening Discord…");
-    const { data, error } = await client.auth.linkIdentity({
-      provider: "discord",
-      options: {
-        redirectTo: accountUrl,
-        skipBrowserRedirect: true,
-      },
-    });
-
-    if (error) {
-      setStatus(error.message || "Could not link Discord.", true);
-      return;
-    }
-
-    if (!data?.url) {
-      setStatus("Discord linking did not return an authorization URL.", true);
-      return;
-    }
-
-    window.location.assign(data.url);
-  });
-
   signOut?.addEventListener("click", async () => {
     await client.auth.signOut();
     goToAccount();
@@ -290,8 +220,6 @@
       return;
     }
 
-    await loadAuthSettings();
-    await loadDiscord();
   };
 
   initialize();
