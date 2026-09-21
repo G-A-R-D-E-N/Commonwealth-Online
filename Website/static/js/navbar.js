@@ -58,7 +58,8 @@
     return;
   }
 
-  const client = window.supabase.createClient(url, key);
+  const client = window.coSupabase || window.supabase.createClient(url, key);
+  window.coSupabase = client;
   client.auth.getSession().then(({ data }) => {
     setAccountLabel(Boolean(data.session));
   });
