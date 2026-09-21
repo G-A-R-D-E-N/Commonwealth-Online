@@ -5,6 +5,7 @@
   const url = (root.dataset.supabaseUrl || "").replace(/\/+$/, "");
   const key = root.dataset.supabaseKey || "";
   const form = root.querySelector("[data-community-profile-form]");
+  const usernameHistoryList = root.querySelector("[data-username-history-list]");
   const friendsList = root.querySelector("[data-friends-list]");
   const blocksList = root.querySelector("[data-blocks-list]");
   const notificationsList = root.querySelector("[data-notifications-list]");
@@ -30,7 +31,7 @@
   const loadDetails = async () => {
     const { data, error } = await client
       .from("user_profile_details")
-      .select("bio,faction,playstyle,is_public,show_presence,show_friends,show_joined_at")
+      .select("bio,faction,playstyle,is_public,show_presence,show_friends,show_joined_at,show_username_history")
       .eq("user_id", user.id)
       .single();
 
@@ -43,6 +44,45 @@
     form.elements.show_presence.checked = data.show_presence;
     form.elements.show_friends.checked = data.show_friends;
     form.elements.show_joined_at.checked = data.show_joined_at;
+    form.elements.show_username_history.checked = data.show_username_history;
+  };
+
+  const loadUsernameHistory = async () => {
+    if (!usernameHistoryList) return;
+
+    const { data, error } = await client
+      .from("user_username_history")
+      .select("id,username,changed_at")
+      .eq("user_id", user.id)
+      .order("changed_at", { ascending: false })
+      .limit(20);
+
+    usernameHistoryList.replaceChildren();
+
+    if (error) {
+      usernameHistoryList.textContent = "Username history is temporarily unavailable.";
+      return;
+    }
+
+    const rows = data || [];
+    if (!rows.length) {
+      usernameHistoryList.textContent = "No previous usernames.";
+      return;
+    }
+
+    for (const row of rows) {
+      const item = document.createElement("div");
+      item.className = "profile-social-row";
+
+      const copy = document.createElement("span");
+      const name = document.createElement("strong");
+      const changed = document.createElement("small");
+      name.textContent = row.username;
+      changed.textContent = new Date(row.changed_at).toLocaleString();
+      copy.append(name, changed);
+      item.append(copy);
+      usernameHistoryList.append(item);
+    }
   };
 
   const friendIdentity = (row) =>
@@ -340,6 +380,7 @@
       show_presence: form.elements.show_presence.checked,
       show_friends: form.elements.show_friends.checked,
       show_joined_at: form.elements.show_joined_at.checked,
+      show_username_history: form.elements.show_username_history.checked,
       updated_at: new Date().toISOString(),
     };
 
@@ -379,6 +420,7 @@
 
     await Promise.all([
       loadDetails(),
+      loadUsernameHistory(),
       loadFriends(),
       loadBlocks(),
       loadNotifications(),
