@@ -49,6 +49,10 @@ const realProfileIconsMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921035009_real_profile_icons.sql"),
   "utf8"
 );
+const localProfileIconsMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921040009_local_profile_icons.sql"),
+  "utf8"
+);
 const config = fs.readFileSync(path.join(root, "config.toml"), "utf8");
 const envExample = fs.readFileSync(path.join(root, ".env.example"), "utf8");
 const deployWorkflow = fs.readFileSync(
@@ -149,6 +153,11 @@ for (const icon of ["armorer.png", "hacker.png", "rifleman.png", "medic.png", "s
   assert.ok(realProfileIconsMigration.includes(icon), `missing real profile icon contract: ${icon}`);
 }
 assert.doesNotMatch(realProfileIconsMigration, /nullif\(new\.raw_user_meta_data ->> 'picture'/i);
+assert.match(localProfileIconsMigration, /profiles_avatar_url_allowed/i);
+for (const icon of ["armorer.png", "hacker.png", "rifleman.png", "medic.png", "scrapper.png", "cap_collector.png"]) {
+  assert.ok(localProfileIconsMigration.includes(`/assets/profile-icons/${icon}`), `missing local profile icon contract: ${icon}`);
+}
+assert.doesNotMatch(localProfileIconsMigration, /nullif\(new\.raw_user_meta_data ->> 'picture'/i);
 
 const mentionPayload = buildDiscordPayload({
   type: "team",
@@ -290,6 +299,7 @@ for (const [name, content] of [
   ["security migration", securityMigration],
   ["account profiles migration", accountProfilesMigration],
   ["real profile icons migration", realProfileIconsMigration],
+  ["local profile icons migration", localProfileIconsMigration],
   ["config", config],
   ["env example", envExample],
 ]) {
