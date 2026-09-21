@@ -11,6 +11,9 @@
     <title><%= page.title %></title>
     <link rel="icon" href="/assets/branding/CommonwealthOnlineIconLogo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/static/css/styles.css?v=20260914-1" />
+<% (page.styles || []).forEach((href) => { %>
+    <link rel="stylesheet" href="<%= href %>" />
+<% }); %>
   </head>
   <body class="co-site<%= page.bodyClass ? ` ${page.bodyClass}` : "" %>">
     <div class="co-site-shell">
