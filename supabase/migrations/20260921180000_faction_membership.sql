@@ -208,6 +208,79 @@ begin
 end;
 $function$;
 
+create or replace function public.remove_faction_member(
+  p_faction_id uuid,
+  p_user_id uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  target_role_name text;
+begin
+  if not private.can_manage_faction_members(p_faction_id) then
+    raise exception 'faction member management permission required';
+  end if;
+
+  if p_user_id = auth.uid() then
+    raise exception 'use leave faction for your own membership';
+  end if;
+
+  select r.name
+  into target_role_name
+  from public.faction_members m
+  left join public.faction_roles r
+    on r.id = m.role_id
+   and r.faction_id = m.faction_id
+  where m.faction_id = p_faction_id
+    and m.user_id = p_user_id
+    and m.status = 'active';
+
+  if not found then
+    raise exception 'active faction member not found';
+  end if;
+
+  if target_role_name = 'Leader' then
+    raise exception 'leader membership cannot be removed';
+  end if;
+
+  update public.faction_members
+  set
+    role_id = null,
+    status = 'removed',
+    updated_at = now()
+  where faction_id = p_faction_id
+    and user_id = p_user_id;
+
+  update public.user_profile_details
+  set
+    primary_faction_id = null,
+    updated_at = now()
+  where user_id = p_user_id
+    and primary_faction_id = p_faction_id;
+
+  insert into public.user_notifications (
+    user_id,
+    actor_id,
+    type,
+    title,
+    body,
+    target_url
+  )
+  select
+    p_user_id,
+    auth.uid(),
+    'system',
+    'Faction membership removed',
+    'Your membership in ' || f.name || ' was removed.',
+    '/faction/?id=' || f.id::text
+  from public.factions f
+  where f.id = p_faction_id;
+end;
+$function$;
+
 create or replace function public.invite_faction_member(
   p_faction_id uuid,
   p_user_id uuid
@@ -501,6 +574,7 @@ revoke all on function private.can_manage_faction_members(uuid) from public, ano
 revoke all on function public.request_faction_membership(uuid) from public, anon;
 revoke all on function public.cancel_faction_membership_request(uuid) from public, anon;
 revoke all on function public.respond_faction_membership(uuid, uuid, boolean) from public, anon;
+revoke all on function public.remove_faction_member(uuid, uuid) from public, anon;
 revoke all on function public.invite_faction_member(uuid, uuid) from public, anon;
 revoke all on function public.respond_faction_invite(uuid, boolean) from public, anon;
 revoke all on function public.leave_faction(uuid) from public, anon;
@@ -510,6 +584,7 @@ revoke all on function public.get_public_member_profile(uuid) from public;
 grant execute on function public.request_faction_membership(uuid) to authenticated;
 grant execute on function public.cancel_faction_membership_request(uuid) to authenticated;
 grant execute on function public.respond_faction_membership(uuid, uuid, boolean) to authenticated;
+grant execute on function public.remove_faction_member(uuid, uuid) to authenticated;
 grant execute on function public.invite_faction_member(uuid, uuid) to authenticated;
 grant execute on function public.respond_faction_invite(uuid, boolean) to authenticated;
 grant execute on function public.leave_faction(uuid) to authenticated;
