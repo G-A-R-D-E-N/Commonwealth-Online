@@ -93,6 +93,10 @@ const userBadgesMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921164500_user_badges.sql"),
   "utf8"
 );
+const userServerIdentityMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921165500_user_server_identity.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -316,6 +320,20 @@ assert.match(userBadgesMigration, /auth\.uid\(\) = user_id/i);
 for (const slug of ["beta-tester", "contributor", "mod-author", "server-host", "moderator", "developer", "founder"]) {
   assert.ok(userBadgesMigration.includes(`'${slug}'`), `missing seeded badge: ${slug}`);
 }
+assert.match(userServerIdentityMigration, /add column if not exists show_recent_servers boolean not null default false/i);
+assert.match(userServerIdentityMigration, /create table if not exists public\.user_server_favorites/i);
+assert.match(userServerIdentityMigration, /create table if not exists public\.user_server_history/i);
+assert.match(userServerIdentityMigration, /alter table public\.user_server_favorites enable row level security/i);
+assert.match(userServerIdentityMigration, /alter table public\.user_server_history enable row level security/i);
+assert.match(userServerIdentityMigration, /auth\.uid\(\) = user_id/i);
+assert.match(userServerIdentityMigration, /create or replace function public\.record_user_server_session/i);
+assert.match(userServerIdentityMigration, /server session exceeds seven days/i);
+assert.match(userServerIdentityMigration, /revoke all on function public\.record_user_server_session[\s\S]*from public, anon, authenticated/i);
+assert.match(userServerIdentityMigration, /grant execute on function public\.record_user_server_session[\s\S]*to service_role/i);
+assert.match(userServerIdentityMigration, /create or replace function public\.get_public_recent_servers\(p_user_id uuid\)/i);
+assert.match(userServerIdentityMigration, /d\.show_recent_servers/i);
+assert.match(userServerIdentityMigration, /private\.users_blocked\(h\.user_id, auth\.uid\(\)\)/i);
+assert.match(userServerIdentityMigration, /limit 5/i);
 for (const table of [
   "factions",
   "faction_roles",
