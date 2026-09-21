@@ -6,7 +6,7 @@
     <meta name="description" content="<%= page.description %>" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; img-src 'self' data: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; script-src 'self' https://cdn.jsdelivr.net; font-src 'self'; connect-src 'self' https://cdn.jsdelivr.net<%= site.supabase?.url ? ` ${site.supabase.url}` : "" %>; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src https://e.widgetbot.io"
+      content="default-src 'self'; img-src 'self' data: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; script-src 'self' https://cdn.jsdelivr.net; font-src 'self'; connect-src 'self' https://cdn.jsdelivr.net<%= site.supabase?.url ? ` ${site.supabase.url}` : "" %>; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
     <title><%= page.title %></title>
     <link rel="icon" href="/assets/branding/CommonwealthOnlineIconLogo.svg" type="image/svg+xml" />

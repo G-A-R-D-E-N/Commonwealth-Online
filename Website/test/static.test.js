@@ -74,10 +74,9 @@ const run = async () => {
     assert.match(html, /src="\/static\/js\/widgetbot\.js"/);
     assert.doesNotMatch(html, /@widgetbot\/crate/);
     assert.match(html, /script-src 'self' https:\/\/cdn\.jsdelivr\.net/);
-    assert.match(html, /frame-src https:\/\/e\.widgetbot\.io/);
+    assert.doesNotMatch(html, /frame-src[^;]*e\.widgetbot\.io/);
     assert.doesNotMatch(html, /script-src[^;]*unsafe-inline/);
     assert.doesNotMatch(html, /script-src[^;]*unsafe-eval/);
-    assert.doesNotMatch(html, /frame-src[^;]*https:\/\/discord\.com/);
   }
 
   const staticServer = await startServer(serveStatic);
@@ -140,9 +139,10 @@ const run = async () => {
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     const navbarJs = fs.readFileSync(path.join(dist, "static/js/navbar.js"), "utf8");
     const widgetbotJs = fs.readFileSync(path.join(dist, "static/js/widgetbot.js"), "utf8");
-    assert.ok(widgetbotJs.includes("https://e.widgetbot.io/channels/"));
-    assert.ok(widgetbotJs.includes("1512018618680999976"));
-    assert.ok(widgetbotJs.includes("1512018620060794982"));
+    assert.ok(widgetbotJs.includes("https://discord.gg/GyfxYG2gzH"));
+    assert.match(widgetbotJs, /noopener noreferrer/);
+    assert.doesNotMatch(widgetbotJs, /e\.widgetbot\.io/);
+    assert.doesNotMatch(widgetbotJs, /createElement\("iframe"\)/);
     assert.doesNotMatch(widgetbotJs, /\bCrate\b/);
     assert.doesNotMatch(widgetbotJs, /\beval\s*\(/);
     assert.doesNotMatch(widgetbotJs, /new Function\s*\(/);
