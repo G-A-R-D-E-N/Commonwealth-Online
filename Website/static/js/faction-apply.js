@@ -13,6 +13,7 @@
   const client = window.coSupabase || window.supabase.createClient(url, key);
   window.coSupabase = client;
   let user = null;
+  let activeApplication = null;
 
   const setStatus = (message, error = false) => {
     status.hidden = !message;
@@ -38,18 +39,29 @@
 
     const { data: existing } = await client
       .from("faction_applications")
-      .select("id,status,review_note")
+      .select("id,status,review_note,proposed_name,proposed_tag,summary,lore,goals,focus,recruitment")
       .eq("applicant_id", user.id)
       .in("status", ["draft", "submitted", "reviewing", "changes_requested"])
       .maybeSingle();
 
     if (!existing) return;
 
+    activeApplication = existing;
+
+    if (existing.status === "changes_requested" || existing.status === "draft") {
+      for (const name of ["proposed_name", "proposed_tag", "summary", "lore", "goals", "focus", "recruitment"]) {
+        form.elements[name].value = existing[name] || "";
+      }
+      setStatus(
+        existing.review_note
+          ? "Staff requested changes: " + existing.review_note
+          : "Continue editing your faction application."
+      );
+      return;
+    }
+
     form.hidden = true;
-    const detail = existing.status === "changes_requested" && existing.review_note
-      ? " Staff requested changes: " + existing.review_note
-      : "";
-    setStatus("You already have an active faction application (" + existing.status.replaceAll("_", " ") + ")." + detail);
+    setStatus("You already have an active faction application (" + existing.status.replaceAll("_", " ") + ").");
   };
 
   form.addEventListener("submit", async (event) => {
@@ -71,9 +83,16 @@
       status: "submitted",
     };
 
-    const { error } = await client
-      .from("faction_applications")
-      .insert(payload);
+    const query = activeApplication
+      ? client
+          .from("faction_applications")
+          .update(payload)
+          .eq("id", activeApplication.id)
+      : client
+          .from("faction_applications")
+          .insert(payload);
+
+    const { error } = await query;
 
     if (error) {
       submit.disabled = false;
@@ -87,6 +106,7 @@
       return;
     }
 
+    activeApplication = null;
     form.reset();
     form.hidden = true;
     setStatus("Faction application submitted for review.");
