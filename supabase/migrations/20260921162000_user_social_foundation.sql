@@ -277,7 +277,7 @@ begin
       'friend_request',
       'New friend request',
       coalesce(actor_name, 'A Commonwealth Online member') || ' sent you a friend request.',
-      '/profile/'
+      '/member/?id=' || new.requester_id::text
     );
   elsif tg_op = 'UPDATE' and old.status = 'pending' and new.status = 'accepted' then
     select display_name into actor_name from public.profiles where id = new.addressee_id;
@@ -291,7 +291,7 @@ begin
       'friend_accepted',
       'Friend request accepted',
       coalesce(actor_name, 'A Commonwealth Online member') || ' accepted your friend request.',
-      '/profile/'
+      '/member/?id=' || new.addressee_id::text
     );
   end if;
 
