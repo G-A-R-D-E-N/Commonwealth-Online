@@ -5,12 +5,12 @@
   }
 
   const AVATARS = [
-    "/assets/profile-icons/vault-dweller.svg",
-    "/assets/profile-icons/minuteman.svg",
-    "/assets/profile-icons/ranger.svg",
-    "/assets/profile-icons/scribe.svg",
-    "/assets/profile-icons/scavenger.svg",
-    "/assets/profile-icons/atom-cat.svg",
+    "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/armorer.png",
+    "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/hacker.png",
+    "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/rifleman.png",
+    "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/medic.png",
+    "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/scrapper.png",
+    "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/cap_collector.png",
   ];
   const url = (root.dataset.supabaseUrl || "").replace(/\/+$/, "");
   const key = root.dataset.supabaseKey || "";
@@ -39,7 +39,7 @@
     status.classList.toggle("is-error", error);
   };
 
-  const avatarSrc = (path) => `${assetBase}${AVATARS.includes(path) ? path : AVATARS[0]}`;
+  const avatarSrc = (path) => (AVATARS.includes(path) ? path : AVATARS[0]);
   const chosenAvatar = (form) => form?.querySelector('input[name="avatar_url"]:checked')?.value || AVATARS[0];
 
   if (!url || !key || !window.supabase?.createClient) {
