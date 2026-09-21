@@ -42,7 +42,10 @@
   line-height: 1.6;
 }
 
-.factions-hero .co-btn {
+.factions-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
   margin-top: 1.2rem;
 }
 
@@ -231,6 +234,69 @@
   width: 100%;
 }
 
+.faction-review-toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.faction-review-filter {
+  width: min(100%, 260px);
+}
+
+.faction-review-filter select {
+  width: 100%;
+}
+
+.faction-review-list,
+.faction-review-card,
+.faction-review-facts {
+  display: grid;
+  gap: 1rem;
+}
+
+.faction-review-card__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.faction-review-card__head h2 {
+  margin: 0.2rem 0 0.35rem;
+}
+
+.faction-review-applicant {
+  color: var(--site-text-muted);
+}
+
+.faction-review-facts {
+  margin: 0;
+  gap: 0.75rem;
+}
+
+.faction-review-facts div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 0.8rem;
+}
+
+.faction-review-facts dt {
+  color: var(--site-heading);
+  font-family: var(--site-font-display);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.faction-review-facts dd {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.faction-review-actions {
+  justify-content: flex-start;
+}
+
 @media (max-width: 760px) {
   .factions-main {
     width: min(100% - 1rem, 1120px);
@@ -245,7 +311,8 @@
 
   .factions-directory__bar,
   .faction-card__head,
-  .faction-profile-head {
+  .faction-profile-head,
+  .faction-review-card__head {
     align-items: stretch;
     flex-direction: column;
   }
@@ -260,6 +327,10 @@
 
   .faction-profile-card {
     grid-column: auto;
+  }
+
+  .faction-review-facts div {
+    grid-template-columns: 1fr;
   }
 }
 
