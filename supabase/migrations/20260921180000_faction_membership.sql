@@ -114,6 +114,32 @@ begin
 end;
 $function$;
 
+create or replace function public.cancel_faction_membership_request(p_faction_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+begin
+  if auth.uid() is null then
+    raise exception 'authentication required';
+  end if;
+
+  update public.faction_members
+  set
+    role_id = null,
+    status = 'left',
+    updated_at = now()
+  where faction_id = p_faction_id
+    and user_id = auth.uid()
+    and status = 'pending';
+
+  if not found then
+    raise exception 'pending membership request not found';
+  end if;
+end;
+$function$;
+
 create or replace function public.respond_faction_membership(
   p_faction_id uuid,
   p_user_id uuid,
@@ -449,6 +475,7 @@ $function$;
 revoke all on function private.can_manage_faction_members(uuid) from public, anon, authenticated;
 
 revoke all on function public.request_faction_membership(uuid) from public, anon;
+revoke all on function public.cancel_faction_membership_request(uuid) from public, anon;
 revoke all on function public.respond_faction_membership(uuid, uuid, boolean) from public, anon;
 revoke all on function public.invite_faction_member(uuid, uuid) from public, anon;
 revoke all on function public.respond_faction_invite(uuid, boolean) from public, anon;
@@ -457,6 +484,7 @@ revoke all on function public.set_primary_faction(uuid) from public, anon;
 revoke all on function public.get_public_member_profile(uuid) from public;
 
 grant execute on function public.request_faction_membership(uuid) to authenticated;
+grant execute on function public.cancel_faction_membership_request(uuid) to authenticated;
 grant execute on function public.respond_faction_membership(uuid, uuid, boolean) to authenticated;
 grant execute on function public.invite_faction_member(uuid, uuid) to authenticated;
 grant execute on function public.respond_faction_invite(uuid, boolean) to authenticated;
