@@ -278,6 +278,7 @@ for (const [name, content] of [
   ["application migration", applicationMigration],
   ["submit function", submitApplication],
   ["security migration", securityMigration],
+  ["account profiles migration", accountProfilesMigration],
   ["config", config],
   ["env example", envExample],
 ]) {
