@@ -151,6 +151,7 @@ const run = async () => {
     assert.match(staticMember.text, /data-block-action/);
     assert.match(staticMember.text, /data-member-friends-list/);
     assert.match(staticMember.text, /data-member-username-history-list/);
+    assert.match(staticMember.text, /data-member-badges-list/);
     assert.doesNotMatch(staticProfile.text, /data-discord-link/);
     assert.doesNotMatch(staticProfile.text, />Link Discord</);
     assert.doesNotMatch(staticAccount.text, />Continue with Discord</);
@@ -161,6 +162,7 @@ const run = async () => {
     assert.match(staticProfile.text, /name="confirm_password"/);
     assert.match(staticProfile.text, /name="show_username_history"/);
     assert.match(staticProfile.text, /data-username-history-list/);
+    assert.match(staticProfile.text, /data-badges-list/);
     assert.doesNotMatch(staticProfile.text, />\s*[^<]*Supabase[^<]*</i);
     const supabaseConfigured =
       /data-supabase-url="[^"]+"/.test(staticAccount.text) &&
@@ -196,6 +198,7 @@ const run = async () => {
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     const profileJs = fs.readFileSync(path.join(dist, "static/js/profile.js"), "utf8");
     const profileSocialJs = fs.readFileSync(path.join(dist, "static/js/profile-social.js"), "utf8");
+    const profileBadgesJs = fs.readFileSync(path.join(dist, "static/js/profile-badges.js"), "utf8");
     const membersJs = fs.readFileSync(path.join(dist, "static/js/members.js"), "utf8");
     const memberJs = fs.readFileSync(path.join(dist, "static/js/member.js"), "utf8");
     const factionsJs = fs.readFileSync(path.join(dist, "static/js/factions.js"), "utf8");
@@ -233,6 +236,8 @@ const run = async () => {
     assert.match(profileSocialJs, /user_notifications/);
     assert.match(profileSocialJs, /user_username_history/);
     assert.match(profileSocialJs, /show_username_history/);
+    assert.match(profileBadgesJs, /user_badge_assignments/);
+    assert.match(profileBadgesJs, /displayedCount >= 3/);
     assert.match(profileSocialJs, /Decline/);
     assert.match(profileSocialJs, /status: "declined"/);
     assert.match(profileSocialJs, /Cancel request/);
@@ -246,6 +251,8 @@ const run = async () => {
     assert.match(memberJs, /get_public_member_profile/);
     assert.match(memberJs, /get_public_member_friends/);
     assert.match(memberJs, /get_public_username_history/);
+    assert.match(memberJs, /user_badge_assignments/);
+    assert.match(memberJs, /is_displayed/);
     assert.match(memberJs, /user_friendships/);
     assert.match(memberJs, /user_blocks/);
     assert.match(memberJs, /status === "declined"/);
