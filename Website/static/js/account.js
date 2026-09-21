@@ -255,6 +255,10 @@
     window.setTimeout(refresh, 0);
   });
 
-  loadAuthSettings();
-  refresh();
+  const initialize = async () => {
+    await loadAuthSettings();
+    await refresh();
+  };
+
+  initialize();
 })();
