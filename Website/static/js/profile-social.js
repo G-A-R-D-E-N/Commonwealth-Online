@@ -124,7 +124,49 @@
           }
           await Promise.all([loadFriends(), loadNotifications()]);
         });
-        item.append(accept);
+
+        const decline = document.createElement("button");
+        decline.className = "co-btn co-btn--ghost";
+        decline.type = "button";
+        decline.textContent = "Decline";
+        decline.addEventListener("click", async () => {
+          decline.disabled = true;
+          const { error: updateError } = await client
+            .from("user_friendships")
+            .update({ status: "declined" })
+            .eq("id", row.id);
+          if (updateError) {
+            decline.disabled = false;
+            setStatus("Could not decline friend request.", true);
+            return;
+          }
+          setStatus("");
+          await loadFriends();
+        });
+
+        item.append(accept, decline);
+      }
+
+      if (row.status === "pending" && row.requester_id === user.id) {
+        const cancel = document.createElement("button");
+        cancel.className = "co-btn co-btn--ghost";
+        cancel.type = "button";
+        cancel.textContent = "Cancel request";
+        cancel.addEventListener("click", async () => {
+          cancel.disabled = true;
+          const { error: deleteError } = await client
+            .from("user_friendships")
+            .delete()
+            .eq("id", row.id);
+          if (deleteError) {
+            cancel.disabled = false;
+            setStatus("Could not cancel friend request.", true);
+            return;
+          }
+          setStatus("");
+          await loadFriends();
+        });
+        item.append(cancel);
       }
 
       if (row.status === "accepted") {
