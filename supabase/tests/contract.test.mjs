@@ -105,6 +105,14 @@ const userCharactersMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921181238_user_characters.sql"),
   "utf8"
 );
+const rpcHardeningMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921194035_harden_public_rpc_execution_and_backend_rls.sql"),
+  "utf8"
+);
+const factionPolicyExecutionMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921194214_fix_faction_manager_policy_execution.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -389,6 +397,75 @@ assert.match(
   /create policy "active factions are public"\s+on public\.factions\s+for select\s+using \(status = 'active'\);/i
 );
 
+for (const table of [
+  "application_rate_limits",
+  "applications",
+  "signup_rate_limits",
+  "user_accounts",
+]) {
+  assert.match(
+    rpcHardeningMigration,
+    new RegExp(`create policy "backend only"\\s+on public\\.${table}\\s+for all\\s+to anon, authenticated\\s+using \\(false\\)\\s+with check \\(false\\)`, "i"),
+    `missing backend-only policy: ${table}`
+  );
+}
+
+for (const signature of [
+  "get_public_member_friends\\(uuid\\)",
+  "get_public_member_profile\\(uuid\\)",
+  "get_public_recent_servers\\(uuid\\)",
+  "get_public_user_characters\\(uuid\\)",
+  "cancel_faction_membership_request\\(uuid\\)",
+  "invite_faction_member\\(uuid, uuid\\)",
+  "is_forum_moderator\\(\\)",
+  "leave_faction\\(uuid\\)",
+  "remove_faction_member\\(uuid, uuid\\)",
+  "request_faction_membership\\(uuid\\)",
+  "respond_faction_invite\\(uuid, boolean\\)",
+  "respond_faction_membership\\(uuid, uuid, boolean\\)",
+  "review_faction_application\\(uuid, text, text\\)",
+  "set_primary_faction\\(uuid\\)",
+]) {
+  assert.match(
+    rpcHardeningMigration,
+    new RegExp(`alter function public\\.${signature} set schema private`, "i"),
+    `privileged RPC must move to private: ${signature}`
+  );
+}
+
+for (const name of [
+  "get_public_member_friends",
+  "get_public_member_profile",
+  "get_public_recent_servers",
+  "get_public_user_characters",
+  "get_public_username_history",
+  "cancel_faction_membership_request",
+  "invite_faction_member",
+  "is_forum_moderator",
+  "leave_faction",
+  "remove_faction_member",
+  "request_faction_membership",
+  "respond_faction_invite",
+  "respond_faction_membership",
+  "review_faction_application",
+  "set_primary_faction",
+]) {
+  assert.match(
+    rpcHardeningMigration,
+    new RegExp(`create or replace function public\\.${name}[\\s\\S]*?security invoker`, "i"),
+    `public RPC must be SECURITY INVOKER: ${name}`
+  );
+}
+
+assert.match(
+  rpcHardeningMigration,
+  /create or replace function private\.get_public_username_history\(p_user_id uuid\)[\s\S]*security definer/i
+);
+assert.match(
+  factionPolicyExecutionMigration,
+  /grant execute on function private\.can_manage_faction_members\(uuid\) to authenticated, service_role/i
+);
+
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
 assert.match(registerAccount, /website/);
@@ -545,6 +622,8 @@ for (const [name, content] of [
   ["signup cleanup fix migration", signupCleanupFixMigration],
   ["social foundation migration", socialFoundationMigration],
   ["faction foundation migration", factionFoundationMigration],
+  ["RPC hardening migration", rpcHardeningMigration],
+  ["faction policy execution migration", factionPolicyExecutionMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],
