@@ -111,6 +111,7 @@
                   <label><input name="show_presence" type="checkbox" /> Show presence/current server</label>
                   <label><input name="show_friends" type="checkbox" /> Show friends</label>
                   <label><input name="show_joined_at" type="checkbox" /> Show join date</label>
+                  <label><input name="show_username_history" type="checkbox" /> Show previous usernames</label>
                 </div>
 
                 <div class="profile-actions">
@@ -118,6 +119,16 @@
                   <button class="co-btn co-btn--primary" type="submit">Save public profile</button>
                 </div>
               </form>
+            </section>
+
+            <section class="profile-card" aria-labelledby="username-history-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Identity</p>
+                <h2 id="username-history-title">Username history</h2>
+              </div>
+              <div class="profile-social-list" data-username-history-list>
+                <p class="account-help">Loading username history…</p>
+              </div>
             </section>
 
             <section class="profile-card" aria-labelledby="friends-title">
