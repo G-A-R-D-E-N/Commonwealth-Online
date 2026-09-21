@@ -70,11 +70,13 @@ const run = async () => {
   for (const filePath of htmlFiles) {
     const html = fs.readFileSync(filePath, "utf8");
     assert.equal(/<%|<%=|<%-/.test(html), false, `unresolved EJS in ${filePath}`);
-    assert.match(html, /https:\/\/cdn\.jsdelivr\.net\/npm\/@widgetbot\/crate@3/);
+    assert.match(html, /href="\/static\/css\/widgetbot\.css"/);
     assert.match(html, /src="\/static\/js\/widgetbot\.js"/);
+    assert.doesNotMatch(html, /@widgetbot\/crate/);
     assert.match(html, /script-src 'self' https:\/\/cdn\.jsdelivr\.net/);
     assert.match(html, /frame-src https:\/\/e\.widgetbot\.io/);
     assert.doesNotMatch(html, /script-src[^;]*unsafe-inline/);
+    assert.doesNotMatch(html, /script-src[^;]*unsafe-eval/);
     assert.doesNotMatch(html, /frame-src[^;]*https:\/\/discord\.com/);
   }
 
@@ -137,6 +139,11 @@ const run = async () => {
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     const navbarJs = fs.readFileSync(path.join(dist, "static/js/navbar.js"), "utf8");
+    const widgetbotJs = fs.readFileSync(path.join(dist, "static/js/widgetbot.js"), "utf8");
+    assert.ok(widgetbotJs.includes("https://e.widgetbot.io/channels/1512018618680999976/1512018620060794982"));
+    assert.doesNotMatch(widgetbotJs, /\bCrate\b/);
+    assert.doesNotMatch(widgetbotJs, /\beval\s*\(/);
+    assert.doesNotMatch(widgetbotJs, /new Function\s*\(/);
     assert.match(navbarJs, /getSession\(\)/);
     assert.match(navbarJs, /onAuthStateChange/);
     assert.ok(navbarJs.includes('signedIn ? "Account" : "Login / Sign Up"'));
