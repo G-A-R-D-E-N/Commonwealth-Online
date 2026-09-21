@@ -143,6 +143,7 @@ const run = async () => {
     assert.match(staticMember.text, /data-member/);
     assert.match(staticMember.text, /data-friend-action/);
     assert.match(staticMember.text, /data-block-action/);
+    assert.match(staticMember.text, /data-member-friends-list/);
     assert.doesNotMatch(staticProfile.text, /data-discord-link/);
     assert.doesNotMatch(staticProfile.text, />Link Discord</);
     assert.doesNotMatch(staticAccount.text, />Continue with Discord</);
@@ -221,8 +222,12 @@ const run = async () => {
     assert.match(profileSocialJs, /Promise\.all/);
     assert.match(membersJs, /user_profile_details!inner/);
     assert.match(membersJs, /user_presence/);
+    assert.doesNotMatch(membersJs, /created_at/);
+    assert.match(memberJs, /get_public_member_profile/);
+    assert.match(memberJs, /get_public_member_friends/);
     assert.match(memberJs, /user_friendships/);
     assert.match(memberJs, /user_blocks/);
+    assert.match(memberJs, /status === "declined"/);
     assert.doesNotMatch(membersJs, /setInterval|setTimeout/);
     assert.doesNotMatch(memberJs, /setInterval/);
     assert.match(siteShellCss, /body\.co-site\s*\{\s*background: #0d0e0f;/);
