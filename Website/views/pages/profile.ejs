@@ -81,6 +81,66 @@
               </form>
             </section>
 
+            <section class="profile-card profile-card--wide" aria-labelledby="community-profile-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Community</p>
+                <h2 id="community-profile-title">Public profile</h2>
+                <p>Control what other Commonwealth Online members can see.</p>
+              </div>
+
+              <form class="profile-form" data-community-profile-form>
+                <label class="profile-field">
+                  <span>Bio</span>
+                  <textarea name="bio" maxlength="500" rows="4" placeholder="Tell other players a little about yourself."></textarea>
+                </label>
+
+                <div class="profile-fields">
+                  <label class="profile-field">
+                    <span>Faction</span>
+                    <input name="faction" type="text" maxlength="40" placeholder="Minutemen, Brotherhood, Railroad…" />
+                  </label>
+
+                  <label class="profile-field">
+                    <span>Playstyle</span>
+                    <input name="playstyle" type="text" maxlength="80" placeholder="Co-op, survival, roleplay…" />
+                  </label>
+                </div>
+
+                <div class="profile-privacy">
+                  <label><input name="is_public" type="checkbox" /> Public profile</label>
+                  <label><input name="show_presence" type="checkbox" /> Show presence/current server</label>
+                  <label><input name="show_friends" type="checkbox" /> Show friends</label>
+                  <label><input name="show_joined_at" type="checkbox" /> Show join date</label>
+                </div>
+
+                <div class="profile-actions">
+                  <a class="co-btn co-btn--ghost" href="/members/">Browse members</a>
+                  <button class="co-btn co-btn--primary" type="submit">Save public profile</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="profile-card" aria-labelledby="friends-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Social</p>
+                <h2 id="friends-title">Friends</h2>
+              </div>
+              <div class="profile-social-list" data-friends-list>
+                <p class="account-help">Loading friends…</p>
+              </div>
+            </section>
+
+            <section class="profile-card" aria-labelledby="notifications-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Activity</p>
+                <h2 id="notifications-title">Notifications</h2>
+              </div>
+              <div class="profile-social-list" data-notifications-list>
+                <p class="account-help">Loading notifications…</p>
+              </div>
+              <button class="co-btn co-btn--ghost" type="button" data-mark-notifications-read>Mark all read</button>
+            </section>
+
             <section class="profile-card" aria-labelledby="security-title">
               <div class="profile-card__head">
                 <p class="section-kicker">Security</p>
