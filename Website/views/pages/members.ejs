@@ -10,17 +10,26 @@
           aria-labelledby="members-title"
         >
           <header class="members-intro">
-            <p class="section-kicker">Commonwealth Online</p>
-            <h1 id="members-title">Members</h1>
-            <p>Find players and view the profiles they choose to share.</p>
+            <div>
+              <p class="section-kicker">Community directory</p>
+              <h1 id="members-title">Members</h1>
+              <p>Find public player profiles, see faction affiliation, and open a member profile without digging through account pages.</p>
+            </div>
+            <div class="members-directory-meta" aria-live="polite">
+              <strong data-members-count>—</strong>
+              <span>Public profiles</span>
+            </div>
           </header>
 
-          <label class="members-search">
-            <span>Search members</span>
-            <input type="search" data-members-search placeholder="Search by username" autocomplete="off" />
-          </label>
+          <div class="members-toolbar">
+            <label class="members-search">
+              <span>Search directory</span>
+              <input type="search" data-members-search placeholder="Search by username" autocomplete="off" />
+            </label>
+            <p class="members-toolbar__hint">Only profiles marked public are listed.</p>
+          </div>
 
-          <p class="site-notice" data-members-status role="status">Loading members…</p>
+          <p class="members-state" data-members-status data-tone="loading" role="status">Loading member directory…</p>
           <div class="members-grid" data-members-list hidden></div>
         </section>
       </main>
