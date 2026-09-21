@@ -16,6 +16,8 @@ npm run test:static
 npm test
 ```
 
+`SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` are optional for a local static build. When both are unset, the account page renders without the Supabase browser client and disables account controls safely. `test:static` supports both configured and unconfigured builds, and CI exercises both modes.
+
 The generated site is written to `dist/`. It contains only HTML, CSS,
 JavaScript, assets, the curated `data/servers.json` copy, and the generated
 `data/changelogs.json` release log. This package has
