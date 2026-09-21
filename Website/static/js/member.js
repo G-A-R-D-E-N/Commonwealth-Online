@@ -7,11 +7,13 @@
   const status = root.querySelector("[data-member-status]");
   const profile = root.querySelector("[data-member-profile]");
   const params = new URLSearchParams(window.location.search);
-  const memberId = params.get("id");
+  const publicUsername = params.get("username");
+  const legacyMemberId = params.get("id");
+  let memberId = legacyMemberId || null;
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
 
-  if (!url || !key || !memberId || !window.supabase?.createClient) {
+  if (!url || !key || (!publicUsername && !legacyMemberId) || !window.supabase?.createClient) {
     status.textContent = "Profile not found.";
     return;
   }
@@ -44,7 +46,23 @@
   let friendship = null;
   let blocked = false;
 
-  const profileHref = (id) => assetBase + "/member/?id=" + encodeURIComponent(id);
+  const profileHref = (username) =>
+    assetBase + "/member/?username=" + encodeURIComponent(username);
+
+  const resolveMemberId = async () => {
+    if (memberId) return memberId;
+
+    const { data, error } = await client
+      .from("profiles")
+      .select("id,display_name,user_profile_details!inner(is_public)")
+      .eq("display_name", publicUsername)
+      .eq("user_profile_details.is_public", true)
+      .maybeSingle();
+
+    if (error || !data?.id) throw new Error("Profile not found");
+    memberId = data.id;
+    return memberId;
+  };
 
   const renderFriendButton = () => {
     if (!els.friend) return;
@@ -214,7 +232,7 @@
     for (const row of rows) {
       const item = document.createElement("a");
       item.className = "profile-social-row";
-      item.href = profileHref(row.id);
+      item.href = profileHref(row.display_name);
 
       const avatar = document.createElement("img");
       avatar.src = assetBase + row.avatar_url;
@@ -321,6 +339,13 @@
   });
 
   const initialize = async () => {
+    try {
+      await resolveMemberId();
+    } catch {
+      status.textContent = "This profile is private or unavailable.";
+      return;
+    }
+
     const [memberResult, sessionResult] = await Promise.all([
       client.rpc("get_public_member_profile", { p_user_id: memberId }),
       client.auth.getSession(),
@@ -335,6 +360,10 @@
     }
 
     currentUser = sessionResult.data.session?.user || null;
+
+    const canonicalUrl =
+      assetBase + "/member/?username=" + encodeURIComponent(member.display_name);
+    window.history?.replaceState(null, "", canonicalUrl);
 
     els.avatar.src = assetBase + member.avatar_url;
     els.name.textContent = member.display_name;

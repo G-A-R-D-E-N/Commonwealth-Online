@@ -111,6 +111,8 @@ const run = async () => {
   assert.equal(count.textContent, "1");
   assert.equal(status.hidden, true);
   assert.equal(list.children[0].children[1].children[0].textContent, "Nomad");
+  assert.equal(list.children[0].href, "/member/?username=Nomad");
+  assert.doesNotMatch(list.children[0].href, /\?id=/);
 
   root.dataset.supabaseUrl = "";
   status.hidden = false;
