@@ -1,75 +1,77 @@
 <%- include("../partials/head") %>
 <%- include("../partials/navbar") %>
 
-      <main class="site-main">
-        <section class="section-panel forum-hero" aria-labelledby="forum-title">
-          <div class="servers-hero__head">
-            <div>
-              <p class="section-kicker">Community</p>
-              <h1 id="forum-title">Forum</h1>
-              <p class="servers-hero__desc">
-                A public Commonwealth Online forum backed by Supabase, with Discord sign-in planned for posting and
-                moderation. Reading stays public and does not require a GitHub account.
-              </p>
-            </div>
-            <div class="servers-hero__actions">
-              <a class="co-btn co-btn--ghost" href="#" data-co-link="discord">Join Discord</a>
-            </div>
-          </div>
-
-          <p class="site-notice" role="status">
-            <strong>Backend preparation is in progress.</strong>
-            The public site already has the forum shell. Once a Supabase project is connected, this page can load
-            public boards directly from Postgres while writes remain protected by authentication and row-level security.
-          </p>
-        </section>
-
+      <main class="site-main forum-main">
         <section
-          class="section-panel"
-          aria-labelledby="forum-boards-title"
+          class="forum-shell"
           data-forum
           data-supabase-url="<%= site.supabase?.url || "" %>"
           data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          aria-labelledby="forum-title"
         >
-          <div class="section-head">
-            <p class="section-kicker">Boards</p>
-            <h2 id="forum-boards-title">Community channels</h2>
+          <header class="forum-hero">
+            <div class="forum-hero__copy">
+              <p class="section-kicker">Commonwealth network</p>
+              <h1 id="forum-title">Forum</h1>
+              <p>Public discussions, development notes, multiplayer help, bug reports, server talk, and community feedback.</p>
+            </div>
+          </header>
+
+          <div class="forum-layout">
+            <aside class="forum-categories" aria-labelledby="forum-categories-title">
+              <div class="forum-panel__head">
+                <p class="section-kicker">Boards</p>
+                <h2 id="forum-categories-title">Categories</h2>
+              </div>
+              <nav data-forum-categories aria-label="Forum categories"></nav>
+            </aside>
+
+            <section class="forum-discussions" aria-labelledby="forum-discussions-title">
+              <div class="forum-panel__head forum-panel__head--row">
+                <div>
+                  <p class="section-kicker">Community</p>
+                  <h2 id="forum-discussions-title" data-forum-heading>Latest discussions</h2>
+                </div>
+                <a class="co-btn co-btn--ghost" href="/account/" data-forum-signin>Sign in</a>
+              </div>
+
+              <form class="forum-compose" data-forum-compose hidden>
+                <label>
+                  <span>Category</span>
+                  <select name="category_id" data-forum-compose-category required></select>
+                </label>
+                <label>
+                  <span>Title</span>
+                  <input name="title" type="text" minlength="3" maxlength="160" required />
+                </label>
+                <label>
+                  <span>Post</span>
+                  <textarea name="body" rows="5" minlength="1" maxlength="12000" required></textarea>
+                </label>
+                <div class="forum-compose__actions">
+                  <button class="co-btn co-btn--primary" type="submit">Start discussion</button>
+                </div>
+              </form>
+
+              <div class="forum-thread-tools">
+                <label class="forum-thread-search">
+                  <span>Search discussions</span>
+                  <input type="search" data-forum-search maxlength="160" autocomplete="off" placeholder="Search titles" />
+                </label>
+              </div>
+
+              <p class="forum-status" data-forum-compose-status role="status" hidden></p>
+              <p class="forum-status" data-forum-status role="status">Loading forum…</p>
+              <div class="forum-thread-list" data-forum-threads hidden></div>
+              <div class="forum-pagination" data-forum-pagination hidden>
+                <button class="co-btn co-btn--ghost" type="button" data-forum-prev>Previous</button>
+                <span data-forum-page></span>
+                <button class="co-btn co-btn--ghost" type="button" data-forum-next>Next</button>
+              </div>
+            </section>
           </div>
-
-          <p class="site-notice" data-forum-status role="status">
-            Supabase is not connected yet. The forum will become live after the project URL and publishable key are
-            configured.
-          </p>
-
-          <ul class="feature-list" data-forum-categories hidden></ul>
-        </section>
-
-        <section class="section-panel" aria-labelledby="forum-access-title">
-          <div class="section-head">
-            <p class="section-kicker">Access model</p>
-            <h2 id="forum-access-title">No GitHub account required</h2>
-          </div>
-          <ul class="feature-list">
-            <li>
-              <span class="feature-list__name">Public reading</span>
-              <span class="feature-list__desc">Anyone can browse categories, threads, posts and reactions.</span>
-            </li>
-            <li>
-              <span class="feature-list__name">Discord sign-in</span>
-              <span class="feature-list__desc">Posting will use Supabase Auth with Discord rather than GitHub accounts.</span>
-            </li>
-            <li>
-              <span class="feature-list__name">Database-enforced permissions</span>
-              <span class="feature-list__desc">Row Level Security controls posting, editing, reactions, reports and moderation.</span>
-            </li>
-            <li>
-              <span class="feature-list__name">Static hosting</span>
-              <span class="feature-list__desc">GitHub Pages serves the UI while Supabase hosts the managed data and authentication layer.</span>
-            </li>
-          </ul>
         </section>
       </main>
 
 <%- include("../partials/footer") %>
-
 <%- include("../partials/scripts") %>

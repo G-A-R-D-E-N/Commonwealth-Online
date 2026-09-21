@@ -1,0 +1,42 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main forum-main">
+        <article
+          class="forum-thread-page"
+          data-forum-thread
+          data-supabase-url="<%= site.supabase?.url || "" %>"
+          data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          aria-labelledby="forum-thread-title"
+        >
+          <header class="forum-thread-header">
+            <a class="forum-back" href="/forum/">← Forum</a>
+            <p class="section-kicker" data-thread-category>Discussion</p>
+            <h1 id="forum-thread-title" data-thread-title>Loading discussion…</h1>
+            <p class="forum-thread-header__meta" data-thread-meta></p>
+            <div class="forum-thread-header__actions" data-thread-actions hidden></div>
+          </header>
+
+          <p class="forum-status" data-thread-status role="status">Loading posts…</p>
+          <div class="forum-post-list" data-thread-posts hidden></div>
+          <div class="forum-pagination" data-thread-pagination hidden>
+            <button class="co-btn co-btn--ghost" type="button" data-thread-prev>Previous</button>
+            <span data-thread-page></span>
+            <button class="co-btn co-btn--ghost" type="button" data-thread-next>Next</button>
+          </div>
+
+          <form class="forum-compose forum-reply" data-thread-reply hidden>
+            <label>
+              <span>Reply</span>
+              <textarea name="body" rows="5" minlength="1" maxlength="12000" required></textarea>
+            </label>
+            <div class="forum-compose__actions">
+              <button class="co-btn co-btn--primary" type="submit">Post reply</button>
+            </div>
+          </form>
+          <p class="forum-status" data-thread-reply-status role="status" hidden></p>
+        </article>
+      </main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/scripts") %>

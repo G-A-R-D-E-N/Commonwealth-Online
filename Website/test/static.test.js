@@ -27,6 +27,7 @@ const expectedPages = [
   "apply/beta/index.html",
   "apply/thanks/index.html",
   "forum/index.html",
+  "forum/thread/index.html",
 ];
 
 const startServer = (handler) =>
@@ -92,7 +93,7 @@ const run = async () => {
   const staticServer = await startServer(serveStatic);
   const staticBase = `http://127.0.0.1:${staticServer.address().port}`;
   try {
-    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/factions/", "/faction/?id=test", "/faction/manage/?id=test", "/factions/apply/", "/factions/review/", "/apply/", "/forum/"]) {
+    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/factions/", "/faction/?id=test", "/faction/manage/?id=test", "/factions/apply/", "/factions/review/", "/apply/", "/forum/", "/forum/thread/?id=1"]) {
       const page = await request(staticBase, route);
       assert.equal(page.response.status, 200, route);
     }
@@ -124,7 +125,25 @@ const run = async () => {
     const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
     const staticUpdates = await request(staticBase, "/updates/");
     const staticMedia = await request(staticBase, "/media/");
+    const staticForum = await request(staticBase, "/forum/");
+    const staticForumThread = await request(staticBase, "/forum/thread/?id=1");
     assert.match(staticTeamForm.text, /data-supabase-url/);
+    assert.match(staticForum.text, /data-forum/);
+    assert.match(staticForum.text, /data-forum-categories/);
+    assert.match(staticForum.text, /data-forum-threads/);
+    assert.match(staticForum.text, /data-forum-compose/);
+    assert.match(staticForum.text, /data-forum-compose-category/);
+    assert.match(staticForum.text, /data-forum-search/);
+    assert.match(staticForum.text, /data-forum-signin/);
+    assert.match(staticForum.text, /data-forum-pagination/);
+    assert.match(staticForum.text, /data-forum-prev/);
+    assert.match(staticForum.text, /data-forum-next/);
+    assert.match(staticForumThread.text, /data-forum-thread/);
+    assert.match(staticForumThread.text, /data-thread-posts/);
+    assert.match(staticForumThread.text, /data-thread-reply/);
+    assert.match(staticForumThread.text, /data-thread-pagination/);
+    assert.match(staticForumThread.text, /data-thread-prev/);
+    assert.match(staticForumThread.text, /data-thread-next/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
     assert.match(staticAccount.text, /data-account/);
     assert.match(staticAccount.text, /data-captcha-provider=/);
@@ -239,6 +258,8 @@ const run = async () => {
     const factionJs = fs.readFileSync(path.join(dist, "static/js/faction.js"), "utf8");
     const factionApplyJs = fs.readFileSync(path.join(dist, "static/js/faction-apply.js"), "utf8");
     const factionReviewJs = fs.readFileSync(path.join(dist, "static/js/faction-review.js"), "utf8");
+    const forumJs = fs.readFileSync(path.join(dist, "static/js/forum.js"), "utf8");
+    const forumThreadJs = fs.readFileSync(path.join(dist, "static/js/forum-thread.js"), "utf8");
     const navbarJs = fs.readFileSync(path.join(dist, "static/js/navbar.js"), "utf8");
     const siteShellCss = fs.readFileSync(path.join(dist, "static/css/site-shell.css"), "utf8");
     const discordLinkJs = fs.readFileSync(path.join(dist, "static/js/discord-link.js"), "utf8");
@@ -251,6 +272,45 @@ const run = async () => {
     assert.doesNotMatch(discordLinkJs, /\bCrate\b/);
     assert.doesNotMatch(discordLinkJs, /\beval\s*\(/);
     assert.doesNotMatch(discordLinkJs, /new Function\s*\(/);
+    assert.match(forumJs, /create_forum_thread/);
+    assert.match(forumJs, /is_forum_moderator/);
+    assert.match(forumJs, /canPostLocked/);
+    assert.match(forumJs, /category\.is_locked \? " · Staff" : ""/);
+    assert.match(forumJs, /PAGE_SIZE = 25/);
+    assert.match(forumJs, /searchParams\.set\("limit", String\(PAGE_SIZE \+ 1\)\)/);
+    assert.match(forumJs, /searchParams\.set\("offset", String\(\(currentPage - 1\) \* PAGE_SIZE\)\)/);
+    assert.match(forumJs, /searchParams\.set\("category\.slug", "eq\." \+ selectedSlug\)/);
+    assert.match(forumJs, /searchParams\.set\("title", "ilike\.\*" \+ query/);
+    assert.doesNotMatch(forumJs, /200/);
+    assert.match(forumJs, /currentPage \+= 1/);
+    assert.match(forumJs, /getSession\(\)/);
+    assert.match(forumThreadJs, /\.from\("forum_posts"\)/);
+    assert.match(forumThreadJs, /PAGE_SIZE = 50/);
+    assert.match(forumThreadJs, /Prefer: "count=exact"/);
+    assert.match(forumThreadJs, /content-range/);
+    assert.match(forumThreadJs, /String\(\(currentPage - 1\) \* PAGE_SIZE\)/);
+    assert.match(forumThreadJs, /destinationPage/);
+    assert.match(forumThreadJs, /currentPage > pageCount/);
+    assert.match(forumThreadJs, /\.from\("forum_reactions"\)/);
+    assert.match(forumThreadJs, /\.from\("forum_reports"\)/);
+    assert.match(forumThreadJs, /\/member\/\?username=/);
+    assert.match(forumThreadJs, /Why are you reporting this post\?/);
+    assert.match(forumThreadJs, /You already have an open report for this post\./);
+    assert.match(forumThreadJs, /Delete post/);
+    assert.match(forumThreadJs, /Edit discussion title/);
+    assert.match(forumThreadJs, /Delete this discussion and all replies\?/);
+    assert.match(forumThreadJs, /\(\(!thread\.is_locked && isAuthor\) \|\| isModerator\)/);
+    assert.match(forumThreadJs, /Edit post/);
+    assert.match(forumThreadJs, /Delete this post\?/);
+    assert.match(forumThreadJs, /is_forum_moderator/);
+    assert.match(forumThreadJs, /moderate_forum_thread/);
+    assert.match(forumThreadJs, /forum_reports/);
+    assert.match(forumThreadJs, /reporter:profiles!forum_reports_reporter_id_fkey/);
+    assert.match(forumThreadJs, /Mark reviewed/);
+    assert.match(forumThreadJs, /Dismiss reports/);
+    assert.match(forumThreadJs, /thread\.is_locked \? "Unlock" : "Lock"/);
+    assert.match(forumThreadJs, /thread\.is_pinned \? "Unpin" : "Pin"/);
+    assert.match(forumThreadJs, /getSession\(\)/);
     assert.match(navbarJs, /getSession\(\)/);
     assert.match(navbarJs, /onAuthStateChange/);
     assert.match(navbarJs, /site-nav__profile/);
