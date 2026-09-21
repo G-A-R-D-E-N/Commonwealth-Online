@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build:static": "node scripts/fetch-profile-icons.js && node scripts/build-static.js",
-    "test": "node test/applications.test.js && node test/security.test.js",
+    "test": "node test/applications.test.js && node test/security.test.js && node test/account-auth.test.js",
     "test:static": "node test/static.test.js"
   },
   "dependencies": {
