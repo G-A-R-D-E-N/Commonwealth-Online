@@ -113,23 +113,27 @@ const run = async () => {
     assert.doesNotMatch(staticAccount.text, /supabase\.min\.js/);
     assert.match(staticAccount.text, /data-discord-link/);
     assert.doesNotMatch(staticAccount.text, /type="file"/);
-    const perkIconSource =
-      "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/";
-    for (const icon of [
+    const profileIcons = [
       "armorer.png",
       "hacker.png",
       "rifleman.png",
       "medic.png",
       "scrapper.png",
       "cap_collector.png",
-    ]) {
-      assert.ok(staticAccount.text.includes(`${perkIconSource}${icon}`), `missing real perk icon ${icon}`);
+    ];
+    for (const icon of profileIcons) {
+      assert.ok(staticAccount.text.includes(`/assets/profile-icons/${icon}`), `missing real perk icon ${icon}`);
+      const iconPath = path.join(dist, "assets/profile-icons", icon);
+      assert.equal(fs.existsSync(iconPath), true, `missing fetched perk icon ${icon}`);
+      assert.deepEqual([...fs.readFileSync(iconPath).subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
     }
-    assert.doesNotMatch(staticAccount.text, /\/assets\/profile-icons\//);
-    assert.equal(fs.existsSync(path.join(dist, "assets/profile-icons")), false, "fake local profile icon assets must not ship");
+    assert.doesNotMatch(staticAccount.text, /profile-icons\/[^"]+\.svg/);
+    const iconFetcher = fs.readFileSync(path.join(root, "scripts/fetch-profile-icons.js"), "utf8");
+    assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     assert.match(accountJs, /linkIdentity/);
-    assert.ok(accountJs.includes(perkIconSource));
+    assert.ok(accountJs.includes("/assets/profile-icons/armorer.png"));
+    assert.doesNotMatch(accountJs, /Fallout_Perk_Planner/);
     assert.ok(accountJs.includes('new URL(`${assetBase}/account/`, window.location.origin).href'));
     assert.doesNotMatch(accountJs, /new URL\("\\.", window\.location\.href\)/);
     assert.doesNotMatch(accountJs, /storage\.from/);
