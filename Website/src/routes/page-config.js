@@ -496,7 +496,7 @@ const PUBLIC_PAGES = [
       description: "Apply to establish a persistent player faction in Commonwealth Online.",
       bodyClass: "co-faction-apply-page",
       activeKey: "factions",
-      styles: ["/static/css/profile.css", "/static/css/factions.css"],
+      styles: ["/static/css/profile.css", "/static/css/factions.css?v=20260921-3"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",

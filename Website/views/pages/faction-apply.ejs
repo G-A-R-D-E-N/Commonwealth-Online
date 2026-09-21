@@ -1,77 +1,95 @@
 <%- include("../partials/head") %>
 <%- include("../partials/navbar") %>
 
-      <main class="site-main">
+      <main class="site-main faction-apply-main">
         <section
-          class="section-panel faction-shell"
+          class="faction-apply-shell"
           data-faction-apply
           data-supabase-url="<%= site.supabase?.url || "" %>"
           data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
           aria-labelledby="faction-apply-title"
         >
-          <div class="section-head">
-            <p class="section-kicker">Faction application</p>
-            <h1 id="faction-apply-title">Establish a faction</h1>
-            <p>
-              Approved factions receive a persistent faction identity, founder leadership role and future hooks for official-server integration.
-            </p>
-          </div>
+          <header class="faction-apply-hero">
+            <div class="faction-apply-hero__copy">
+              <p class="section-kicker">Faction application</p>
+              <h1 id="faction-apply-title">Establish a faction</h1>
+              <p>Create a persistent player group with its own identity, lore, recruitment stance, and future server integration.</p>
+              <a class="co-btn co-btn--ghost" href="/factions/">Back to factions</a>
+            </div>
+          </header>
 
-          <p class="site-notice" data-faction-apply-status role="status" hidden></p>
-
-          <form class="profile-form faction-application-form" data-faction-apply-form>
-            <div class="profile-fields">
-              <label class="profile-field">
-                <span>Faction name</span>
-                <input name="proposed_name" type="text" minlength="3" maxlength="80" required />
-              </label>
-              <label class="profile-field">
-                <span>Tag</span>
-                <input name="proposed_tag" type="text" minlength="2" maxlength="10" required />
-              </label>
+          <section class="faction-application-panel" aria-label="Faction application form">
+            <div class="faction-application-panel__bar">
+              <span>Community registry</span>
+              <span>Faction application</span>
             </div>
 
-            <label class="profile-field">
-              <span>Short summary</span>
-              <textarea name="summary" minlength="20" maxlength="500" rows="3" required></textarea>
-            </label>
+            <p class="site-notice faction-application-status" data-faction-apply-status role="status" hidden></p>
 
-            <label class="profile-field">
-              <span>Lore and background</span>
-              <textarea name="lore" minlength="20" maxlength="6000" rows="8" required></textarea>
-            </label>
+            <form class="faction-application-form" data-faction-apply-form>
+              <fieldset class="faction-form-section">
+                <legend>Identity</legend>
+                <p class="faction-form-section__help">Choose the public name and short tag players will see across the site.</p>
+                <div class="faction-form-grid faction-form-grid--two">
+                  <label class="faction-form-field">
+                    <span>Faction name</span>
+                    <input name="proposed_name" type="text" minlength="3" maxlength="80" placeholder="Example: Commonwealth Rangers" required />
+                  </label>
+                  <label class="faction-form-field">
+                    <span>Tag</span>
+                    <input name="proposed_tag" type="text" minlength="2" maxlength="10" placeholder="CR" required />
+                  </label>
+                </div>
+              </fieldset>
 
-            <label class="profile-field">
-              <span>Goals</span>
-              <textarea name="goals" minlength="20" maxlength="3000" rows="5" required></textarea>
-            </label>
+              <fieldset class="faction-form-section">
+                <legend>Public profile</legend>
+                <p class="faction-form-section__help">Describe what the faction is, where it fits in the Commonwealth, and what it is trying to accomplish.</p>
+                <label class="faction-form-field">
+                  <span>Short summary</span>
+                  <textarea name="summary" minlength="20" maxlength="500" rows="3" placeholder="A short description shown in the faction directory." required></textarea>
+                </label>
+                <label class="faction-form-field">
+                  <span>Lore and background</span>
+                  <textarea name="lore" minlength="20" maxlength="6000" rows="7" placeholder="Origins, beliefs, history, territory, notable events, and roleplay context." required></textarea>
+                </label>
+                <label class="faction-form-field">
+                  <span>Goals</span>
+                  <textarea name="goals" minlength="20" maxlength="3000" rows="4" placeholder="What does this faction want to achieve?" required></textarea>
+                </label>
+              </fieldset>
 
-            <div class="profile-fields">
-              <label class="profile-field">
-                <span>Focus</span>
-                <select name="focus" required>
-                  <option value="mixed">Mixed</option>
-                  <option value="pve">PvE</option>
-                  <option value="pvp">PvP</option>
-                  <option value="roleplay">Roleplay</option>
-                </select>
-              </label>
-              <label class="profile-field">
-                <span>Recruitment</span>
-                <select name="recruitment" required>
-                  <option value="open">Open</option>
-                  <option value="application">Application</option>
-                  <option value="invite_only">Invite only</option>
-                  <option value="closed">Closed</option>
-                </select>
-              </label>
-            </div>
+              <fieldset class="faction-form-section">
+                <legend>Operations</legend>
+                <p class="faction-form-section__help">Set the faction's main play focus and how new members can join.</p>
+                <div class="faction-form-grid faction-form-grid--two">
+                  <label class="faction-form-field">
+                    <span>Focus</span>
+                    <select name="focus" required>
+                      <option value="mixed">Mixed</option>
+                      <option value="pve">PvE</option>
+                      <option value="pvp">PvP</option>
+                      <option value="roleplay">Roleplay</option>
+                    </select>
+                  </label>
+                  <label class="faction-form-field">
+                    <span>Recruitment</span>
+                    <select name="recruitment" required>
+                      <option value="open">Open</option>
+                      <option value="application">Application</option>
+                      <option value="invite_only">Invite only</option>
+                      <option value="closed">Closed</option>
+                    </select>
+                  </label>
+                </div>
+              </fieldset>
 
-            <div class="profile-actions">
-              <a class="co-btn co-btn--ghost" href="/factions/">Cancel</a>
-              <button class="co-btn co-btn--primary" type="submit">Submit faction application</button>
-            </div>
-          </form>
+              <div class="faction-form-actions">
+                <a class="co-btn co-btn--ghost" href="/factions/">Cancel</a>
+                <button class="co-btn co-btn--primary" type="submit">Submit faction application</button>
+              </div>
+            </form>
+          </section>
         </section>
       </main>
 
