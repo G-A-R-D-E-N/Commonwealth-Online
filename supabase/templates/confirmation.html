@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <body style="margin:0;background:#0a0c0a;color:#d8ddd0;font-family:Arial,sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#0a0c0a;padding:32px 16px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#101510;border:1px solid #c9a84a;">
+            <tr>
+              <td style="padding:28px 28px 12px;">
+                <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#3ecf4a;">Commonwealth Online</div>
+                <h1 style="margin:10px 0 0;font-size:28px;line-height:1.2;color:#d8ddd0;">Confirm your Commonwealth ID</h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:8px 28px 28px;">
+                <p style="margin:0 0 16px;line-height:1.6;color:#d8ddd0;">Welcome{{ if .Data.display_name }}, {{ .Data.display_name }}{{ end }}.</p>
+                <p style="margin:0 0 22px;line-height:1.6;color:#9aa898;">
+                  Confirm this email address to finish creating your Commonwealth Online account.
+                </p>
+                <p style="margin:0 0 24px;">
+                  <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:12px 18px;background:#3ecf4a;color:#0a0c0a;text-decoration:none;font-weight:700;border-radius:3px;">
+                    Confirm account
+                  </a>
+                </p>
+                <p style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#9aa898;">
+                  If the button does not work, copy and paste this address into your browser:
+                </p>
+                <p style="margin:0 0 22px;font-size:12px;line-height:1.5;word-break:break-all;color:#c9a84a;">{{ .ConfirmationURL }}</p>
+                <p style="margin:0;font-size:12px;line-height:1.5;color:#758073;">
+                  If you did not create this account, you can ignore this email.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
