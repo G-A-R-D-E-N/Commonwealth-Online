@@ -76,6 +76,24 @@ alter table public.user_blocks enable row level security;
 alter table public.user_presence enable row level security;
 alter table public.user_notifications enable row level security;
 
+create or replace function private.users_blocked(p_left uuid, p_right uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select exists (
+    select 1
+    from public.user_blocks b
+    where (b.blocker_id = p_left and b.blocked_id = p_right)
+       or (b.blocker_id = p_right and b.blocked_id = p_left)
+  );
+$function$;
+
+revoke all on function private.users_blocked(uuid, uuid) from public, anon, authenticated;
+grant execute on function private.users_blocked(uuid, uuid) to service_role;
+
 grant select on public.user_profile_details to anon, authenticated;
 grant insert, update, delete on public.user_profile_details to authenticated;
 
@@ -127,12 +145,7 @@ to authenticated
 with check (
   auth.uid() = requester_id
   and requester_id <> addressee_id
-  and not exists (
-    select 1
-    from public.user_blocks b
-    where (b.blocker_id = requester_id and b.blocked_id = addressee_id)
-       or (b.blocker_id = addressee_id and b.blocked_id = requester_id)
-  )
+  and not private.users_blocked(requester_id, addressee_id)
 );
 
 create policy "addressee responds to friendship"
@@ -179,12 +192,7 @@ using (
         and d.is_public
         and d.show_presence
     )
-    and not exists (
-      select 1
-      from public.user_blocks b
-      where (b.blocker_id = user_presence.user_id and b.blocked_id = auth.uid())
-         or (b.blocker_id = auth.uid() and b.blocked_id = user_presence.user_id)
-    )
+    and not private.users_blocked(user_presence.user_id, auth.uid())
   )
 );
 
