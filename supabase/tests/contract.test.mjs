@@ -255,6 +255,9 @@ assert.match(socialFoundationMigration, /create trigger create_social_profile_ro
 assert.match(socialFoundationMigration, /create trigger notify_friendship_change/i);
 assert.match(socialFoundationMigration, /create trigger remove_friendship_on_block/i);
 assert.match(socialFoundationMigration, /grant update \(read_at\) on public\.user_notifications/i);
+assert.match(socialFoundationMigration, /grant usage, select on sequence public\.user_friendships_id_seq to authenticated/i);
+assert.match(socialFoundationMigration, /grant all on public\.user_presence to service_role/i);
+assert.doesNotMatch(socialFoundationMigration, /grant insert, update, delete on public\.user_presence to authenticated/i);
 assert.doesNotMatch(socialFoundationMigration, /grant insert on public\.user_notifications to authenticated/i);
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
