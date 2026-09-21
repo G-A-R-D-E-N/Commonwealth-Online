@@ -34,8 +34,32 @@ body.co-site .site-nav a.site-nav__profile.is-active {
 }
 
 .site-nav__profile-avatar[hidden],
-.site-nav__account-label[hidden] {
+.site-nav__account-label[hidden],
+.site-nav__notification-badge[hidden] {
   display: none;
+}
+
+.site-nav__notification-badge {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.4rem;
+  min-width: 1.2rem;
+  height: 1.2rem;
+  padding: 0 0.28rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--site-bg);
+  border-radius: 999px;
+  background: var(--site-heading);
+  color: var(--site-bg);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+body.co-site .site-nav a.site-nav__profile {
+  position: relative;
 }
 
 @media (max-width: 760px) {

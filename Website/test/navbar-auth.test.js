@@ -39,9 +39,24 @@ const element = (overrides = {}) => ({
 
 const toggle = element();
 const nav = element();
-const accountLink = element();
+const accountAttributes = new Map();
+const badgeAttributes = new Map();
+const accountLink = element({
+  setAttribute(name, value) {
+    accountAttributes.set(name, value);
+  },
+  removeAttribute(name) {
+    accountAttributes.delete(name);
+  },
+});
 const accountLabel = element({ textContent: "Login / Sign Up" });
 const accountAvatar = element({ hidden: true });
+const notificationBadge = element({
+  hidden: true,
+  setAttribute(name, value) {
+    badgeAttributes.set(name, value);
+  },
+});
 
 const mount = element({
   dataset: {
@@ -55,33 +70,55 @@ const mount = element({
       ["[data-account-nav]", accountLink],
       ["[data-account-nav-label]", accountLabel],
       ["[data-account-nav-avatar]", accountAvatar],
+      ["[data-account-nav-notifications]", notificationBadge],
     ]).get(selector) || null;
   },
 });
+
+let authHandler;
+let notificationQueries = 0;
+const documentHandlers = new Map();
+const signedInSession = {
+  user: {
+    id: "user-1",
+    user_metadata: {
+      display_name: "Nomad",
+      avatar_url: "/assets/profile-icons/rifleman.png",
+    },
+  },
+};
 
 const client = {
   auth: {
     async getSession() {
       return {
         data: {
-          session: {
-            user: {
-              id: "user-1",
-              user_metadata: {
-                display_name: "Nomad",
-                avatar_url: "/assets/profile-icons/rifleman.png",
-              },
-            },
-          },
+          session: signedInSession,
         },
       };
     },
-    onAuthStateChange() {
+    onAuthStateChange(callback) {
+      authHandler = callback;
       return { data: { subscription: { unsubscribe() {} } } };
     },
   },
-  from() {
-    throw new Error("navbar must not query profile storage");
+  from(table) {
+    assert.equal(table, "user_notifications");
+    notificationQueries += 1;
+    return {
+      select(columns, options) {
+        assert.equal(columns, "id");
+        assert.equal(options.count, "exact");
+        assert.equal(options.head, true);
+        return {
+          async is(column, value) {
+            assert.equal(column, "read_at");
+            assert.equal(value, null);
+            return { count: 3, error: null };
+          },
+        };
+      },
+    };
   },
 };
 
@@ -98,7 +135,9 @@ const context = {
       }
       return null;
     },
-    addEventListener() {},
+    addEventListener(name, callback) {
+      documentHandlers.set(name, callback);
+    },
   },
   window: {
     matchMedia() {
@@ -129,11 +168,28 @@ const run = async () => {
   assert.equal(accountLabel.hidden, true);
   assert.equal(accountAvatar.hidden, false);
   assert.equal(accountAvatar.src, "/assets/profile-icons/rifleman.png");
-  assert.equal(attributes.get("aria-label"), "Nomad profile");
+  assert.equal(accountAttributes.get("aria-label"), "Nomad profile");
   assert.equal(accountLink.title, "Profile");
   assert.equal(classes.has("site-nav__profile"), true);
+  assert.equal(notificationQueries, 1);
+  assert.equal(notificationBadge.hidden, false);
+  assert.equal(notificationBadge.textContent, "3");
+  assert.equal(badgeAttributes.get("aria-label"), "3 unread notifications");
 
-  console.log("navbar profile icon checks passed");
+  authHandler("TOKEN_REFRESHED", signedInSession);
+  await flush();
+  assert.equal(notificationQueries, 1, "auth refresh must not repeat notification query");
+
+  documentHandlers.get("co:notifications-cleared")();
+  assert.equal(notificationBadge.hidden, true);
+  assert.equal(notificationBadge.textContent, "");
+
+  authHandler("SIGNED_OUT", null);
+  await flush();
+  assert.equal(notificationBadge.hidden, true);
+  assert.equal(notificationBadge.textContent, "");
+
+  console.log("navbar profile and notification checks passed");
 };
 
 run().catch((error) => {

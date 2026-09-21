@@ -15,6 +15,12 @@ const expectedPages = [
   "updates/index.html",
   "account/index.html",
   "profile/index.html",
+  "members/index.html",
+  "member/index.html",
+  "factions/index.html",
+  "faction/index.html",
+  "faction/manage/index.html",
+  "factions/apply/index.html",
   "apply/index.html",
   "apply/team/index.html",
   "apply/beta/index.html",
@@ -85,7 +91,7 @@ const run = async () => {
   const staticServer = await startServer(serveStatic);
   const staticBase = `http://127.0.0.1:${staticServer.address().port}`;
   try {
-    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/apply/", "/forum/"]) {
+    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/factions/", "/faction/?id=test", "/faction/manage/?id=test", "/factions/apply/", "/apply/", "/forum/"]) {
       const page = await request(staticBase, route);
       assert.equal(page.response.status, 200, route);
     }
@@ -106,6 +112,11 @@ const run = async () => {
     const staticApply = await request(staticBase, "/apply/");
     const staticAccount = await request(staticBase, "/account/");
     const staticProfile = await request(staticBase, "/profile/");
+    const staticMembers = await request(staticBase, "/members/");
+    const staticMember = await request(staticBase, "/member/?id=test");
+    const staticFactions = await request(staticBase, "/factions/");
+    const staticFaction = await request(staticBase, "/faction/?id=test");
+    const staticFactionApply = await request(staticBase, "/factions/apply/");
     const staticTeamForm = await request(staticBase, "/apply/team/");
     const staticBetaForm = await request(staticBase, "/apply/beta/");
     const staticThanks = await request(staticBase, "/apply/thanks/?ref=static-proof");
@@ -131,6 +142,19 @@ const run = async () => {
     assert.match(staticProfile.text, /data-profile/);
     assert.match(staticProfile.text, /data-profile-form/);
     assert.match(staticProfile.text, /data-password-form/);
+    assert.match(staticProfile.text, /data-community-profile-form/);
+    assert.match(staticProfile.text, /data-friends-list/);
+    assert.match(staticProfile.text, /data-notifications-list/);
+    assert.match(staticMembers.text, /data-members/);
+    assert.match(staticMembers.text, /data-members-search/);
+    assert.match(staticMember.text, /data-member/);
+    assert.match(staticMember.text, /data-friend-action/);
+    assert.match(staticMember.text, /data-block-action/);
+    assert.match(staticMember.text, /data-member-friends-list/);
+    assert.match(staticMember.text, /data-member-username-history-list/);
+    assert.match(staticMember.text, /data-member-badges-list/);
+    assert.match(staticMember.text, /data-member-recent-servers-list/);
+    assert.match(staticMember.text, /data-member-characters-list/);
     assert.doesNotMatch(staticProfile.text, /data-discord-link/);
     assert.doesNotMatch(staticProfile.text, />Link Discord</);
     assert.doesNotMatch(staticAccount.text, />Continue with Discord</);
@@ -139,6 +163,14 @@ const run = async () => {
     assert.match(staticProfile.text, /name="current_password"/);
     assert.match(staticProfile.text, /name="new_password"/);
     assert.match(staticProfile.text, /name="confirm_password"/);
+    assert.match(staticProfile.text, /name="show_username_history"/);
+    assert.match(staticProfile.text, /data-username-history-list/);
+    assert.match(staticProfile.text, /data-badges-list/);
+    assert.match(staticProfile.text, /name="show_recent_servers"/);
+    assert.match(staticProfile.text, /data-server-favorites-list/);
+    assert.match(staticProfile.text, /data-server-history-list/);
+    assert.match(staticProfile.text, /name="show_characters"/);
+    assert.match(staticProfile.text, /data-characters-list/);
     assert.doesNotMatch(staticProfile.text, />\s*[^<]*Supabase[^<]*</i);
     const supabaseConfigured =
       /data-supabase-url="[^"]+"/.test(staticAccount.text) &&
@@ -173,6 +205,20 @@ const run = async () => {
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     const profileJs = fs.readFileSync(path.join(dist, "static/js/profile.js"), "utf8");
+    const profileSocialJs = fs.readFileSync(path.join(dist, "static/js/profile-social.js"), "utf8");
+    const profileNotificationsJs = fs.readFileSync(path.join(dist, "static/js/profile-notifications.js"), "utf8");
+    const profileBadgesJs = fs.readFileSync(path.join(dist, "static/js/profile-badges.js"), "utf8");
+    const profileServersJs = fs.readFileSync(path.join(dist, "static/js/profile-servers.js"), "utf8");
+    const profileCharactersJs = fs.readFileSync(path.join(dist, "static/js/profile-characters.js"), "utf8");
+    const memberCharactersJs = fs.readFileSync(path.join(dist, "static/js/member-characters.js"), "utf8");
+    const memberServersJs = fs.readFileSync(path.join(dist, "static/js/member-servers.js"), "utf8");
+    const serversFavoritesJs = fs.readFileSync(path.join(dist, "static/js/servers-favorites.js"), "utf8");
+    const membersJs = fs.readFileSync(path.join(dist, "static/js/members.js"), "utf8");
+    const memberJs = fs.readFileSync(path.join(dist, "static/js/member.js"), "utf8");
+    const serversJs = fs.readFileSync(path.join(dist, "static/js/servers.js"), "utf8");
+    const factionsJs = fs.readFileSync(path.join(dist, "static/js/factions.js"), "utf8");
+    const factionJs = fs.readFileSync(path.join(dist, "static/js/faction.js"), "utf8");
+    const factionApplyJs = fs.readFileSync(path.join(dist, "static/js/faction-apply.js"), "utf8");
     const navbarJs = fs.readFileSync(path.join(dist, "static/js/navbar.js"), "utf8");
     const siteShellCss = fs.readFileSync(path.join(dist, "static/css/site-shell.css"), "utf8");
     const discordLinkJs = fs.readFileSync(path.join(dist, "static/js/discord-link.js"), "utf8");
@@ -200,6 +246,53 @@ const run = async () => {
     assert.match(profileJs, /updateUser/);
     assert.match(profileJs, /currentPassword/);
     assert.match(profileJs, /\.from\("profiles"\)/);
+    assert.match(profileSocialJs, /user_profile_details/);
+    assert.match(profileSocialJs, /user_friendships/);
+    assert.doesNotMatch(profileSocialJs, /user_notifications/);
+    assert.match(profileNotificationsJs, /user_notifications/);
+    assert.match(profileSocialJs, /user_username_history/);
+    assert.match(profileSocialJs, /show_username_history/);
+    assert.match(profileBadgesJs, /user_badge_assignments/);
+    assert.match(profileBadgesJs, /displayedCount >= 3/);
+    assert.match(profileServersJs, /user_server_favorites/);
+    assert.match(profileServersJs, /user_server_history/);
+    assert.match(memberServersJs, /get_public_recent_servers/);
+    assert.match(profileCharactersJs, /user_characters/);
+    assert.match(memberCharactersJs, /get_public_user_characters/);
+    assert.match(serversFavoritesJs, /user_server_favorites/);
+    assert.match(serversFavoritesJs, /onAuthStateChange/);
+    assert.match(serversJs, /data-favorite-server/);
+    assert.match(serversJs, /co:servers-rendered/);
+    assert.match(profileSocialJs, /Decline/);
+    assert.match(profileSocialJs, /status: "declined"/);
+    assert.match(profileSocialJs, /Cancel request/);
+    assert.match(profileNotificationsJs, /row\.actor\?\.avatar_url/);
+    assert.match(profileNotificationsJs, /co:notifications-cleared/);
+    assert.match(profileNotificationsJs, /window\.location\.assign\(item\.href\)/);
+    assert.match(profileSocialJs, /co:notifications-refresh/);
+    assert.match(profileSocialJs, /Promise\.all/);
+    assert.match(membersJs, /user_profile_details!inner/);
+    assert.match(membersJs, /user_presence/);
+    assert.doesNotMatch(membersJs, /created_at/);
+    assert.match(memberJs, /get_public_member_profile/);
+    assert.match(memberJs, /get_public_member_friends/);
+    assert.match(memberJs, /get_public_username_history/);
+    assert.match(memberJs, /user_badge_assignments/);
+    assert.match(memberJs, /is_displayed/);
+    assert.match(memberJs, /user_friendships/);
+    assert.match(memberJs, /user_blocks/);
+    assert.match(memberJs, /status === "declined"/);
+    assert.doesNotMatch(membersJs, /setInterval|setTimeout/);
+    assert.doesNotMatch(memberJs, /setInterval/);
+    assert.match(factionsJs, /\.from\("factions"\)/);
+    assert.match(factionJs, /\.from\("faction_members"\)/);
+    assert.match(factionApplyJs, /\.from\("faction_applications"\)/);
+    assert.match(factionApplyJs, /\.insert\(\{ applicant_id: user\.id, \.\.\.payload \}\)/);
+    assert.doesNotMatch(factionApplyJs, /const payload = \{[^}]*applicant_id:/);
+    assert.match(factionApplyJs, /changes_requested/);
+    assert.doesNotMatch(factionsJs, /setInterval|setTimeout/);
+    assert.doesNotMatch(factionJs, /setInterval|setTimeout/);
+    assert.doesNotMatch(factionApplyJs, /setInterval|setTimeout/);
     assert.match(siteShellCss, /body\.co-site\s*\{\s*background: #0d0e0f;/);
     assert.match(siteShellCss, /body\.co-site::before\s*\{\s*content: none;/);
     assert.doesNotMatch(siteShellCss, /radial-gradient|fractalNoise/);
