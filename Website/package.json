@@ -7,7 +7,7 @@
     "node": ">=24.21.0"
   },
   "scripts": {
-    "build:static": "node scripts/build-static.js",
+    "build:static": "node scripts/fetch-profile-icons.js && node scripts/build-static.js",
     "test": "node test/applications.test.js && node test/security.test.js",
     "test:static": "node test/static.test.js"
   },
