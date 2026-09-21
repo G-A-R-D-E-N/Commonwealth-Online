@@ -1,6 +1,4 @@
 (() => {
-  // The header markup is rendered server-side (views/partials/navbar.ejs), so
-  // this script only wires up the mobile menu toggle.
   const mount = document.querySelector("[data-co-navbar]");
   if (!mount) {
     return;
@@ -8,6 +6,7 @@
 
   const toggle = mount.querySelector(".site-nav-toggle");
   const nav = mount.querySelector(".site-nav");
+  const accountLink = mount.querySelector("[data-account-nav]");
 
   if (!toggle || !nav) {
     return;
@@ -17,6 +16,12 @@
     toggle.setAttribute("aria-expanded", String(open));
     toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
     nav.classList.toggle("is-open", open);
+  };
+
+  const setAccountLabel = (signedIn) => {
+    if (accountLink) {
+      accountLink.textContent = signedIn ? "Account" : "Login / Sign Up";
+    }
   };
 
   toggle.addEventListener("click", () => {
@@ -44,5 +49,20 @@
     if (event.matches) {
       setOpen(false);
     }
+  });
+
+  const url = (mount.dataset.supabaseUrl || "").replace(/\/+$/, "");
+  const key = mount.dataset.supabaseKey || "";
+  if (!accountLink || !url || !key || !window.supabase?.createClient) {
+    setAccountLabel(false);
+    return;
+  }
+
+  const client = window.supabase.createClient(url, key);
+  client.auth.getSession().then(({ data }) => {
+    setAccountLabel(Boolean(data.session));
+  });
+  client.auth.onAuthStateChange((_event, session) => {
+    setAccountLabel(Boolean(session));
   });
 })();
