@@ -257,7 +257,7 @@
 
         if (role?.can_manage_members || role?.can_manage_roles || role?.can_edit_faction) {
           manageLink.href =
-            assetBase + "/faction/manage/?slug=" + encodeURIComponent(faction.slug);
+            assetBase + "/profile/?manageFaction=" + encodeURIComponent(faction.slug);
           manageLink.hidden = false;
         }
       }
