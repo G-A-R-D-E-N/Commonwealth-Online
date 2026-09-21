@@ -112,6 +112,7 @@
                   <label><input name="show_friends" type="checkbox" /> Show friends</label>
                   <label><input name="show_joined_at" type="checkbox" /> Show join date</label>
                   <label><input name="show_username_history" type="checkbox" /> Show previous usernames</label>
+                  <label><input name="show_recent_servers" type="checkbox" /> Show recent servers</label>
                 </div>
 
                 <div class="profile-actions">
@@ -119,6 +120,26 @@
                   <button class="co-btn co-btn--primary" type="submit">Save public profile</button>
                 </div>
               </form>
+            </section>
+
+            <section class="profile-card" aria-labelledby="server-favorites-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Multiplayer</p>
+                <h2 id="server-favorites-title">Favorite servers</h2>
+              </div>
+              <div class="profile-social-list" data-server-favorites-list>
+                <p class="account-help">Loading favorite servers…</p>
+              </div>
+            </section>
+
+            <section class="profile-card" aria-labelledby="server-history-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Multiplayer</p>
+                <h2 id="server-history-title">Recent sessions</h2>
+              </div>
+              <div class="profile-social-list" data-server-history-list>
+                <p class="account-help">Loading server history…</p>
+              </div>
             </section>
 
             <section class="profile-card" aria-labelledby="badges-title">
