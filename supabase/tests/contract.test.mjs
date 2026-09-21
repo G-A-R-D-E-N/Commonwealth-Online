@@ -81,6 +81,10 @@ const socialPrivacyMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921162500_social_privacy_hardening.sql"),
   "utf8"
 );
+const usernameHistoryMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921163500_username_history.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -279,6 +283,17 @@ assert.match(socialPrivacyMigration, /owner_details\.show_friends/i);
 assert.match(socialPrivacyMigration, /friend_details\.is_public/i);
 assert.match(socialPrivacyMigration, /revoke all on function public\.get_public_member_profile\(uuid\) from public/i);
 assert.match(socialPrivacyMigration, /revoke all on function public\.get_public_member_friends\(uuid\) from public/i);
+assert.match(usernameHistoryMigration, /add column if not exists show_username_history boolean not null default false/i);
+assert.match(usernameHistoryMigration, /create table if not exists public\.user_username_history/i);
+assert.match(usernameHistoryMigration, /alter table public\.user_username_history enable row level security/i);
+assert.match(usernameHistoryMigration, /auth\.uid\(\) = user_id/i);
+assert.match(usernameHistoryMigration, /viewer\.role = 'admin'/i);
+assert.match(usernameHistoryMigration, /create trigger capture_username_change/i);
+assert.match(usernameHistoryMigration, /values \(old\.id, old\.display_name, now\(\)\)/i);
+assert.match(usernameHistoryMigration, /create or replace function public\.get_public_username_history\(p_user_id uuid\)/i);
+assert.match(usernameHistoryMigration, /d\.show_username_history/i);
+assert.match(usernameHistoryMigration, /limit 10/i);
+assert.match(usernameHistoryMigration, /revoke all on function public\.get_public_username_history\(uuid\) from public/i);
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
 assert.match(registerAccount, /website/);
