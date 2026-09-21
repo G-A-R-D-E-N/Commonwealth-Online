@@ -28,11 +28,12 @@
 
           <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
             <% navItems.forEach((item) => { %>
-              <% if (item.key === page.activeKey) { %>
-            <a href="<%= item.href %>" class="is-active" aria-current="page"<% if (item.key === "account") { %> data-account-nav<% } %><% if (item.external) { %> target="_blank" rel="noopener noreferrer"<% } %>><%= item.label %></a>
-              <% } else { %>
-            <a href="<%= item.href %>"<% if (item.key === "account") { %> data-account-nav<% } %><% if (item.external) { %> target="_blank" rel="noopener noreferrer"<% } %>><%= item.label %></a>
-              <% } %>
+            <a
+              href="<%= item.href %>"
+              <% if (item.key === page.activeKey) { %>class="is-active" aria-current="page"<% } %>
+              <% if (item.key === "account") { %>data-account-nav<% } %>
+              <% if (item.external) { %>target="_blank" rel="noopener noreferrer"<% } %>
+            ><% if (item.key === "account") { %><span class="site-nav__account-label" data-account-nav-label><%= item.label %></span><img class="site-nav__profile-avatar" data-account-nav-avatar src="/assets/profile-icons/armorer.png" alt="" width="32" height="32" hidden /><% } else { %><%= item.label %><% } %></a>
             <% }) %>
             <a class="site-nav__donate" href="https://ko-fi.com/commonwealth_online" target="_blank" rel="noopener noreferrer">Donate</a>
           </nav>

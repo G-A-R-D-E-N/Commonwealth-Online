@@ -1,0 +1,126 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main profile-main">
+        <section
+          class="profile-shell"
+          data-profile
+          data-supabase-url="<%= site.supabase?.url || "" %>"
+          data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          aria-labelledby="profile-title"
+        >
+          <p class="site-notice profile-status" data-profile-status role="status" hidden></p>
+
+          <header class="profile-header">
+            <div class="profile-identity">
+              <img
+                data-profile-avatar
+                src="/assets/profile-icons/armorer.png"
+                alt=""
+                width="112"
+                height="112"
+                referrerpolicy="no-referrer"
+              />
+              <div>
+                <p class="section-kicker">Commonwealth Online</p>
+                <h1 id="profile-title" data-profile-name>Profile</h1>
+                <p data-profile-email></p>
+              </div>
+            </div>
+            <button class="co-btn co-btn--ghost" type="button" data-sign-out>Sign out</button>
+          </header>
+
+          <div class="profile-grid">
+            <section class="profile-card profile-card--wide" aria-labelledby="profile-settings-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Identity</p>
+                <h2 id="profile-settings-title">Profile settings</h2>
+                <p>Choose how you appear across Commonwealth Online.</p>
+              </div>
+
+              <form class="profile-form" data-profile-form>
+                <div class="profile-fields">
+                  <label class="profile-field">
+                    <span>Username</span>
+                    <input name="username" type="text" minlength="1" maxlength="80" autocomplete="nickname" required />
+                  </label>
+
+                  <label class="profile-field">
+                    <span>Email</span>
+                    <input name="email" type="email" maxlength="254" autocomplete="email" required />
+                  </label>
+                </div>
+
+                <fieldset class="profile-avatar-fieldset">
+                  <legend>Profile picture</legend>
+                  <div class="profile-avatar-grid">
+                    <% [
+                      ["Armorer", "/assets/profile-icons/armorer.png"],
+                      ["Hacker", "/assets/profile-icons/hacker.png"],
+                      ["Rifleman", "/assets/profile-icons/rifleman.png"],
+                      ["Medic", "/assets/profile-icons/medic.png"],
+                      ["Scrapper", "/assets/profile-icons/scrapper.png"],
+                      ["Cap Collector", "/assets/profile-icons/cap_collector.png"]
+                    ].forEach(([label, src]) => { %>
+                    <label class="profile-avatar-option">
+                      <input type="radio" name="avatar_url" value="<%= src %>" />
+                      <img src="<%= src %>" alt="" width="88" height="88" loading="lazy" referrerpolicy="no-referrer" />
+                      <span><%= label %></span>
+                    </label>
+                    <% }) %>
+                  </div>
+                </fieldset>
+
+                <div class="profile-actions">
+                  <button class="co-btn co-btn--primary" type="submit">Save profile</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="profile-card" aria-labelledby="security-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Security</p>
+                <h2 id="security-title">Change password</h2>
+              </div>
+
+              <form class="profile-form" data-password-form>
+                <label class="profile-field">
+                  <span>Current password</span>
+                  <input name="current_password" type="password" autocomplete="current-password" />
+                </label>
+
+                <label class="profile-field">
+                  <span>New password</span>
+                  <input name="new_password" type="password" minlength="8" autocomplete="new-password" required />
+                </label>
+
+                <label class="profile-field">
+                  <span>Confirm new password</span>
+                  <input name="confirm_password" type="password" minlength="8" autocomplete="new-password" required />
+                </label>
+
+                <button class="co-btn co-btn--primary" type="submit">Update password</button>
+              </form>
+            </section>
+
+            <section class="profile-card" aria-labelledby="connections-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Connections</p>
+                <h2 id="connections-title">Connected accounts</h2>
+              </div>
+
+              <div class="profile-connection">
+                <div>
+                  <strong>Discord</strong>
+                  <span data-discord-state>Checking connection…</span>
+                </div>
+                <button class="co-btn co-btn--discord" type="button" data-discord-link disabled>Link Discord</button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+
+<%- include("../partials/scripts") %>

@@ -12,8 +12,6 @@ const element = (overrides = {}) => ({
   hidden: false,
   disabled: false,
   textContent: "",
-  value: "",
-  src: "",
   classList: { toggle() {} },
   addEventListener() {},
   querySelector() {
@@ -30,8 +28,6 @@ const element = (overrides = {}) => ({
 });
 
 const status = element({ hidden: true });
-const signedOut = element();
-const signedIn = element({ hidden: true });
 const signInForm = element({
   addEventListener(type, handler) {
     if (type === "submit") {
@@ -39,31 +35,11 @@ const signInForm = element({
     }
   },
 });
-const profileName = element();
-const profileEmail = element();
-const profileRole = element();
-const profileAvatar = element();
-const discordState = element();
-const discordLink = element();
-const discordSignIn = element();
-const displayName = element();
-const profileForm = element({
-  elements: { display_name: displayName },
-  addEventListener() {},
-});
+const discordSignIn = element({ hidden: true, disabled: true });
 
 const elements = new Map([
   ["[data-account-status]", status],
-  ["[data-account-signed-out]", signedOut],
-  ["[data-account-signed-in]", signedIn],
   ["[data-signin-form]", signInForm],
-  ["[data-profile-form]", profileForm],
-  ["[data-profile-avatar]", profileAvatar],
-  ["[data-profile-name]", profileName],
-  ["[data-profile-email]", profileEmail],
-  ["[data-profile-role]", profileRole],
-  ["[data-discord-state]", discordState],
-  ["[data-discord-link]", discordLink],
   ["[data-discord-sign-in]", discordSignIn],
 ]);
 
@@ -77,11 +53,6 @@ const root = element({
   },
 });
 
-const signedInUser = {
-  id: "user-1",
-  email: "member@example.test",
-};
-
 const client = {
   auth: {
     async getSession() {
@@ -91,41 +62,19 @@ const client = {
       return {
         data: {
           session: {
-            user: signedInUser,
+            user: {
+              id: "user-1",
+              email: "member@example.test",
+            },
           },
         },
         error: null,
       };
     },
-    async getUserIdentities() {
-      return { data: { identities: [] } };
-    },
-    onAuthStateChange() {
-      return { data: { subscription: { unsubscribe() {} } } };
-    },
-  },
-  from() {
-    return {
-      select() {
-        return this;
-      },
-      eq() {
-        return this;
-      },
-      async single() {
-        return {
-          data: {
-            display_name: "Resident",
-            avatar_url: "/assets/profile-icons/armorer.png",
-            role: "member",
-          },
-          error: null,
-        };
-      },
-    };
   },
 };
 
+let assignedUrl = "";
 const context = {
   URL,
   FormData: class {
@@ -154,9 +103,11 @@ const context = {
     },
   }),
   window: {
-    location: { origin: "https://commonwealth-online.com" },
-    setTimeout(callback) {
-      callback();
+    location: {
+      origin: "https://commonwealth-online.com",
+      assign(url) {
+        assignedUrl = url;
+      },
     },
     supabase: {
       createClient() {
@@ -179,14 +130,10 @@ const run = async () => {
     preventDefault() {},
   });
 
-  assert.equal(signedIn.hidden, false);
-  assert.equal(signedOut.hidden, true);
-  assert.equal(profileName.textContent, "Resident");
-  assert.equal(profileEmail.textContent, "member@example.test");
-  assert.equal(status.hidden, true);
-  assert.equal(status.textContent, "");
+  assert.equal(assignedUrl, "https://commonwealth-online.com/profile/");
+  assert.equal(status.textContent, "Signing in…");
 
-  console.log("account sign-in handoff checks passed");
+  console.log("account sign-in redirect checks passed");
 };
 
 run().catch((error) => {

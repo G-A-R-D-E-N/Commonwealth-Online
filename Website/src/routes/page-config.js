@@ -377,8 +377,7 @@ const PUBLIC_PAGES = [
     output: "account/index.html",
     page: {
       title: "Account - Commonwealth Online",
-      description:
-        "Register or sign in to a Commonwealth Online account, link Discord, and select a curated Fallout 4 perk profile icon.",
+      description: "Create a Commonwealth Online account or sign in to your existing profile.",
       bodyClass: "co-account-page",
       activeKey: "account",
       styles: ["/static/css/account.css"],
@@ -387,6 +386,24 @@ const PUBLIC_PAGES = [
         "/static/js/navbar.js",
         "/static/js/script.js",
         "/static/js/account.js",
+      ],
+    },
+  },
+  {
+    route: "/profile",
+    template: "pages/profile",
+    output: "profile/index.html",
+    page: {
+      title: "Profile - Commonwealth Online",
+      description: "Manage your Commonwealth Online profile, email, password, profile picture, and connected accounts.",
+      bodyClass: "co-profile-page",
+      activeKey: "account",
+      styles: ["/static/css/profile.css"],
+      scripts: [
+        "/static/js/links.js",
+        "/static/js/navbar.js",
+        "/static/js/script.js",
+        "/static/js/profile.js",
       ],
     },
   },
