@@ -34,7 +34,7 @@
       const presence = firstRelated(row.user_presence);
       const card = document.createElement("a");
       card.className = "member-tile";
-      card.href = assetBase + "/member/?id=" + encodeURIComponent(row.id);
+      card.href = assetBase + "/member/?username=" + encodeURIComponent(row.display_name);
 
       const img = document.createElement("img");
       const avatar = row.avatar_url || "/assets/branding/CommonwealthOnlineIconLogo.svg";
