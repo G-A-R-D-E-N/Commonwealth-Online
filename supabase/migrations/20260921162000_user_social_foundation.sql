@@ -100,11 +100,12 @@ grant insert, update, delete on public.user_profile_details to authenticated;
 
 grant select, insert, delete on public.user_friendships to authenticated;
 grant update (status) on public.user_friendships to authenticated;
+grant usage, select on sequence public.user_friendships_id_seq to authenticated;
 
 grant select, insert, delete on public.user_blocks to authenticated;
 
 grant select on public.user_presence to anon, authenticated;
-grant insert, update, delete on public.user_presence to authenticated;
+grant all on public.user_presence to service_role;
 
 grant select, delete on public.user_notifications to authenticated;
 grant update (read_at) on public.user_notifications to authenticated;
@@ -196,25 +197,6 @@ using (
     and not private.users_blocked(user_presence.user_id, auth.uid())
   )
 );
-
-create policy "users create own presence"
-on public.user_presence
-for insert
-to authenticated
-with check (auth.uid() = user_id);
-
-create policy "users update own presence"
-on public.user_presence
-for update
-to authenticated
-using (auth.uid() = user_id)
-with check (auth.uid() = user_id);
-
-create policy "users delete own presence"
-on public.user_presence
-for delete
-to authenticated
-using (auth.uid() = user_id);
 
 create policy "users see own notifications"
 on public.user_notifications
