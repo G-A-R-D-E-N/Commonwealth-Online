@@ -22,10 +22,12 @@
   const accountLink = mount.querySelector("[data-account-nav]");
   const accountLabel = mount.querySelector("[data-account-nav-label]");
   const accountAvatar = mount.querySelector("[data-account-nav-avatar]");
+  const notificationBadge = mount.querySelector("[data-account-nav-notifications]");
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
   const accountHref = `${assetBase}/account/`;
   const profileHref = `${assetBase}/profile/`;
+  let notificationUserId = null;
 
   if (!toggle || !nav) {
     return;
@@ -52,6 +54,11 @@
     if (accountAvatar) {
       accountAvatar.hidden = true;
     }
+    if (notificationBadge) {
+      notificationBadge.hidden = true;
+      notificationBadge.textContent = "";
+    }
+    notificationUserId = null;
   };
 
   toggle.addEventListener("click", () => {
@@ -89,6 +96,31 @@
   const client = window.coSupabase || window.supabase.createClient(url, key);
   window.coSupabase = client;
 
+  const loadUnreadNotifications = async (user) => {
+    if (!notificationBadge || notificationUserId === user.id) {
+      return;
+    }
+
+    notificationUserId = user.id;
+    const { count, error } = await client
+      .from("user_notifications")
+      .select("id", { count: "exact", head: true })
+      .is("read_at", null);
+
+    if (error || !count) {
+      notificationBadge.hidden = true;
+      notificationBadge.textContent = "";
+      return;
+    }
+
+    notificationBadge.textContent = count > 99 ? "99+" : String(count);
+    notificationBadge.setAttribute(
+      "aria-label",
+      count === 1 ? "1 unread notification" : `${count} unread notifications`
+    );
+    notificationBadge.hidden = false;
+  };
+
   const showSignedIn = (user) => {
     const displayName = user.user_metadata?.display_name || "Profile";
     let avatar = user.user_metadata?.avatar_url || AVATARS[0];
@@ -108,6 +140,7 @@
       accountAvatar.src = `${assetBase}${avatar}`;
       accountAvatar.hidden = false;
     }
+    loadUnreadNotifications(user);
   };
 
   const renderSession = (session) => {
