@@ -4,9 +4,9 @@ create table public.factions (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique
     check (slug = lower(slug) and slug ~ '^[a-z0-9][a-z0-9-]{1,79}$'),
-  name text not null unique
+  name text not null
     check (char_length(name) between 3 and 80),
-  tag text not null unique
+  tag text not null
     check (char_length(tag) between 2 and 10),
   summary text not null
     check (char_length(summary) between 20 and 500),
@@ -35,19 +35,23 @@ create table public.faction_roles (
   can_edit_faction boolean not null default false,
   can_review_members boolean not null default false,
   created_at timestamptz not null default now(),
-  unique (faction_id, name)
+  unique (faction_id, name),
+  unique (id, faction_id)
 );
 
 create table public.faction_members (
   faction_id uuid not null references public.factions(id) on delete cascade,
   user_id uuid not null references public.profiles(id) on delete cascade,
-  role_id uuid references public.faction_roles(id) on delete set null,
+  role_id uuid,
   status text not null default 'active'
     check (status in ('pending', 'invited', 'active', 'left', 'removed')),
   joined_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  primary key (faction_id, user_id)
+  primary key (faction_id, user_id),
+  foreign key (role_id, faction_id)
+    references public.faction_roles(id, faction_id)
+    on delete set null (role_id)
 );
 
 create table public.faction_applications (
@@ -70,6 +74,12 @@ create table public.faction_applications (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+create unique index factions_name_unique_ci
+  on public.factions (lower(name));
+
+create unique index factions_tag_unique_ci
+  on public.factions (upper(tag));
 
 create index factions_status_created_idx
   on public.factions (status, created_at desc);
@@ -170,7 +180,6 @@ declare
   application_row public.faction_applications%rowtype;
   faction_id uuid;
   leader_role_id uuid;
-  member_role_id uuid;
   faction_slug text;
 begin
   if not exists (
@@ -214,7 +223,10 @@ begin
   end if;
 
   faction_slug :=
-    trim(both '-' from regexp_replace(lower(application_row.proposed_name), '[^a-z0-9]+', '-', 'g'))
+    coalesce(
+      nullif(trim(both '-' from regexp_replace(lower(application_row.proposed_name), '[^a-z0-9]+', '-', 'g')), ''),
+      'faction'
+    )
     || '-'
     || left(replace(application_row.id::text, '-', ''), 8);
 
@@ -269,8 +281,7 @@ begin
     faction_id,
     'Member',
     100
-  )
-  returning id into member_role_id;
+  );
 
   insert into public.faction_members (
     faction_id,
