@@ -46,7 +46,7 @@ const accountProfilesMigration = fs.readFileSync(
   "utf8"
 );
 const realProfileIconsMigration = fs.readFileSync(
-  path.join(root, "migrations", "20260921034000_real_profile_icons.sql"),
+  path.join(root, "migrations", "20260921035009_real_profile_icons.sql"),
   "utf8"
 );
 const config = fs.readFileSync(path.join(root, "config.toml"), "utf8");
