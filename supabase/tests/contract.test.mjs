@@ -81,6 +81,10 @@ const socialPrivacyMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921162500_social_privacy_hardening.sql"),
   "utf8"
 );
+const factionFoundationMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921173000_faction_foundation.sql"),
+  "utf8"
+);
 const usernameHistoryMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921163500_username_history.sql"),
   "utf8"
@@ -294,6 +298,36 @@ assert.match(usernameHistoryMigration, /create or replace function public\.get_p
 assert.match(usernameHistoryMigration, /d\.show_username_history/i);
 assert.match(usernameHistoryMigration, /limit 10/i);
 assert.match(usernameHistoryMigration, /revoke all on function public\.get_public_username_history\(uuid\) from public/i);
+for (const table of [
+  "factions",
+  "faction_roles",
+  "faction_members",
+  "faction_applications",
+]) {
+  assert.match(
+    factionFoundationMigration,
+    new RegExp(`create table public\\\\.${table}`, "i"),
+    `missing faction table: ${table}`
+  );
+  assert.match(
+    factionFoundationMigration,
+    new RegExp(`alter table public\\\\.${table} enable row level security`, "i"),
+    `RLS must be enabled on ${table}`
+  );
+}
+assert.match(factionFoundationMigration, /create unique index faction_applications_open_per_user/i);
+assert.match(factionFoundationMigration, /create or replace function public\.review_faction_application/i);
+assert.match(factionFoundationMigration, /role in \('moderator', 'admin'\)/i);
+assert.match(factionFoundationMigration, /insert into public\.faction_roles/i);
+assert.match(factionFoundationMigration, /insert into public\.faction_members/i);
+assert.match(factionFoundationMigration, /grant select on public\.factions to anon, authenticated/i);
+assert.match(factionFoundationMigration, /grant select, insert, update on public\.faction_applications to authenticated/i);
+assert.match(factionFoundationMigration, /revoke all on function public\.review_faction_application\(uuid, text, text\) from public, anon/i);
+assert.doesNotMatch(
+  factionFoundationMigration,
+  /create policy "active factions are public"[\s\S]*public\.is_forum_moderator\(\)[\s\S]*create policy "staff and founders read nonpublic factions"/i
+);
+
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
 assert.match(registerAccount, /website/);
@@ -449,6 +483,7 @@ for (const [name, content] of [
   ["signup abuse migration", signupAbuseMigration],
   ["signup cleanup fix migration", signupCleanupFixMigration],
   ["social foundation migration", socialFoundationMigration],
+  ["faction foundation migration", factionFoundationMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],
