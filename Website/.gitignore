@@ -3,6 +3,7 @@
 # Node
 node_modules/
 dist/
+assets/profile-icons/
 npm-debug.log*
 
 # Environment
