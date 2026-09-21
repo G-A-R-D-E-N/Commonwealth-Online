@@ -8,6 +8,8 @@
   const profile = root.querySelector("[data-member-profile]");
   const params = new URLSearchParams(window.location.search);
   const memberId = params.get("id");
+  const brandLogo = document.querySelector(".site-brand__logo");
+  const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
 
   if (!url || !key || !memberId || !window.supabase?.createClient) {
     status.textContent = "Profile not found.";
@@ -187,7 +189,7 @@
     const details = member.user_profile_details?.[0] || {};
     const presence = member.user_presence?.[0];
 
-    els.avatar.src = member.avatar_url;
+    els.avatar.src = assetBase + member.avatar_url;
     els.name.textContent = member.display_name;
     els.bio.textContent = details.bio || "No bio provided.";
     els.faction.textContent = details.faction || "Not set";
