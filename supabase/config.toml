@@ -22,6 +22,10 @@ additional_redirect_urls = [
 enable_signup = true
 enable_confirmations = true
 
+[auth.email.template.confirmation]
+subject = "Confirm your Commonwealth Online account"
+content_path = "./supabase/templates/confirmation.html"
+
 [auth.external.discord]
 enabled = true
 client_id = "env(SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID)"
