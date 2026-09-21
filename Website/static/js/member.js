@@ -28,6 +28,8 @@
     playstyle: root.querySelector("[data-member-playstyle]"),
     joined: root.querySelector("[data-member-joined]"),
     joinedRow: root.querySelector("[data-member-joined-row]"),
+    badgesCard: root.querySelector("[data-member-badges-card]"),
+    badgesList: root.querySelector("[data-member-badges-list]"),
     usernameHistoryCard: root.querySelector("[data-member-username-history-card]"),
     usernameHistoryList: root.querySelector("[data-member-username-history-list]"),
     friendsCard: root.querySelector("[data-member-friends-card]"),
@@ -102,6 +104,50 @@
     els.actionsCard.hidden = false;
     els.block.textContent = blocked ? "Unblock" : "Block";
     renderFriendButton();
+  };
+
+  const loadPublicBadges = async () => {
+    if (!els.badgesCard || !els.badgesList) return;
+
+    const { data, error } = await client
+      .from("user_badge_assignments")
+      .select("badge_id,display_order,badge:user_badges!user_badge_assignments_badge_id_fkey(name,description)")
+      .eq("user_id", memberId)
+      .eq("is_displayed", true)
+      .order("display_order", { ascending: true })
+      .limit(3);
+
+    els.badgesList.replaceChildren();
+
+    if (error) {
+      els.badgesCard.hidden = true;
+      return;
+    }
+
+    const rows = data || [];
+    if (!rows.length) {
+      els.badgesCard.hidden = true;
+      return;
+    }
+
+    for (const row of rows) {
+      const badge = row.badge;
+      if (!badge) continue;
+
+      const item = document.createElement("div");
+      item.className = "profile-social-row";
+
+      const copy = document.createElement("span");
+      const name = document.createElement("strong");
+      const description = document.createElement("small");
+      name.textContent = badge.name;
+      description.textContent = badge.description || "Commonwealth Online badge";
+      copy.append(name, description);
+      item.append(copy);
+      els.badgesList.append(item);
+    }
+
+    els.badgesCard.hidden = false;
   };
 
   const loadPublicUsernameHistory = async () => {
@@ -314,6 +360,7 @@
 
     await Promise.all([
       loadRelationship(),
+      loadPublicBadges(),
       loadPublicUsernameHistory(),
       loadPublicFriends(Boolean(member.show_friends)),
     ]);
