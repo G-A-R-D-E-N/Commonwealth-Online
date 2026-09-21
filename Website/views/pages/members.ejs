@@ -1,0 +1,29 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main members-main">
+        <section
+          class="members-shell"
+          data-members
+          data-supabase-url="<%= site.supabase?.url || "" %>"
+          data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          aria-labelledby="members-title"
+        >
+          <header class="members-intro">
+            <p class="section-kicker">Commonwealth Online</p>
+            <h1 id="members-title">Members</h1>
+            <p>Find players and view the profiles they choose to share.</p>
+          </header>
+
+          <label class="members-search">
+            <span>Search members</span>
+            <input type="search" data-members-search placeholder="Search by username" autocomplete="off" />
+          </label>
+
+          <p class="site-notice" data-members-status role="status">Loading members…</p>
+          <div class="members-grid" data-members-list hidden></div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/scripts") %>

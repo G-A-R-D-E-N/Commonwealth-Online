@@ -1,0 +1,79 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section
+          class="section-panel faction-shell"
+          data-faction-apply
+          data-supabase-url="<%= site.supabase?.url || "" %>"
+          data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          aria-labelledby="faction-apply-title"
+        >
+          <div class="section-head">
+            <p class="section-kicker">Faction application</p>
+            <h1 id="faction-apply-title">Establish a faction</h1>
+            <p>
+              Approved factions receive a persistent faction identity, founder leadership role and future hooks for official-server integration.
+            </p>
+          </div>
+
+          <p class="site-notice" data-faction-apply-status role="status" hidden></p>
+
+          <form class="profile-form faction-application-form" data-faction-apply-form>
+            <div class="profile-fields">
+              <label class="profile-field">
+                <span>Faction name</span>
+                <input name="proposed_name" type="text" minlength="3" maxlength="80" required />
+              </label>
+              <label class="profile-field">
+                <span>Tag</span>
+                <input name="proposed_tag" type="text" minlength="2" maxlength="10" required />
+              </label>
+            </div>
+
+            <label class="profile-field">
+              <span>Short summary</span>
+              <textarea name="summary" minlength="20" maxlength="500" rows="3" required></textarea>
+            </label>
+
+            <label class="profile-field">
+              <span>Lore and background</span>
+              <textarea name="lore" minlength="20" maxlength="6000" rows="8" required></textarea>
+            </label>
+
+            <label class="profile-field">
+              <span>Goals</span>
+              <textarea name="goals" minlength="20" maxlength="3000" rows="5" required></textarea>
+            </label>
+
+            <div class="profile-fields">
+              <label class="profile-field">
+                <span>Focus</span>
+                <select name="focus" required>
+                  <option value="mixed">Mixed</option>
+                  <option value="pve">PvE</option>
+                  <option value="pvp">PvP</option>
+                  <option value="roleplay">Roleplay</option>
+                </select>
+              </label>
+              <label class="profile-field">
+                <span>Recruitment</span>
+                <select name="recruitment" required>
+                  <option value="open">Open</option>
+                  <option value="application">Application</option>
+                  <option value="invite_only">Invite only</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="profile-actions">
+              <a class="co-btn co-btn--ghost" href="/factions/">Cancel</a>
+              <button class="co-btn co-btn--primary" type="submit">Submit faction application</button>
+            </div>
+          </form>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/scripts") %>

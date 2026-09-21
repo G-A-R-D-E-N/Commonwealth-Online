@@ -1,0 +1,68 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section
+          class="section-panel faction-shell"
+          data-faction-manage
+          data-supabase-url="<%= site.supabase?.url || "" %>"
+          data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          aria-labelledby="faction-manage-title"
+        >
+          <p class="site-notice" data-faction-manage-status role="status">Checking faction permissions…</p>
+
+          <div data-faction-manage-content hidden>
+            <header class="faction-profile-head">
+              <div>
+                <p class="section-kicker">Faction management</p>
+                <h1 id="faction-manage-title" data-faction-manage-name>Faction</h1>
+                <p class="servers-hero__desc">Review membership requests, invite players and manage the active roster.</p>
+              </div>
+              <a class="co-btn co-btn--ghost" data-faction-manage-back href="/factions/">Back to faction</a>
+            </header>
+
+            <div class="faction-profile-grid">
+              <section class="profile-card faction-profile-card">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Queue</p>
+                  <h2>Membership requests</h2>
+                </div>
+                <div class="profile-social-list" data-faction-request-list>
+                  <p class="account-help">Loading requests…</p>
+                </div>
+              </section>
+
+              <section class="profile-card faction-profile-card">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Recruitment</p>
+                  <h2>Invite a member</h2>
+                  <p>Search public Commonwealth Online profiles and send a faction invitation.</p>
+                </div>
+                <form class="profile-form" data-faction-invite-search>
+                  <label class="profile-field">
+                    <span>Username</span>
+                    <input name="query" type="search" minlength="2" maxlength="80" autocomplete="off" required />
+                  </label>
+                  <div class="profile-actions">
+                    <button class="co-btn co-btn--primary" type="submit">Search members</button>
+                  </div>
+                </form>
+                <div class="profile-social-list" data-faction-invite-results></div>
+              </section>
+
+              <section class="profile-card faction-profile-card">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Roster</p>
+                  <h2>Active members</h2>
+                </div>
+                <div class="profile-social-list" data-faction-manage-members>
+                  <p class="account-help">Loading members…</p>
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/scripts") %>

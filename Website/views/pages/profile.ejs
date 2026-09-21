@@ -81,6 +81,139 @@
               </form>
             </section>
 
+            <section class="profile-card profile-card--wide" aria-labelledby="community-profile-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Community</p>
+                <h2 id="community-profile-title">Public profile</h2>
+                <p>Control what other Commonwealth Online members can see.</p>
+              </div>
+
+              <form class="profile-form" data-community-profile-form>
+                <label class="profile-field">
+                  <span>Bio</span>
+                  <textarea name="bio" maxlength="500" rows="4" placeholder="Tell other players a little about yourself."></textarea>
+                </label>
+
+                <label class="profile-field">
+                  <span>Playstyle</span>
+                  <input name="playstyle" type="text" maxlength="80" placeholder="Co-op, survival, roleplay…" />
+                </label>
+
+                <div class="profile-privacy">
+                  <label><input name="is_public" type="checkbox" /> Public profile</label>
+                  <label><input name="show_presence" type="checkbox" /> Show presence/current server</label>
+                  <label><input name="show_friends" type="checkbox" /> Show friends</label>
+                  <label><input name="show_joined_at" type="checkbox" /> Show join date</label>
+                  <label><input name="show_username_history" type="checkbox" /> Show previous usernames</label>
+                  <label><input name="show_recent_servers" type="checkbox" /> Show recent servers</label>
+                  <label><input name="show_characters" type="checkbox" /> Show characters</label>
+                </div>
+
+                <div class="profile-actions">
+                  <a class="co-btn co-btn--ghost" href="/members/">Browse members</a>
+                  <button class="co-btn co-btn--primary" type="submit">Save public profile</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="profile-card profile-card--wide" aria-labelledby="characters-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Multiplayer</p>
+                <h2 id="characters-title">Characters</h2>
+                <p>Character records are synchronized by Commonwealth Online services.</p>
+              </div>
+              <div class="profile-social-list" data-characters-list>
+                <p class="account-help">Loading characters…</p>
+              </div>
+            </section>
+
+            <section class="profile-card" aria-labelledby="server-favorites-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Multiplayer</p>
+                <h2 id="server-favorites-title">Favorite servers</h2>
+              </div>
+              <div class="profile-social-list" data-server-favorites-list>
+                <p class="account-help">Loading favorite servers…</p>
+              </div>
+            </section>
+
+            <section class="profile-card" aria-labelledby="server-history-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Multiplayer</p>
+                <h2 id="server-history-title">Recent sessions</h2>
+              </div>
+              <div class="profile-social-list" data-server-history-list>
+                <p class="account-help">Loading server history…</p>
+              </div>
+            </section>
+
+            <section class="profile-card profile-card--wide" aria-labelledby="factions-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Factions</p>
+                <h2 id="factions-title">Faction membership</h2>
+                <p>Your primary faction appears on your public profile and can be used by future official servers.</p>
+              </div>
+              <div class="profile-social-list" data-profile-factions-list>
+                <p class="account-help">Loading factions…</p>
+              </div>
+              <div class="profile-actions">
+                <a class="co-btn co-btn--ghost" href="/factions/">Browse factions</a>
+                <a class="co-btn co-btn--ghost" href="/factions/apply/">Create a faction</a>
+              </div>
+            </section>
+
+            <section class="profile-card" aria-labelledby="badges-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Identity</p>
+                <h2 id="badges-title">Badges</h2>
+                <p>Choose up to three earned badges to display publicly.</p>
+              </div>
+              <div class="profile-social-list" data-badges-list>
+                <p class="account-help">Loading badges…</p>
+              </div>
+            </section>
+
+            <section class="profile-card" aria-labelledby="username-history-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Identity</p>
+                <h2 id="username-history-title">Username history</h2>
+              </div>
+              <div class="profile-social-list" data-username-history-list>
+                <p class="account-help">Loading username history…</p>
+              </div>
+            </section>
+
+            <section class="profile-card" aria-labelledby="friends-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Social</p>
+                <h2 id="friends-title">Friends</h2>
+              </div>
+              <div class="profile-social-list" data-friends-list>
+                <p class="account-help">Loading friends…</p>
+              </div>
+            </section>
+
+            <section class="profile-card" aria-labelledby="blocked-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Privacy</p>
+                <h2 id="blocked-title">Blocked members</h2>
+              </div>
+              <div class="profile-social-list" data-blocks-list>
+                <p class="account-help">Loading blocked members…</p>
+              </div>
+            </section>
+
+            <section class="profile-card" aria-labelledby="notifications-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Activity</p>
+                <h2 id="notifications-title">Notifications</h2>
+              </div>
+              <div class="profile-social-list" data-notifications-list>
+                <p class="account-help">Loading notifications…</p>
+              </div>
+              <button class="co-btn co-btn--ghost" type="button" data-mark-notifications-read>Mark all read</button>
+            </section>
+
             <section class="profile-card" aria-labelledby="security-title">
               <div class="profile-card__head">
                 <p class="section-kicker">Security</p>

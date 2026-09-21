@@ -1,0 +1,33 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section
+          class="section-panel faction-shell"
+          data-factions
+          data-supabase-url="<%= site.supabase?.url || "" %>"
+          data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          aria-labelledby="factions-title"
+        >
+          <div class="servers-hero__head">
+            <div>
+              <p class="section-kicker">Community factions</p>
+              <h1 id="factions-title">Build a place in the Commonwealth</h1>
+              <p class="servers-hero__desc">
+                Browse approved player factions, read their lore and recruitment status, or apply to establish your own.
+              </p>
+            </div>
+            <div class="servers-hero__actions">
+              <a class="co-btn co-btn--primary" href="/factions/apply/">Apply for a faction</a>
+            </div>
+          </div>
+
+          <p class="site-notice" data-factions-status role="status" hidden></p>
+          <div class="faction-grid" data-factions-list>
+            <p class="account-help">Loading factions…</p>
+          </div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/scripts") %>

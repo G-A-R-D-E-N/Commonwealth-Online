@@ -139,6 +139,14 @@
           <button class="co-btn co-btn--primary" type="button" data-copy-address="${escapeHtml(server.address)}">
             Copy address
           </button>
+          <button
+            class="co-btn co-btn--ghost"
+            type="button"
+            data-favorite-server
+            data-server-id="${escapeHtml(server.id)}"
+            data-server-name="${escapeHtml(server.name)}"
+            hidden
+          >Favorite</button>
           ${discordLink}
         </footer>
       </article>
@@ -195,6 +203,7 @@
       : renderEmpty();
 
     bindCopyButtons();
+    document.dispatchEvent(new CustomEvent("co:servers-rendered"));
     revealContent(els.feed);
 
     setStatus(
