@@ -57,7 +57,7 @@
 
   client
     .from("profiles")
-    .select("id,display_name,avatar_url,created_at,user_profile_details!inner(faction,is_public),user_presence(status)")
+    .select("id,display_name,avatar_url,user_profile_details!inner(faction,is_public),user_presence(status)")
     .eq("user_profile_details.is_public", true)
     .order("display_name")
     .then(({ data, error }) => {
