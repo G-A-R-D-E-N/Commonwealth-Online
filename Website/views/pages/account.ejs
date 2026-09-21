@@ -71,7 +71,7 @@
               </form>
 
               <div class="account-divider"><span>or</span></div>
-              <button class="co-btn co-btn--discord" type="button" data-discord-sign-in>Continue with Discord</button>
+              <button class="co-btn co-btn--discord" type="button" data-discord-sign-in disabled>Discord sign-in unavailable</button>
             </section>
 
             <section class="section-panel account-panel" aria-labelledby="signin-title">
@@ -95,8 +95,8 @@
               </form>
 
               <p class="account-help">
-                Discord sign-in uses the same Supabase account when the provider identity is already linked or can be
-                linked safely by Supabase.
+                Email registration and sign-in work independently. Discord sign-in becomes available automatically
+                after the provider is configured in Supabase.
               </p>
             </section>
           </div>
@@ -154,7 +154,7 @@
                 <strong>Discord</strong>
                 <span data-discord-state>Checking linked identities…</span>
               </div>
-              <button class="co-btn co-btn--discord" type="button" data-discord-link>Link Discord</button>
+              <button class="co-btn co-btn--discord" type="button" data-discord-link disabled>Link Discord</button>
             </div>
           </section>
         </section>
