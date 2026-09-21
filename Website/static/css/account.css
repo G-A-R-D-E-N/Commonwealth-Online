@@ -1,0 +1,166 @@
+.co-account-page .site-main {
+  width: min(980px, calc(100% - (var(--site-gutter) * 2)));
+  margin: 0 auto;
+  padding: 4rem 0 5rem;
+}
+
+.account-shell {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.account-intro {
+  max-width: 680px;
+  margin: 0 auto 1rem;
+  text-align: center;
+}
+
+.account-intro h1 {
+  margin: 0.35rem 0 0.8rem;
+  color: var(--site-text);
+  font-family: var(--site-font-display);
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 1.05;
+}
+
+.account-intro > p:last-child {
+  color: var(--site-text-muted);
+  font-size: 1rem;
+}
+
+.account-status {
+  margin: 0;
+}
+
+.account-status.is-error {
+  border-color: rgba(210, 115, 90, 0.6);
+  color: #e6a08d;
+}
+
+.account-auth-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.account-card {
+  min-width: 0;
+  padding: 1.6rem;
+  border: 1px solid var(--site-border-soft);
+  background: var(--site-surface);
+}
+
+.account-card__head {
+  margin-bottom: 1.3rem;
+}
+
+.account-card__head h2 {
+  margin: 0.2rem 0 0.35rem;
+  color: var(--site-text);
+  font-family: var(--site-font-display);
+  font-size: 1.55rem;
+}
+
+.account-card__head > p:last-child,
+.account-help {
+  color: var(--site-text-muted);
+  font-size: 0.92rem;
+}
+
+.account-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.account-field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.account-field > span {
+  color: var(--site-heading);
+  font-family: var(--site-font-display);
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.account-field input {
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--site-border-soft);
+  border-radius: var(--site-radius);
+  background: var(--site-bg-inset);
+  color: var(--site-text);
+  font: inherit;
+}
+
+.account-field input:focus {
+  border-color: var(--site-link);
+  outline: 2px solid rgba(62, 207, 74, 0.25);
+  outline-offset: 1px;
+}
+
+.account-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1.2rem 0;
+  color: var(--site-text-faint);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.account-divider::before,
+.account-divider::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--site-border-soft);
+}
+
+.account-discord-button {
+  width: 100%;
+}
+
+body.co-site .co-btn--discord,
+body.co-site .co-btn--discord:visited {
+  color: #f2f3f5;
+  background: #5865f2;
+  border-color: #4752c4;
+}
+
+body.co-site .co-btn--discord:hover,
+body.co-site .co-btn--discord:focus-visible {
+  color: #fff;
+  background: #4752c4;
+  border-color: #6875f5;
+  text-decoration: none;
+}
+
+.account-help {
+  margin-top: 1.2rem;
+}
+
+@media (max-width: 760px) {
+  .co-account-page .site-main {
+    padding-top: 2.5rem;
+  }
+
+  .account-auth-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.account-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.account-captcha {
+  min-height: 65px;
+}

@@ -1,0 +1,91 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main account-main">
+        <section
+          class="account-shell"
+          data-account
+          data-supabase-url="<%= site.supabase?.url || "" %>"
+          data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          data-captcha-provider="<%= site.captcha?.provider || "" %>"
+          data-captcha-site-key="<%= site.captcha?.siteKey || "" %>"
+          aria-labelledby="account-title"
+        >
+          <header class="account-intro">
+            <p class="section-kicker">Commonwealth Online</p>
+            <h1 id="account-title">Your Commonwealth starts here.</h1>
+            <p>Create an account or sign in to access your Commonwealth Online profile and member features.</p>
+          </header>
+
+          <p class="site-notice account-status" data-account-status role="status" hidden></p>
+
+          <div class="account-auth-grid">
+            <section class="account-card" aria-labelledby="register-title">
+              <div class="account-card__head">
+                <p class="section-kicker">New member</p>
+                <h2 id="register-title">Create account</h2>
+                <p>Choose your username and secure your account.</p>
+              </div>
+
+              <form class="account-form" data-register-form>
+                <label class="account-field">
+                  <span>Username</span>
+                  <input name="username" type="text" minlength="1" maxlength="80" autocomplete="nickname" required />
+                </label>
+
+                <label class="account-field">
+                  <span>Email</span>
+                  <input name="email" type="email" maxlength="254" autocomplete="email" required />
+                </label>
+
+                <label class="account-field">
+                  <span>Password</span>
+                  <input name="password" type="password" minlength="8" autocomplete="new-password" required />
+                </label>
+
+                <label class="account-honeypot" aria-hidden="true">
+                  <span>Website</span>
+                  <input name="website" type="text" tabindex="-1" autocomplete="off" />
+                </label>
+
+                <% if (site.captcha?.provider === "turnstile" && site.captcha?.siteKey) { %>
+                <div class="account-captcha" data-captcha-widget aria-label="Anti-bot verification"></div>
+                <% } %>
+
+                <button class="co-btn co-btn--primary" type="submit">Create account</button>
+              </form>
+
+            </section>
+
+            <section class="account-card" aria-labelledby="signin-title">
+              <div class="account-card__head">
+                <p class="section-kicker">Welcome back</p>
+                <h2 id="signin-title">Sign in</h2>
+                <p>Continue to your Commonwealth Online profile.</p>
+              </div>
+
+              <form class="account-form" data-signin-form>
+                <label class="account-field">
+                  <span>Email</span>
+                  <input name="email" type="email" maxlength="254" autocomplete="email" required />
+                </label>
+
+                <label class="account-field">
+                  <span>Password</span>
+                  <input name="password" type="password" autocomplete="current-password" required />
+                </label>
+
+                <button class="co-btn co-btn--primary" type="submit">Sign in</button>
+              </form>
+
+              <p class="account-help">
+                After signing in, use your profile icon in the navigation to manage your account.
+              </p>
+            </section>
+          </div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+
+<%- include("../partials/scripts") %>

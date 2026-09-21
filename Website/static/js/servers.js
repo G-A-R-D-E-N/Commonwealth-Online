@@ -1,6 +1,5 @@
 (() => {
-  // Curated in servers/server.json, served by the Commonwealth Online API.
-  const DATA_URL = "/api/v1/servers";
+  const DATA_URL = "/data/servers.json";
 
   const els = {
     status: document.getElementById("servers-status"),
@@ -112,7 +111,8 @@
   };
 
   const renderServer = (server) => {
-    const discordLink = server.discord
+    const discordProtocol = globalThis.CoUrlPolicy?.protocolOf(server.discord, window.location.href);
+    const discordLink = server.discord && ["http:", "https:"].includes(discordProtocol)
       ? `<a class="co-btn co-btn--ghost" href="${escapeHtml(server.discord)}" target="_blank" rel="noopener noreferrer">Discord</a>`
       : "";
 

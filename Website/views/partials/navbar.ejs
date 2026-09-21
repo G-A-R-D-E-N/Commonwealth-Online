@@ -1,4 +1,4 @@
-      <header class="site-header" id="top" data-co-navbar>
+      <header class="site-header" id="top" data-co-navbar data-supabase-url="<%= site.supabase?.url || "" %>" data-supabase-key="<%= site.supabase?.publishableKey || "" %>">
         <div class="site-header__inner">
           <a class="site-brand" href="/" aria-label="Commonwealth Online Home">
             <img
@@ -27,13 +27,32 @@
           </button>
 
           <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
-            <% navItems.forEach((item) => { %>
-              <% if (item.key === page.activeKey) { %>
-            <a href="<%= item.href %>" class="is-active" aria-current="page"<% if (item.external) { %> target="_blank" rel="noopener noreferrer"<% } %>><%= item.label %></a>
-              <% } else { %>
-            <a href="<%= item.href %>"<% if (item.external) { %> target="_blank" rel="noopener noreferrer"<% } %>><%= item.label %></a>
-              <% } %>
+            <% navItems.filter((item) => item.key !== "account").forEach((item) => { %>
+            <a
+              href="<%= item.href %>"
+              <% if (item.key === page.activeKey) { %>class="is-active" aria-current="page"<% } %>
+              <% if (item.external) { %>target="_blank" rel="noopener noreferrer"<% } %>
+            ><%= item.label %></a>
             <% }) %>
+            <a class="site-nav__donate" href="https://ko-fi.com/commonwealth_online" target="_blank" rel="noopener noreferrer">Donate</a>
+            <a
+              href="/account"
+              class="site-nav__account<%= page.activeKey === "account" ? " is-active" : "" %>"
+              <% if (page.activeKey === "account") { %>aria-current="page"<% } %>
+              data-account-nav
+              aria-label="Login or sign up"
+            >
+              <span class="site-nav__account-label" data-account-nav-label>Login / Sign Up</span>
+              <img
+                class="site-nav__profile-avatar"
+                data-account-nav-avatar
+                src="/assets/profile-icons/armorer.png"
+                alt=""
+                width="32"
+                height="32"
+                hidden
+              />
+            </a>
           </nav>
         </div>
       </header>

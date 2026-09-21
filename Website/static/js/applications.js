@@ -6,14 +6,11 @@
 
   const statusEl = document.getElementById("apply-status");
   const submitBtn = document.getElementById("apply-submit");
-  const discordInput = form.elements.namedItem("discordHandle");
-  const discordStatus = document.getElementById("discord-membership-status");
-  const discordMessage = document.getElementById("discord-membership-message");
-  const discordJoin = discordStatus?.querySelector(".apply-discord-status__join");
   const type = form.getAttribute("data-apply-type") || "team";
-  let discordVerified = false;
-  let membershipRequest = 0;
-  let membershipTimer;
+  const supabaseUrl = (form.dataset.supabaseUrl || "").replace(/\/+$/, "");
+  const publishableKey = form.dataset.supabaseKey || "";
+  const thanksUrl = form.dataset.thanksUrl || "/apply/thanks";
+  const submitUrl = supabaseUrl && publishableKey ? `${supabaseUrl}/functions/v1/submit-application` : "";
 
   const setStatus = (message, isError = false) => {
     if (!statusEl) {
@@ -33,6 +30,13 @@
       input.setAttribute("aria-invalid", "false");
     });
   };
+
+  if (!submitUrl) {
+    setStatus("Applications are temporarily unavailable. Please try again later.", true);
+    if (submitBtn) {
+      submitBtn.disabled = true;
+    }
+  }
 
   const showFieldError = (name, message) => {
     const input = form.elements.namedItem(name);
@@ -54,7 +58,10 @@
     }
     error.textContent = message;
     error.id = error.id || `field-${name}-error`;
-    input.setAttribute("aria-describedby", [input.getAttribute("aria-describedby"), error.id].filter(Boolean).join(" "));
+    input.setAttribute(
+      "aria-describedby",
+      [input.getAttribute("aria-describedby"), error.id].filter(Boolean).join(" ")
+    );
   };
 
   const collectPayload = () => {
@@ -62,10 +69,6 @@
     const formData = new FormData(form);
 
     for (const [key, value] of formData.entries()) {
-      if (key === "website") {
-        data[key] = value;
-        continue;
-      }
       data[key] = typeof value === "string" ? value.trim() : value;
     }
 
@@ -76,68 +79,6 @@
     return data;
   };
 
-  const setDiscordStatus = (message, state = "") => {
-    if (!discordStatus || !discordMessage) {
-      return;
-    }
-    discordStatus.hidden = !message;
-    discordMessage.textContent = message || "";
-    discordStatus.dataset.state = state;
-    if (discordJoin) {
-      discordJoin.hidden = state !== "not-member";
-    }
-  };
-
-  const checkDiscordMembership = async () => {
-    const request = ++membershipRequest;
-    const username = String(discordInput?.value || "").trim();
-    discordVerified = false;
-    if (submitBtn) {
-      submitBtn.disabled = true;
-    }
-    if (username.length < 2) {
-      setDiscordStatus(username ? "Keep typing your Discord username to check it." : "", "checking");
-      return;
-    }
-    setDiscordStatus("Checking this Discord username against the server…", "checking");
-    try {
-      const response = await fetch(`/api/v1/applications/discord-membership?username=${encodeURIComponent(username)}`);
-      const body = await response.json().catch(() => null);
-      if (request !== membershipRequest) {
-        return;
-      }
-      discordVerified = Boolean(response.ok && body?.member);
-      setDiscordStatus(
-        discordVerified
-          ? "Discord membership confirmed — you can submit this application."
-          : response.ok
-            ? "That Discord username is not in the server."
-            : body?.error?.message || "Discord verification is temporarily unavailable. Please try again.",
-        discordVerified ? "success" : response.ok ? "not-member" : "error"
-      );
-      if (submitBtn) {
-        submitBtn.disabled = !discordVerified;
-      }
-    } catch {
-      if (request === membershipRequest) {
-        setDiscordStatus("Discord verification is temporarily unavailable. Please try again.", "error");
-      }
-    }
-  };
-
-  if (discordInput) {
-    if (submitBtn) {
-      submitBtn.disabled = true;
-    }
-    discordInput.addEventListener("input", () => {
-      clearTimeout(membershipTimer);
-      membershipTimer = setTimeout(checkDiscordMembership, 300);
-    });
-    if (discordInput.value.trim()) {
-      void checkDiscordMembership();
-    }
-  }
-
   form.querySelectorAll("textarea[data-max]").forEach((textarea) => {
     const counter = document.querySelector(`[data-count-for="${textarea.id}"]`);
     if (!counter) {
@@ -145,8 +86,7 @@
     }
     const max = Number(textarea.getAttribute("data-max")) || 0;
     const update = () => {
-      const used = textarea.value.length;
-      counter.textContent = max ? `${used} / ${max}` : "";
+      counter.textContent = max ? `${textarea.value.length} / ${max}` : "";
     };
     textarea.addEventListener("input", update);
     update();
@@ -154,27 +94,34 @@
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!discordVerified) {
-      setStatus("Confirm your Discord membership before applying.", true);
+    if (!submitUrl) {
+      return;
+    }
+    if (!form.checkValidity()) {
+      form.reportValidity();
       return;
     }
     clearFieldErrors();
-    setStatus("Sending application…", false);
+    setStatus("Sending application…");
 
     if (submitBtn) {
       submitBtn.disabled = true;
     }
 
     try {
-      const response = await fetch("/api/v1/applications", {
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      };
+      if (supabaseUrl && publishableKey) {
+        headers.apikey = publishableKey;
+      }
+
+      const response = await fetch(submitUrl, {
         method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(collectPayload()),
       });
-
       const body = await response.json().catch(() => null);
 
       if (response.status === 422 && body?.error?.details) {
@@ -197,12 +144,12 @@
         return;
       }
 
-      window.location.assign(`/apply/thanks?ref=${encodeURIComponent(body.application.publicId)}`);
+      window.location.assign(`${thanksUrl}?ref=${encodeURIComponent(body.application.publicId)}`);
     } catch {
       setStatus("Could not reach the server. Check your connection and try again.", true);
     } finally {
       if (submitBtn && !window.location.pathname.startsWith("/apply/thanks")) {
-        submitBtn.disabled = !discordVerified;
+        submitBtn.disabled = false;
       }
     }
   });

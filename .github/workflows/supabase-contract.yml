@@ -1,0 +1,55 @@
+name: Supabase Contract
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/**"
+      - "Website/src/config.js"
+      - "Website/src/lib/applications.js"
+      - "Website/static/js/applications.js"
+      - "Website/src/lib/nav.js"
+      - "Website/src/routes/page-config.js"
+      - "Website/scripts/build-static.js"
+      - "Website/views/pages/forum.ejs"
+      - "Website/static/js/forum.js"
+      - "Website/.env.example"
+      - ".github/workflows/supabase-contract.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "supabase/**"
+      - "Website/src/config.js"
+      - "Website/src/lib/applications.js"
+      - "Website/static/js/applications.js"
+      - "Website/src/lib/nav.js"
+      - "Website/src/routes/page-config.js"
+      - "Website/scripts/build-static.js"
+      - "Website/views/pages/forum.ejs"
+      - "Website/static/js/forum.js"
+      - "Website/.env.example"
+      - ".github/workflows/supabase-contract.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24.21.0"
+
+      - name: Validate Supabase contract
+        run: node supabase/tests/contract.test.mjs
+
+      - name: Whitespace check
+        if: always()
+        run: git diff --check

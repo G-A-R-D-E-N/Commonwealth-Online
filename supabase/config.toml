@@ -1,0 +1,42 @@
+project_id = "commonwealth-online"
+
+[api]
+enabled = true
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[auth]
+enabled = true
+enable_manual_linking = true
+site_url = "http://127.0.0.1:3000"
+additional_redirect_urls = [
+  "http://127.0.0.1:3000/forum",
+  "http://127.0.0.1:3000/account/",
+  "https://g-a-r-d-e-n.github.io/Commonwealth-Online/forum/",
+  "https://g-a-r-d-e-n.github.io/Commonwealth-Online/account/",
+  "https://commonwealth-online.com/account/"
+]
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+
+[auth.email.template.confirmation]
+subject = "Confirm your Commonwealth Online account"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.external.discord]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET)"
+redirect_uri = ""
+
+[functions.submit-application]
+verify_jwt = false
+
+[functions.review-application]
+verify_jwt = false
+
+[functions.register-account]
+verify_jwt = false

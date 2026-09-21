@@ -13,11 +13,9 @@
             </div>
           </div>
 
-          <% if (reference) { %>
-          <p class="site-notice" role="status">
-            Your reference is <code><%= reference %></code>. Keep it if you need to follow up.
+          <p class="site-notice" role="status" data-application-reference-wrap<%= reference ? "" : " hidden" %>>
+            Your reference is <code data-application-reference><%= reference || "" %></code>. Keep it if you need to follow up.
           </p>
-          <% } %>
 
           <div class="media-highlights__actions apply-thanks__actions">
             <a class="co-btn co-btn--primary" href="#" data-co-link="discord">Join Discord</a>

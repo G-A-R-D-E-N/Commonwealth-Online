@@ -1,5 +1,12 @@
+<% if (site.supabase?.url && site.supabase?.publishableKey) { %>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0" defer></script>
+<% } %>
 <% (page.scripts || []).forEach((src) => { %>
     <script src="<%= src %>" defer></script>
 <% }); %>
+<% if (site.captcha?.provider === "turnstile" && site.captcha?.siteKey) { %>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=coTurnstileReady" defer></script>
+<% } %>
+    <script src="/static/js/discord-link.js?v=20260921-1" defer></script>
   </body>
 </html>

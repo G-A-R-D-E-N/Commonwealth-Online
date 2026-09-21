@@ -1,0 +1,174 @@
+name: Commonwealth Online Website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Website/**"
+      - "changelogs/**"
+      - ".github/workflows/co-website-static.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "Website/**"
+      - "changelogs/**"
+      - ".github/workflows/co-website-static.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  website-static:
+    permissions:
+      contents: read
+      pages: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24.21.0"
+
+      - name: Verify Node tools
+        run: |
+          set -euo pipefail
+          command -v node >/dev/null
+          command -v npm >/dev/null
+          node --version
+          npm --version
+          test "$(node --version)" = "v24.21.0"
+
+      - name: Install website dependencies
+        working-directory: Website
+        run: npm ci
+
+      - name: Run website tests
+        working-directory: Website
+        run: npm test
+
+      - name: Verify static website without Supabase browser configuration
+        working-directory: Website
+        env:
+          SUPABASE_URL: ""
+          SUPABASE_PUBLISHABLE_KEY: ""
+        run: |
+          set -euo pipefail
+          npm run build:static
+          npm run test:static
+
+      - name: Validate Supabase browser configuration
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$SUPABASE_URL"
+          case "$SUPABASE_PUBLISHABLE_KEY" in
+            sb_publishable_*) ;;
+            *) echo "SUPABASE_PUBLISHABLE_KEY must be a publishable API key" >&2; exit 1 ;;
+          esac
+
+      - name: Build static website
+        working-directory: Website
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: npm run build:static
+
+      - name: Verify static website and backend boundary
+        working-directory: Website
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: npm run test:static
+
+      - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request'
+        id: pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
+
+      - name: Build GitHub Pages artifact
+        if: github.event_name != 'pull_request'
+        working-directory: Website
+        env:
+          STATIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: npm run build:static
+
+      - name: Verify GitHub Pages paths
+        if: github.event_name != 'pull_request'
+        env:
+          STATIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: |
+          set -euo pipefail
+          grep -q "href=\"${STATIC_BASE_PATH}/" Website/dist/index.html
+          grep -q "src=\"${STATIC_BASE_PATH}/static/" Website/dist/index.html
+          grep -q "\"${STATIC_BASE_PATH}/data/servers.json\"" Website/dist/static/js/servers.js
+          grep -q "\"${STATIC_BASE_PATH}/updates\"" Website/dist/static/js/links.js
+
+      # Pull requests never run the Pages build above, so the base-path rewrite
+      # was previously unproven until after merge. Exercise the same deployment
+      # mode here with a representative project base path.
+      - name: Verify project base-path build on pull request
+        if: github.event_name == 'pull_request'
+        env:
+          STATIC_BASE_PATH: /Commonwealth-Online
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -euo pipefail
+          cd Website
+          npm run build:static
+          grep -q "\"${STATIC_BASE_PATH}/data/servers.json\"" dist/static/js/servers.js
+          grep -q "\"${STATIC_BASE_PATH}/data/changelogs.json\"" dist/static/js/updates.js
+          grep -q "\"${STATIC_BASE_PATH}/updates\"" dist/static/js/links.js
+          test -s dist/data/changelogs.json
+          # The /repo browser and its Gitea API client were removed.
+          test ! -e dist/repo/index.html
+          test ! -e dist/static/js/repo.js
+          if grep -q '/repo' dist/static/js/updates.js; then
+            echo "updates.js still references the removed /repo page" >&2
+            exit 1
+          fi
+          grep -q 'https://github.com/G-A-R-D-E-N/Commonwealth-Online' dist/static/js/updates.js
+
+      - name: Upload GitHub Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b
+        with:
+          name: github-pages-${{ github.run_attempt }}
+          path: Website/dist
+
+      - name: Whitespace check
+        if: always()
+        run: git diff --check
+
+  deploy-pages:
+    if: github.event_name != 'pull_request'
+    needs: website-static
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}

@@ -1,0 +1,15 @@
+<section class="site-section timeline" id="timeline" aria-labelledby="timeline-title">
+  <div class="section-head">
+    <p class="section-kicker">Roadmap</p>
+    <h2 id="timeline-title">Current progression</h2>
+  </div>
+  <ol class="timeline-list" aria-label="Development roadmap">
+    <% page.roadmap.forEach((phase) => { %>
+    <li>
+      <span class="timeline-status is-<%= phase.status %>"><%= phase.statusLabel %></span>
+      <a href="/roadmap/#<%= phase.id %>"><strong><%= phase.title %></strong></a>
+    </li>
+    <% }) %>
+  </ol>
+  <p class="timeline-link"><a href="/roadmap">Read the full field briefing</a></p>
+</section>

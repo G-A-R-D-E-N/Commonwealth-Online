@@ -30,7 +30,10 @@
             id="apply-form"
             data-apply-form
             data-apply-type="<%= form.id %>"
-            action="/apply/<%= form.id %>"
+            data-supabase-url="<%= site.supabase?.url || "" %>"
+            data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+            data-thanks-url="<%= thanksUrl || "/apply/thanks" %>"
+            action="<%= submitAction || `/apply/${form.id}` %>"
             method="post"
             novalidate
           >
@@ -116,12 +119,6 @@
               <% } %>
               <% if (errorMap[field.key]) { %>
               <p class="apply-field__error" id="<%= fieldId %>-error"><%= errorMap[field.key] %></p>
-              <% } %>
-              <% if (field.key === "discordHandle") { %>
-              <div class="apply-discord-status" id="discord-membership-status" hidden>
-                <span id="discord-membership-message" role="status" aria-live="polite"></span>
-                <a class="co-btn co-btn--ghost apply-discord-status__join" href="#" data-co-link="discord" hidden>Join Discord</a>
-              </div>
               <% } %>
             </div>
               <% } %>
