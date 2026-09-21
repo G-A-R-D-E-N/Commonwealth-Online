@@ -371,6 +371,25 @@ const PUBLIC_PAGES = [
       footerCopy: UPDATES_FOOTER_COPY,
     },
   },
+  {
+    route: "/account",
+    template: "pages/account",
+    output: "account/index.html",
+    page: {
+      title: "Account - Commonwealth Online",
+      description:
+        "Register or sign in to a Commonwealth Online account, link Discord, and select a curated Fallout 4 perk profile icon.",
+      bodyClass: "co-account-page",
+      activeKey: "account",
+      styles: ["/static/css/account.css"],
+      scripts: [
+        "/static/js/links.js",
+        "/static/js/navbar.js",
+        "/static/js/script.js",
+        "/static/js/account.js",
+      ],
+    },
+  },
 ];
 
 const LEGACY_REDIRECTS = {

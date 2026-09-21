@@ -56,6 +56,16 @@ jobs:
         working-directory: Website
         run: npm test
 
+      - name: Verify static website without Supabase browser configuration
+        working-directory: Website
+        env:
+          SUPABASE_URL: ""
+          SUPABASE_PUBLISHABLE_KEY: ""
+        run: |
+          set -euo pipefail
+          npm run build:static
+          npm run test:static
+
       - name: Validate Supabase browser configuration
         env:
           SUPABASE_URL: ${{ vars.SUPABASE_URL }}

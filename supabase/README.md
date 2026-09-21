@@ -58,3 +58,16 @@ Authenticated users may create threads, reply, edit or delete their own unlocked
 Moderator/admin status is stored in `profiles.role`. RLS gives moderators access to reports and moderation-level row operations. Browser clients are not granted permission to change their own role, thread lock/pin state, category configuration or report ownership.
 
 The first migration creates the default board list and an `auth.users` trigger that creates a public profile for new Discord-authenticated users.
+
+## Account registration and Discord linking
+
+The website account page uses Supabase Auth for email/password registration and Discord OAuth. Discord can be used as the initial sign-in method or manually linked from an authenticated profile.
+
+Hosted Supabase must have these Auth settings enabled:
+
+- new user sign-up
+- Discord provider with the project callback URL
+- manual identity linking
+- the production and GitHub Pages account URLs in the redirect allow list
+
+Profile avatars are intentionally not backed by Supabase Storage. `public.profiles.avatar_url` is restricted by a database check constraint to six local `/assets/profile-icons/*.png` paths generated from verified Fallout 4 perk images during the website build, and `handle_new_user()` ignores provider avatar URLs outside that allow list. Source attribution is documented in `Website/PROFILE_ICON_ATTRIBUTION.md`.

@@ -16,6 +16,8 @@ npm run test:static
 npm test
 ```
 
+`SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` are optional for a local static build. When both are unset, the account page renders without the Supabase browser client and disables account controls safely. `test:static` supports both configured and unconfigured builds, and CI exercises both modes.
+
 The generated site is written to `dist/`. It contains only HTML, CSS,
 JavaScript, assets, the curated `data/servers.json` copy, and the generated
 `data/changelogs.json` release log. This package has
@@ -46,6 +48,7 @@ servers/server.json           curated public server data
 | Servers | `/servers` |
 | Updates | `/updates` |
 | Repository | https://github.com/G-A-R-D-E-N/Commonwealth-Online |
+| Account | `/account` |
 | Forum | `/forum` |
 | Applications | `/apply` |
 | Join the team | `/apply/team` |
@@ -79,3 +82,11 @@ Function validates, rate-limits, and persists the application in Supabase, then
 performs Discord delivery in the background. Reviewers use the separate
 `review-application` Edge Function; its token and Discord webhook remain
 Supabase secrets and are not part of this website package.
+
+## Account flow
+
+The `/account` page uses Supabase Auth for email/password registration, sign-in, Discord OAuth and manual Discord identity linking. Profiles are stored in `public.profiles`.
+
+Profile pictures are not uploaded. The static build fetches six real Fallout 4 perk images from the pinned public source documented in `PROFILE_ICON_ATTRIBUTION.md`, verifies their Git blob SHAs, and deploys them locally. The browser and database only accept those six local paths. The database constraint is the enforcement boundary, so direct API requests cannot store arbitrary avatar URLs.
+
+Discord OAuth still requires provider credentials and manual identity linking to be enabled in the hosted Supabase Auth configuration.
