@@ -7,7 +7,7 @@ const vm = require("node:vm");
 
 const source = fs.readFileSync(path.join(__dirname, "..", "static", "js", "account.js"), "utf8");
 
-const listeners = {};
+let signInSubmit;
 const element = (overrides = {}) => ({
   hidden: false,
   disabled: false,
@@ -15,9 +15,7 @@ const element = (overrides = {}) => ({
   value: "",
   src: "",
   classList: { toggle() {} },
-  addEventListener(type, handler) {
-    listeners[type] = handler;
-  },
+  addEventListener() {},
   querySelector() {
     return null;
   },
@@ -34,7 +32,13 @@ const element = (overrides = {}) => ({
 const status = element({ hidden: true });
 const signedOut = element();
 const signedIn = element({ hidden: true });
-const signInForm = element();
+const signInForm = element({
+  addEventListener(type, handler) {
+    if (type === "submit") {
+      signInSubmit = handler;
+    }
+  },
+});
 const profileName = element();
 const profileEmail = element();
 const profileRole = element();
@@ -45,6 +49,7 @@ const discordSignIn = element();
 const displayName = element();
 const profileForm = element({
   elements: { display_name: displayName },
+  addEventListener() {},
 });
 
 const elements = new Map([
@@ -168,9 +173,9 @@ const run = async () => {
   await flush();
   await flush();
 
-  assert.equal(typeof listeners.submit, "function");
+  assert.equal(typeof signInSubmit, "function");
 
-  await listeners.submit({
+  await signInSubmit({
     preventDefault() {},
   });
 
