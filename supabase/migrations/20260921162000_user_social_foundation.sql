@@ -234,6 +234,25 @@ for delete
 to authenticated
 using (auth.uid() = user_id);
 
+create or replace function private.handle_new_social_profile()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+begin
+  insert into public.user_profile_details (user_id)
+  values (new.id)
+  on conflict (user_id) do nothing;
+
+  insert into public.user_presence (user_id, status, last_seen_at, updated_at)
+  values (new.id, 'offline', now(), now())
+  on conflict (user_id) do nothing;
+
+  return new;
+end;
+$function$;
+
 create or replace function private.guard_friendship_update()
 returns trigger
 language plpgsql
@@ -312,6 +331,11 @@ begin
 end;
 $function$;
 
+create trigger create_social_profile_rows
+after insert on public.profiles
+for each row
+execute function private.handle_new_social_profile();
+
 create trigger guard_friendship_update
 before update on public.user_friendships
 for each row
@@ -327,9 +351,11 @@ after insert on public.user_blocks
 for each row
 execute function private.handle_user_block();
 
+revoke all on function private.handle_new_social_profile() from public, anon, authenticated;
 revoke all on function private.guard_friendship_update() from public, anon, authenticated;
 revoke all on function private.handle_friendship_notification() from public, anon, authenticated;
 revoke all on function private.handle_user_block() from public, anon, authenticated;
+grant execute on function private.handle_new_social_profile() to service_role;
 grant execute on function private.guard_friendship_update() to service_role;
 grant execute on function private.handle_friendship_notification() to service_role;
 grant execute on function private.handle_user_block() to service_role;
