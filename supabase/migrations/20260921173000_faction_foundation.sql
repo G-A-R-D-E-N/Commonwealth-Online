@@ -182,8 +182,6 @@ using (
 with check (
   applicant_id = auth.uid()
   and status in ('draft', 'submitted')
-  and reviewed_by is null
-  and reviewed_at is null
 );
 
 create or replace function public.review_faction_application(
@@ -339,7 +337,29 @@ revoke all on public.faction_applications from anon, authenticated;
 grant select on public.factions to anon, authenticated;
 grant select on public.faction_roles to anon, authenticated;
 grant select on public.faction_members to anon, authenticated;
-grant select, insert, update on public.faction_applications to authenticated;
+grant select on public.faction_applications to authenticated;
+grant insert (
+  applicant_id,
+  proposed_name,
+  proposed_tag,
+  summary,
+  lore,
+  goals,
+  focus,
+  recruitment,
+  status
+) on public.faction_applications to authenticated;
+grant update (
+  proposed_name,
+  proposed_tag,
+  summary,
+  lore,
+  goals,
+  focus,
+  recruitment,
+  status,
+  updated_at
+) on public.faction_applications to authenticated;
 
 revoke all on function public.review_faction_application(uuid, text, text) from public, anon;
 grant execute on function public.review_faction_application(uuid, text, text) to authenticated, service_role;
