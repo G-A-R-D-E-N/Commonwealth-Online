@@ -7,6 +7,8 @@
   const status = root.querySelector("[data-members-status]");
   const list = root.querySelector("[data-members-list]");
   const search = root.querySelector("[data-members-search]");
+  const brandLogo = document.querySelector(".site-brand__logo");
+  const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
   if (!url || !key || !window.supabase?.createClient || !status || !list) return;
 
   const client = window.coSupabase || window.supabase.createClient(url, key);
@@ -25,10 +27,10 @@
       const presence = row.user_presence?.[0];
       const card = document.createElement("a");
       card.className = "member-tile";
-      card.href = "/member/?id=" + encodeURIComponent(row.id);
+      card.href = assetBase + "/member/?id=" + encodeURIComponent(row.id);
 
       const img = document.createElement("img");
-      img.src = row.avatar_url;
+      img.src = assetBase + row.avatar_url;
       img.alt = "";
       img.width = 72;
       img.height = 72;
