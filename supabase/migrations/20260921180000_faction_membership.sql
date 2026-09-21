@@ -510,6 +510,8 @@ begin
 end;
 $function$;
 
+drop function if exists public.get_public_member_profile(uuid);
+
 create or replace function public.get_public_member_profile(p_user_id uuid)
 returns table (
   id uuid,

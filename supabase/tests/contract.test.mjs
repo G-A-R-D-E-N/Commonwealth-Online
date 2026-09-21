@@ -85,6 +85,10 @@ const factionFoundationMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921173000_faction_foundation.sql"),
   "utf8"
 );
+const factionMembershipMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921180000_faction_membership.sql"),
+  "utf8"
+);
 const usernameHistoryMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921163500_username_history.sql"),
   "utf8"
@@ -299,6 +303,7 @@ assert.match(socialPrivacyMigration, /owner_details\.show_friends/i);
 assert.match(socialPrivacyMigration, /friend_details\.is_public/i);
 assert.match(socialPrivacyMigration, /revoke all on function public\.get_public_member_profile\(uuid\) from public/i);
 assert.match(socialPrivacyMigration, /revoke all on function public\.get_public_member_friends\(uuid\) from public/i);
+assert.match(factionMembershipMigration, /drop function if exists public\.get_public_member_profile\(uuid\)[\s\S]*create or replace function public\.get_public_member_profile/i);
 assert.match(usernameHistoryMigration, /add column if not exists show_username_history boolean not null default false/i);
 assert.match(usernameHistoryMigration, /create table if not exists public\.user_username_history/i);
 assert.match(usernameHistoryMigration, /alter table public\.user_username_history enable row level security/i);
