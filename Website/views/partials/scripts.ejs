@@ -1,3 +1,6 @@
+<% if (site.supabase?.url && site.supabase?.publishableKey) { %>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0" defer></script>
+<% } %>
 <% (page.scripts || []).forEach((src) => { %>
     <script src="<%= src %>" defer></script>
 <% }); %>
