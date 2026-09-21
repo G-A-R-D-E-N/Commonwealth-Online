@@ -132,6 +132,9 @@ const run = async () => {
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
     assert.match(accountJs, /linkIdentity/);
+    assert.match(accountJs, /\/auth\/v1\/settings/);
+    assert.match(accountJs, /settings\.external\?\.discord/);
+    assert.match(accountJs, /settings\.disable_signup/);
     assert.ok(accountJs.includes("/assets/profile-icons/armorer.png"));
     assert.doesNotMatch(accountJs, /Fallout_Perk_Planner/);
     assert.ok(accountJs.includes('new URL(`${assetBase}/account/`, window.location.origin).href'));
