@@ -46,6 +46,7 @@ servers/server.json           curated public server data
 | Servers | `/servers` |
 | Updates | `/updates` |
 | Repository | https://github.com/G-A-R-D-E-N/Commonwealth-Online |
+| Account | `/account` |
 | Forum | `/forum` |
 | Applications | `/apply` |
 | Join the team | `/apply/team` |
@@ -79,3 +80,11 @@ Function validates, rate-limits, and persists the application in Supabase, then
 performs Discord delivery in the background. Reviewers use the separate
 `review-application` Edge Function; its token and Discord webhook remain
 Supabase secrets and are not part of this website package.
+
+## Account flow
+
+The `/account` page uses Supabase Auth for email/password registration, sign-in, Discord OAuth and manual Discord identity linking. Profiles are stored in `public.profiles`.
+
+Profile pictures are not uploaded. The browser and database only accept the six built-in files under `assets/profile-icons/`. The database constraint is the enforcement boundary, so direct API requests cannot store arbitrary avatar URLs.
+
+Discord OAuth still requires provider credentials and manual identity linking to be enabled in the hosted Supabase Auth configuration.
