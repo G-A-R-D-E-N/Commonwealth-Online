@@ -13,13 +13,15 @@
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
 
-  if (!url || !key || (!publicUsername && !legacyMemberId) || !window.supabase?.createClient) {
+  if (!url || !key || (!publicUsername && !legacyMemberId)) {
     status.textContent = "Profile not found.";
     return;
   }
 
-  const client = window.coSupabase || window.supabase.createClient(url, key);
-  window.coSupabase = client;
+  const client = window.supabase?.createClient
+    ? window.coSupabase || window.supabase.createClient(url, key)
+    : null;
+  if (client) window.coSupabase = client;
 
   const els = {
     avatar: root.querySelector("[data-member-avatar]"),
@@ -49,19 +51,49 @@
   const profileHref = (username) =>
     assetBase + "/member/?username=" + encodeURIComponent(username);
 
+  const restHeaders = {
+    apikey: key,
+    "Content-Type": "application/json",
+  };
+
   const resolveMemberId = async () => {
     if (memberId) return memberId;
 
-    const { data, error } = await client
-      .from("profiles")
-      .select("id,display_name,user_profile_details!inner(is_public)")
-      .eq("display_name", publicUsername)
-      .eq("user_profile_details.is_public", true)
-      .maybeSingle();
+    if (client) {
+      const { data, error } = await client
+        .from("profiles")
+        .select("id,display_name")
+        .eq("display_name", publicUsername)
+        .maybeSingle();
 
-    if (error || !data?.id) throw new Error("Profile not found");
-    memberId = data.id;
+      if (error || !data?.id) throw new Error("Profile not found");
+      memberId = data.id;
+      return memberId;
+    }
+
+    const endpoint = new URL(url + "/rest/v1/profiles");
+    endpoint.searchParams.set("select", "id,display_name");
+    endpoint.searchParams.set("display_name", "eq." + publicUsername);
+    const response = await fetch(endpoint, { headers: restHeaders });
+    if (!response.ok) throw new Error("Profile not found");
+    const rows = await response.json();
+    if (!Array.isArray(rows) || rows.length !== 1 || !rows[0]?.id) {
+      throw new Error("Profile not found");
+    }
+    memberId = rows[0].id;
     return memberId;
+  };
+
+  const callPublicRpc = async (name, args) => {
+    if (client) return client.rpc(name, args);
+
+    const response = await fetch(url + "/rest/v1/rpc/" + name, {
+      method: "POST",
+      headers: restHeaders,
+      body: JSON.stringify(args),
+    });
+    if (!response.ok) return { data: null, error: true };
+    return { data: await response.json(), error: null };
   };
 
   const renderFriendButton = () => {
@@ -347,8 +379,8 @@
     }
 
     const [memberResult, sessionResult] = await Promise.all([
-      client.rpc("get_public_member_profile", { p_user_id: memberId }),
-      client.auth.getSession(),
+      callPublicRpc("get_public_member_profile", { p_user_id: memberId }),
+      client ? client.auth.getSession() : Promise.resolve({ data: { session: null } }),
     ]);
 
     const member = Array.isArray(memberResult.data)
@@ -396,12 +428,14 @@
     status.hidden = true;
     profile.hidden = false;
 
-    await Promise.all([
-      loadRelationship(),
-      loadPublicBadges(),
-      loadPublicUsernameHistory(),
-      loadPublicFriends(Boolean(member.show_friends)),
-    ]);
+    if (client) {
+      await Promise.all([
+        loadRelationship(),
+        loadPublicBadges(),
+        loadPublicUsernameHistory(),
+        loadPublicFriends(Boolean(member.show_friends)),
+      ]);
+    }
   };
 
   initialize();
