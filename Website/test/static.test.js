@@ -115,6 +115,9 @@ const run = async () => {
     assert.match(staticAccount.text, /data-account/);
     assert.match(staticAccount.text, /data-account-nav/);
     assert.match(staticAccount.text, /data-account-nav-avatar/);
+    const donateIndex = staticAccount.text.indexOf(">Donate</a>");
+    const accountNavIndex = staticAccount.text.indexOf("data-account-nav");
+    assert.ok(donateIndex >= 0 && accountNavIndex > donateIndex, "account/profile control must render after Donate");
     assert.match(staticAccount.text, />Your Commonwealth starts here\.</);
     assert.doesNotMatch(staticAccount.text, />\s*[^<]*Supabase[^<]*</i);
     assert.doesNotMatch(staticAccount.text, /data-profile-form/);
@@ -124,7 +127,9 @@ const run = async () => {
     assert.match(staticProfile.text, /data-profile/);
     assert.match(staticProfile.text, /data-profile-form/);
     assert.match(staticProfile.text, /data-password-form/);
-    assert.match(staticProfile.text, /data-discord-link/);
+    assert.doesNotMatch(staticProfile.text, /data-discord-link/);
+    assert.doesNotMatch(staticProfile.text, />Link Discord</);
+    assert.doesNotMatch(staticAccount.text, />Continue with Discord</);
     assert.match(staticProfile.text, /name="username"/);
     assert.match(staticProfile.text, /name="email"/);
     assert.match(staticProfile.text, /name="current_password"/);

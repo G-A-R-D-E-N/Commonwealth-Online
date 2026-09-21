@@ -102,6 +102,10 @@
   };
 
   const loadDiscord = async () => {
+    if (!discordState || !discordLink) {
+      return;
+    }
+
     if (!discordAvailable) {
       discordState.textContent = "Unavailable";
       discordLink.hidden = true;

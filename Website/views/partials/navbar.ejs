@@ -27,15 +27,32 @@
           </button>
 
           <nav class="site-nav" id="primary-navigation" aria-label="Primary navigation">
-            <% navItems.forEach((item) => { %>
+            <% navItems.filter((item) => item.key !== "account").forEach((item) => { %>
             <a
               href="<%= item.href %>"
               <% if (item.key === page.activeKey) { %>class="is-active" aria-current="page"<% } %>
-              <% if (item.key === "account") { %>data-account-nav<% } %>
               <% if (item.external) { %>target="_blank" rel="noopener noreferrer"<% } %>
-            ><% if (item.key === "account") { %><span class="site-nav__account-label" data-account-nav-label><%= item.label %></span><img class="site-nav__profile-avatar" data-account-nav-avatar src="/assets/profile-icons/armorer.png" alt="" width="32" height="32" hidden /><% } else { %><%= item.label %><% } %></a>
+            ><%= item.label %></a>
             <% }) %>
             <a class="site-nav__donate" href="https://ko-fi.com/commonwealth_online" target="_blank" rel="noopener noreferrer">Donate</a>
+            <a
+              href="/account"
+              class="site-nav__account<%= page.activeKey === "account" ? " is-active" : "" %>"
+              <% if (page.activeKey === "account") { %>aria-current="page"<% } %>
+              data-account-nav
+              aria-label="Login or sign up"
+            >
+              <span class="site-nav__account-label" data-account-nav-label>Login / Sign Up</span>
+              <img
+                class="site-nav__profile-avatar"
+                data-account-nav-avatar
+                src="/assets/profile-icons/armorer.png"
+                alt=""
+                width="32"
+                height="32"
+                hidden
+              />
+            </a>
           </nav>
         </div>
       </header>
