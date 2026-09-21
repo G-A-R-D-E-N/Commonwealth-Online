@@ -133,6 +133,10 @@ const memberUsernameNotificationLinksMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921204800_member_username_notification_links.sql"),
   "utf8"
 );
+const factionApplicationDeleteMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921220000_faction_application_admin_delete.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
