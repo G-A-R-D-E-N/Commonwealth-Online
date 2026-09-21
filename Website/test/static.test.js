@@ -109,7 +109,8 @@ const run = async () => {
     assert.match(staticTeamForm.text, /data-supabase-url/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
     assert.match(staticAccount.text, /data-account/);
-    assert.match(staticAccount.text, /@supabase\/supabase-js@2\.105\.0/);
+    assert.match(staticAccount.text, /https:\/\/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js@2\.105\.0/);
+    assert.doesNotMatch(staticAccount.text, /supabase\.min\.js/);
     assert.match(staticAccount.text, /data-discord-link/);
     assert.doesNotMatch(staticAccount.text, /type="file"/);
     for (const icon of [
