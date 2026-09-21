@@ -144,6 +144,7 @@ const run = async () => {
     assert.match(staticMember.text, /data-friend-action/);
     assert.match(staticMember.text, /data-block-action/);
     assert.match(staticMember.text, /data-member-friends-list/);
+    assert.match(staticMember.text, /data-member-username-history-list/);
     assert.doesNotMatch(staticProfile.text, /data-discord-link/);
     assert.doesNotMatch(staticProfile.text, />Link Discord</);
     assert.doesNotMatch(staticAccount.text, />Continue with Discord</);
@@ -152,6 +153,8 @@ const run = async () => {
     assert.match(staticProfile.text, /name="current_password"/);
     assert.match(staticProfile.text, /name="new_password"/);
     assert.match(staticProfile.text, /name="confirm_password"/);
+    assert.match(staticProfile.text, /name="show_username_history"/);
+    assert.match(staticProfile.text, /data-username-history-list/);
     assert.doesNotMatch(staticProfile.text, />\s*[^<]*Supabase[^<]*</i);
     const supabaseConfigured =
       /data-supabase-url="[^"]+"/.test(staticAccount.text) &&
@@ -219,6 +222,8 @@ const run = async () => {
     assert.match(profileSocialJs, /user_profile_details/);
     assert.match(profileSocialJs, /user_friendships/);
     assert.match(profileSocialJs, /user_notifications/);
+    assert.match(profileSocialJs, /user_username_history/);
+    assert.match(profileSocialJs, /show_username_history/);
     assert.match(profileSocialJs, /Decline/);
     assert.match(profileSocialJs, /status: "declined"/);
     assert.match(profileSocialJs, /Cancel request/);
@@ -231,6 +236,7 @@ const run = async () => {
     assert.doesNotMatch(membersJs, /created_at/);
     assert.match(memberJs, /get_public_member_profile/);
     assert.match(memberJs, /get_public_member_friends/);
+    assert.match(memberJs, /get_public_username_history/);
     assert.match(memberJs, /user_friendships/);
     assert.match(memberJs, /user_blocks/);
     assert.match(memberJs, /status === "declined"/);
