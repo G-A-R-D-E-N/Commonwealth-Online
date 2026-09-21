@@ -109,7 +109,9 @@ const run = async () => {
     assert.match(staticTeamForm.text, /data-supabase-url/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
     assert.match(staticAccount.text, /data-account/);
+    assert.match(staticAccount.text, /data-account-nav[^>]*>Login \/ Sign Up<\/a>/);
     assert.match(staticAccount.text, /https:\/\/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js@2\.105\.0/);
+    assert.equal((staticAccount.text.match(/@supabase\/supabase-js@2\.105\.0/g) || []).length, 1);
     assert.doesNotMatch(staticAccount.text, /supabase\.min\.js/);
     assert.match(staticAccount.text, /data-discord-link/);
     assert.doesNotMatch(staticAccount.text, /type="file"/);
@@ -131,6 +133,10 @@ const run = async () => {
     const iconFetcher = fs.readFileSync(path.join(root, "scripts/fetch-profile-icons.js"), "utf8");
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
+    const navbarJs = fs.readFileSync(path.join(dist, "static/js/navbar.js"), "utf8");
+    assert.match(navbarJs, /getSession\(\)/);
+    assert.match(navbarJs, /onAuthStateChange/);
+    assert.ok(navbarJs.includes('signedIn ? "Account" : "Login / Sign Up"'));
     assert.match(accountJs, /linkIdentity/);
     assert.match(accountJs, /\/auth\/v1\/settings/);
     assert.match(accountJs, /settings\.external\?\.discord/);
