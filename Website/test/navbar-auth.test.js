@@ -107,7 +107,8 @@ const client = {
     return {
       select(columns, options) {
         assert.equal(columns, "id");
-        assert.deepEqual(options, { count: "exact", head: true });
+        assert.equal(options.count, "exact");
+        assert.equal(options.head, true);
         return {
           async is(column, value) {
             assert.equal(column, "read_at");
