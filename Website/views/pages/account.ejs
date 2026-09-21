@@ -9,7 +9,7 @@
               <h1 id="account-title">Register your Commonwealth Online account</h1>
               <p class="servers-hero__desc">
                 Create one account for the website and community services. Discord can be used to sign in or linked
-                later to an email account. Profile pictures are limited to the built-in Fallout 4 themed icon set.
+                later to an email account. Profile pictures are limited to a curated set of real Fallout 4 perk icons.
               </p>
             </div>
           </div>
@@ -48,19 +48,19 @@
 
                 <fieldset class="account-avatar-fieldset">
                   <legend>Profile icon</legend>
-                  <p>Choose one built-in icon. Custom uploads are disabled.</p>
+                  <p>Choose one Fallout 4 perk icon. Custom uploads are disabled.</p>
                   <div class="account-avatar-grid">
                     <% [
-                      ["Vault Dweller", "/assets/profile-icons/vault-dweller.svg"],
-                      ["Minuteman", "/assets/profile-icons/minuteman.svg"],
-                      ["Ranger", "/assets/profile-icons/ranger.svg"],
-                      ["Scribe", "/assets/profile-icons/scribe.svg"],
-                      ["Scavenger", "/assets/profile-icons/scavenger.svg"],
-                      ["Atom Cat", "/assets/profile-icons/atom-cat.svg"]
+                      ["Armorer", "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/armorer.png"],
+                      ["Hacker", "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/hacker.png"],
+                      ["Rifleman", "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/rifleman.png"],
+                      ["Medic", "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/medic.png"],
+                      ["Scrapper", "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/scrapper.png"],
+                      ["Cap Collector", "https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/cap_collector.png"]
                     ].forEach(([label, src], index) => { %>
                     <label class="account-avatar-option">
                       <input type="radio" name="avatar_url" value="<%= src %>"<%= index === 0 ? " checked" : "" %> />
-                      <img src="<%= src %>" alt="" width="96" height="96" />
+                      <img src="<%= src %>" alt="" width="96" height="96" loading="lazy" referrerpolicy="no-referrer" />
                       <span><%= label %></span>
                     </label>
                     <% }) %>
@@ -111,7 +111,7 @@
             </div>
 
             <div class="account-profile__identity">
-              <img data-profile-avatar src="/assets/profile-icons/vault-dweller.svg" alt="" width="128" height="128" />
+              <img data-profile-avatar src="https://cdn.jsdelivr.net/gh/CircuitBread0111/Fallout_Perk_Planner@918547cc872c3288122f9d15ed0416cf33aa8bbf/perk_images/armorer.png" alt="" width="128" height="128" referrerpolicy="no-referrer" />
               <div>
                 <strong data-profile-name>Member</strong>
                 <span data-profile-email></span>
@@ -127,7 +127,7 @@
 
               <fieldset class="account-avatar-fieldset">
                 <legend>Profile icon</legend>
-                <p>Only the built-in Fallout 4 themed icons can be selected.</p>
+                <p>Only the curated Fallout 4 perk icons can be selected.</p>
                 <div class="account-avatar-grid">
                   <% [
                     ["Vault Dweller", "/assets/profile-icons/vault-dweller.svg"],
@@ -139,7 +139,7 @@
                   ].forEach(([label, src]) => { %>
                   <label class="account-avatar-option">
                     <input type="radio" name="avatar_url" value="<%= src %>" />
-                    <img src="<%= src %>" alt="" width="96" height="96" />
+                    <img src="<%= src %>" alt="" width="96" height="96" loading="lazy" referrerpolicy="no-referrer" />
                     <span><%= label %></span>
                   </label>
                   <% }) %>
