@@ -9,6 +9,8 @@
   const notificationsList = root.querySelector("[data-notifications-list]");
   const markRead = root.querySelector("[data-mark-notifications-read]");
   const status = root.querySelector("[data-profile-status]");
+  const brandLogo = document.querySelector(".site-brand__logo");
+  const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
   if (!url || !key || !form || !window.supabase?.createClient) return;
 
   const client = window.coSupabase || window.supabase.createClient(url, key);
@@ -22,7 +24,7 @@
     status.classList.toggle("is-error", error);
   };
 
-  const profileHref = (id) => "/member/?id=" + encodeURIComponent(id);
+  const profileHref = (id) => assetBase + "/member/?id=" + encodeURIComponent(id);
 
   const loadDetails = async () => {
     const { data, error } = await client
@@ -78,7 +80,7 @@
       identity.href = profileHref(person.id);
 
       const avatar = document.createElement("img");
-      avatar.src = person.avatar_url;
+      avatar.src = assetBase + person.avatar_url;
       avatar.alt = "";
       avatar.width = 40;
       avatar.height = 40;
@@ -174,7 +176,7 @@
     for (const row of rows) {
       const item = document.createElement(row.target_url ? "a" : "div");
       item.className = "profile-social-row";
-      if (row.target_url) item.href = row.target_url;
+      if (row.target_url) item.href = row.target_url.startsWith("/") ? assetBase + row.target_url : row.target_url;
 
       const copy = document.createElement("span");
       const title = document.createElement("strong");
