@@ -11,6 +11,8 @@ let registerHandler;
 let discordHandler;
 let signUpCalls = 0;
 let oauthArgs;
+let usernameValue = "   ";
+let signUpError = null;
 let resolveSettings;
 const settingsResponse = new Promise((resolve) => {
   resolveSettings = resolve;
@@ -84,7 +86,7 @@ const client = {
     },
     async signUp() {
       signUpCalls += 1;
-      return { data: { session: null }, error: null };
+      return { data: { session: null }, error: signUpError };
     },
     async signInWithOAuth(args) {
       oauthArgs = args;
@@ -101,7 +103,7 @@ const context = {
   FormData: class {
     get(name) {
       if (name === "username") {
-        return "   ";
+        return usernameValue;
       }
       if (name === "email") {
         return "member@example.test";
@@ -172,6 +174,25 @@ const run = async () => {
   assert.equal(signUpCalls, 0);
   assert.equal(status.textContent, "Enter a username.");
   assert.equal(status.hidden, false);
+
+  usernameValue = "Nomad";
+  signUpError = {
+    status: 429,
+    code: "over_email_send_rate_limit",
+    message: "email rate limit exceeded",
+  };
+
+  await registerHandler({ preventDefault() {} });
+
+  assert.equal(signUpCalls, 1);
+  assert.equal(registerSubmit.disabled, true);
+  assert.equal(
+    status.textContent,
+    "Confirmation email service is temporarily rate-limited. Please try again later."
+  );
+
+  await registerHandler({ preventDefault() {} });
+  assert.equal(signUpCalls, 1, "rate-limited page must not send another signup request");
   assert.equal(typeof discordHandler, "function");
 
   await discordHandler();

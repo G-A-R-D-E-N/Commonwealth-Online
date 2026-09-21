@@ -40,6 +40,14 @@
   const client = window.coSupabase || window.supabase.createClient(url, key);
   window.coSupabase = client;
   let discordAvailable = false;
+  let emailSignupAvailable = true;
+  let registerPending = false;
+
+  const syncRegisterState = () => {
+    if (registerSubmit) {
+      registerSubmit.disabled = registerPending || !emailSignupAvailable;
+    }
+  };
 
   const goToProfile = () => {
     window.location.assign(profileUrl);
@@ -61,8 +69,8 @@
         discordSignIn.hidden = !discordAvailable;
       }
       if (registerSubmit) {
-        const emailSignupAvailable = !settings.disable_signup && settings.external?.email !== false;
-        registerSubmit.disabled = !emailSignupAvailable;
+        emailSignupAvailable = !settings.disable_signup && settings.external?.email !== false;
+        syncRegisterState();
         if (!emailSignupAvailable) {
           setStatus("Account registration is currently unavailable.", true);
         }
@@ -77,6 +85,9 @@
 
   registerForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (registerPending || !emailSignupAvailable) {
+      return;
+    }
     if (!registerForm.checkValidity()) {
       registerForm.reportValidity();
       return;
@@ -89,7 +100,10 @@
       return;
     }
 
+    registerPending = true;
+    syncRegisterState();
     setStatus("Creating your account…");
+
     const { data, error } = await client.auth.signUp({
       email: String(form.get("email") || "").trim(),
       password: String(form.get("password") || ""),
@@ -102,6 +116,23 @@
     });
 
     if (error) {
+      registerPending = false;
+      const rateLimited =
+        error.status === 429 ||
+        error.code === "over_email_send_rate_limit" ||
+        /email.*rate limit|rate limit.*email/i.test(error.message || "");
+
+      if (rateLimited) {
+        emailSignupAvailable = false;
+        syncRegisterState();
+        setStatus(
+          "Confirmation email service is temporarily rate-limited. Please try again later.",
+          true
+        );
+        return;
+      }
+
+      syncRegisterState();
       setStatus(error.message || "Could not create your account.", true);
       return;
     }
@@ -111,6 +142,9 @@
       return;
     }
 
+    registerPending = false;
+    emailSignupAvailable = false;
+    syncRegisterState();
     registerForm.reset();
     setStatus("Account created. Check your email to confirm your address, then sign in.");
   });

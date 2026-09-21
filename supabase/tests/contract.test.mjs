@@ -57,6 +57,14 @@ const factionProfileIconsMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921050000_faction_profile_icons.sql"),
   "utf8"
 );
+const userAccountsMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921143413_user_accounts_admin_table.sql"),
+  "utf8"
+);
+const userAccountsLockMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921143532_lock_user_account_sync_functions.sql"),
+  "utf8"
+);
 const config = fs.readFileSync(path.join(root, "config.toml"), "utf8");
 const confirmationTemplate = fs.readFileSync(path.join(root, "templates", "confirmation.html"), "utf8");
 const envExample = fs.readFileSync(path.join(root, ".env.example"), "utf8");
@@ -186,6 +194,16 @@ for (const icon of ["Brotherhood", "Institute", "Minutemen", "Railroad"]) {
   );
 }
 assert.doesNotMatch(factionProfileIconsMigration, /nullif\(new\.raw_user_meta_data ->> 'picture'/i);
+
+assert.match(userAccountsMigration, /create table if not exists public\.user_accounts/i);
+assert.match(userAccountsMigration, /alter table public\.user_accounts enable row level security/i);
+assert.match(userAccountsMigration, /revoke all on table public\.user_accounts from anon, authenticated/i);
+assert.match(userAccountsMigration, /grant all on table public\.user_accounts to service_role/i);
+assert.match(userAccountsMigration, /create trigger sync_user_account_auth/i);
+assert.match(userAccountsMigration, /create trigger sync_user_account_profile/i);
+assert.match(userAccountsMigration, /insert into public\.user_accounts/i);
+assert.match(userAccountsLockMigration, /revoke execute on function public\.sync_user_account_from_auth\(\) from public, anon, authenticated/i);
+assert.match(userAccountsLockMigration, /revoke execute on function public\.sync_user_account_from_profile\(\) from public, anon, authenticated/i);
 
 const mentionPayload = buildDiscordPayload({
   type: "team",
@@ -329,6 +347,8 @@ for (const [name, content] of [
   ["real profile icons migration", realProfileIconsMigration],
   ["local profile icons migration", localProfileIconsMigration],
   ["faction profile icons migration", factionProfileIconsMigration],
+  ["user accounts migration", userAccountsMigration],
+  ["user accounts lock migration", userAccountsLockMigration],
   ["config", config],
   ["confirmation template", confirmationTemplate],
   ["env example", envExample],
