@@ -31,7 +31,7 @@
   const loadDetails = async () => {
     const { data, error } = await client
       .from("user_profile_details")
-      .select("bio,faction,playstyle,is_public,show_presence,show_friends,show_joined_at,show_username_history,show_recent_servers")
+      .select("bio,faction,playstyle,is_public,show_presence,show_friends,show_joined_at,show_username_history,show_recent_servers,show_characters")
       .eq("user_id", user.id)
       .single();
 
@@ -45,6 +45,7 @@
     form.elements.show_joined_at.checked = data.show_joined_at;
     form.elements.show_username_history.checked = data.show_username_history;
     form.elements.show_recent_servers.checked = data.show_recent_servers;
+    form.elements.show_characters.checked = data.show_characters;
   };
 
   const loadUsernameHistory = async () => {
@@ -381,6 +382,7 @@
       show_joined_at: form.elements.show_joined_at.checked,
       show_username_history: form.elements.show_username_history.checked,
       show_recent_servers: form.elements.show_recent_servers.checked,
+      show_characters: form.elements.show_characters.checked,
       updated_at: new Date().toISOString(),
     };
 
