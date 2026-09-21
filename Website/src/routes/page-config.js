@@ -572,15 +572,31 @@ const FORUM_PAGE = {
     description: "Community discussion for the Commonwealth Online multiplayer framework.",
     bodyClass: "co-forum-page",
     activeKey: "forum",
+    styles: ["/static/css/forum.css"],
     scripts: ["/static/js/links.js", "/static/js/navbar.js", "/static/js/script.js", "/static/js/forum.js"],
   },
 };
 
-const STATIC_SHELL_PAGES = [APPLICATIONS_PAGE, FORUM_PAGE];
+const FORUM_THREAD_PAGE = {
+  route: "/forum/thread",
+  template: "pages/forum-thread",
+  output: "forum/thread/index.html",
+  page: {
+    title: "Discussion - Commonwealth Online",
+    description: "Read a Commonwealth Online forum discussion.",
+    bodyClass: "co-forum-page",
+    activeKey: "forum",
+    styles: ["/static/css/forum.css"],
+    scripts: ["/static/js/links.js", "/static/js/navbar.js", "/static/js/script.js", "/static/js/forum-thread.js"],
+  },
+};
+
+const STATIC_SHELL_PAGES = [APPLICATIONS_PAGE, FORUM_PAGE, FORUM_THREAD_PAGE];
 
 module.exports = {
   APPLICATIONS_PAGE,
   FORUM_PAGE,
+  FORUM_THREAD_PAGE,
   LEGACY_REDIRECTS,
   PUBLIC_PAGES,
   STATIC_SHELL_PAGES,

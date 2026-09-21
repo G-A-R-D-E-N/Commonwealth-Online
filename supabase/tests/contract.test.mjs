@@ -125,6 +125,10 @@ const publicProfileDefaultMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921204600_public_profiles_default.sql"),
   "utf8"
 );
+const forumThreadCreationMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921221000_forum_thread_creation.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -525,6 +529,83 @@ assert.doesNotMatch(
   /update public\.user_profile_details/i
 );
 
+assert.match(
+  forumThreadCreationMigration,
+  /create unique index if not exists forum_reports_open_post_reporter_unique[\s\S]*post_id, reporter_id[\s\S]*where status = 'open'/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /create policy "Authenticated users can create threads"[\s\S]*not is_locked[\s\S]*private\.is_forum_moderator\(\)/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /create or replace function public\.create_forum_thread\([\s\S]*returns bigint/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /security invoker/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /insert into public\.forum_threads[\s\S]*insert into public\.forum_posts/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /revoke all on function public\.create_forum_thread\(bigint, text, text\) from public, anon/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /grant execute on function public\.create_forum_thread\(bigint, text, text\) to authenticated, service_role/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /create trigger notify_forum_reply[\s\S]*after insert on public\.forum_posts/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /thread_author = new\.author_id[\s\S]*return new/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /insert into public\.user_notifications[\s\S]*'New forum reply'[\s\S]*\/forum\/thread\/\?id=/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /ceil\(post_count \/ 50\.0\)/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /create trigger mark_forum_post_edited[\s\S]*before update of body on public\.forum_posts/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /new\.edited_at := now\(\)/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /create trigger touch_forum_thread_on_post[\s\S]*after insert or update or delete on public\.forum_posts/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /update public\.forum_threads[\s\S]*set updated_at = now\(\)/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /create or replace function private\.moderate_forum_thread\([\s\S]*role in \('moderator', 'admin'\)/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /create or replace function public\.moderate_forum_thread\([\s\S]*security invoker/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /grant execute on function private\.moderate_forum_thread\(bigint, boolean, boolean\) to authenticated, service_role/i
+);
+assert.match(
+  forumThreadCreationMigration,
+  /grant execute on function public\.moderate_forum_thread\(bigint, boolean, boolean\) to authenticated, service_role/i
+);
+
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
 assert.match(registerAccount, /website/);
@@ -686,6 +767,7 @@ for (const [name, content] of [
   ["faction review guards migration", factionReviewGuardsMigration],
   ["faction status notifications migration", factionStatusNotificationsMigration],
   ["public profile default migration", publicProfileDefaultMigration],
+  ["forum thread creation migration", forumThreadCreationMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],

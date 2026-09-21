@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build:static": "node scripts/fetch-profile-icons.js && node scripts/build-static.js",
-    "test": "node test/applications.test.js && node test/security.test.js && node test/account-auth.test.js && node test/account-signin.test.js && node test/profile.test.js && node test/navbar-auth.test.js && node test/members.test.js && node test/member-url.test.js",
+    "test": "node test/applications.test.js && node test/security.test.js && node test/account-auth.test.js && node test/account-signin.test.js && node test/profile.test.js && node test/navbar-auth.test.js && node test/members.test.js && node test/member-url.test.js && node test/forum.test.js",
     "test:static": "node test/static.test.js"
   },
   "dependencies": {
