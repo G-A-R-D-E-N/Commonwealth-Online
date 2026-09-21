@@ -151,6 +151,12 @@
     showSignedIn(session.user);
   };
 
+  document.addEventListener("co:notifications-cleared", () => {
+    if (!notificationBadge) return;
+    notificationBadge.hidden = true;
+    notificationBadge.textContent = "";
+  });
+
   client.auth.getSession().then(({ data }) => {
     renderSession(data.session);
   });
