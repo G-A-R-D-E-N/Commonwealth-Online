@@ -5,7 +5,7 @@ create table public.user_profile_details (
   bio text not null default '' check (char_length(bio) <= 500),
   faction text check (faction is null or char_length(faction) <= 40),
   playstyle text check (playstyle is null or char_length(playstyle) <= 80),
-  is_public boolean not null default true,
+  is_public boolean not null default false,
   show_presence boolean not null default true,
   show_friends boolean not null default true,
   show_joined_at boolean not null default true,
@@ -91,8 +91,9 @@ as $function$
   );
 $function$;
 
-revoke all on function private.users_blocked(uuid, uuid) from public, anon, authenticated;
-grant execute on function private.users_blocked(uuid, uuid) to service_role;
+revoke all on function private.users_blocked(uuid, uuid) from public;
+grant usage on schema private to anon, authenticated, service_role;
+grant execute on function private.users_blocked(uuid, uuid) to anon, authenticated, service_role;
 
 grant select on public.user_profile_details to anon, authenticated;
 grant insert, update, delete on public.user_profile_details to authenticated;
