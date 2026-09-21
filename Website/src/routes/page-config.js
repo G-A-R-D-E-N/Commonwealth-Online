@@ -405,6 +405,7 @@ const PUBLIC_PAGES = [
         "/static/js/script.js",
         "/static/js/profile.js",
         "/static/js/profile-social.js",
+        "/static/js/profile-badges.js",
       ],
     },
   },
