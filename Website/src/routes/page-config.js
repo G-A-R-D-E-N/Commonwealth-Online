@@ -444,6 +444,60 @@ const PUBLIC_PAGES = [
       ],
     },
   },
+  {
+    route: "/factions",
+    template: "pages/factions",
+    output: "factions/index.html",
+    page: {
+      title: "Factions - Commonwealth Online",
+      description: "Browse approved Commonwealth Online player factions, lore, focus, and recruitment status.",
+      bodyClass: "co-factions-page",
+      activeKey: "factions",
+      styles: ["/static/css/social.css", "/static/css/factions.css"],
+      scripts: [
+        "/static/js/links.js",
+        "/static/js/navbar.js",
+        "/static/js/script.js",
+        "/static/js/factions.js",
+      ],
+    },
+  },
+  {
+    route: "/faction",
+    template: "pages/faction",
+    output: "faction/index.html",
+    page: {
+      title: "Faction - Commonwealth Online",
+      description: "View a Commonwealth Online faction profile, lore, recruitment status, and roster.",
+      bodyClass: "co-faction-page",
+      activeKey: "factions",
+      styles: ["/static/css/social.css", "/static/css/factions.css"],
+      scripts: [
+        "/static/js/links.js",
+        "/static/js/navbar.js",
+        "/static/js/script.js",
+        "/static/js/faction.js",
+      ],
+    },
+  },
+  {
+    route: "/factions/apply",
+    template: "pages/faction-apply",
+    output: "factions/apply/index.html",
+    page: {
+      title: "Faction Application - Commonwealth Online",
+      description: "Apply to establish a persistent player faction in Commonwealth Online.",
+      bodyClass: "co-faction-apply-page",
+      activeKey: "factions",
+      styles: ["/static/css/profile.css", "/static/css/factions.css"],
+      scripts: [
+        "/static/js/links.js",
+        "/static/js/navbar.js",
+        "/static/js/script.js",
+        "/static/js/faction-apply.js",
+      ],
+    },
+  },
 ];
 
 const LEGACY_REDIRECTS = {
