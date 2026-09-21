@@ -54,6 +54,7 @@ const localProfileIconsMigration = fs.readFileSync(
   "utf8"
 );
 const config = fs.readFileSync(path.join(root, "config.toml"), "utf8");
+const confirmationTemplate = fs.readFileSync(path.join(root, "templates", "confirmation.html"), "utf8");
 const envExample = fs.readFileSync(path.join(root, ".env.example"), "utf8");
 const deployWorkflow = fs.readFileSync(
   path.join(root, "..", ".github", "workflows", "supabase-deploy.yml"),
@@ -92,6 +93,12 @@ assert.match(config, /^enable_manual_linking = true$/m);
 assert.match(config, /\[auth\.email\]/);
 assert.match(config, /^enable_signup = true$/m);
 assert.match(config, /^enable_confirmations = true$/m);
+assert.match(config, /\[auth\.email\.template\.confirmation\]/);
+assert.match(config, /subject = "Confirm your Commonwealth Online account"/);
+assert.match(config, /content_path = "\.\/supabase\/templates\/confirmation\.html"/);
+assert.match(confirmationTemplate, /Commonwealth Online/);
+assert.match(confirmationTemplate, /\{\{ \.ConfirmationURL \}\}/);
+assert.match(confirmationTemplate, /\{\{ if \.Data\.display_name \}\}/);
 assert.match(config, /http:\/\/127\.0\.0\.1:3000\/account\//);
 assert.match(config, /https:\/\/g-a-r-d-e-n\.github\.io\/Commonwealth-Online\/account\//);
 assert.match(config, /https:\/\/commonwealth-online\.com\/account\//);
@@ -304,6 +311,7 @@ for (const [name, content] of [
   ["real profile icons migration", realProfileIconsMigration],
   ["local profile icons migration", localProfileIconsMigration],
   ["config", config],
+  ["confirmation template", confirmationTemplate],
   ["env example", envExample],
 ]) {
   assert.doesNotMatch(content, /sb_secret_[A-Za-z0-9_-]+/, `${name} contains a Supabase secret key`);
