@@ -1,0 +1,57 @@
+name: User Social Foundation Proof
+
+on:
+  push:
+    branches: [feat/user-social-foundation]
+
+permissions:
+  contents: read
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "24.21.0"
+
+      - name: Install website dependencies
+        working-directory: Website
+        run: npm ci
+
+      - name: Run website tests
+        working-directory: Website
+        run: npm test
+
+      - name: Verify static build without backend config
+        working-directory: Website
+        env:
+          SUPABASE_URL: ""
+          SUPABASE_PUBLISHABLE_KEY: ""
+          CAPTCHA_PROVIDER: ""
+          CAPTCHA_SITE_KEY: ""
+        run: |
+          npm run build:static
+          npm run test:static
+
+      - name: Verify configured static build
+        working-directory: Website
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          CAPTCHA_PROVIDER: ${{ vars.CAPTCHA_PROVIDER }}
+          CAPTCHA_SITE_KEY: ${{ vars.CAPTCHA_SITE_KEY }}
+        run: |
+          npm run build:static
+          npm run test:static
+
+      - name: Verify Supabase contract
+        run: node supabase/tests/contract.test.mjs
+
+      - name: Whitespace check
+        run: git diff --check
