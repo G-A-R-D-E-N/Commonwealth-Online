@@ -339,7 +339,16 @@
     els.avatar.src = assetBase + member.avatar_url;
     els.name.textContent = member.display_name;
     els.bio.textContent = member.bio || "No bio provided.";
-    els.faction.textContent = member.faction || "Not set";
+    els.faction.replaceChildren();
+    if (member.faction_id && member.faction_name) {
+      const factionLink = document.createElement("a");
+      factionLink.href = assetBase + "/faction/?id=" + encodeURIComponent(member.faction_id);
+      factionLink.textContent =
+        member.faction_name + (member.faction_tag ? " [" + member.faction_tag + "]" : "");
+      els.faction.append(factionLink);
+    } else {
+      els.faction.textContent = "Not set";
+    }
     els.playstyle.textContent = member.playstyle || "Not set";
     els.joinedRow.hidden = !member.joined_at;
     els.joined.textContent = member.joined_at
