@@ -37,3 +37,6 @@ verify_jwt = false
 
 [functions.review-application]
 verify_jwt = false
+
+[functions.register-account]
+verify_jwt = false

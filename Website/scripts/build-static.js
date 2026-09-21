@@ -18,6 +18,7 @@ const site = {
   url: config.siteUrl,
   links: config.links,
   supabase: config.supabase,
+  captcha: config.captcha,
 };
 
 const localsFor = (page) => ({

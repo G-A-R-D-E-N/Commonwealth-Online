@@ -75,7 +75,8 @@ const run = async () => {
     assert.match(html, /src="\/static\/js\/discord-link\.js\?v=20260921-1"/);
     assert.doesNotMatch(html, /@widgetbot\/crate/);
     assert.doesNotMatch(html, /\/static\/(?:js|css)\/widgetbot\./);
-    assert.match(html, /script-src 'self' https:\/\/cdn\.jsdelivr\.net/);
+    assert.match(html, /script-src 'self' https:\/\/cdn\.jsdelivr\.net https:\/\/challenges\.cloudflare\.com/);
+    assert.match(html, /frame-src 'self' https:\/\/challenges\.cloudflare\.com/);
     assert.doesNotMatch(html, /frame-src[^;]*e\.widgetbot\.io/);
     assert.doesNotMatch(html, /script-src[^;]*unsafe-inline/);
     assert.doesNotMatch(html, /script-src[^;]*unsafe-eval/);
@@ -113,6 +114,9 @@ const run = async () => {
     assert.match(staticTeamForm.text, /data-supabase-url/);
     assert.match(staticBetaForm.text, /data-supabase-key/);
     assert.match(staticAccount.text, /data-account/);
+    assert.match(staticAccount.text, /data-captcha-provider=/);
+    assert.match(staticAccount.text, /data-captcha-site-key=/);
+    assert.match(staticAccount.text, /name="website"/);
     assert.match(staticAccount.text, /data-account-nav/);
     assert.match(staticAccount.text, /data-account-nav-avatar/);
     const donateIndex = staticAccount.text.indexOf(">Donate</a>");
@@ -188,7 +192,6 @@ const run = async () => {
     assert.match(navbarJs, /\/profile\//);
     assert.match(navbarJs, /window\.coSupabase/);
     assert.match(accountJs, /window\.coSupabase/);
-    assert.ok(accountJs.includes("emailRedirectTo: accountUrl"));
     assert.match(accountJs, /redirectTo: accountUrl,[\s\S]*skipBrowserRedirect: true/);
     assert.doesNotMatch(accountJs, /linkIdentity/);
     assert.doesNotMatch(accountJs, /\.from\("profiles"\)/);
@@ -201,6 +204,10 @@ const run = async () => {
     assert.match(siteShellCss, /body\.co-site::before\s*\{\s*content: none;/);
     assert.doesNotMatch(siteShellCss, /radial-gradient|fractalNoise/);
     assert.match(accountJs, /\/auth\/v1\/settings/);
+    assert.match(accountJs, /\/functions\/v1\/register-account/);
+    assert.match(accountJs, /SIGNUP_COOLDOWN_MS/);
+    assert.match(accountJs, /captchaToken/);
+    assert.doesNotMatch(accountJs, /auth\.signUp\(/);
     assert.match(accountJs, /settings\.external\?\.discord/);
     assert.match(accountJs, /settings\.disable_signup/);
     assert.match(accountJs, /Account services are temporarily unavailable\./);

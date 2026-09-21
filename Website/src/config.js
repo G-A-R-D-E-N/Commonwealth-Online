@@ -34,6 +34,11 @@ const config = {
     publishableKey: String(process.env.SUPABASE_PUBLISHABLE_KEY || "").trim(),
   },
 
+  captcha: {
+    provider: String(process.env.CAPTCHA_PROVIDER || "").trim().toLowerCase(),
+    siteKey: String(process.env.CAPTCHA_SITE_KEY || "").trim(),
+  },
+
   features: {
     forum: toBool(process.env.FEATURE_FORUM, false),
     applications: toBool(process.env.FEATURE_APPLICATIONS, true),

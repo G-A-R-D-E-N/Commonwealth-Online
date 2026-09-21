@@ -7,6 +7,8 @@
           data-account
           data-supabase-url="<%= site.supabase?.url || "" %>"
           data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+          data-captcha-provider="<%= site.captcha?.provider || "" %>"
+          data-captcha-site-key="<%= site.captcha?.siteKey || "" %>"
           aria-labelledby="account-title"
         >
           <header class="account-intro">
@@ -40,6 +42,15 @@
                   <span>Password</span>
                   <input name="password" type="password" minlength="8" autocomplete="new-password" required />
                 </label>
+
+                <label class="account-honeypot" aria-hidden="true">
+                  <span>Website</span>
+                  <input name="website" type="text" tabindex="-1" autocomplete="off" />
+                </label>
+
+                <% if (site.captcha?.provider === "turnstile" && site.captcha?.siteKey) { %>
+                <div class="account-captcha" data-captcha-widget aria-label="Anti-bot verification"></div>
+                <% } %>
 
                 <button class="co-btn co-btn--primary" type="submit">Create account</button>
               </form>

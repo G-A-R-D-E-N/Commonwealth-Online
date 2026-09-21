@@ -65,6 +65,18 @@ const userAccountsLockMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921143532_lock_user_account_sync_functions.sql"),
   "utf8"
 );
+const signupAbuseMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921145547_signup_abuse_controls.sql"),
+  "utf8"
+);
+const signupCleanupFixMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921151049_fix_signup_cleanup_return_types.sql"),
+  "utf8"
+);
+const registerAccount = fs.readFileSync(
+  path.join(root, "functions", "register-account", "index.ts"),
+  "utf8"
+);
 const config = fs.readFileSync(path.join(root, "config.toml"), "utf8");
 const confirmationTemplate = fs.readFileSync(path.join(root, "templates", "confirmation.html"), "utf8");
 const envExample = fs.readFileSync(path.join(root, ".env.example"), "utf8");
@@ -118,6 +130,7 @@ assert.match(config, /\[auth\.external\.discord\]/);
 assert.match(config, /client_id = "env\(SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID\)"/);
 assert.match(config, /secret = "env\(SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET\)"/);
 assert.match(config, /\[functions\.submit-application\]/);
+assert.match(config, /\[functions\.register-account\]/);
 assert.match(config, /verify_jwt = false/);
 assert.match(applicationMigration, /alter table public\.applications enable row level security;/i);
 assert.match(applicationMigration, /revoke all on public\.applications from anon, authenticated;/i);
@@ -152,6 +165,7 @@ assert.match(envExample, /^SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET=$/m);
 assert.match(envExample, /^DISCORD_APPLICATION_WEBHOOK_URL=$/m);
 assert.match(envExample, /^APPLICATION_REVIEW_TOKEN=$/m);
 assert.match(envExample, /^APPLICATION_CORS_ORIGINS=/m);
+assert.match(envExample, /^ACCOUNT_CORS_ORIGINS=/m);
 for (const index of [
   "forum_threads_author_idx",
   "forum_posts_author_idx",
@@ -204,6 +218,21 @@ assert.match(userAccountsMigration, /create trigger sync_user_account_profile/i)
 assert.match(userAccountsMigration, /insert into public\.user_accounts/i);
 assert.match(userAccountsLockMigration, /revoke execute on function public\.sync_user_account_from_auth\(\) from public, anon, authenticated/i);
 assert.match(userAccountsLockMigration, /revoke execute on function public\.sync_user_account_from_profile\(\) from public, anon, authenticated/i);
+assert.match(signupAbuseMigration, /create table if not exists public\.signup_rate_limits/i);
+assert.match(signupAbuseMigration, /consume_signup_rate_limit/i);
+assert.match(signupAbuseMigration, /risk_score/i);
+assert.match(signupAbuseMigration, /review_status/i);
+assert.match(signupAbuseMigration, /prune_flagged_unconfirmed_accounts/i);
+assert.match(signupAbuseMigration, /p_dry_run boolean default true/i);
+assert.match(signupCleanupFixMigration, /u\.email::text/i);
+assert.match(signupCleanupFixMigration, /p_older_than < interval '24 hours'/i);
+assert.match(registerAccount, /consume_signup_rate_limit/);
+assert.match(registerAccount, /captchaToken/);
+assert.match(registerAccount, /website/);
+assert.match(registerAccount, /IP_LIMIT = 5/);
+assert.match(registerAccount, /EMAIL_LIMIT = 3/);
+assert.match(registerAccount, /allowedRedirects/);
+assert.doesNotMatch(registerAccount, /SUPABASE_SERVICE_ROLE_KEY\s*[:=]\s*["'][^"']+/);
 
 const mentionPayload = buildDiscordPayload({
   type: "team",
@@ -349,6 +378,9 @@ for (const [name, content] of [
   ["faction profile icons migration", factionProfileIconsMigration],
   ["user accounts migration", userAccountsMigration],
   ["user accounts lock migration", userAccountsLockMigration],
+  ["signup abuse migration", signupAbuseMigration],
+  ["signup cleanup fix migration", signupCleanupFixMigration],
+  ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],
   ["env example", envExample],
