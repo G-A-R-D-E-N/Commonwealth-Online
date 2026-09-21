@@ -106,6 +106,7 @@
                   <label><input name="show_joined_at" type="checkbox" /> Show join date</label>
                   <label><input name="show_username_history" type="checkbox" /> Show previous usernames</label>
                   <label><input name="show_recent_servers" type="checkbox" /> Show recent servers</label>
+                  <label><input name="show_characters" type="checkbox" /> Show characters</label>
                 </div>
 
                 <div class="profile-actions">
@@ -113,6 +114,17 @@
                   <button class="co-btn co-btn--primary" type="submit">Save public profile</button>
                 </div>
               </form>
+            </section>
+
+            <section class="profile-card profile-card--wide" aria-labelledby="characters-title">
+              <div class="profile-card__head">
+                <p class="section-kicker">Multiplayer</p>
+                <h2 id="characters-title">Characters</h2>
+                <p>Character records are synchronized by Commonwealth Online services.</p>
+              </div>
+              <div class="profile-social-list" data-characters-list>
+                <p class="account-help">Loading characters…</p>
+              </div>
             </section>
 
             <section class="profile-card" aria-labelledby="server-favorites-title">
