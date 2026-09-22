@@ -82,6 +82,10 @@ const run = async () => {
     assert.match(html, /href="\/static\/css\/styles\.css\?v=20260922-1"/);
     assert.match(html, /href="\/static\/css\/site-shell\.css\?v=20260922-1"/);
     assert.match(html, /src="\/static\/js\/discord-link\.js\?v=20260921-1"/);
+    // Every page script must be cache-busted so changed JS (for example the
+    // navbar account avatar handling) can never be served stale from cache.
+    assert.doesNotMatch(html, /<script src="\/static\/js\/[^"]+\.js" defer><\/script>/);
+    assert.match(html, /<script src="\/static\/js\/navbar\.js\?v=20260922-1" defer>/);
     assert.doesNotMatch(html, /@widgetbot\/crate/);
     assert.doesNotMatch(html, /\/static\/(?:js|css)\/widgetbot\./);
     assert.match(html, /script-src 'self' https:\/\/cdn\.jsdelivr\.net https:\/\/challenges\.cloudflare\.com/);
