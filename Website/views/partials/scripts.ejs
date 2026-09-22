@@ -1,8 +1,10 @@
 <% if (site.supabase?.url && site.supabase?.publishableKey) { %>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0" defer></script>
 <% } %>
+<% // Bump this query-string version whenever static JS behavior changes so
+   // browsers never keep running a stale cached copy against newer markup. %>
 <% (page.scripts || []).forEach((src) => { %>
-    <script src="<%= src %>" defer></script>
+    <script src="<%- src %><%- src.includes("?") ? "&" : "?" %>v=20260922-1" defer></script>
 <% }); %>
 <% if (site.captcha?.provider === "turnstile" && site.captcha?.siteKey) { %>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=coTurnstileReady" defer></script>
