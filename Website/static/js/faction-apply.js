@@ -14,6 +14,8 @@
   const reviewNoteWrap = root.querySelector("[data-faction-application-review-note-wrap]");
   const reviewNote = root.querySelector("[data-faction-application-review-note]");
   const stateActions = root.querySelector("[data-faction-application-actions]");
+  const history = root.querySelector("[data-faction-application-history]");
+  const historyList = root.querySelector("[data-faction-application-history-list]");
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
   if (!url || !key || !form || !window.supabase?.createClient) return;
@@ -109,19 +111,58 @@
     }
   };
 
+  const renderHistory = (applications) => {
+    if (!history || !historyList) return;
+
+    historyList.replaceChildren();
+    for (const application of applications) {
+      const item = document.createElement("article");
+      item.className = "faction-history-item";
+
+      const head = document.createElement("div");
+      head.className = "faction-history-item__head";
+      const title = document.createElement("strong");
+      const badge = document.createElement("span");
+      title.textContent = application.proposed_name + " [" + application.proposed_tag + "]";
+      badge.className = "faction-status";
+      badge.textContent = String(application.status || "").replaceAll("_", " ");
+      head.append(title, badge);
+
+      const date = document.createElement("p");
+      date.className = "faction-history-item__date";
+      date.textContent = new Date(application.created_at).toLocaleString();
+
+      item.append(head, date);
+
+      const note = String(application.review_note || "").trim();
+      if (note) {
+        const review = document.createElement("p");
+        review.className = "faction-history-item__note";
+        review.textContent = "Review note: " + note;
+        item.append(review);
+      }
+
+      historyList.append(item);
+    }
+
+    history.hidden = applications.length === 0;
+  };
+
   const loadApplication = async () => {
-    const { data: existing, error } = await client
+    const { data: applications, error } = await client
       .from("faction_applications")
       .select("id,status,review_note,reviewed_at,created_at,updated_at,proposed_name,proposed_tag,summary,lore,goals,focus,recruitment")
       .eq("applicant_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .order("created_at", { ascending: false });
 
     if (error) {
       setStatus("Could not load your faction application.", true);
       return;
     }
+
+    const rows = applications || [];
+    const existing = rows[0] || null;
+    renderHistory(existing ? rows.slice(1) : rows);
 
     if (!existing) {
       activeApplication = null;

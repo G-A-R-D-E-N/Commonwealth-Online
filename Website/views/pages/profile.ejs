@@ -217,6 +217,90 @@
               <button class="co-btn co-btn--ghost" type="button" data-mark-notifications-read>Mark all read</button>
             </section>
 
+
+            <section
+              class="profile-card profile-restricted-card"
+              data-faction-review
+              data-supabase-url="<%= site.supabase?.url || "" %>"
+              data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+              hidden
+              aria-labelledby="profile-faction-review-title"
+            >
+              <div class="profile-card__head">
+                <p class="section-kicker">Staff</p>
+                <h2 id="profile-faction-review-title">Faction applications</h2>
+                <p>Review pending faction applications and application history.</p>
+              </div>
+              <p class="site-notice" data-faction-review-status role="status" hidden></p>
+              <div class="faction-review-toolbar" data-faction-review-toolbar hidden>
+                <label class="profile-field faction-review-filter">
+                  <span>Show applications</span>
+                  <select data-faction-review-filter>
+                    <option value="open">Open queue</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="reviewing">In review</option>
+                    <option value="changes_requested">Changes requested</option>
+                    <option value="closed">Closed</option>
+                    <option value="all">All</option>
+                  </select>
+                </label>
+              </div>
+              <div class="faction-review-list" data-faction-review-list hidden></div>
+            </section>
+
+            <section
+              class="profile-card profile-restricted-card"
+              data-faction-manage
+              data-supabase-url="<%= site.supabase?.url || "" %>"
+              data-supabase-key="<%= site.supabase?.publishableKey || "" %>"
+              hidden
+              aria-labelledby="profile-faction-manage-title"
+            >
+              <p class="site-notice" data-faction-manage-status role="status" hidden></p>
+              <div data-faction-manage-content hidden>
+                <div class="profile-card__head">
+                  <p class="section-kicker">Faction management</p>
+                  <h2 id="profile-faction-manage-title" data-faction-manage-name>Faction</h2>
+                  <p>Review requests, invite members, and manage the active roster.</p>
+                </div>
+
+                <section class="profile-card faction-profile-card">
+                  <div class="profile-card__head">
+                    <p class="section-kicker">Queue</p>
+                    <h3>Membership requests</h3>
+                  </div>
+                  <div class="profile-social-list" data-faction-request-list></div>
+                </section>
+
+                <section class="profile-card faction-profile-card">
+                  <div class="profile-card__head">
+                    <p class="section-kicker">Recruitment</p>
+                    <h3>Invite a member</h3>
+                  </div>
+                  <form class="profile-form" data-faction-invite-search>
+                    <label class="profile-field">
+                      <span>Username</span>
+                      <input name="query" type="search" minlength="2" maxlength="80" autocomplete="off" required />
+                    </label>
+                    <div class="profile-actions">
+                      <button class="co-btn co-btn--primary" type="submit">Search members</button>
+                    </div>
+                  </form>
+                  <div class="profile-social-list" data-faction-invite-results></div>
+                </section>
+
+                <section class="profile-card faction-profile-card">
+                  <div class="profile-card__head">
+                    <p class="section-kicker">Roster</p>
+                    <h3>Active members</h3>
+                  </div>
+                  <div class="profile-social-list" data-faction-manage-members></div>
+                </section>
+
+                <a class="co-btn co-btn--ghost" data-faction-manage-back href="/factions/">Back to faction</a>
+              </div>
+            </section>
+
             <section class="profile-card" aria-labelledby="security-title">
               <div class="profile-card__head">
                 <p class="section-kicker">Security</p>

@@ -250,14 +250,14 @@
       if (manageLink && membership.role_id) {
         const { data: role } = await client
           .from("faction_roles")
-          .select("can_manage_members,can_manage_roles,can_edit_faction")
+          .select("can_manage_members")
           .eq("id", membership.role_id)
           .eq("faction_id", factionId)
           .maybeSingle();
 
-        if (role?.can_manage_members || role?.can_manage_roles || role?.can_edit_faction) {
+        if (role?.can_manage_members) {
           manageLink.href =
-            assetBase + "/faction/manage/?slug=" + encodeURIComponent(faction.slug);
+            assetBase + "/profile/?manageFaction=" + encodeURIComponent(faction.slug);
           manageLink.hidden = false;
         }
       }

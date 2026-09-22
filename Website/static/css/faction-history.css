@@ -1,0 +1,61 @@
+.faction-application-history {
+  display: grid;
+  gap: 0.8rem;
+  margin: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--site-border-soft);
+  background: var(--site-surface-alt);
+}
+
+.faction-application-history[hidden] {
+  display: none;
+}
+
+.faction-application-history__head h2 {
+  margin: 0.15rem 0 0;
+  color: var(--site-heading);
+  font-family: var(--site-font-display);
+  font-size: 1.15rem;
+}
+
+.faction-application-history__list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.faction-history-item {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.8rem;
+  border: 1px solid var(--site-border-soft);
+  background: #090c09;
+}
+
+.faction-history-item__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.faction-history-item__head strong {
+  color: var(--site-heading);
+}
+
+.faction-history-item__date,
+.faction-history-item__note {
+  margin: 0;
+  color: var(--site-text-muted);
+  font-size: 0.8rem;
+}
+
+.faction-history-item__note {
+  white-space: pre-wrap;
+}
+
+@media (max-width: 620px) {
+  .faction-history-item__head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

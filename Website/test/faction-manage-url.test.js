@@ -145,16 +145,15 @@ const runCase = async (search) => {
 };
 
 (async () => {
-  const slug = await runCase("?slug=commonwealth-rangers");
-  assert.deepEqual(slug.lookup, { column: "slug", value: "commonwealth-rangers" });
-  assert.equal(slug.canonicalUrl, "/faction/manage/?slug=commonwealth-rangers");
-  assert.equal(slug.backHref, "/faction/?slug=commonwealth-rangers");
-  assert.equal(slug.title, "Commonwealth Rangers [CR]");
+  const managed = await runCase("?manageFaction=commonwealth-rangers");
+  assert.deepEqual(managed.lookup, { column: "slug", value: "commonwealth-rangers" });
+  assert.equal(managed.canonicalUrl, "/profile/?manageFaction=commonwealth-rangers");
+  assert.equal(managed.backHref, "/faction/?slug=commonwealth-rangers");
+  assert.equal(managed.title, "Commonwealth Rangers [CR]");
 
-  const legacy = await runCase("?id=" + factionId);
-  assert.deepEqual(legacy.lookup, { column: "id", value: factionId });
-  assert.equal(legacy.canonicalUrl, "/faction/manage/?slug=commonwealth-rangers");
-  assert.equal(legacy.backHref, "/faction/?slug=commonwealth-rangers");
+  const inactive = await runCase("");
+  assert.equal(inactive.lookup, null);
+  assert.equal(inactive.canonicalUrl, "");
 
   console.log("faction management URL checks passed");
 })().catch((error) => {
