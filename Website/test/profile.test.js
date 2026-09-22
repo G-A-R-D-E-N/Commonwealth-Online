@@ -69,6 +69,11 @@ const avatarRadios = [
   "/assets/profile-images/Icon__Institute.png",
   "/assets/profile-images/Icon__Minutemen.png",
   "/assets/profile-images/Icon__Railroad.png",
+  "/assets/profile-images/CO.png",
+  "/assets/profile-images/Cool.png",
+  "/assets/profile-images/Love.png",
+  "/assets/profile-images/Rage.png",
+  "/assets/profile-images/Wink.png",
 ].map((value) => ({ value, checked: false }));
 avatarRadios[0].checked = true;
 

@@ -57,6 +57,10 @@ const factionProfileIconsMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921050000_faction_profile_icons.sql"),
   "utf8"
 );
+const emoteProfileIconsMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260922000000_emote_profile_icons.sql"),
+  "utf8"
+);
 const userAccountsMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921143413_user_accounts_admin_table.sql"),
   "utf8"
@@ -268,6 +272,26 @@ for (const icon of ["Brotherhood", "Institute", "Minutemen", "Railroad"]) {
   );
 }
 assert.doesNotMatch(factionProfileIconsMigration, /nullif\(new\.raw_user_meta_data ->> 'picture'/i);
+assert.match(emoteProfileIconsMigration, /profiles_avatar_url_allowed/i);
+for (const icon of ["armorer.png", "hacker.png", "rifleman.png", "medic.png", "scrapper.png", "cap_collector.png"]) {
+  assert.ok(
+    emoteProfileIconsMigration.includes(`/assets/profile-icons/${icon}`),
+    `emote profile icons must preserve existing perk icon: ${icon}`,
+  );
+}
+for (const icon of ["Brotherhood", "Institute", "Minutemen", "Railroad"]) {
+  assert.ok(
+    emoteProfileIconsMigration.includes(`/assets/profile-images/Icon__${icon}.png`),
+    `emote profile icons must preserve existing faction icon: ${icon}`,
+  );
+}
+for (const icon of ["CO", "Cool", "Love", "Rage", "Wink"]) {
+  assert.ok(
+    emoteProfileIconsMigration.includes(`/assets/profile-images/${icon}.png`),
+    `missing emote profile icon contract: ${icon}`,
+  );
+}
+assert.doesNotMatch(emoteProfileIconsMigration, /nullif\(new\.raw_user_meta_data ->> 'picture'/i);
 
 assert.match(userAccountsMigration, /create table if not exists public\.user_accounts/i);
 assert.match(userAccountsMigration, /alter table public\.user_accounts enable row level security/i);

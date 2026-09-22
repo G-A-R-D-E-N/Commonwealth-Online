@@ -26,4 +26,14 @@ The selector also offers four Fallout 4 faction icons committed to this reposito
 
 These committed images are copied into the static build by `scripts/build-static.js` and served from `/assets/profile-images/`.
 
+The selector also offers five additional committed Commonwealth Online images in `assets/profile-images/`, authored for this project (source art in `assets/profile-images/CO-Icons.ai`):
+
+- Commonwealth Online logo (`assets/profile-images/CO.png`)
+- Cool (`assets/profile-images/Cool.png`)
+- Love (`assets/profile-images/Love.png`)
+- Rage (`assets/profile-images/Rage.png`)
+- Wink (`assets/profile-images/Wink.png`)
+
+Like the faction icons, these are copied into the static build by `scripts/build-static.js` and served from `/assets/profile-images/`.
+
 The Fallout 4 artwork, Vault Boy imagery, and faction emblems remain the property of Bethesda Softworks / ZeniMax Media. Commonwealth Online does not claim ownership of that artwork and is not affiliated with or endorsed by Bethesda Softworks or ZeniMax Media.
