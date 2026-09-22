@@ -89,9 +89,22 @@ const writePage = (templateName, output, locals) => {
   fs.writeFileSync(outputPath, withStaticBasePath(html));
 };
 
+const writeRedirect = (output, target) => {
+  const outputPath = path.join(dist, output);
+  const href = `${staticBasePath}${target}`;
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(
+    outputPath,
+    `<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${href}"><link rel="canonical" href="${href}"><title>Redirecting</title><a href="${href}">Continue</a>`
+  );
+};
+
 for (const definition of pages) {
   writePage(definition.template, definition.output, localsFor(definition.page));
 }
+
+writeRedirect("factions/review/index.html", "/profile/?staff=factions");
+writeRedirect("faction/manage/index.html", "/profile/");
 
 const applicationScripts = [
   "/static/js/links.js",

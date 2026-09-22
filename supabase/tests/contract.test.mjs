@@ -161,6 +161,10 @@ const profileBannersMigration = fs.readFileSync(
   path.join(root, "migrations", "20260929000000_profile_banners.sql"),
   "utf8"
 );
+const factionApplicationDeleteMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921220000_faction_application_admin_delete.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -659,6 +663,23 @@ assert.match(
   /grant execute on function public\.get_public_member_profile\(uuid\) to anon, authenticated, service_role/i
 );
 assert.doesNotMatch(profileBannersMigration, /update public\.profiles /i);
+assert.match(
+  factionApplicationDeleteMigration,
+  /create or replace function private\.delete_faction_application\(p_application_id uuid\)/i
+);
+assert.match(factionApplicationDeleteMigration, /role = 'admin'/i);
+assert.match(
+  factionApplicationDeleteMigration,
+  /delete from public\.faction_applications[\s\S]*where id = p_application_id/i
+);
+assert.match(
+  factionApplicationDeleteMigration,
+  /revoke all on function public\.delete_faction_application\(uuid\) from public, anon/i
+);
+assert.match(
+  factionApplicationDeleteMigration,
+  /grant execute on function public\.delete_faction_application\(uuid\) to authenticated, service_role/i
+);
 
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
@@ -824,6 +845,7 @@ for (const [name, content] of [
   ["public faction slug links migration", publicFactionSlugLinksMigration],
   ["member username notification links migration", memberUsernameNotificationLinksMigration],
   ["profile bootstrap migration", profileBootstrapMigration],
+  ["faction application delete migration", factionApplicationDeleteMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],

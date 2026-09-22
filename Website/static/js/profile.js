@@ -150,8 +150,10 @@
   });
 
   const tabFromHash = () => window.location.hash.replace(/^#/, "");
+  const tabFromQuery = () =>
+    /[?&](?:staff|manageFaction)=/.test(window.location.search) ? "faction" : "";
 
-  const initialTab = tabFromHash();
+  const initialTab = tabFromHash() || tabFromQuery();
   activateTab(validTabs.has(initialTab) ? initialTab : "profile");
 
   // Keep the active tab in sync with the URL hash so deep links and
