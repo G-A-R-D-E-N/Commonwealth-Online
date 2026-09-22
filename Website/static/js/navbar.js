@@ -45,6 +45,11 @@
     if (trigger && trigger.getAttribute("aria-expanded") === "true") {
       trigger.setAttribute("aria-expanded", "false");
     }
+    // On desktop the menu also stays open via the :focus-within rule while the
+    // trigger keeps focus, so drop focus to let Escape close it reliably.
+    if (trigger && typeof trigger.blur === "function") {
+      trigger.blur();
+    }
     group.classList.remove("is-open");
   };
 

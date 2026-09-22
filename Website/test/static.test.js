@@ -79,6 +79,8 @@ const run = async () => {
     const html = fs.readFileSync(filePath, "utf8");
     assert.equal(/<%|<%=|<%-/.test(html), false, `unresolved EJS in ${filePath}`);
     assert.match(html, /href="\/static\/css\/discord-link\.css\?v=20260921-1"/);
+    assert.match(html, /href="\/static\/css\/styles\.css\?v=20260922-1"/);
+    assert.match(html, /href="\/static\/css\/site-shell\.css\?v=20260922-1"/);
     assert.match(html, /src="\/static\/js\/discord-link\.js\?v=20260921-1"/);
     assert.doesNotMatch(html, /@widgetbot\/crate/);
     assert.doesNotMatch(html, /\/static\/(?:js|css)\/widgetbot\./);
