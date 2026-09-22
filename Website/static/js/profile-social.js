@@ -24,7 +24,8 @@
     status.classList.toggle("is-error", error);
   };
 
-  const profileHref = (id) => assetBase + "/member/?id=" + encodeURIComponent(id);
+  const profileHref = (username) =>
+    assetBase + "/member/?username=" + encodeURIComponent(username);
 
   const loadDetails = async () => {
     const { data, error } = await client
@@ -117,7 +118,7 @@
 
       const identity = document.createElement("a");
       identity.className = "profile-social-row__identity";
-      identity.href = profileHref(person.id);
+      identity.href = profileHref(person.display_name);
 
       const avatar = document.createElement("img");
       avatar.src = assetBase + person.avatar_url;
@@ -264,7 +265,7 @@
 
       const identity = document.createElement("a");
       identity.className = "profile-social-row__identity";
-      identity.href = profileHref(person.id);
+      identity.href = profileHref(person.display_name);
 
       const avatar = document.createElement("img");
       avatar.src = assetBase + person.avatar_url;

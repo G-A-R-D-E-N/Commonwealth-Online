@@ -40,7 +40,7 @@
 
     const name = document.createElement("h2");
     const link = document.createElement("a");
-    link.href = assetBase + "/faction/?id=" + encodeURIComponent(faction.id);
+    link.href = assetBase + "/faction/?slug=" + encodeURIComponent(faction.slug);
     link.textContent = faction.name;
     name.append(link);
 

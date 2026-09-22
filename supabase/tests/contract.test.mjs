@@ -125,6 +125,14 @@ const publicProfileDefaultMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921204600_public_profiles_default.sql"),
   "utf8"
 );
+const publicFactionSlugLinksMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921204700_public_faction_slug_links.sql"),
+  "utf8"
+);
+const memberUsernameNotificationLinksMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260921204800_member_username_notification_links.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -525,6 +533,32 @@ assert.doesNotMatch(
   /update public\.user_profile_details/i
 );
 
+assert.match(
+  publicFactionSlugLinksMigration,
+  /create or replace function private\.remove_faction_member[\s\S]*'\/faction\/\?slug=' \|\| f\.slug/i
+);
+assert.match(
+  publicFactionSlugLinksMigration,
+  /create or replace function private\.invite_faction_member[\s\S]*'\/faction\/\?slug=' \|\| f\.slug/i
+);
+assert.match(
+  publicFactionSlugLinksMigration,
+  /update public\.user_notifications n[\s\S]*set target_url = '\/faction\/\?slug=' \|\| f\.slug[\s\S]*where n\.target_url = '\/faction\/\?id=' \|\| f\.id::text/i
+);
+
+assert.match(
+  memberUsernameNotificationLinksMigration,
+  /create or replace function private\.handle_friendship_notification\(\)/i
+);
+assert.match(
+  memberUsernameNotificationLinksMigration,
+  /'\/member\/\?username=' \|\| actor_name/i
+);
+assert.match(
+  memberUsernameNotificationLinksMigration,
+  /update public\.user_notifications n[\s\S]*set target_url = '\/member\/\?username=' \|\| p\.display_name[\s\S]*where n\.target_url = '\/member\/\?id=' \|\| p\.id::text/i
+);
+
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
 assert.match(registerAccount, /website/);
@@ -686,6 +720,8 @@ for (const [name, content] of [
   ["faction review guards migration", factionReviewGuardsMigration],
   ["faction status notifications migration", factionStatusNotificationsMigration],
   ["public profile default migration", publicProfileDefaultMigration],
+  ["public faction slug links migration", publicFactionSlugLinksMigration],
+  ["member username notification links migration", memberUsernameNotificationLinksMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],
