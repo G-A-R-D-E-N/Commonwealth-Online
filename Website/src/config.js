@@ -22,7 +22,7 @@ const trimTrailingSlashes = (value) => String(value || "").replace(/\/+$/, "");
 const links = {
   github: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",
   repository: "https://github.com/G-A-R-D-E-N/Commonwealth-Online",
-  githubReleases: "https://github.com/G-A-R-D-E-N/Commonwealth-Online/releases",
+  githubReleases: "https://github.com/G-A-R-D-E-N/CommonwealthOnline-Matrix-Old-Python/releases",
   nexus: "https://www.nexusmods.com/fallout4/mods/107542",
   discord: "https://discord.gg/GyfxYG2gzH",
 };

@@ -18,7 +18,7 @@ const ROADMAP_PHASES = [
     systems: [
       {
         name: "Dedicated server runtime",
-        detail: "External server process with multiple clients, JSON configuration and local or remote hosting.",
+        detail: "External server process with multiple clients, JSON configuration, a graphical host, LAN/TCP hosting and Iroh internet hosting.",
       },
       {
         name: "Remote player proxies",
@@ -84,21 +84,21 @@ const ROADMAP_PHASES = [
       },
       {
         name: "Server browser",
-        detail: "Direct connect, browsable entries, LAN discovery, favourites, ping display and controller support.",
+        detail: "Public Browse, LAN discovery, favourites, recent servers, TCP/Iroh Direct Connect, password prompts and controller support.",
       },
       {
         name: "Server-based characters",
         detail: "Per-server saves, in-game character creation and profile binding when reconnecting.",
       },
       {
-        name: "Development & hosting tools",
-        detail: "CLI and graphical development servers, fake clients, weather controls and deployment scripts.",
+        name: "Internet hosting & host tools",
+        detail: "Graphical hosting, private invite codes, optional public listing, passwords, connected-player status, kick/ban controls, CLI tools and deployment scripts.",
       },
     ],
     note:
-      "This phase is the field kit for testing and hosting: the server browser and menu are usable surfaces, while the underlying server remains independently deployable.",
+      "Version 1.1.0 completes the practical hosting path: home hosts can use Iroh without port forwarding, keep a world private by sharing an invite code, or opt into authenticated public discovery. The server browser and controller path are usable surfaces while the relay remains independently deployable.",
     doneWhen:
-      "A host can find or directly join a server, create a character and operate the session from the in-game tools.",
+      "A host can start and moderate a private or public session, share an Iroh invite code, and players can browse, reconnect or directly join from the in-game tools.",
   },
   {
     id: "combat-capacity",
@@ -149,8 +149,8 @@ const ROADMAP_PHASES = [
         detail: "Zoom, pan, player markers and settings panels connected to live multiplayer data.",
       },
       {
-        name: "Server administration",
-        detail: "Remote administration, logs, moderation, permissions and password-protected private servers.",
+        name: "Expanded server administration",
+        detail: "Extend the shipped password, kick, ban, unban and session-status controls with richer permissions, remote administration and logs.",
       },
     ],
     note:
@@ -253,7 +253,7 @@ const MULTIPLAYER_GATES = [
     statusLabel: "Hardening",
     title: "Identity, resume & recovery",
     summary:
-      "Profile identity, compatibility metadata, resume credentials and durable state exist, while default-on identity enforcement and legacy activation retirement remain active work.",
+      "Persistent client/server Iroh identities, EndpointId-keyed profiles, authenticated directory ownership and reconnect metadata are now working; broader identity policy and legacy activation retirement remain active work.",
   },
   {
     id: "validation",
@@ -261,7 +261,7 @@ const MULTIPLAYER_GATES = [
     statusLabel: "Hardening",
     title: "Validation & abuse resistance",
     summary:
-      "Packet bounds, finite-value checks, rate limits, combat sequence checks and server-side trust boundaries protect the session; new gameplay systems must preserve those gates.",
+      "Packet bounds, admission framing, EndpointId rate limits, Argon2id password checks, persistent bans, authenticated admin access and server-side trust boundaries protect the session; new gameplay systems must preserve those gates.",
   },
   {
     id: "acceptance",
@@ -281,7 +281,7 @@ const PUBLIC_PAGES = [
     page: {
       title: "Commonwealth Online",
       description:
-        "Commonwealth Online is a Fallout 4 multiplayer framework with dedicated servers, remote player sync, appearance and equipment replication, shared world state and custom PrismaUI menus. Supports both Fallout 4 Anniversary Edition and the original release. No DLC, mods or Creation Club content required unless other players have them.",
+        "Commonwealth Online 1.1.0 is a Fallout 4 multiplayer framework with dedicated servers, Iroh internet hosting, private invite codes, authenticated public discovery, remote player sync, appearance and equipment replication, shared world state and custom PrismaUI menus. Supports both Fallout 4 Anniversary Edition and the original release.",
       bodyClass: "co-home-page",
       activeKey: "home",
       roadmap: ROADMAP_PHASES,

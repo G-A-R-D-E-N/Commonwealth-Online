@@ -26,8 +26,9 @@
               />
               <h1 id="hero-title">Fallout 4 multiplayer, built from the ground up.</h1>
               <p class="hero__tagline">
-                Connect to a dedicated server and share the Commonwealth with other players. Supports both Fallout 4
-                Anniversary Edition and the original release, with working servers, player sync and shared world state.
+                Connect to a dedicated server and share the Commonwealth with other players. Version 1.1.0 adds
+                invite-based internet hosting through Iroh, a full graphical host workflow, stronger controller support,
+                and optional public server discovery alongside the existing player sync and shared world state.
               </p>
               <div class="hero__actions">
                 <a class="co-btn co-btn--primary" href="#" data-co-link="discord">Join Discord</a>
@@ -49,14 +50,14 @@
           </p>
           <p>
             The project has grown well beyond a prototype: dedicated servers, remote player replication, equipment
-            sync and shared world state are all functional and in active use. Independent fan project. Not affiliated
-            with Bethesda or Microsoft.
+            sync, shared world state, private internet hosting, authenticated public listings, password protection and
+            host moderation controls are all functional. Independent fan project. Not affiliated with Bethesda or Microsoft.
           </p>
           <ul class="overview__stack" aria-label="Runtime stack">
             <li><span>Game</span><strong>Fallout 4 (Anniversary Edition &amp; original)</strong></li>
             <li><span>Client</span><strong>F4SE plugin (per-player simulation)</strong></li>
-            <li><span>Server</span><strong>Dedicated server (JSON config, CLI)</strong></li>
-            <li><span>UI</span><strong>PrismaUI / HTML menus</strong></li>
+            <li><span>Server</span><strong>Python relay + graphical host + Iroh internet transport</strong></li>
+            <li><span>UI</span><strong>PrismaUI / HTML menus (PrismaUI installed separately)</strong></li>
             <li><span>Status</span><strong>Actively developed, core multiplayer systems functional</strong></li>
           </ul>
         </section>
@@ -114,7 +115,15 @@
               </li>
               <li>
                 <span class="feature-list__name">Server Browser</span>
-                <span class="feature-list__desc">Direct connect, browsable entries, LAN discovery, favourites, ping and controller support.</span>
+                <span class="feature-list__desc">Public Browse, LAN discovery, favourites, recent servers, TCP Direct Connect, Iroh invite-code Direct Connect, password prompts and full controller navigation.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Internet Hosting via Iroh</span>
+                <span class="feature-list__desc">Host from a home PC without router port forwarding or a public IPv4 address. Share an invite code privately or opt into the public server list.</span>
+              </li>
+              <li>
+                <span class="feature-list__name">Graphical Host &amp; Moderation</span>
+                <span class="feature-list__desc">World name, player limit, private/public visibility, invite code, password protection, connection-path status, connected-player list, kick, ban and unban controls.</span>
               </li>
               <li>
                 <span class="feature-list__name">Custom Main Menu</span>
@@ -126,7 +135,7 @@
               </li>
               <li>
                 <span class="feature-list__name">Development &amp; Hosting Tools</span>
-                <span class="feature-list__desc">CLI server, graphical dev server, fake clients, weather controls and deployment scripts.</span>
+                <span class="feature-list__desc">End-user graphical host, CLI relay, graphical dev server, fake clients, weather controls, authenticated directory tooling and deployment scripts.</span>
               </li>
             </ul>
           </div>
@@ -159,8 +168,8 @@
                 <span class="feature-list__desc">Zoom, pan, player markers and settings panels connected to live game data.</span>
               </li>
               <li>
-                <span class="feature-list__name">Server Administration</span>
-                <span class="feature-list__desc">Remote admin, logs, moderation, permissions and password-protected private servers.</span>
+                <span class="feature-list__name">Expanded Server Administration</span>
+                <span class="feature-list__desc">Build on the shipped kick, ban, unban, password and session controls with richer permissions, remote administration and operator tooling.</span>
               </li>
             </ul>
           </div>
@@ -213,8 +222,8 @@
                 <span class="feature-list__desc">Load-order checks, version negotiation and missing-content warnings when peers use DLC, mods or Creation Club assets you do not have.</span>
               </li>
               <li>
-                <span class="feature-list__name">Public Server Infrastructure</span>
-                <span class="feature-list__desc">Master listings, filtering, latency, regions and moderation tools.</span>
+                <span class="feature-list__name">Expanded Public Server Infrastructure</span>
+                <span class="feature-list__desc">Extend the working authenticated public directory with regions, richer filtering, moderation policy and larger-scale operational tooling.</span>
               </li>
             </ul>
           </div>
@@ -290,8 +299,9 @@
           </div>
           <p>
             Commonwealth Online is a working multiplayer framework: dedicated servers, remote player replication,
-            appearance and equipment sync and shared world state are all in place, and both the Anniversary Edition and
-            the original release of Fallout 4 are supported. Combat, quests, NPCs, settlements, voice chat and
+            appearance and equipment sync, shared world state, private Iroh hosting, public discovery and host moderation
+            are all in place, and both the Anniversary Edition and the original release of Fallout 4 are supported.
+            Combat, quests, NPCs, settlements, voice chat and
             large-server performance are actively in development. DLC, mods and Creation Club content are not required
             unless other players have them. Community feedback and testing interest help shape priorities as systems
             mature.
