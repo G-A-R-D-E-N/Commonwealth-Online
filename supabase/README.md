@@ -70,4 +70,4 @@ Hosted Supabase must have these Auth settings enabled:
 - manual identity linking
 - the production and GitHub Pages account URLs in the redirect allow list
 
-Profile avatars are intentionally not backed by Supabase Storage. `public.profiles.avatar_url` is restricted by a database check constraint to six local `/assets/profile-icons/*.png` paths generated from verified Fallout 4 perk images during the website build, and `handle_new_user()` ignores provider avatar URLs outside that allow list. Source attribution is documented in `Website/PROFILE_ICON_ATTRIBUTION.md`.
+Profile avatars are intentionally not backed by Supabase Storage. `public.profiles.avatar_url` is restricted by a database check constraint to the local `/assets/profile-icons/*.png` and `/assets/profile-images/*.png` paths generated or committed for the website build, and `handle_new_user()` ignores provider avatar URLs outside that allow list. Source attribution is documented in `Website/PROFILE_ICON_ATTRIBUTION.md`.

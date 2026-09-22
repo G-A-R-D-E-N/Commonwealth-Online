@@ -226,6 +226,14 @@ const run = async () => {
       assert.equal(fs.existsSync(iconPath), true, `missing deployed faction icon ${icon}`);
       assert.deepEqual([...fs.readFileSync(iconPath).subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
     }
+    const emoteIcons = ["CO", "Cool", "Love", "Rage", "Wink"];
+    for (const name of emoteIcons) {
+      const icon = `${name}.png`;
+      assert.ok(staticProfile.text.includes(`/assets/profile-images/${icon}`), `missing profile image ${icon}`);
+      const iconPath = path.join(dist, "assets/profile-images", icon);
+      assert.equal(fs.existsSync(iconPath), true, `missing deployed profile image ${icon}`);
+      assert.deepEqual([...fs.readFileSync(iconPath).subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+    }
     const iconFetcher = fs.readFileSync(path.join(root, "scripts/fetch-profile-icons.js"), "utf8");
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
     const accountJs = fs.readFileSync(path.join(dist, "static/js/account.js"), "utf8");
@@ -385,6 +393,11 @@ const run = async () => {
       const icon = `/assets/profile-images/Icon__${name}.png`;
       assert.ok(profileJs.includes(icon), `profile.js missing faction icon ${icon}`);
       assert.ok(navbarJs.includes(icon), `navbar.js missing faction icon ${icon}`);
+    }
+    for (const name of emoteIcons) {
+      const icon = `/assets/profile-images/${name}.png`;
+      assert.ok(profileJs.includes(icon), `profile.js missing profile image ${icon}`);
+      assert.ok(navbarJs.includes(icon), `navbar.js missing profile image ${icon}`);
     }
     assert.doesNotMatch(accountJs, /Fallout_Perk_Planner/);
     assert.doesNotMatch(profileJs, /Fallout_Perk_Planner/);
