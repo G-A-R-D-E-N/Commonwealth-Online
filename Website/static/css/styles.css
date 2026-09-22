@@ -1764,6 +1764,11 @@ a.co-btn--primary:active {
     width: min(var(--site-max), calc(100% - 2rem));
   }
 
+  .site-main--home {
+    width: 100%;
+    max-width: none;
+  }
+
   :root {
     --site-gutter: 1rem;
   }
