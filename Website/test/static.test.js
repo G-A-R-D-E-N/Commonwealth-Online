@@ -112,9 +112,10 @@ const run = async () => {
 
     const changelogs = JSON.parse(fs.readFileSync(path.join(dist, "data/changelogs.json"), "utf8"));
     assert.equal(changelogs.length > 0, true, "changelog data is populated");
-    assert.equal(changelogs[0].version, "1.0.6");
-    assert.equal(changelogs[0].date, "2026-09-20");
-    assert.match(changelogs[0].markdown, /server browser/i);
+    assert.equal(changelogs[0].version, "1.1.0");
+    assert.equal(changelogs[0].date, "2026-09-22");
+    assert.match(changelogs[0].markdown, /Iroh/i);
+    assert.match(changelogs[0].markdown, /invite code/i);
 
     const staticApply = await request(staticBase, "/apply/");
     const staticAccount = await request(staticBase, "/account/");
