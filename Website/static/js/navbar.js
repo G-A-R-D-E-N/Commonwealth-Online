@@ -20,13 +20,14 @@
   const toggle = mount.querySelector(".site-nav-toggle");
   const nav = mount.querySelector(".site-nav");
   const accountLink = mount.querySelector("[data-account-nav]");
-  const accountLabel = mount.querySelector("[data-account-nav-label]");
+  const accountIcon = mount.querySelector("[data-account-nav-icon]");
   const accountAvatar = mount.querySelector("[data-account-nav-avatar]");
   const notificationBadge = mount.querySelector("[data-account-nav-notifications]");
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
   const accountHref = `${assetBase}/account/`;
   const profileHref = `${assetBase}/profile/`;
+  const groups = mount.querySelectorAll ? [...mount.querySelectorAll("[data-nav-group]")] : [];
   let notificationUserId = null;
 
   if (!toggle || !nav) {
@@ -39,6 +40,44 @@
     nav.classList.toggle("is-open", open);
   };
 
+  const closeGroup = (group) => {
+    const trigger = group.querySelector("[data-nav-trigger]");
+    if (trigger && trigger.getAttribute("aria-expanded") === "true") {
+      trigger.setAttribute("aria-expanded", "false");
+    }
+    // On desktop the menu also stays open via the :focus-within rule while the
+    // trigger keeps focus, so drop focus to let Escape close it reliably.
+    if (trigger && typeof trigger.blur === "function") {
+      trigger.blur();
+    }
+    group.classList.remove("is-open");
+  };
+
+  const closeAllGroups = () => groups.forEach(closeGroup);
+
+  groups.forEach((group) => {
+    const trigger = group.querySelector("[data-nav-trigger]");
+    if (!trigger) {
+      return;
+    }
+    trigger.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const expanded = trigger.getAttribute("aria-expanded") === "true";
+      closeAllGroups();
+      if (!expanded) {
+        trigger.setAttribute("aria-expanded", "true");
+        group.classList.add("is-open");
+      }
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (event.target instanceof HTMLElement && event.target.closest("[data-nav-group]")) {
+      return;
+    }
+    closeAllGroups();
+  });
+
   const showSignedOut = () => {
     if (!accountLink) {
       return;
@@ -46,10 +85,9 @@
     accountLink.href = accountHref;
     accountLink.classList.remove("site-nav__profile");
     accountLink.setAttribute("aria-label", "Login or sign up");
-    accountLink.removeAttribute("title");
-    if (accountLabel) {
-      accountLabel.hidden = false;
-      accountLabel.textContent = "Login / Sign Up";
+    accountLink.title = "Login or sign up";
+    if (accountIcon) {
+      accountIcon.hidden = false;
     }
     if (accountAvatar) {
       accountAvatar.hidden = true;
@@ -75,7 +113,11 @@
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+    if (event.key !== "Escape") {
+      return;
+    }
+    closeAllGroups();
+    if (toggle.getAttribute("aria-expanded") === "true") {
       setOpen(false);
     }
   });
@@ -83,6 +125,7 @@
   window.matchMedia("(min-width: 761px)").addEventListener("change", (event) => {
     if (event.matches) {
       setOpen(false);
+      closeAllGroups();
     }
   });
 
@@ -133,8 +176,8 @@
     accountLink.classList.add("site-nav__profile");
     accountLink.setAttribute("aria-label", `${displayName} profile`);
     accountLink.title = "Profile";
-    if (accountLabel) {
-      accountLabel.hidden = true;
+    if (accountIcon) {
+      accountIcon.hidden = true;
     }
     if (accountAvatar) {
       accountAvatar.src = `${assetBase}${avatar}`;
