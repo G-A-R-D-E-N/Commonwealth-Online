@@ -149,6 +149,8 @@ jobs:
           grep -q "\"${STATIC_BASE_PATH}/data/servers.json\"" dist/static/js/servers.js
           grep -q "\"${STATIC_BASE_PATH}/data/changelogs.json\"" dist/static/js/updates.js
           grep -q "\"${STATIC_BASE_PATH}/updates\"" dist/static/js/links.js
+          grep -q "url=${STATIC_BASE_PATH}/profile/?staff=factions" dist/factions/review/index.html
+          grep -q "url=${STATIC_BASE_PATH}/profile/" dist/faction/manage/index.html
           test -s dist/data/changelogs.json
           # The /repo browser and its Gitea API client were removed.
           test ! -e dist/repo/index.html

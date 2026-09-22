@@ -10,6 +10,8 @@
   const list = root.querySelector("[data-faction-review-list]");
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
+  const staffView = new URLSearchParams(window.location.search).get("staff") === "factions";
+  if (!staffView) return;
   if (!url || !key || !status || !list || !window.supabase?.createClient) return;
 
   const client = window.coSupabase || window.supabase.createClient(url, key);
@@ -56,6 +58,23 @@
     }
 
     setStatus("Faction application updated.");
+    await loadApplications();
+    return true;
+  };
+
+  const deleteApplication = async (application) => {
+    if (!window.confirm("Delete this faction application permanently?")) return false;
+
+    const { error } = await client.rpc("delete_faction_application", {
+      p_application_id: application.id,
+    });
+
+    if (error) {
+      setStatus(error.message || "Could not delete the faction application.", true);
+      return false;
+    }
+
+    setStatus("Faction application deleted.");
     await loadApplications();
     return true;
   };
@@ -148,11 +167,30 @@
       facts.append(row);
     }
 
+    if (application.reviewed_at) {
+      const reviewed = document.createElement("div");
+      const term = document.createElement("dt");
+      const detail = document.createElement("dd");
+      term.textContent = "Reviewed";
+      detail.textContent =
+        new Date(application.reviewed_at).toLocaleString() +
+        (application.reviewer?.display_name ? " by " + application.reviewer.display_name : "");
+      reviewed.append(term, detail);
+      facts.append(reviewed);
+    }
+
     const actionable =
       application.status === "submitted" || application.status === "reviewing";
 
     if (!actionable) {
       appendReviewNote(facts, application);
+      const closedActions = document.createElement("div");
+      closedActions.className = "profile-actions faction-review-actions";
+      closedActions.append(
+        createButton("Delete application", "co-btn co-btn--ghost", () =>
+          deleteApplication(application)
+        )
+      );
       card.append(head, facts);
 
       if (application.status === "changes_requested") {
@@ -167,6 +205,7 @@
         card.append(waiting);
       }
 
+      card.append(closedActions);
       return card;
     }
 
@@ -213,7 +252,10 @@
         }
         if (!window.confirm("Reject this faction application?")) return false;
         return review(application, "rejected", message);
-      })
+      }),
+      createButton("Delete application", "co-btn co-btn--ghost", () =>
+        deleteApplication(application)
+      )
     );
 
     card.append(head, facts, noteField, actions);
@@ -224,7 +266,7 @@
     let query = client
       .from("faction_applications")
       .select(
-        "id,applicant_id,proposed_name,proposed_tag,summary,lore,goals,focus,recruitment,status,review_note,created_at,applicant:profiles!faction_applications_applicant_id_fkey(id,display_name,avatar_url)"
+        "id,applicant_id,proposed_name,proposed_tag,summary,lore,goals,focus,recruitment,status,review_note,reviewed_at,created_at,applicant:profiles!faction_applications_applicant_id_fkey(id,display_name,avatar_url),reviewer:profiles!faction_applications_reviewed_by_fkey(display_name)"
       )
       .order("created_at", { ascending: true });
 
@@ -264,10 +306,7 @@
   const initialize = async () => {
     const { data: sessionData } = await client.auth.getSession();
     const user = sessionData.session?.user || null;
-    if (!user) {
-      setStatus("Sign in with an administrator account to review faction applications.", true);
-      return;
-    }
+    if (!user) return;
 
     const { data: profile, error } = await client
       .from("profiles")
@@ -276,10 +315,11 @@
       .maybeSingle();
 
     if (error || profile?.role !== "admin") {
-      setStatus("Administrator access is required.", true);
+      window.location.replace(assetBase + "/profile/");
       return;
     }
 
+    root.hidden = false;
     setStatus("");
     if (toolbar) toolbar.hidden = false;
     await loadApplications();

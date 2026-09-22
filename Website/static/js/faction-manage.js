@@ -14,12 +14,11 @@
   const backLink = root.querySelector("[data-faction-manage-back]");
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
-  const params = new URLSearchParams(window.location.search);
-  const factionSlug = params.get("slug");
-  const legacyFactionId = params.get("id");
-  let factionId = legacyFactionId || null;
-  if (!url || !key || (!factionSlug && !legacyFactionId) || !window.supabase?.createClient) {
-    status.textContent = "Faction management is unavailable.";
+  const factionSlug = new URLSearchParams(window.location.search).get("manageFaction");
+  let factionId = null;
+  if (!factionSlug) return;
+  if (!url || !key || !window.supabase?.createClient) {
+    window.location.replace(assetBase + "/profile/");
     return;
   }
 
@@ -239,21 +238,17 @@
     user = sessionData.session?.user || null;
 
     if (!user) {
-      setStatus("Sign in to manage a faction.", true);
+      window.location.replace(assetBase + "/account/");
       return;
     }
 
-    let factionQuery = client
+    const factionResult = await client
       .from("factions")
-      .select("id,slug,name,tag");
-
-    factionQuery = factionSlug
-      ? factionQuery.eq("slug", factionSlug)
-      : factionQuery.eq("id", legacyFactionId);
-
-    const factionResult = await factionQuery.single();
+      .select("id,slug,name,tag")
+      .eq("slug", factionSlug)
+      .single();
     if (factionResult.error || !factionResult.data) {
-      setStatus("You do not have permission to manage this faction.", true);
+      window.location.replace(assetBase + "/profile/");
       return;
     }
 
@@ -268,7 +263,7 @@
       .maybeSingle();
 
     if (!membershipResult.data?.role_id) {
-      setStatus("You do not have permission to manage this faction.", true);
+      window.location.replace(assetBase + "/profile/");
       return;
     }
 
@@ -280,17 +275,18 @@
       .maybeSingle();
 
     if (roleError || !role?.can_manage_members) {
-      setStatus("You do not have permission to manage this faction.", true);
+      window.location.replace(assetBase + "/profile/");
       return;
     }
 
+    root.hidden = false;
     factionName.textContent = factionResult.data.name + " [" + factionResult.data.tag + "]";
     backLink.href =
       assetBase + "/faction/?slug=" + encodeURIComponent(factionResult.data.slug);
     window.history?.replaceState(
       null,
       "",
-      assetBase + "/faction/manage/?slug=" + encodeURIComponent(factionResult.data.slug)
+      assetBase + "/profile/?manageFaction=" + encodeURIComponent(factionResult.data.slug)
     );
     setStatus("");
     contentRoot.hidden = false;
