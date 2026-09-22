@@ -50,6 +50,13 @@ body.co-site .site-nav a.site-nav__account.is-active .site-nav__account-icon {
   display: none;
 }
 
+/* Keep the two account states mutually exclusive even if a stale script or
+   browser cache leaves the hidden attribute styling behind. */
+.site-nav__account.site-nav__profile .site-nav__account-icon,
+.site-nav__account:not(.site-nav__profile) .site-nav__profile-avatar {
+  display: none;
+}
+
 .site-nav__profile-avatar {
   display: block;
   width: 2rem;
