@@ -398,7 +398,7 @@ const PUBLIC_PAGES = [
       description: "Manage your Commonwealth Online profile, security, privacy, friends, and notifications.",
       bodyClass: "co-profile-page",
       activeKey: "account",
-      styles: ["/static/css/profile.css?v=20260923-3", "/static/css/social.css?v=20260923-1"],
+      styles: ["/static/css/profile.css?v=20260923-4", "/static/css/social.css?v=20260923-1"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -496,7 +496,7 @@ const PUBLIC_PAGES = [
       description: "Apply to establish a persistent player faction in Commonwealth Online.",
       bodyClass: "co-faction-apply-page",
       activeKey: "factions",
-      styles: ["/static/css/profile.css?v=20260923-3", "/static/css/factions.css?v=20260921-3"],
+      styles: ["/static/css/profile.css?v=20260923-4", "/static/css/factions.css?v=20260921-3"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -514,7 +514,7 @@ const PUBLIC_PAGES = [
       description: "Manage Commonwealth Online faction membership requests, invitations, and roster.",
       bodyClass: "co-faction-manage-page",
       activeKey: "factions",
-      styles: ["/static/css/profile.css?v=20260923-3", "/static/css/social.css?v=20260923-1", "/static/css/factions.css"],
+      styles: ["/static/css/profile.css?v=20260923-4", "/static/css/social.css?v=20260923-1", "/static/css/factions.css"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -532,7 +532,7 @@ const PUBLIC_PAGES = [
       description: "Review pending Commonwealth Online faction applications.",
       bodyClass: "co-faction-review-page",
       activeKey: "factions",
-      styles: ["/static/css/profile.css?v=20260923-3", "/static/css/social.css?v=20260923-1", "/static/css/factions.css?v=20260921-4"],
+      styles: ["/static/css/profile.css?v=20260923-4", "/static/css/social.css?v=20260923-1", "/static/css/factions.css?v=20260921-4"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",

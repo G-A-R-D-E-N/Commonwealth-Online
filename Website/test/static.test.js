@@ -29,10 +29,10 @@ const expectedPages = [
   "forum/index.html",
 ];
 const expectedProfileStyles = new Map([
-  ["profile/index.html", "/static/css/profile.css?v=20260923-3"],
-  ["faction/manage/index.html", "/static/css/profile.css?v=20260923-3"],
-  ["factions/apply/index.html", "/static/css/profile.css?v=20260923-3"],
-  ["factions/review/index.html", "/static/css/profile.css?v=20260923-3"],
+  ["profile/index.html", "/static/css/profile.css?v=20260923-4"],
+  ["faction/manage/index.html", "/static/css/profile.css?v=20260923-4"],
+  ["factions/apply/index.html", "/static/css/profile.css?v=20260923-4"],
+  ["factions/review/index.html", "/static/css/profile.css?v=20260923-4"],
 ]);
 
 const startServer = (handler) =>
