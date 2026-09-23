@@ -398,7 +398,7 @@ const PUBLIC_PAGES = [
       description: "Manage your Commonwealth Online profile, security, privacy, friends, and notifications.",
       bodyClass: "co-profile-page",
       activeKey: "account",
-      styles: ["/static/css/profile.css", "/static/css/social.css"],
+      styles: ["/static/css/profile.css?v=20260923-1", "/static/css/social.css?v=20260923-1"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -422,7 +422,7 @@ const PUBLIC_PAGES = [
       description: "Browse public Commonwealth Online member profiles.",
       bodyClass: "co-members-page",
       activeKey: "members",
-      styles: ["/static/css/social.css?v=20260921-2"],
+      styles: ["/static/css/social.css?v=20260923-1"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -440,7 +440,7 @@ const PUBLIC_PAGES = [
       description: "View a public Commonwealth Online member profile.",
       bodyClass: "co-member-page",
       activeKey: "members",
-      styles: ["/static/css/social.css"],
+      styles: ["/static/css/social.css?v=20260923-1"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",

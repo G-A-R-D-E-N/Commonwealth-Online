@@ -48,6 +48,7 @@
   let currentUser = null;
   let friendship = null;
   let blocked = false;
+  let blockedByOwner = false;
 
   const profileHref = (username) =>
     assetBase + "/member/?username=" + encodeURIComponent(username);
@@ -61,14 +62,19 @@
     if (memberId) return memberId;
 
     if (client) {
+      // `display_name` is not guaranteed unique, so resolve to a single row
+      // explicitly instead of relying on `maybeSingle` (which errors on
+      // duplicates). Require exactly one match, mirroring the REST fallback.
       const { data, error } = await client
         .from("profiles")
         .select("id,display_name")
         .eq("display_name", publicUsername)
-        .maybeSingle();
+        .limit(2);
 
-      if (error || !data?.id) throw new Error("Profile not found");
-      memberId = data.id;
+      if (error || !Array.isArray(data) || data.length !== 1 || !data[0]?.id) {
+        throw new Error("Profile not found");
+      }
+      memberId = data[0].id;
       return memberId;
     }
 
@@ -120,15 +126,17 @@
 
   const renderActions = () => {
     const isOwner = currentUser && currentUser.id === memberId;
+    const canAct = currentUser && !isOwner && !blockedByOwner;
     if (els.editProfile) els.editProfile.hidden = !isOwner;
-    if (els.friend) els.friend.hidden = !currentUser || isOwner || blocked;
-    if (els.block) els.block.hidden = !currentUser || isOwner;
+    if (els.friend) els.friend.hidden = !canAct || blocked;
+    if (els.block) els.block.hidden = !canAct;
   };
 
   const renderFriendButton = () => {
     if (!els.friend) return;
 
-    if (blocked) {
+    const isOwner = currentUser && currentUser.id === memberId;
+    if (!currentUser || isOwner || blocked || blockedByOwner) {
       els.friend.hidden = true;
       return;
     }
@@ -164,7 +172,7 @@
       "and(requester_id.eq." + currentUser.id + ",addressee_id.eq." + memberId + ")," +
       "and(requester_id.eq." + memberId + ",addressee_id.eq." + currentUser.id + ")";
 
-    const [friendResult, blockResult] = await Promise.all([
+    const [friendResult, blockResult, blockedByResult] = await Promise.all([
       client
         .from("user_friendships")
         .select("id,requester_id,addressee_id,status")
@@ -176,10 +184,17 @@
         .eq("blocker_id", currentUser.id)
         .eq("blocked_id", memberId)
         .maybeSingle(),
+      client
+        .from("user_blocks")
+        .select("blocker_id,blocked_id")
+        .eq("blocker_id", memberId)
+        .eq("blocked_id", currentUser.id)
+        .maybeSingle(),
     ]);
 
     friendship = friendResult.data || null;
     blocked = Boolean(blockResult.data);
+    blockedByOwner = Boolean(blockedByResult.data);
     els.block.textContent = blocked ? "Unblock" : "Block";
     renderActions();
     renderFriendButton();

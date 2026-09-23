@@ -260,6 +260,7 @@ const context = {
     history: {
       replaceState() {},
     },
+    addEventListener() {},
     setTimeout(callback) {
       callback();
     },

@@ -105,8 +105,16 @@
     });
   });
 
-  const initialTab = window.location.hash.replace("#", "");
+  const tabFromHash = () => window.location.hash.replace(/^#/, "");
+
+  const initialTab = tabFromHash();
   activateTab(validTabs.has(initialTab) ? initialTab : "profile");
+
+  // Keep the active tab in sync with the URL hash so deep links and
+  // back/forward navigation resolve to the intended section.
+  window.addEventListener("hashchange", () => {
+    activateTab(tabFromHash());
+  });
 
   /* ── Profile picture picker ───────────────────────────────── */
 

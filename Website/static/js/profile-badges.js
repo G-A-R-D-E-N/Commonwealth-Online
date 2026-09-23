@@ -144,32 +144,47 @@
 
   const saveSelection = async () => {
     const ordered = badges.filter((row) => selectedIds.has(row.badge_id));
-    const updates = [];
+    const removals = [];
+    const additions = [];
 
     for (const row of badges) {
       const shouldDisplay = selectedIds.has(row.badge_id);
       if (shouldDisplay === row.is_displayed) continue;
 
       if (shouldDisplay) {
-        updates.push(
-          client
-            .from("user_badge_assignments")
-            .update({ is_displayed: true, display_order: ordered.findIndex((entry) => entry.badge_id === row.badge_id) })
-            .eq("user_id", user.id)
-            .eq("badge_id", row.badge_id)
-        );
+        additions.push({
+          row,
+          order: ordered.findIndex((entry) => entry.badge_id === row.badge_id),
+        });
       } else {
-        updates.push(
-          client
-            .from("user_badge_assignments")
-            .update({ is_displayed: false })
-            .eq("user_id", user.id)
-            .eq("badge_id", row.badge_id)
-        );
+        removals.push(row);
       }
     }
 
-    const results = await Promise.all(updates);
+    // Remove deselected badges before adding replacements so the three-badge
+    // display limit is never exceeded mid-save (the database trigger rejects a
+    // fourth displayed badge while the old selection is still in place).
+    const removalResults = await Promise.all(
+      removals.map((row) =>
+        client
+          .from("user_badge_assignments")
+          .update({ is_displayed: false })
+          .eq("user_id", user.id)
+          .eq("badge_id", row.badge_id)
+      )
+    );
+
+    const additionResults = await Promise.all(
+      additions.map(({ row, order }) =>
+        client
+          .from("user_badge_assignments")
+          .update({ is_displayed: true, display_order: order })
+          .eq("user_id", user.id)
+          .eq("badge_id", row.badge_id)
+      )
+    );
+
+    const results = [...removalResults, ...additionResults];
     const failed = results.some((result) => result.error);
     if (failed) {
       setStatus("Could not save your badges.", true);

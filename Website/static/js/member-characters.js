@@ -17,14 +17,17 @@
   const resolveMemberId = async () => {
     if (legacyMemberId) return legacyMemberId;
 
+    // `display_name` is not guaranteed unique, so resolve to a single row
+    // explicitly rather than relying on `maybeSingle` (which errors on
+    // duplicate display names).
     const { data, error } = await client
       .from("profiles")
       .select("id")
       .eq("display_name", publicUsername)
-      .maybeSingle();
+      .limit(2);
 
-    if (error || !data?.id) return null;
-    return data.id;
+    if (error || !Array.isArray(data) || data.length !== 1 || !data[0]?.id) return null;
+    return data[0].id;
   };
 
   const load = async () => {
