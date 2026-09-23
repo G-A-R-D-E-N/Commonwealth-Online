@@ -83,7 +83,7 @@
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       activateTab(tab.dataset.profileTab);
-      history.replaceState(null, "", `#${tab.dataset.profileTab}`);
+      window.history.replaceState(null, "", `#${tab.dataset.profileTab}`);
     });
     tab.addEventListener("keydown", (event) => {
       const index = tabs.indexOf(tab);

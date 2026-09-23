@@ -143,50 +143,15 @@
   };
 
   const saveSelection = async () => {
-    const ordered = badges.filter((row) => selectedIds.has(row.badge_id));
-    const removals = [];
-    const additions = [];
+    const orderedIds = badges
+      .filter((row) => selectedIds.has(row.badge_id))
+      .map((row) => row.badge_id);
 
-    for (const row of badges) {
-      const shouldDisplay = selectedIds.has(row.badge_id);
-      if (shouldDisplay === row.is_displayed) continue;
+    const { error } = await client.rpc("set_displayed_badges", {
+      p_badge_ids: orderedIds,
+    });
 
-      if (shouldDisplay) {
-        additions.push({
-          row,
-          order: ordered.findIndex((entry) => entry.badge_id === row.badge_id),
-        });
-      } else {
-        removals.push(row);
-      }
-    }
-
-    // Remove deselected badges before adding replacements so the three-badge
-    // display limit is never exceeded mid-save (the database trigger rejects a
-    // fourth displayed badge while the old selection is still in place).
-    const removalResults = await Promise.all(
-      removals.map((row) =>
-        client
-          .from("user_badge_assignments")
-          .update({ is_displayed: false })
-          .eq("user_id", user.id)
-          .eq("badge_id", row.badge_id)
-      )
-    );
-
-    const additionResults = await Promise.all(
-      additions.map(({ row, order }) =>
-        client
-          .from("user_badge_assignments")
-          .update({ is_displayed: true, display_order: order })
-          .eq("user_id", user.id)
-          .eq("badge_id", row.badge_id)
-      )
-    );
-
-    const results = [...removalResults, ...additionResults];
-    const failed = results.some((result) => result.error);
-    if (failed) {
+    if (error) {
       setStatus("Could not save your badges.", true);
       return false;
     }

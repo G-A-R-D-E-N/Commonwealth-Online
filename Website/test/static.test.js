@@ -293,8 +293,9 @@ const run = async () => {
     assert.match(profileNotificationsJs, /user_notifications/);
     assert.match(profileSocialJs, /user_username_history/);
     assert.match(profileSocialJs, /show_username_history/);
-    assert.match(profileBadgesJs, /user_badge_assignments/);
-    assert.match(profileBadgesJs, /displayedCount >= 3/);
+     assert.match(profileBadgesJs, /user_badge_assignments/);
+     assert.match(profileBadgesJs, /displayedCount >= 3/);
+     assert.match(profileBadgesJs, /set_displayed_badges/);
     assert.match(profileServersJs, /user_server_favorites/);
     assert.match(profileServersJs, /user_server_history/);
     assert.match(memberServersJs, /get_public_recent_servers/);
@@ -329,7 +330,8 @@ const run = async () => {
     assert.match(memberJs, /user_badge_assignments/);
     assert.match(memberJs, /is_displayed/);
     assert.match(memberJs, /user_friendships/);
-    assert.match(memberJs, /user_blocks/);
+     assert.match(memberJs, /user_blocks/);
+     assert.match(memberJs, /get_member_relationship/);
     assert.match(memberJs, /status === "declined"/);
     assert.doesNotMatch(membersJs, /setInterval|setTimeout/);
     assert.doesNotMatch(memberJs, /setInterval/);

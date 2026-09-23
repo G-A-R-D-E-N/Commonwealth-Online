@@ -172,29 +172,21 @@
       "and(requester_id.eq." + currentUser.id + ",addressee_id.eq." + memberId + ")," +
       "and(requester_id.eq." + memberId + ",addressee_id.eq." + currentUser.id + ")";
 
-    const [friendResult, blockResult, blockedByResult] = await Promise.all([
+    const [friendResult, relationshipResult] = await Promise.all([
       client
         .from("user_friendships")
         .select("id,requester_id,addressee_id,status")
         .or(pairFilter)
         .maybeSingle(),
-      client
-        .from("user_blocks")
-        .select("blocker_id,blocked_id")
-        .eq("blocker_id", currentUser.id)
-        .eq("blocked_id", memberId)
-        .maybeSingle(),
-      client
-        .from("user_blocks")
-        .select("blocker_id,blocked_id")
-        .eq("blocker_id", memberId)
-        .eq("blocked_id", currentUser.id)
-        .maybeSingle(),
+      client.rpc("get_member_relationship", {
+        p_target_user_id: memberId,
+      }),
     ]);
 
     friendship = friendResult.data || null;
-    blocked = Boolean(blockResult.data);
-    blockedByOwner = Boolean(blockedByResult.data);
+    const relationship = relationshipResult.data || {};
+    blocked = relationship.blocked_target === true;
+    blockedByOwner = relationship.blocked_by_target === true;
     els.block.textContent = blocked ? "Unblock" : "Block";
     renderActions();
     renderFriendButton();
