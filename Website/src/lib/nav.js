@@ -23,6 +23,7 @@ const NAV_ITEMS = [
     ],
   },
   { key: "servers", label: "Servers", href: "/servers" },
+  { key: "hosting", label: "Hosting", href: "/hosting" },
   {
     key: "community",
     label: "Community",
@@ -64,6 +65,7 @@ const FOOTER_LINKS = [
   { label: "Members", href: "/members" },
   { label: "Media", key: "media" },
   { label: "Servers", key: "servers" },
+  { label: "Hosting", href: "/hosting" },
   { label: "Roadmap", href: "/roadmap" },
   { label: "Updates", key: "updates" },
 ];

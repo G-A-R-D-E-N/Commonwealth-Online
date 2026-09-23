@@ -11,6 +11,7 @@ const expectedPages = [
   "index.html",
   "media/index.html",
   "roadmap/index.html",
+  "hosting/index.html",
   "servers/index.html",
   "updates/index.html",
   "account/index.html",
@@ -98,7 +99,7 @@ const run = async () => {
   const staticServer = await startServer(serveStatic);
   const staticBase = `http://127.0.0.1:${staticServer.address().port}`;
   try {
-    for (const route of ["/", "/media/", "/roadmap/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/factions/", "/faction/?id=test", "/faction/manage/?id=test", "/factions/apply/", "/factions/review/", "/apply/", "/forum/"]) {
+    for (const route of ["/", "/media/", "/roadmap/", "/hosting/", "/servers/", "/updates/", "/account/", "/profile/", "/members/", "/member/", "/factions/", "/faction/?id=test", "/faction/manage/?id=test", "/factions/apply/", "/factions/review/", "/apply/", "/forum/"]) {
       const page = await request(staticBase, route);
       assert.equal(page.response.status, 200, route);
     }

@@ -337,6 +337,20 @@ const PUBLIC_PAGES = [
     },
   },
   {
+    route: "/hosting",
+    template: "pages/hosting",
+    output: "hosting/index.html",
+    page: {
+      title: "Hosting Guide - Commonwealth Online",
+      description:
+        "Host a private Commonwealth Online Fallout 4 session, share an Iroh invite code, and join through Direct Connect or TCP / LAN.",
+      bodyClass: "co-hosting-page",
+      activeKey: "hosting",
+      styles: ["/static/css/hosting.css"],
+      scripts: ["/static/js/links.js", "/static/js/navbar.js", "/static/js/script.js"],
+    },
+  },
+  {
     route: "/servers",
     template: "pages/servers",
     output: "servers/index.html",

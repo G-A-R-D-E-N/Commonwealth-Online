@@ -45,6 +45,7 @@ servers/server.json           curated public server data
 | Home | `/` |
 | Media | `/media` |
 | Roadmap | `/roadmap` |
+| Hosting | `/hosting` |
 | Servers | `/servers` |
 | Updates | `/updates` |
 | Repository | https://github.com/G-A-R-D-E-N/Commonwealth-Online |

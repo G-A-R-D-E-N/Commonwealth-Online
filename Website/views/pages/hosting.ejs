@@ -1,0 +1,167 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main hosting-page">
+        <section class="section-panel hosting-hero" aria-labelledby="hosting-title">
+          <div class="hosting-hero__signal" aria-hidden="true">
+            <span>CO_HOST // SECURE HANDSHAKE</span>
+            <span>INVITE CHANNEL // READY</span>
+          </div>
+          <p class="section-kicker">Operator briefing // server access</p>
+          <h1 id="hosting-title">Host a world. Share the signal.</h1>
+          <p class="hosting-hero__lead">
+            Start a private Commonwealth Online session, copy the host invite code, and let your crew join through
+            <strong>Multiplayer → Direct Connect</strong> without sharing a home IP address.
+          </p>
+          <div class="hosting-hero__actions">
+            <a class="co-btn co-btn--primary" href="#internet-hosting">Internet invite code</a>
+            <a class="co-btn co-btn--ghost" href="#lan-hosting">TCP / LAN setup</a>
+          </div>
+        </section>
+
+        <section class="hosting-callout section-panel" aria-label="Important connection detail">
+          <div class="hosting-callout__icon" aria-hidden="true">01</div>
+          <div>
+            <p class="section-kicker">The short version</p>
+            <h2>The invite code is the host's EndpointId</h2>
+            <p>
+              It is a 64-character hexadecimal identity. Players paste it into the <strong>EndpointId</strong> field
+              after choosing <strong>Internet via Iroh</strong> in Direct Connect. They do not enter the host's LAN
+              address or port for this route.
+            </p>
+          </div>
+        </section>
+
+        <section class="hosting-section" id="internet-hosting" aria-labelledby="internet-hosting-title">
+          <div class="section-head">
+            <p class="section-kicker">Recommended path</p>
+            <h2 id="internet-hosting-title">Internet hosting with an invite code</h2>
+          </div>
+          <div class="hosting-grid hosting-grid--two">
+            <article class="hosting-card">
+              <header class="hosting-card__header">
+                <span class="hosting-card__index">HOST // 01</span>
+                <h3>Start the private world</h3>
+              </header>
+              <ol class="hosting-step-list">
+                <li>Open the host launcher or run the host window from the server pack.</li>
+                <li>Set the world name, player limit, and game port in <strong>World setup</strong>.</li>
+                <li>Enable <strong>Allow internet players</strong>.</li>
+                <li>Optionally enable <strong>Require a password</strong> and set the password.</li>
+                <li>Click <strong>Start hosting</strong> and wait for <strong>Connection: Online</strong>.</li>
+                <li>Click <strong>Copy invite code</strong> and send it to your players.</li>
+              </ol>
+              <p class="hosting-card__note">Keep the host window open for the whole session. Stop hosting when the session is over.</p>
+            </article>
+
+            <article class="hosting-card">
+              <header class="hosting-card__header">
+                <span class="hosting-card__index">PLAYER // 02</span>
+                <h3>Join through Direct Connect</h3>
+              </header>
+              <ol class="hosting-step-list">
+                <li>Launch Fallout 4 through F4SE and open <strong>Multiplayer</strong>.</li>
+                <li>Open the <strong>Direct Connect</strong> tab.</li>
+                <li>Set <strong>Connection type</strong> to <strong>Internet via Iroh</strong>.</li>
+                <li>Paste the invite code into <strong>EndpointId</strong>.</li>
+                <li>Enter the password if the host requires one.</li>
+                <li>Select <strong>Connect</strong>.</li>
+              </ol>
+              <p class="hosting-card__note">Paste the code exactly as copied: no label, quotes, or extra spaces.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="hosting-screenshot section-panel" aria-labelledby="hosting-screenshot-title">
+          <div class="hosting-screenshot__copy">
+            <p class="section-kicker">Field reference</p>
+            <h2 id="hosting-screenshot-title">Find Direct Connect in Multiplayer</h2>
+            <p>
+              The connection form lives inside the in-game Multiplayer menu. The current internet path adds the Iroh
+              connection type and EndpointId field to this same Direct Connect workflow.
+            </p>
+          </div>
+          <figure>
+            <div class="hosting-screenshot__frame">
+              <img
+                src="/assets/images/server-browser-direct-connect.webp"
+                alt="Fallout 4 Multiplayer menu showing the Direct Connect screen"
+                loading="lazy"
+                width="1985"
+                height="922"
+              />
+            </div>
+            <figcaption>Multiplayer → Direct Connect // enter the host identity, then connect.</figcaption>
+          </figure>
+        </section>
+
+        <section class="hosting-section" id="lan-hosting" aria-labelledby="lan-hosting-title">
+          <div class="section-head">
+            <p class="section-kicker">Local route</p>
+            <h2 id="lan-hosting-title">Same-PC and LAN hosting</h2>
+          </div>
+          <div class="hosting-grid hosting-grid--two">
+            <article class="hosting-card hosting-card--compact">
+              <header class="hosting-card__header">
+                <span class="hosting-card__index">HOST // TCP</span>
+                <h3>Show the local address</h3>
+              </header>
+              <p>Leave <strong>Allow internet players</strong> disabled, start hosting, and copy the value beside <strong>Local connection</strong>.</p>
+              <ul class="hosting-bullet-list">
+                <li>Same PC: <code>127.0.0.1:7777</code></li>
+                <li>Same LAN: <code>192.168.x.x:7777</code></li>
+                <li>The port changes if the host chooses a custom game port.</li>
+              </ul>
+            </article>
+            <article class="hosting-card hosting-card--compact">
+              <header class="hosting-card__header">
+                <span class="hosting-card__index">PLAYER // TCP</span>
+                <h3>Enter the LAN endpoint</h3>
+              </header>
+              <p>In Direct Connect, choose <strong>TCP / LAN</strong>, enter the host name or IP under <strong>Server Address</strong>, enter the displayed port, and select <strong>Connect</strong>.</p>
+              <p class="hosting-card__note">The Local tab can discover servers on the same network. Manual Direct Connect is the fallback.</p>
+            </article>
+          </div>
+          <div class="hosting-firewall">
+            <strong>LAN firewall note</strong>
+            <span>Allow inbound TCP <code>7777</code> (or the custom game port) and UDP <code>7778</code> for LAN discovery.</span>
+          </div>
+        </section>
+
+        <section class="hosting-section" aria-labelledby="hosting-help-title">
+          <div class="section-head">
+            <p class="section-kicker">Signal repair</p>
+            <h2 id="hosting-help-title">Quick troubleshooting</h2>
+          </div>
+          <div class="hosting-troubleshooting">
+            <details open>
+              <summary>EndpointId validation fails</summary>
+              <p>The code must be exactly 64 hexadecimal characters. Re-copy it from the host and make sure the connection type is <strong>Internet via Iroh</strong>.</p>
+            </details>
+            <details>
+              <summary>The host invite field is blank</summary>
+              <p>Enable <strong>Allow internet players</strong>, start hosting, and wait for <strong>Connection: Online</strong>. If the state becomes <strong>Needs attention</strong>, read the host Activity log and restart it.</p>
+            </details>
+            <details>
+              <summary>Joining fails immediately</summary>
+              <p>Confirm the host is still running, the password is correct, both players use the same Fallout 4/F4SE/mod setup, and the player limit has not been reached.</p>
+            </details>
+            <details>
+              <summary>LAN discovery finds nothing</summary>
+              <p>Confirm both PCs are on the same network and Windows Firewall allows UDP <code>7778</code> and TCP <code>7777</code>. Then use TCP / LAN with the host's address manually.</p>
+            </details>
+          </div>
+        </section>
+
+        <section class="hosting-scope section-panel" aria-labelledby="hosting-scope-title">
+          <p class="section-kicker">Current build boundary</p>
+          <h2 id="hosting-scope-title">What the session synchronizes today</h2>
+          <p>
+            Commonwealth Online currently provides shared player presence and visual replication. Quests, combat,
+            inventory, NPCs, settlements, VATS, and full campaign co-op are not synchronized yet.
+          </p>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/scripts") %>
