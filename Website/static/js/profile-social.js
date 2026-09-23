@@ -4,14 +4,15 @@
 
   const url = (root.dataset.supabaseUrl || "").replace(/\/+$/, "");
   const key = root.dataset.supabaseKey || "";
-  const form = root.querySelector("[data-community-profile-form]");
+  const aboutForm = root.querySelector("[data-about-form]");
+  const communityForm = root.querySelector("[data-community-profile-form]");
   const usernameHistoryList = root.querySelector("[data-username-history-list]");
   const friendsList = root.querySelector("[data-friends-list]");
   const blocksList = root.querySelector("[data-blocks-list]");
   const status = root.querySelector("[data-profile-status]");
   const brandLogo = document.querySelector(".site-brand__logo");
   const assetBase = brandLogo ? new URL(brandLogo.src).pathname.split("/assets/")[0] : "";
-  if (!url || !key || !form || !window.supabase?.createClient) return;
+  if (!url || !key || (!aboutForm && !communityForm) || !window.supabase?.createClient) return;
 
   const client = window.coSupabase || window.supabase.createClient(url, key);
   window.coSupabase = client;
@@ -36,15 +37,19 @@
 
     if (error || !data) return;
 
-    form.elements.bio.value = data.bio || "";
-    form.elements.playstyle.value = data.playstyle || "";
-    form.elements.is_public.checked = data.is_public;
-    form.elements.show_presence.checked = data.show_presence;
-    form.elements.show_friends.checked = data.show_friends;
-    form.elements.show_joined_at.checked = data.show_joined_at;
-    form.elements.show_username_history.checked = data.show_username_history;
-    form.elements.show_recent_servers.checked = data.show_recent_servers;
-    form.elements.show_characters.checked = data.show_characters;
+    if (aboutForm) {
+      aboutForm.elements.bio.value = data.bio || "";
+      aboutForm.elements.playstyle.value = data.playstyle || "";
+    }
+    if (communityForm) {
+      communityForm.elements.is_public.checked = data.is_public;
+      communityForm.elements.show_presence.checked = data.show_presence;
+      communityForm.elements.show_friends.checked = data.show_friends;
+      communityForm.elements.show_joined_at.checked = data.show_joined_at;
+      communityForm.elements.show_username_history.checked = data.show_username_history;
+      communityForm.elements.show_recent_servers.checked = data.show_recent_servers;
+      communityForm.elements.show_characters.checked = data.show_characters;
+    }
   };
 
   const loadUsernameHistory = async () => {
@@ -308,20 +313,36 @@
     }
   };
 
-  form.addEventListener("submit", async (event) => {
+  aboutForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!user || !form.checkValidity()) return;
+    if (!user || !aboutForm.checkValidity()) return;
 
     const payload = {
-      bio: form.elements.bio.value.trim(),
-      playstyle: form.elements.playstyle.value.trim() || null,
-      is_public: form.elements.is_public.checked,
-      show_presence: form.elements.show_presence.checked,
-      show_friends: form.elements.show_friends.checked,
-      show_joined_at: form.elements.show_joined_at.checked,
-      show_username_history: form.elements.show_username_history.checked,
-      show_recent_servers: form.elements.show_recent_servers.checked,
-      show_characters: form.elements.show_characters.checked,
+      bio: aboutForm.elements.bio.value.trim(),
+      playstyle: aboutForm.elements.playstyle.value.trim() || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await client
+      .from("user_profile_details")
+      .update(payload)
+      .eq("user_id", user.id);
+
+    setStatus(error ? "Could not save your about information." : "About information saved.", Boolean(error));
+  });
+
+  communityForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!user || !communityForm.checkValidity()) return;
+
+    const payload = {
+      is_public: communityForm.elements.is_public.checked,
+      show_presence: communityForm.elements.show_presence.checked,
+      show_friends: communityForm.elements.show_friends.checked,
+      show_joined_at: communityForm.elements.show_joined_at.checked,
+      show_username_history: communityForm.elements.show_username_history.checked,
+      show_recent_servers: communityForm.elements.show_recent_servers.checked,
+      show_characters: communityForm.elements.show_characters.checked,
       updated_at: new Date().toISOString(),
     };
 

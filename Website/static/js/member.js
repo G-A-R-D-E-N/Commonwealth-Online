@@ -32,16 +32,17 @@
     playstyle: root.querySelector("[data-member-playstyle]"),
     joined: root.querySelector("[data-member-joined]"),
     joinedRow: root.querySelector("[data-member-joined-row]"),
+    badgeChips: root.querySelector("[data-member-badge-chips]"),
     badgesCard: root.querySelector("[data-member-badges-card]"),
     badgesList: root.querySelector("[data-member-badges-list]"),
     usernameHistoryCard: root.querySelector("[data-member-username-history-card]"),
     usernameHistoryList: root.querySelector("[data-member-username-history-list]"),
     friendsCard: root.querySelector("[data-member-friends-card]"),
     friendsList: root.querySelector("[data-member-friends-list]"),
-    actionsCard: root.querySelector("[data-member-actions-card]"),
     friend: root.querySelector("[data-friend-action]"),
     block: root.querySelector("[data-block-action]"),
     actionStatus: root.querySelector("[data-member-action-status]"),
+    editProfile: root.querySelector("[data-member-edit-profile]"),
   };
 
   let currentUser = null;
@@ -117,6 +118,13 @@
     return Array.isArray(rows) && rows.length === 1 ? rows[0]?.slug || null : null;
   };
 
+  const renderActions = () => {
+    const isOwner = currentUser && currentUser.id === memberId;
+    if (els.editProfile) els.editProfile.hidden = !isOwner;
+    if (els.friend) els.friend.hidden = !currentUser || isOwner || blocked;
+    if (els.block) els.block.hidden = !currentUser || isOwner;
+  };
+
   const renderFriendButton = () => {
     if (!els.friend) return;
 
@@ -172,8 +180,8 @@
 
     friendship = friendResult.data || null;
     blocked = Boolean(blockResult.data);
-    els.actionsCard.hidden = false;
     els.block.textContent = blocked ? "Unblock" : "Block";
+    renderActions();
     renderFriendButton();
   };
 
@@ -189,6 +197,7 @@
       .limit(3);
 
     els.badgesList.replaceChildren();
+    if (els.badgeChips) els.badgeChips.replaceChildren();
 
     if (error) {
       els.badgesCard.hidden = true;
@@ -204,6 +213,14 @@
     for (const row of rows) {
       const badge = row.badge;
       if (!badge) continue;
+
+      if (els.badgeChips) {
+        const chip = document.createElement("span");
+        chip.className = "member-profile__badge-chip";
+        chip.textContent = badge.name;
+        chip.title = badge.description || badge.name;
+        els.badgeChips.append(chip);
+      }
 
       const item = document.createElement("div");
       item.className = "profile-social-row";
@@ -388,6 +405,7 @@
     els.block.textContent = blocked ? "Unblock" : "Block";
     els.block.disabled = false;
     els.actionStatus.textContent = "";
+    renderActions();
     renderFriendButton();
   });
 
@@ -444,16 +462,27 @@
       : "Hidden";
 
     if (member.presence_status) {
+      els.presence.hidden = false;
       els.presence.textContent =
         member.presence_status === "in_game" && member.current_server
           ? "In game · " + member.current_server
           : String(member.presence_status).replace("_", " ");
+      els.presence.classList.toggle(
+        "is-online",
+        member.presence_status === "online"
+      );
+      els.presence.classList.toggle(
+        "is-in-game",
+        member.presence_status === "in_game"
+      );
     } else {
+      els.presence.hidden = true;
       els.presence.textContent = "";
     }
 
     status.hidden = true;
     profile.hidden = false;
+    renderActions();
 
     if (client) {
       await Promise.all([
