@@ -27,229 +27,331 @@
                 <p data-profile-email></p>
               </div>
             </div>
-            <button class="co-btn co-btn--ghost" type="button" data-sign-out>Sign out</button>
+            <div class="profile-header__actions">
+              <a class="co-btn co-btn--ghost" data-view-public-profile href="/members/">View Public Profile</a>
+              <button class="co-btn co-btn--ghost" type="button" data-sign-out>Sign out</button>
+            </div>
           </header>
 
-          <div class="profile-grid">
-            <div class="profile-column profile-column--main">
-            <section class="profile-card" aria-labelledby="profile-settings-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Identity</p>
-                <h2 id="profile-settings-title">Profile settings</h2>
-                <p>Choose how you appear across Commonwealth Online.</p>
-              </div>
+          <nav class="profile-tabs" aria-label="Profile sections" role="tablist">
+            <button class="profile-tab is-active" type="button" role="tab" id="tab-button-profile" data-profile-tab="profile" aria-controls="tab-panel-profile" aria-selected="true">Profile</button>
+            <button class="profile-tab" type="button" role="tab" id="tab-button-privacy" data-profile-tab="privacy" aria-controls="tab-panel-privacy" aria-selected="false">Privacy</button>
+            <button class="profile-tab" type="button" role="tab" id="tab-button-social" data-profile-tab="social" aria-controls="tab-panel-social" aria-selected="false">Social</button>
+            <button class="profile-tab" type="button" role="tab" id="tab-button-multiplayer" data-profile-tab="multiplayer" aria-controls="tab-panel-multiplayer" aria-selected="false">Multiplayer</button>
+            <button class="profile-tab" type="button" role="tab" id="tab-button-faction" data-profile-tab="faction" aria-controls="tab-panel-faction" aria-selected="false">Faction</button>
+            <button class="profile-tab" type="button" role="tab" id="tab-button-notifications" data-profile-tab="notifications" aria-controls="tab-panel-notifications" aria-selected="false">Notifications</button>
+            <button class="profile-tab" type="button" role="tab" id="tab-button-security" data-profile-tab="security" aria-controls="tab-panel-security" aria-selected="false">Account &amp; Security</button>
+          </nav>
 
-              <form class="profile-form" data-profile-form>
-                <div class="profile-fields">
+          <div class="profile-tab-panels">
+            <section class="profile-panel is-active" role="tabpanel" id="tab-panel-profile" data-profile-panel="profile" aria-labelledby="tab-button-profile" tabindex="0">
+              <section class="profile-card" aria-labelledby="profile-settings-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Identity</p>
+                  <h2 id="profile-settings-title">Profile</h2>
+                  <p>Choose how you appear across Commonwealth Online.</p>
+                </div>
+
+                <form class="profile-form" data-profile-form>
                   <label class="profile-field">
                     <span>Username</span>
                     <input name="username" type="text" minlength="1" maxlength="80" autocomplete="nickname" required />
                   </label>
 
+                  <input name="avatar_url" type="hidden" />
+
+                  <div class="profile-picture">
+                    <span class="profile-picture__label">Profile picture</span>
+                    <div class="profile-picture__current">
+                      <img
+                        data-profile-avatar-current
+                        src="/assets/profile-icons/armorer.png"
+                        alt=""
+                        width="64"
+                        height="64"
+                        referrerpolicy="no-referrer"
+                      />
+                      <div>
+                        <strong data-profile-avatar-current-name>Armorer</strong>
+                        <button class="co-btn co-btn--ghost" type="button" data-avatar-picker-open>Change Profile Picture</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="profile-actions">
+                    <button class="co-btn co-btn--primary" type="submit">Save profile</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="profile-card" aria-labelledby="profile-about-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">About</p>
+                  <h2 id="profile-about-title">Bio &amp; playstyle</h2>
+                  <p>Tell other players a little about how you like to play.</p>
+                </div>
+
+                <form class="profile-form" data-about-form>
+                  <label class="profile-field">
+                    <span>Bio</span>
+                    <textarea name="bio" maxlength="500" rows="4" placeholder="Tell other players a little about yourself."></textarea>
+                  </label>
+
+                  <label class="profile-field">
+                    <span>Playstyle</span>
+                    <input name="playstyle" type="text" maxlength="80" placeholder="Co-op, survival, roleplay…" />
+                  </label>
+
+                  <div class="profile-actions">
+                    <button class="co-btn co-btn--primary" type="submit">Save about</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="profile-card" aria-labelledby="badges-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Identity</p>
+                  <h2 id="badges-title">Displayed badges</h2>
+                  <p>Choose up to three earned badges to display publicly.</p>
+                </div>
+                <div class="profile-social-list" data-badges-list>
+                  <p class="account-help">Loading badges…</p>
+                </div>
+                <div class="profile-actions">
+                  <button class="co-btn co-btn--ghost" type="button" data-badges-manage>Manage Badges</button>
+                </div>
+              </section>
+            </section>
+
+            <section class="profile-panel" role="tabpanel" id="tab-panel-privacy" data-profile-panel="privacy" aria-labelledby="tab-button-privacy" tabindex="0" hidden>
+              <section class="profile-card" aria-labelledby="privacy-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Privacy</p>
+                  <h2 id="privacy-title">Public profile</h2>
+                  <p>Control what other Commonwealth Online members can see.</p>
+                </div>
+
+                <form class="profile-form" data-community-profile-form>
+                  <div class="profile-privacy">
+                    <label><input name="is_public" type="checkbox" /> Public profile</label>
+                    <label><input name="show_presence" type="checkbox" /> Show presence/current server</label>
+                    <label><input name="show_friends" type="checkbox" /> Show friends</label>
+                    <label><input name="show_joined_at" type="checkbox" /> Show join date</label>
+                    <label><input name="show_username_history" type="checkbox" /> Show previous usernames</label>
+                    <label><input name="show_recent_servers" type="checkbox" /> Show recent servers</label>
+                    <label><input name="show_characters" type="checkbox" /> Show characters</label>
+                  </div>
+
+                  <div class="profile-actions">
+                    <button class="co-btn co-btn--primary" type="submit">Save privacy</button>
+                  </div>
+                </form>
+              </section>
+            </section>
+
+            <section class="profile-panel" role="tabpanel" id="tab-panel-social" data-profile-panel="social" aria-labelledby="tab-button-social" tabindex="0" hidden>
+              <section class="profile-card" aria-labelledby="friends-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Social</p>
+                  <h2 id="friends-title">Friends</h2>
+                </div>
+                <div class="profile-social-list" data-friends-list>
+                  <p class="account-help">Loading friends…</p>
+                </div>
+              </section>
+
+              <section class="profile-card" aria-labelledby="blocked-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Privacy</p>
+                  <h2 id="blocked-title">Blocked members</h2>
+                </div>
+                <div class="profile-social-list" data-blocks-list>
+                  <p class="account-help">Loading blocked members…</p>
+                </div>
+              </section>
+            </section>
+
+            <section class="profile-panel" role="tabpanel" id="tab-panel-multiplayer" data-profile-panel="multiplayer" aria-labelledby="tab-button-multiplayer" tabindex="0" hidden>
+              <section class="profile-card" aria-labelledby="characters-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Multiplayer</p>
+                  <h2 id="characters-title">Characters</h2>
+                  <p>Character records are synchronized by Commonwealth Online services.</p>
+                </div>
+                <div class="profile-social-list" data-characters-list>
+                  <p class="account-help">Loading characters…</p>
+                </div>
+              </section>
+
+              <section class="profile-card" aria-labelledby="server-favorites-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Multiplayer</p>
+                  <h2 id="server-favorites-title">Favorite servers</h2>
+                </div>
+                <div class="profile-social-list" data-server-favorites-list>
+                  <p class="account-help">Loading favorite servers…</p>
+                </div>
+              </section>
+
+              <section class="profile-card" aria-labelledby="server-history-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Multiplayer</p>
+                  <h2 id="server-history-title">Recent sessions</h2>
+                </div>
+                <div class="profile-social-list" data-server-history-list>
+                  <p class="account-help">Loading server history…</p>
+                </div>
+              </section>
+            </section>
+
+            <section class="profile-panel" role="tabpanel" id="tab-panel-faction" data-profile-panel="faction" aria-labelledby="tab-button-faction" tabindex="0" hidden>
+              <section class="profile-card" aria-labelledby="factions-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Factions</p>
+                  <h2 id="factions-title">Faction membership</h2>
+                  <p>Your primary faction appears on your public profile and can be used by future official servers.</p>
+                </div>
+                <div class="profile-social-list" data-profile-factions-list>
+                  <p class="account-help">Loading factions…</p>
+                </div>
+                <div class="profile-actions">
+                  <a class="co-btn co-btn--ghost" href="/factions/">Browse factions</a>
+                  <a class="co-btn co-btn--ghost" href="/factions/apply/">Create a faction</a>
+                </div>
+              </section>
+            </section>
+
+            <section class="profile-panel" role="tabpanel" id="tab-panel-notifications" data-profile-panel="notifications" aria-labelledby="tab-button-notifications" tabindex="0" hidden>
+              <section class="profile-card" aria-labelledby="notifications-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Activity</p>
+                  <h2 id="notifications-title">Notifications</h2>
+                </div>
+                <div class="profile-social-list" data-notifications-list>
+                  <p class="account-help">Loading notifications…</p>
+                </div>
+                <button class="co-btn co-btn--ghost" type="button" data-mark-notifications-read>Mark all read</button>
+              </section>
+            </section>
+
+            <section class="profile-panel" role="tabpanel" id="tab-panel-security" data-profile-panel="security" aria-labelledby="tab-button-security" tabindex="0" hidden>
+              <section class="profile-card" aria-labelledby="security-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Security</p>
+                  <h2 id="security-title">Account email</h2>
+                </div>
+
+                <form class="profile-form" data-email-form>
                   <label class="profile-field">
                     <span>Email</span>
                     <input name="email" type="email" maxlength="254" autocomplete="email" required />
                   </label>
-                </div>
-
-                <fieldset class="profile-avatar-fieldset">
-                  <legend>Profile picture</legend>
-                  <div class="profile-avatar-grid">
-                    <% [
-                      ["Armorer", "/assets/profile-icons/armorer.png"],
-                      ["Hacker", "/assets/profile-icons/hacker.png"],
-                      ["Rifleman", "/assets/profile-icons/rifleman.png"],
-                      ["Medic", "/assets/profile-icons/medic.png"],
-                      ["Scrapper", "/assets/profile-icons/scrapper.png"],
-                      ["Cap Collector", "/assets/profile-icons/cap_collector.png"],
-                      ["Brotherhood", "/assets/profile-images/Icon__Brotherhood.png"],
-                      ["Institute", "/assets/profile-images/Icon__Institute.png"],
-                      ["Minutemen", "/assets/profile-images/Icon__Minutemen.png"],
-                      ["Railroad", "/assets/profile-images/Icon__Railroad.png"],
-                      ["Commonwealth", "/assets/profile-images/CO.png"],
-                      ["Cool", "/assets/profile-images/Cool.png"],
-                      ["Love", "/assets/profile-images/Love.png"],
-                      ["Rage", "/assets/profile-images/Rage.png"],
-                      ["Wink", "/assets/profile-images/Wink.png"]
-                    ].forEach(([label, src]) => { %>
-                    <label class="profile-avatar-option">
-                      <input type="radio" name="avatar_url" value="<%= src %>" />
-                      <img src="<%= src %>" alt="" width="88" height="88" loading="lazy" referrerpolicy="no-referrer" />
-                      <span><%= label %></span>
-                    </label>
-                    <% }) %>
+                  <div class="profile-actions">
+                    <button class="co-btn co-btn--primary" type="submit">Update email</button>
                   </div>
-                </fieldset>
+                </form>
+              </section>
 
-                <div class="profile-actions">
-                  <button class="co-btn co-btn--primary" type="submit">Save profile</button>
-                </div>
-              </form>
-            </section>
-
-            <section class="profile-card" aria-labelledby="community-profile-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Community</p>
-                <h2 id="community-profile-title">Public profile</h2>
-                <p>Control what other Commonwealth Online members can see.</p>
-              </div>
-
-              <form class="profile-form" data-community-profile-form>
-                <label class="profile-field">
-                  <span>Bio</span>
-                  <textarea name="bio" maxlength="500" rows="4" placeholder="Tell other players a little about yourself."></textarea>
-                </label>
-
-                <label class="profile-field">
-                  <span>Playstyle</span>
-                  <input name="playstyle" type="text" maxlength="80" placeholder="Co-op, survival, roleplay…" />
-                </label>
-
-                <div class="profile-privacy">
-                  <label><input name="is_public" type="checkbox" /> Public profile</label>
-                  <label><input name="show_presence" type="checkbox" /> Show presence/current server</label>
-                  <label><input name="show_friends" type="checkbox" /> Show friends</label>
-                  <label><input name="show_joined_at" type="checkbox" /> Show join date</label>
-                  <label><input name="show_username_history" type="checkbox" /> Show previous usernames</label>
-                  <label><input name="show_recent_servers" type="checkbox" /> Show recent servers</label>
-                  <label><input name="show_characters" type="checkbox" /> Show characters</label>
+              <section class="profile-card" aria-labelledby="password-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Security</p>
+                  <h2 id="password-title">Change password</h2>
                 </div>
 
-                <div class="profile-actions">
-                  <a class="co-btn co-btn--ghost" href="/members/">Browse members</a>
-                  <button class="co-btn co-btn--primary" type="submit">Save public profile</button>
+                <form class="profile-form" data-password-form>
+                  <label class="profile-field">
+                    <span>Current password</span>
+                    <input name="current_password" type="password" autocomplete="current-password" />
+                  </label>
+
+                  <label class="profile-field">
+                    <span>New password</span>
+                    <input name="new_password" type="password" minlength="8" autocomplete="new-password" required />
+                  </label>
+
+                  <label class="profile-field">
+                    <span>Confirm new password</span>
+                    <input name="confirm_password" type="password" minlength="8" autocomplete="new-password" required />
+                  </label>
+
+                  <button class="co-btn co-btn--primary" type="submit">Update password</button>
+                </form>
+              </section>
+
+              <section class="profile-card" aria-labelledby="username-history-title">
+                <div class="profile-card__head">
+                  <p class="section-kicker">Identity</p>
+                  <h2 id="username-history-title">Username history</h2>
                 </div>
-              </form>
+                <div class="profile-social-list" data-username-history-list>
+                  <p class="account-help">Loading username history…</p>
+                </div>
+              </section>
             </section>
-
-            <section class="profile-card" aria-labelledby="characters-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Multiplayer</p>
-                <h2 id="characters-title">Characters</h2>
-                <p>Character records are synchronized by Commonwealth Online services.</p>
-              </div>
-              <div class="profile-social-list" data-characters-list>
-                <p class="account-help">Loading characters…</p>
-              </div>
-            </section>
-
-            <section class="profile-card" aria-labelledby="factions-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Factions</p>
-                <h2 id="factions-title">Faction membership</h2>
-                <p>Your primary faction appears on your public profile and can be used by future official servers.</p>
-              </div>
-              <div class="profile-social-list" data-profile-factions-list>
-                <p class="account-help">Loading factions…</p>
-              </div>
-              <div class="profile-actions">
-                <a class="co-btn co-btn--ghost" href="/factions/">Browse factions</a>
-                <a class="co-btn co-btn--ghost" href="/factions/apply/">Create a faction</a>
-              </div>
-            </section>
-            </div>
-
-            <div class="profile-column profile-column--side">
-            <section class="profile-card" aria-labelledby="server-favorites-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Multiplayer</p>
-                <h2 id="server-favorites-title">Favorite servers</h2>
-              </div>
-              <div class="profile-social-list" data-server-favorites-list>
-                <p class="account-help">Loading favorite servers…</p>
-              </div>
-            </section>
-
-            <section class="profile-card" aria-labelledby="server-history-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Multiplayer</p>
-                <h2 id="server-history-title">Recent sessions</h2>
-              </div>
-              <div class="profile-social-list" data-server-history-list>
-                <p class="account-help">Loading server history…</p>
-              </div>
-            </section>
-
-            <section class="profile-card" aria-labelledby="badges-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Identity</p>
-                <h2 id="badges-title">Badges</h2>
-                <p>Choose up to three earned badges to display publicly.</p>
-              </div>
-              <div class="profile-social-list" data-badges-list>
-                <p class="account-help">Loading badges…</p>
-              </div>
-            </section>
-
-            <section class="profile-card" aria-labelledby="username-history-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Identity</p>
-                <h2 id="username-history-title">Username history</h2>
-              </div>
-              <div class="profile-social-list" data-username-history-list>
-                <p class="account-help">Loading username history…</p>
-              </div>
-            </section>
-
-            <section class="profile-card" aria-labelledby="friends-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Social</p>
-                <h2 id="friends-title">Friends</h2>
-              </div>
-              <div class="profile-social-list" data-friends-list>
-                <p class="account-help">Loading friends…</p>
-              </div>
-            </section>
-
-            <section class="profile-card" aria-labelledby="blocked-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Privacy</p>
-                <h2 id="blocked-title">Blocked members</h2>
-              </div>
-              <div class="profile-social-list" data-blocks-list>
-                <p class="account-help">Loading blocked members…</p>
-              </div>
-            </section>
-
-            <section class="profile-card" aria-labelledby="notifications-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Activity</p>
-                <h2 id="notifications-title">Notifications</h2>
-              </div>
-              <div class="profile-social-list" data-notifications-list>
-                <p class="account-help">Loading notifications…</p>
-              </div>
-              <button class="co-btn co-btn--ghost" type="button" data-mark-notifications-read>Mark all read</button>
-            </section>
-
-            <section class="profile-card" aria-labelledby="security-title">
-              <div class="profile-card__head">
-                <p class="section-kicker">Security</p>
-                <h2 id="security-title">Change password</h2>
-              </div>
-
-              <form class="profile-form" data-password-form>
-                <label class="profile-field">
-                  <span>Current password</span>
-                  <input name="current_password" type="password" autocomplete="current-password" />
-                </label>
-
-                <label class="profile-field">
-                  <span>New password</span>
-                  <input name="new_password" type="password" minlength="8" autocomplete="new-password" required />
-                </label>
-
-                <label class="profile-field">
-                  <span>Confirm new password</span>
-                  <input name="confirm_password" type="password" minlength="8" autocomplete="new-password" required />
-                </label>
-
-                <button class="co-btn co-btn--primary" type="submit">Update password</button>
-              </form>
-            </section>
-            </div>
-
           </div>
+
+          <dialog class="profile-modal" data-avatar-modal aria-labelledby="avatar-modal-title">
+            <div class="profile-modal__chrome">
+              <h3 class="profile-modal__title" id="avatar-modal-title">Choose a profile picture</h3>
+              <button class="profile-modal__close" type="button" data-avatar-modal-close aria-label="Close">✕</button>
+            </div>
+            <div class="profile-modal__filters" role="group" aria-label="Profile picture categories">
+              <button class="co-btn co-btn--ghost is-active" type="button" data-avatar-filter="all">All</button>
+              <button class="co-btn co-btn--ghost" type="button" data-avatar-filter="perks">Perks</button>
+              <button class="co-btn co-btn--ghost" type="button" data-avatar-filter="factions">Factions</button>
+              <button class="co-btn co-btn--ghost" type="button" data-avatar-filter="commonwealth">Commonwealth</button>
+            </div>
+            <div class="profile-modal__grid" data-avatar-grid>
+              <% [
+                ["Armorer", "/assets/profile-icons/armorer.png", "perks"],
+                ["Hacker", "/assets/profile-icons/hacker.png", "perks"],
+                ["Rifleman", "/assets/profile-icons/rifleman.png", "perks"],
+                ["Medic", "/assets/profile-icons/medic.png", "perks"],
+                ["Scrapper", "/assets/profile-icons/scrapper.png", "perks"],
+                ["Cap Collector", "/assets/profile-icons/cap_collector.png", "perks"],
+                ["Brotherhood", "/assets/profile-images/Icon__Brotherhood.png", "factions"],
+                ["Institute", "/assets/profile-images/Icon__Institute.png", "factions"],
+                ["Minutemen", "/assets/profile-images/Icon__Minutemen.png", "factions"],
+                ["Railroad", "/assets/profile-images/Icon__Railroad.png", "factions"],
+                ["Commonwealth", "/assets/profile-images/CO.png", "commonwealth"],
+                ["Cool", "/assets/profile-images/Cool.png", "commonwealth"],
+                ["Love", "/assets/profile-images/Love.png", "commonwealth"],
+                ["Rage", "/assets/profile-images/Rage.png", "commonwealth"],
+                ["Wink", "/assets/profile-images/Wink.png", "commonwealth"]
+              ].forEach(([label, src, category]) => { %>
+              <button
+                class="profile-avatar-option"
+                type="button"
+                data-avatar-value="<%= src %>"
+                data-avatar-category="<%= category %>"
+                aria-pressed="false"
+              >
+                <img src="<%= src %>" alt="" width="72" height="72" loading="lazy" referrerpolicy="no-referrer" />
+                <span><%= label %></span>
+              </button>
+              <% }) %>
+            </div>
+            <div class="profile-modal__actions">
+              <button class="co-btn co-btn--ghost" type="button" data-avatar-modal-cancel>Cancel</button>
+              <button class="co-btn co-btn--primary" type="button" data-avatar-modal-confirm>Use picture</button>
+            </div>
+          </dialog>
+
+          <dialog class="profile-modal" data-badges-modal aria-labelledby="badges-modal-title">
+            <div class="profile-modal__chrome">
+              <h3 class="profile-modal__title" id="badges-modal-title">Manage badges</h3>
+              <button class="profile-modal__close" type="button" data-badges-modal-close aria-label="Close">✕</button>
+            </div>
+            <p class="profile-modal__hint">Choose up to three earned badges to display on your public profile.</p>
+            <p class="profile-modal__count" data-badges-count aria-live="polite">0/3 selected</p>
+            <div class="profile-modal__list" data-badges-modal-list>
+              <p class="account-help">Loading badges…</p>
+            </div>
+            <div class="profile-modal__actions">
+              <button class="co-btn co-btn--ghost" type="button" data-badges-modal-cancel>Cancel</button>
+              <button class="co-btn co-btn--primary" type="button" data-badges-modal-confirm>Save badges</button>
+            </div>
+          </dialog>
         </section>
       </main>
 

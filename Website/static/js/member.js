@@ -32,21 +32,23 @@
     playstyle: root.querySelector("[data-member-playstyle]"),
     joined: root.querySelector("[data-member-joined]"),
     joinedRow: root.querySelector("[data-member-joined-row]"),
+    badgeChips: root.querySelector("[data-member-badge-chips]"),
     badgesCard: root.querySelector("[data-member-badges-card]"),
     badgesList: root.querySelector("[data-member-badges-list]"),
     usernameHistoryCard: root.querySelector("[data-member-username-history-card]"),
     usernameHistoryList: root.querySelector("[data-member-username-history-list]"),
     friendsCard: root.querySelector("[data-member-friends-card]"),
     friendsList: root.querySelector("[data-member-friends-list]"),
-    actionsCard: root.querySelector("[data-member-actions-card]"),
     friend: root.querySelector("[data-friend-action]"),
     block: root.querySelector("[data-block-action]"),
     actionStatus: root.querySelector("[data-member-action-status]"),
+    editProfile: root.querySelector("[data-member-edit-profile]"),
   };
 
   let currentUser = null;
   let friendship = null;
   let blocked = false;
+  let blockedByOwner = false;
 
   const profileHref = (username) =>
     assetBase + "/member/?username=" + encodeURIComponent(username);
@@ -60,14 +62,19 @@
     if (memberId) return memberId;
 
     if (client) {
+      // `display_name` is not guaranteed unique, so resolve to a single row
+      // explicitly instead of relying on `maybeSingle` (which errors on
+      // duplicates). Require exactly one match, mirroring the REST fallback.
       const { data, error } = await client
         .from("profiles")
         .select("id,display_name")
         .eq("display_name", publicUsername)
-        .maybeSingle();
+        .limit(2);
 
-      if (error || !data?.id) throw new Error("Profile not found");
-      memberId = data.id;
+      if (error || !Array.isArray(data) || data.length !== 1 || !data[0]?.id) {
+        throw new Error("Profile not found");
+      }
+      memberId = data[0].id;
       return memberId;
     }
 
@@ -117,10 +124,19 @@
     return Array.isArray(rows) && rows.length === 1 ? rows[0]?.slug || null : null;
   };
 
+  const renderActions = () => {
+    const isOwner = currentUser && currentUser.id === memberId;
+    const canAct = currentUser && !isOwner && !blockedByOwner;
+    if (els.editProfile) els.editProfile.hidden = !isOwner;
+    if (els.friend) els.friend.hidden = !canAct || blocked;
+    if (els.block) els.block.hidden = !canAct;
+  };
+
   const renderFriendButton = () => {
     if (!els.friend) return;
 
-    if (blocked) {
+    const isOwner = currentUser && currentUser.id === memberId;
+    if (!currentUser || isOwner || blocked || blockedByOwner) {
       els.friend.hidden = true;
       return;
     }
@@ -156,24 +172,23 @@
       "and(requester_id.eq." + currentUser.id + ",addressee_id.eq." + memberId + ")," +
       "and(requester_id.eq." + memberId + ",addressee_id.eq." + currentUser.id + ")";
 
-    const [friendResult, blockResult] = await Promise.all([
+    const [friendResult, relationshipResult] = await Promise.all([
       client
         .from("user_friendships")
         .select("id,requester_id,addressee_id,status")
         .or(pairFilter)
         .maybeSingle(),
-      client
-        .from("user_blocks")
-        .select("blocker_id,blocked_id")
-        .eq("blocker_id", currentUser.id)
-        .eq("blocked_id", memberId)
-        .maybeSingle(),
+      client.rpc("get_member_relationship", {
+        p_target_user_id: memberId,
+      }),
     ]);
 
     friendship = friendResult.data || null;
-    blocked = Boolean(blockResult.data);
-    els.actionsCard.hidden = false;
+    const relationship = relationshipResult.data || {};
+    blocked = relationship.blocked_target === true;
+    blockedByOwner = relationship.blocked_by_target === true;
     els.block.textContent = blocked ? "Unblock" : "Block";
+    renderActions();
     renderFriendButton();
   };
 
@@ -189,6 +204,7 @@
       .limit(3);
 
     els.badgesList.replaceChildren();
+    if (els.badgeChips) els.badgeChips.replaceChildren();
 
     if (error) {
       els.badgesCard.hidden = true;
@@ -204,6 +220,14 @@
     for (const row of rows) {
       const badge = row.badge;
       if (!badge) continue;
+
+      if (els.badgeChips) {
+        const chip = document.createElement("span");
+        chip.className = "member-profile__badge-chip";
+        chip.textContent = badge.name;
+        chip.title = badge.description || badge.name;
+        els.badgeChips.append(chip);
+      }
 
       const item = document.createElement("div");
       item.className = "profile-social-row";
@@ -388,6 +412,7 @@
     els.block.textContent = blocked ? "Unblock" : "Block";
     els.block.disabled = false;
     els.actionStatus.textContent = "";
+    renderActions();
     renderFriendButton();
   });
 
@@ -444,16 +469,27 @@
       : "Hidden";
 
     if (member.presence_status) {
+      els.presence.hidden = false;
       els.presence.textContent =
         member.presence_status === "in_game" && member.current_server
           ? "In game · " + member.current_server
           : String(member.presence_status).replace("_", " ");
+      els.presence.classList.toggle(
+        "is-online",
+        member.presence_status === "online"
+      );
+      els.presence.classList.toggle(
+        "is-in-game",
+        member.presence_status === "in_game"
+      );
     } else {
+      els.presence.hidden = true;
       els.presence.textContent = "";
     }
 
     status.hidden = true;
     profile.hidden = false;
+    renderActions();
 
     if (client) {
       await Promise.all([

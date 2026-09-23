@@ -28,18 +28,18 @@ const assertVersioned = (rendered, expected) => {
   assert.deepEqual(tags, expected, "rendered page script srcs");
   for (const src of tags) {
     assert.equal((src.match(/\?/g) || []).length, 1, `expected exactly one ? in ${src}`);
-    assert.match(src, /v=20260922-1$/, `expected cache-bust version on ${src}`);
+    assert.match(src, /v=20260923-1$/, `expected cache-bust version on ${src}`);
   }
 };
 
 assertVersioned(render({ scripts: ["/static/js/navbar.js"] }), [
-  "/static/js/navbar.js?v=20260922-1",
+  "/static/js/navbar.js?v=20260923-1",
 ]);
 
 // A src that already carries a query string must merge with &, not add a
 // second ?, so the cache-bust version can only be served stale.
 assertVersioned(render({ scripts: ["/static/js/profile.js?cache-preload=1"] }), [
-  "/static/js/profile.js?cache-preload=1&v=20260922-1",
+  "/static/js/profile.js?cache-preload=1&v=20260923-1",
 ]);
 
 assertVersioned(
@@ -51,9 +51,9 @@ assertVersioned(
     ],
   }),
   [
-    "/static/js/navbar.js?v=20260922-1",
-    "/static/js/links.js?v=3&v=20260922-1",
-    "/static/js/script.js?x=1&y=2&v=20260922-1",
+    "/static/js/navbar.js?v=20260923-1",
+    "/static/js/links.js?v=3&v=20260923-1",
+    "/static/js/script.js?x=1&y=2&v=20260923-1",
   ]
 );
 
@@ -61,7 +61,7 @@ assertVersioned(render({ scripts: [] }), []);
 
 // CDN supabase script must not render when unconfigured.
 const withoutSupabase = render({ scripts: ["/static/js/member.js"] }, { supabase: null });
-assert.match(withoutSupabase, /<script src="\/static\/js\/member\.js\?v=20260922-1" defer>/);
+assert.match(withoutSupabase, /<script src="\/static\/js\/member\.js\?v=20260923-1" defer>/);
 assert.doesNotMatch(withoutSupabase, /supabase-js@2\.105\.0/);
 
 console.log("scripts cache-bust query merge checks passed");

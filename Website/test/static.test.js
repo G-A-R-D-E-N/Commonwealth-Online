@@ -85,7 +85,7 @@ const run = async () => {
     // Every page script must be cache-busted so changed JS (for example the
     // navbar account avatar handling) can never be served stale from cache.
     assert.doesNotMatch(html, /<script src="\/static\/js\/[^"]+\.js" defer><\/script>/);
-    assert.match(html, /<script src="\/static\/js\/navbar\.js\?v=20260922-1" defer>/);
+    assert.match(html, /<script src="\/static\/js\/navbar\.js\?v=20260923-1" defer>/);
     assert.doesNotMatch(html, /@widgetbot\/crate/);
     assert.doesNotMatch(html, /\/static\/(?:js|css)\/widgetbot\./);
     assert.match(html, /script-src 'self' https:\/\/cdn\.jsdelivr\.net https:\/\/challenges\.cloudflare\.com/);
@@ -149,9 +149,13 @@ const run = async () => {
     assert.doesNotMatch(staticAccount.text, /name="avatar_url"/);
     assert.doesNotMatch(staticAccount.text, /type="file"/);
     assert.match(staticProfile.text, /data-profile/);
-    assert.match(staticProfile.text, /class="profile-column profile-column--main"/);
-    assert.match(staticProfile.text, /class="profile-column profile-column--side"/);
+    assert.match(staticProfile.text, /class="profile-tabs"/);
+    assert.match(staticProfile.text, /data-profile-tab="security"/);
+    assert.match(staticProfile.text, /data-profile-panel="privacy"/);
+    assert.match(staticProfile.text, /data-avatar-modal/);
+    assert.match(staticProfile.text, /data-badges-modal/);
     assert.match(staticProfile.text, /data-profile-form/);
+    assert.match(staticProfile.text, /data-email-form/);
     assert.match(staticProfile.text, /data-password-form/);
     assert.match(staticProfile.text, /data-community-profile-form/);
     assert.match(staticProfile.text, /data-friends-list/);
@@ -289,8 +293,9 @@ const run = async () => {
     assert.match(profileNotificationsJs, /user_notifications/);
     assert.match(profileSocialJs, /user_username_history/);
     assert.match(profileSocialJs, /show_username_history/);
-    assert.match(profileBadgesJs, /user_badge_assignments/);
-    assert.match(profileBadgesJs, /displayedCount >= 3/);
+     assert.match(profileBadgesJs, /user_badge_assignments/);
+     assert.match(profileBadgesJs, /displayedCount >= 3/);
+     assert.match(profileBadgesJs, /set_displayed_badges/);
     assert.match(profileServersJs, /user_server_favorites/);
     assert.match(profileServersJs, /user_server_history/);
     assert.match(memberServersJs, /get_public_recent_servers/);
@@ -325,7 +330,8 @@ const run = async () => {
     assert.match(memberJs, /user_badge_assignments/);
     assert.match(memberJs, /is_displayed/);
     assert.match(memberJs, /user_friendships/);
-    assert.match(memberJs, /user_blocks/);
+     assert.match(memberJs, /user_blocks/);
+     assert.match(memberJs, /get_member_relationship/);
     assert.match(memberJs, /status === "declined"/);
     assert.doesNotMatch(membersJs, /setInterval|setTimeout/);
     assert.doesNotMatch(memberJs, /setInterval/);
