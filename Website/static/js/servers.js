@@ -1,5 +1,6 @@
 (() => {
-  const DATA_URL = "/data/servers.json";
+  const DIRECTORY_URL = "https://oeajjfquvmdxqqtiotfa.supabase.co/functions/v1/server-directory";
+  const CURATED_URL = "/data/servers.json";
 
   const els = {
     status: document.getElementById("servers-status"),
@@ -90,6 +91,30 @@
       password: Boolean(raw.password),
       modlist: String(raw.modlist ?? "").trim(),
       discord: String(raw.discord ?? "").trim(),
+      live: raw.live === true,
+      players: Number.isInteger(raw.players) ? raw.players : null,
+      maxPlayers: Number.isInteger(raw.maxPlayers) ? raw.maxPlayers : null,
+    };
+  };
+
+  const endpointKey = (server) => {
+    const host = String(server?.host ?? server?.address ?? "").trim();
+    const port = Number(server?.port);
+    return host && Number.isFinite(port) ? `${host}:${port}` : "";
+  };
+
+  const mergeListings = (live, curated) => {
+    const liveServers = Array.isArray(live?.servers)
+      ? live.servers.map((server) => ({ ...server, live: true }))
+      : [];
+    const seen = new Set(liveServers.map(endpointKey).filter(Boolean));
+    const curatedServers = (Array.isArray(curated?.servers) ? curated.servers : [])
+      .map((server) => ({ ...server, live: false }))
+      .filter((server) => !seen.has(endpointKey(server)));
+
+    return {
+      updatedAt: live?.updatedAt ?? curated?.updatedAt,
+      servers: [...liveServers, ...curatedServers],
     };
   };
 
@@ -99,7 +124,7 @@
       badges.push(`<span class="servers-badge servers-badge--region">${escapeHtml(server.region)}</span>`);
     }
     if (server.password) {
-      badges.push(`<span class="servers-badge servers-badge--password">Password</span>`);
+      badges.push('<span class="servers-badge servers-badge--password">Password</span>');
     }
     for (const tag of server.tags) {
       badges.push(`<span class="servers-badge">${escapeHtml(tag)}</span>`);
@@ -122,7 +147,11 @@
 
     const description = server.description
       ? `<p class="servers-entry__desc">${escapeHtml(server.description)}</p>`
-      : `<p class="servers-entry__desc servers-entry__desc--empty">No description provided.</p>`;
+      : '<p class="servers-entry__desc servers-entry__desc--empty">No description provided.</p>';
+
+    const livePlayers = server.live && server.players !== null && server.maxPlayers !== null
+      ? `<span class="servers-entry__players">${escapeHtml(server.players)}/${escapeHtml(server.maxPlayers)} online</span>`
+      : "";
 
     return `
       <article class="servers-entry" id="${escapeHtml(server.id)}">
@@ -131,6 +160,7 @@
           <h3 class="servers-entry__title">${escapeHtml(server.name)}</h3>
           <p class="servers-entry__meta">
             <span class="servers-entry__address">${escapeHtml(server.address)}</span>
+            ${livePlayers}
           </p>
         </header>
         ${description}
@@ -155,7 +185,7 @@
 
   const renderEmpty = () => `
     <div class="servers-empty">
-      <p>No public servers are listed yet. Entries are curated in <code>servers/server.json</code>.</p>
+      <p>No public servers are online right now. Hosts appear here while their server is running with <code>List publicly</code> enabled.</p>
     </div>
   `;
 
@@ -213,25 +243,42 @@
     );
   };
 
+  const fetchJson = async (url) => {
+    const response = await fetch(url, { cache: "no-cache" });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    return response.json();
+  };
+
   const load = async () => {
     setStatus("Loading server list", false, { busy: true });
     els.feed.setAttribute("aria-busy", "true");
 
-    try {
-      const response = await fetch(DATA_URL, { cache: "no-cache" });
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      const payload = await response.json();
-      render(payload);
-    } catch (error) {
+    const [live, curated] = await Promise.allSettled([
+      fetchJson(DIRECTORY_URL),
+      fetchJson(CURATED_URL),
+    ]);
+
+    if (live.status === "rejected" && curated.status === "rejected") {
       els.feed.removeAttribute("aria-busy");
       els.feed.innerHTML = `
         <div class="servers-empty">
-          <p>Could not reach the server list API.</p>
+          <p>Could not reach the server list.</p>
         </div>
       `;
-      setStatus(`Failed to load server list${error?.message ? `: ${error.message}` : ""}`, true);
+      const reason = live.reason?.message || curated.reason?.message;
+      setStatus(`Failed to load server list${reason ? `: ${reason}` : ""}`, true);
+      return;
+    }
+
+    render(mergeListings(
+      live.status === "fulfilled" ? live.value : null,
+      curated.status === "fulfilled" ? curated.value : null,
+    ));
+
+    if (live.status === "rejected") {
+      setStatus("Live directory unavailable; showing curated servers only", true);
     }
   };
 
