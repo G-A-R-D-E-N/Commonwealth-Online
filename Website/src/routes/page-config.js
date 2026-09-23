@@ -398,7 +398,7 @@ const PUBLIC_PAGES = [
       description: "Manage your Commonwealth Online profile, security, privacy, friends, and notifications.",
       bodyClass: "co-profile-page",
       activeKey: "account",
-      styles: ["/static/css/profile.css?v=20260923-1", "/static/css/social.css?v=20260923-1"],
+      styles: ["/static/css/profile.css?v=20260923-2", "/static/css/social.css?v=20260923-1"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
