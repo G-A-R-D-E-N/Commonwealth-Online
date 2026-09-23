@@ -29,6 +29,12 @@ const expectedPages = [
   "apply/thanks/index.html",
   "forum/index.html",
 ];
+const expectedProfileStyles = new Map([
+  ["profile/index.html", "/static/css/profile.css?v=20260923-3"],
+  ["faction/manage/index.html", "/static/css/profile.css?v=20260923-3"],
+  ["factions/apply/index.html", "/static/css/profile.css?v=20260923-3"],
+  ["factions/review/index.html", "/static/css/profile.css?v=20260923-3"],
+]);
 
 const startServer = (handler) =>
   new Promise((resolve) => {
@@ -94,6 +100,10 @@ const run = async () => {
     assert.doesNotMatch(html, /frame-src[^;]*e\.widgetbot\.io/);
     assert.doesNotMatch(html, /script-src[^;]*unsafe-inline/);
     assert.doesNotMatch(html, /script-src[^;]*unsafe-eval/);
+  }
+  for (const [page, stylesheet] of expectedProfileStyles) {
+    const html = fs.readFileSync(path.join(dist, page), "utf8");
+    assert.equal(html.includes(`href="${stylesheet}"`), true, `profile stylesheet cache bust for ${page}`);
   }
 
   const staticServer = await startServer(serveStatic);
