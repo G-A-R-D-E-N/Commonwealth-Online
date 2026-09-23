@@ -591,6 +591,7 @@ body.co-site {
 html:has(body.co-site) {
   scroll-behavior: auto;
   scroll-padding-top: calc(var(--site-header-h) + 0.5rem);
+  scrollbar-gutter: stable;
 }
 
 body.co-site {
