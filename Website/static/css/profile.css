@@ -78,6 +78,7 @@
 
 .profile-tabs {
   display: flex;
+  align-items: center;
   gap: 0.15rem;
   overflow-x: auto;
   min-width: 0;
