@@ -6,6 +6,7 @@
 
 .profile-shell {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.25rem;
 }
 
@@ -79,6 +80,8 @@
   display: flex;
   gap: 0.15rem;
   overflow-x: auto;
+  min-width: 0;
+  width: 100%;
   padding: 0.4rem;
   border: 1px solid var(--site-border-soft);
   background: var(--site-surface);
@@ -117,13 +120,16 @@
 
 .profile-tab-panels {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.85rem;
+  min-width: 0;
 }
 
 .profile-panel {
   display: grid;
   gap: 0.85rem;
   align-content: start;
+  min-width: 0;
 }
 
 .profile-panel[hidden] {
