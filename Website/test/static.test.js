@@ -87,7 +87,7 @@ const run = async () => {
     assert.equal(/<%|<%=|<%-/.test(html), false, `unresolved EJS in ${filePath}`);
     assert.match(html, /href="\/static\/css\/discord-link\.css\?v=20260921-1"/);
     assert.match(html, /href="\/static\/css\/styles\.css\?v=20260923-1"/);
-    assert.match(html, /href="\/static\/css\/site-shell\.css\?v=20260922-2"/);
+    assert.match(html, /href="\/static\/css\/site-shell\.css\?v=20260924-1"/);
     assert.match(html, /src="\/static\/js\/discord-link\.js\?v=20260921-1"/);
     // Every page script must be cache-busted so changed JS (for example the
     // navbar account avatar handling) can never be served stale from cache.
