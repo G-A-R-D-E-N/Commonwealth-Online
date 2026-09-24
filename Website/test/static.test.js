@@ -316,6 +316,10 @@ const run = async () => {
     assert.match(serversFavoritesJs, /onAuthStateChange/);
     assert.match(serversJs, /data-favorite-server/);
     assert.match(serversJs, /co:servers-rendered/);
+    assert.ok(serversJs.includes("https://oeajjfquvmdxqqtiotfa.supabase.co/functions/v1/server-directory"));
+    assert.ok(serversJs.includes('const CURATED_URL = "/data/servers.json";'));
+    assert.match(serversJs, /Promise\.allSettled/);
+    assert.match(serversJs, /Live directory unavailable; showing curated servers only/);
     assert.match(profileSocialJs, /Decline/);
     assert.match(profileSocialJs, /status: "declined"/);
     assert.match(profileSocialJs, /Cancel request/);
