@@ -380,6 +380,20 @@ const run = async () => {
   assert.equal(authUpdates[2].payload.currentPassword, "old-password");
   assert.equal(authUpdates[2].options, undefined);
 
+  // An empty banner ("No banner") is a valid selection and must save through
+  // as NULL rather than blocking the whole profile form.
+  bannerHidden.value = "";
+  await profileSubmit({ preventDefault() {} });
+  assert.equal(profileUpdates.length, 2, "no-banner save must update profiles");
+  assert.equal(profileUpdates[1].display_name, "Nomad");
+  assert.equal(profileUpdates[1].avatar_url, "/assets/profile-icons/rifleman.png");
+  assert.equal(profileUpdates[1].banner_url, null);
+  assert.equal(authUpdates[3].payload.data.banner_url, null);
+  assert.equal(bannerCurrent.hidden, true);
+  assert.equal(bannerCurrentName.textContent, "No banner");
+  assert.equal(profileCover.hidden, true);
+  assert.equal(status.textContent, "Profile saved.");
+
   // The avatar picker modal selects a picture and commits it.
   avatarHidden.value = "/assets/profile-icons/armorer.png";
   openAvatar();

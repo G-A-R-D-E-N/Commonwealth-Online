@@ -357,7 +357,7 @@
       setStatus("Choose one of the available profile pictures.", true);
       return;
     }
-    if (!BANNERS.includes(banner)) {
+    if (banner !== "" && !BANNERS.includes(banner)) {
       setStatus("Choose one of the available profile banners.", true);
       return;
     }
