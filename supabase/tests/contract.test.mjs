@@ -61,6 +61,10 @@ const emoteProfileIconsMigration = fs.readFileSync(
   path.join(root, "migrations", "20260922000000_emote_profile_icons.sql"),
   "utf8"
 );
+const profileBootstrapMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260929000000_profile_bootstrap.sql"),
+  "utf8"
+);
 const userAccountsMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921143413_user_accounts_admin_table.sql"),
   "utf8"
@@ -292,6 +296,18 @@ for (const icon of ["CO", "Cool", "Love", "Rage", "Wink"]) {
   );
 }
 assert.doesNotMatch(emoteProfileIconsMigration, /nullif\(new\.raw_user_meta_data ->> 'picture'/i);
+assert.match(
+  profileBootstrapMigration,
+  /nullif\(trim\(users\.raw_user_meta_data ->> 'display_name'\), ''\)/i
+);
+assert.match(
+  profileBootstrapMigration,
+  /nullif\(trim\(users\.raw_user_meta_data ->> 'global_name'\), ''\)/i
+);
+assert.match(
+  profileBootstrapMigration,
+  /grant insert \(id, display_name, avatar_url\) on public\.profiles to authenticated/i
+);
 
 assert.match(userAccountsMigration, /create table if not exists public\.user_accounts/i);
 assert.match(userAccountsMigration, /alter table public\.user_accounts enable row level security/i);
@@ -746,6 +762,7 @@ for (const [name, content] of [
   ["public profile default migration", publicProfileDefaultMigration],
   ["public faction slug links migration", publicFactionSlugLinksMigration],
   ["member username notification links migration", memberUsernameNotificationLinksMigration],
+  ["profile bootstrap migration", profileBootstrapMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],

@@ -7,11 +7,11 @@ insert into public.profiles (id, display_name, avatar_url)
 select
   users.id,
   coalesce(nullif(left(trim(coalesce(
-    nullif(users.raw_user_meta_data ->> 'display_name', ''),
-    nullif(users.raw_user_meta_data ->> 'global_name', ''),
-    nullif(users.raw_user_meta_data ->> 'full_name', ''),
-    nullif(users.raw_user_meta_data ->> 'name', ''),
-    nullif(users.raw_user_meta_data ->> 'user_name', ''),
+    nullif(trim(users.raw_user_meta_data ->> 'display_name'), ''),
+    nullif(trim(users.raw_user_meta_data ->> 'global_name'), ''),
+    nullif(trim(users.raw_user_meta_data ->> 'full_name'), ''),
+    nullif(trim(users.raw_user_meta_data ->> 'name'), ''),
+    nullif(trim(users.raw_user_meta_data ->> 'user_name'), ''),
     'Member'
   )), 80), ''), 'Member'),
   case users.raw_user_meta_data ->> 'avatar_url'

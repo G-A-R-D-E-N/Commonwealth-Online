@@ -240,14 +240,17 @@
     }
   };
 
+  const fetchProfile = (user) =>
+    client
+      .from("profiles")
+      .select("display_name,avatar_url")
+      .eq("id", user.id)
+      .maybeSingle();
+
   const loadProfile = async (user) => {
     let profileResult;
     try {
-      profileResult = await client
-        .from("profiles")
-        .select("display_name,avatar_url")
-        .eq("id", user.id)
-        .maybeSingle();
+      profileResult = await fetchProfile(user);
     } catch {
       setStatus("Could not load your profile.", true);
       return false;
@@ -287,11 +290,29 @@
       createError = true;
     }
 
-    renderProfile(user, fallbackProfile);
-    profileReady = !createError;
     if (createError) {
+      // Another request may have created the row after our read. Re-read it
+      // before treating the bootstrap as failed so concurrent page loads do
+      // not leave this page permanently unable to save.
+      try {
+        const retryResult = await fetchProfile(user);
+        if (!retryResult.error && retryResult.data) {
+          renderProfile(user, retryResult.data);
+          profileReady = true;
+          return true;
+        }
+      } catch {
+        // Keep the fallback visible and retry restoration on the next save.
+      }
+
+      renderProfile(user, fallbackProfile);
+      profileReady = false;
       setStatus("Your profile is being restored. Please try again shortly.", true);
+      return false;
     }
+
+    renderProfile(user, fallbackProfile);
+    profileReady = true;
     return true;
   };
 
@@ -301,13 +322,18 @@
       profileForm.reportValidity();
       return;
     }
-    if (!profileReady) {
-      setStatus("Your profile is still being restored. Please try again shortly.", true);
-      return;
-    }
 
+    // Preserve the requested values because a restoration retry renders the
+    // recovered profile and would otherwise replace the pending form edits.
     const username = profileForm.elements.username.value.trim();
     const avatar = profileForm.elements.avatar_url.value;
+    if (!profileReady) {
+      setStatus("Restoring your profile…");
+      if (!(await loadProfile(currentUser))) {
+        return;
+      }
+    }
+
     if (!username) {
       setStatus("Enter a username.", true);
       return;
