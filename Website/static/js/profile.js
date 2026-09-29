@@ -59,6 +59,21 @@
   const avatarName = (path) =>
     (PROFILE_PICTURES.find((picture) => picture.src === path) || PROFILE_PICTURES[0]).name;
 
+  // Resolve a display name from auth metadata using every common name field,
+  // matching the trigger/migration fallback order. Shared by the initial
+  // render fallback and the missing-row bootstrap so neither path omits a
+  // field the other supports.
+  const metadataDisplayName = (user) =>
+    String(
+      [
+        user.user_metadata?.display_name,
+        user.user_metadata?.global_name,
+        user.user_metadata?.full_name,
+        user.user_metadata?.name,
+        user.user_metadata?.user_name,
+      ].find((name) => String(name || "").trim()) || "Member"
+    ).trim().slice(0, 80) || "Member";
+
   const goToAccount = () => {
     window.location.assign(accountUrl);
   };
@@ -213,7 +228,7 @@
 
   const renderProfile = (user, profile) => {
     const avatar = AVATARS.includes(profile.avatar_url) ? profile.avatar_url : AVATARS[0];
-    const username = profile.display_name || user.user_metadata?.display_name || "Member";
+    const username = profile.display_name || metadataDisplayName(user);
 
     profileName.textContent = username;
     profileEmail.textContent = user.email || "";
@@ -255,14 +270,7 @@
     // a row yet. Bootstrap it from auth metadata instead of leaving the page
     // unusable. The insert is best-effort so a stale deployment can still
     // render the profile and be repaired by the migration.
-    const metadataName = [
-      user.user_metadata?.display_name,
-      user.user_metadata?.global_name,
-      user.user_metadata?.full_name,
-      user.user_metadata?.name,
-      user.user_metadata?.user_name,
-    ].find((name) => String(name || "").trim());
-    const fallbackName = String(metadataName || "Member").trim().slice(0, 80) || "Member";
+    const fallbackName = metadataDisplayName(user);
     const fallbackProfile = {
       display_name: fallbackName,
       avatar_url: AVATARS.includes(user.user_metadata?.avatar_url)
