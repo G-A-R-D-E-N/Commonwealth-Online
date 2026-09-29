@@ -16,6 +16,21 @@ const require = createRequire(import.meta.url);
 const { TYPES, TYPE_IDS } = require("../../Website/src/lib/applications.js");
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const migrationFiles = fs.readdirSync(path.join(root, "migrations"));
+const migrationVersions = new Set();
+
+for (const filename of migrationFiles) {
+  assert.match(
+    filename,
+    /^\d{14}_[a-z0-9_]+\.sql$/,
+    `invalid migration filename: ${filename}`,
+  );
+
+  const version = filename.slice(0, 14);
+  assert.ok(!migrationVersions.has(version), `duplicate migration version: ${version}`);
+  migrationVersions.add(version);
+}
+
 const migration = fs.readFileSync(path.join(root, "migrations", "20260920032942_forum.sql"), "utf8");
 const applicationMigration = fs.readFileSync(
   path.join(root, "migrations", "20260920032951_applications.sql"),

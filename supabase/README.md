@@ -49,6 +49,17 @@ The Supabase deployment workflow copies `APPLICATION_REVIEW_TOKEN` into the Edge
 
 The committed Discord provider configuration references environment variables rather than literal credentials.
 
+## Production migration workflow
+
+- Start work from an up-to-date branch (`git pull --ff-only`).
+- Create every schema change with `supabase migration new <descriptive_name>` and commit the generated SQL file.
+- Never rename, edit, or delete a migration after it has been merged to `main`; add a corrective migration instead.
+- Do not run `supabase db push` against the production project from a developer machine. Production migrations are deployed only by `.github/workflows/supabase-deploy.yml` after they reach `main`.
+- Avoid production schema changes in the Supabase dashboard. If an emergency dashboard change is unavoidable, immediately run `supabase db pull`, review the generated migration, and commit it before the next deployment.
+- Keep production access tokens and the database password in GitHub Actions secrets rather than developer environments wherever possible.
+
+The Supabase contract workflow rejects malformed or duplicate migration versions and prevents pull requests from modifying migrations already committed to `main`. Configure branch protection to require the **Supabase Contract** check before merging.
+
 ## Current forum contract
 
 Anonymous visitors may read public profiles, categories, threads, posts and reactions.
