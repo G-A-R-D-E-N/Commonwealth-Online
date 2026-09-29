@@ -65,6 +65,10 @@
   const accountUrl = new URL(`${assetBase}/account/`, window.location.origin).href;
 
   let currentUser = null;
+  // Do not allow profile updates until the profile row has loaded or has been
+  // successfully bootstrapped. A failed read must not look like a usable
+  // profile, since an update would otherwise appear to save nothing.
+  let profileReady = false;
 
   const setStatus = (message, error = false) => {
     status.hidden = !message;
@@ -75,6 +79,21 @@
   const avatarSrc = (path) => `${assetBase}${AVATARS.includes(path) ? path : AVATARS[0]}`;
   const avatarName = (path) =>
     (PROFILE_PICTURES.find((picture) => picture.src === path) || PROFILE_PICTURES[0]).name;
+
+  // Resolve a display name from auth metadata using every common name field,
+  // matching the trigger/migration fallback order. Shared by the initial
+  // render fallback and the missing-row bootstrap so neither path omits a
+  // field the other supports.
+  const metadataDisplayName = (user) =>
+    String(
+      [
+        user.user_metadata?.display_name,
+        user.user_metadata?.global_name,
+        user.user_metadata?.full_name,
+        user.user_metadata?.name,
+        user.user_metadata?.user_name,
+      ].find((name) => String(name || "").trim()) || "Member"
+    ).trim().slice(0, 80) || "Member";
 
   const bannerSrc = (path) => (BANNERS.includes(path) ? `${assetBase}${path}` : "");
   const bannerName = (path) =>
@@ -312,7 +331,7 @@
 
   const renderProfile = (user, profile) => {
     const avatar = AVATARS.includes(profile.avatar_url) ? profile.avatar_url : AVATARS[0];
-    const username = profile.display_name || user.user_metadata?.display_name || "Member";
+    const username = profile.display_name || metadataDisplayName(user);
 
     profileName.textContent = username;
     profileEmail.textContent = user.email || "";
@@ -325,19 +344,82 @@
     }
   };
 
-  const loadProfile = async (user) => {
-    const { data: profile, error } = await client
+  const fetchProfile = (user) =>
+    client
       .from("profiles")
       .select("display_name,avatar_url,banner_url")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
+
+  const loadProfile = async (user) => {
+    let profileResult;
+    try {
+      profileResult = await fetchProfile(user);
+    } catch {
+      setStatus("Could not load your profile.", true);
+      return false;
+    }
+
+    const { data: profile, error } = profileResult;
 
     if (error) {
       setStatus("Could not load your profile.", true);
       return false;
     }
 
-    renderProfile(user, profile);
+    if (profile) {
+      renderProfile(user, profile);
+      profileReady = true;
+      return true;
+    }
+
+    // Accounts created before the profile trigger was installed may not have
+    // a row yet. Bootstrap it from auth metadata instead of leaving the page
+    // unusable. The insert is best-effort so a stale deployment can still
+    // render the profile and be repaired by the migration.
+    const fallbackName = metadataDisplayName(user);
+    const fallbackProfile = {
+      display_name: fallbackName,
+      avatar_url: AVATARS.includes(user.user_metadata?.avatar_url)
+        ? user.user_metadata.avatar_url
+        : AVATARS[0],
+      banner_url: BANNERS.includes(user.user_metadata?.banner_url)
+        ? user.user_metadata.banner_url
+        : null,
+    };
+    let createError = null;
+    try {
+      ({ error: createError } = await client.from("profiles").insert({
+        id: user.id,
+        ...fallbackProfile,
+      }));
+    } catch {
+      createError = true;
+    }
+
+    if (createError) {
+      // Another request may have created the row after our read. Re-read it
+      // before treating the bootstrap as failed so concurrent page loads do
+      // not leave this page permanently unable to save.
+      try {
+        const retryResult = await fetchProfile(user);
+        if (!retryResult.error && retryResult.data) {
+          renderProfile(user, retryResult.data);
+          profileReady = true;
+          return true;
+        }
+      } catch {
+        // Keep the fallback visible and retry restoration on the next save.
+      }
+
+      renderProfile(user, fallbackProfile);
+      profileReady = false;
+      setStatus("Your profile is being restored. Please try again shortly.", true);
+      return false;
+    }
+
+    renderProfile(user, fallbackProfile);
+    profileReady = true;
     return true;
   };
 
@@ -348,9 +430,18 @@
       return;
     }
 
+    // Preserve the requested values because a restoration retry renders the
+    // recovered profile and would otherwise replace the pending form edits.
     const username = profileForm.elements.username.value.trim();
     const avatar = profileForm.elements.avatar_url.value;
     const banner = profileForm.elements.banner_url.value;
+    if (!profileReady) {
+      setStatus("Restoring your profile…");
+      if (!(await loadProfile(currentUser))) {
+        return;
+      }
+    }
+
     if (!username) {
       setStatus("Enter a username.", true);
       return;
@@ -483,7 +574,14 @@
   });
 
   const initialize = async () => {
-    const { data } = await client.auth.getSession();
+    let sessionResult;
+    try {
+      sessionResult = await client.auth.getSession();
+    } catch {
+      setStatus("Could not load your profile.", true);
+      return;
+    }
+    const { data } = sessionResult;
     currentUser = data.session?.user || null;
     if (!currentUser) {
       goToAccount();

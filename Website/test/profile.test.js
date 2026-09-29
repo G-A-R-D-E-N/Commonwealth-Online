@@ -66,6 +66,9 @@ let openBanner;
 let confirmBanner;
 const authUpdates = [];
 const profileUpdates = [];
+const profileInserts = [];
+const profileReadResults = [];
+const profileInsertErrors = [];
 const callOrder = [];
 
 const status = makeElement({ hidden: true });
@@ -198,7 +201,7 @@ const user = {
   id: "user-1",
   email: "member@example.test",
   user_metadata: {
-    display_name: "Resident",
+    full_name: "Resident",
     avatar_url: "/assets/profile-icons/armorer.png",
   },
 };
@@ -249,6 +252,13 @@ const client = {
           },
           error: null,
         };
+      },
+      async maybeSingle() {
+        return profileReadResults.shift() || { data: null, error: null };
+      },
+      async insert(payload) {
+        profileInserts.push(payload);
+        return { error: profileInsertErrors.shift() || null };
       },
       update(payload) {
         profileUpdates.push(payload);
@@ -307,12 +317,17 @@ const context = {
 };
 
 const flush = () => new Promise((resolve) => setImmediate(resolve));
-
-const run = async () => {
+const runProfileScript = async () => {
   vm.runInNewContext(source, context, { filename: "profile.js" });
   await flush();
   await flush();
   await flush();
+};
+
+const run = async () => {
+  // A missing profile is created from auth metadata on initial load.
+  profileReadResults.push({ data: null, error: null });
+  await runProfileScript();
 
   // Initial render populates identity and forms.
   assert.equal(profileName.textContent, "Resident");
@@ -328,6 +343,10 @@ const run = async () => {
   assert.equal(bannerCurrent.hidden, true);
   assert.equal(profileCover.hidden, true);
   assert.equal(viewPublicProfile.href, "/member/?username=Resident");
+  assert.equal(profileInserts[0].id, "user-1");
+  assert.equal(profileInserts[0].display_name, "Resident");
+  assert.equal(profileInserts[0].avatar_url, "/assets/profile-icons/armorer.png");
+  assert.equal(profileInserts[0].banner_url, null);
 
   // Saving the profile updates the profiles table and account metadata.
   username.value = "Nomad";
@@ -424,6 +443,61 @@ const run = async () => {
   assert.equal(bannerCurrent.hidden, true);
   assert.equal(profileCover.hidden, true);
   assert.equal(bannerCurrentName.textContent, "No banner");
+
+  // An existing profile loads directly without attempting a bootstrap insert.
+  const insertsBeforeExisting = profileInserts.length;
+  profileReadResults.push({
+    data: {
+      display_name: "Existing Resident",
+      avatar_url: "/assets/profile-icons/armorer.png",
+    },
+    error: null,
+  });
+  await runProfileScript();
+  assert.equal(profileName.textContent, "Existing Resident");
+  assert.equal(profileInserts.length, insertsBeforeExisting);
+
+  // If another request wins the creation race, the failed insert is followed
+  // by a read that accepts the concurrently-created profile.
+  user.user_metadata.banner_url = "/assets/profile-banners/Vertibird.webp";
+  const insertsBeforeRace = profileInserts.length;
+  profileReadResults.push(
+    { data: null, error: null },
+    {
+      data: {
+        display_name: "Concurrent Resident",
+        avatar_url: "/assets/profile-icons/rifleman.png",
+      },
+      error: null,
+    }
+  );
+  profileInsertErrors.push({ code: "23505", message: "duplicate key" });
+  await runProfileScript();
+  assert.equal(profileInserts[insertsBeforeRace].banner_url, "/assets/profile-banners/Vertibird.webp");
+  assert.equal(profileName.textContent, "Concurrent Resident");
+  assert.notEqual(status.textContent, "Your profile is being restored. Please try again shortly.");
+  delete user.user_metadata.banner_url;
+
+  // A genuine bootstrap failure remains unsaveable, but the next submission
+  // retries creation and continues the requested update after recovery.
+  profileReadResults.push(
+    { data: null, error: null },
+    { data: null, error: { message: "temporary read failure" } }
+  );
+  profileInsertErrors.push({ message: "temporary insert failure" });
+  await runProfileScript();
+  assert.equal(status.textContent, "Your profile is being restored. Please try again shortly.");
+
+  const updatesBeforeRecovery = profileUpdates.length;
+  profileReadResults.push({ data: null, error: null });
+  username.value = "Recovered Resident";
+  avatarHidden.value = "/assets/profile-icons/armorer.png";
+  bannerHidden.value = "/assets/profile-banners/Vertibird.webp";
+  await profileSubmit({ preventDefault() {} });
+  assert.equal(profileUpdates.length, updatesBeforeRecovery + 1);
+  assert.equal(profileUpdates.at(-1).display_name, "Recovered Resident");
+  assert.equal(profileUpdates.at(-1).banner_url, "/assets/profile-banners/Vertibird.webp");
+  assert.equal(status.textContent, "Profile saved.");
 
   console.log("profile settings checks passed");
 };
