@@ -11,6 +11,8 @@
         >
           <p class="site-notice profile-status" data-profile-status role="status" hidden></p>
 
+          <div class="profile-cover" data-profile-cover hidden></div>
+
           <header class="profile-header">
             <div class="profile-identity">
               <img
@@ -74,6 +76,30 @@
                       <div>
                         <strong data-profile-avatar-current-name>Armorer</strong>
                         <button class="co-btn co-btn--ghost" type="button" data-avatar-picker-open>Change Profile Picture</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <input name="banner_url" type="hidden" />
+
+                  <div class="profile-banner">
+                    <span class="profile-banner__label">Profile banner</span>
+                    <div class="profile-banner__current">
+                      <div class="profile-banner__preview is-empty" data-profile-banner-preview>
+                        <img
+                          data-profile-banner-current
+                          src=""
+                          alt=""
+                          width="480"
+                          height="144"
+                          loading="lazy"
+                          referrerpolicy="no-referrer"
+                          hidden
+                        />
+                      </div>
+                      <div class="profile-banner__current-copy">
+                        <strong data-profile-banner-current-name>No banner</strong>
+                        <button class="co-btn co-btn--ghost" type="button" data-banner-picker-open>Change Banner</button>
                       </div>
                     </div>
                   </div>
@@ -334,6 +360,47 @@
             <div class="profile-modal__actions">
               <button class="co-btn co-btn--ghost" type="button" data-avatar-modal-cancel>Cancel</button>
               <button class="co-btn co-btn--primary" type="button" data-avatar-modal-confirm>Use picture</button>
+            </div>
+          </dialog>
+
+          <dialog class="profile-modal" data-banner-modal aria-labelledby="banner-modal-title">
+            <div class="profile-modal__chrome">
+              <h3 class="profile-modal__title" id="banner-modal-title">Choose a profile banner</h3>
+              <button class="profile-modal__close" type="button" data-banner-modal-close aria-label="Close">✕</button>
+            </div>
+            <p class="profile-modal__hint">Banners appear at the top of your profile. Pick one or choose no banner.</p>
+            <div class="profile-modal__grid profile-modal__grid--banners" data-banner-grid>
+              <% [
+                ["AE Art", "/assets/profile-banners/AE-Art.webp"],
+                ["Automatron", "/assets/profile-banners/Automatron.webp"],
+                ["Mural Banner 01", "/assets/profile-banners/MuralBanner1.webp"],
+                ["Mural Banner 02", "/assets/profile-banners/MuralBanner2.webp"],
+                ["Mural Banner 03", "/assets/profile-banners/MuralBanner3.webp"],
+                ["Nuka Girl", "/assets/profile-banners/NukaGirl.webp"],
+                ["Vertibird", "/assets/profile-banners/Vertibird.webp"]
+              ].forEach(([label, src]) => { %>
+              <button
+                class="profile-banner-option"
+                type="button"
+                data-banner-value="<%= src %>"
+                aria-pressed="false"
+              >
+                <img src="<%= src.replace('/assets/profile-banners/', '/assets/profile-banners/thumbs/') %>" alt="" width="160" height="48" loading="lazy" referrerpolicy="no-referrer" />
+                <span><%= label %></span>
+              </button>
+              <% }) %>
+              <button
+                class="profile-banner-option"
+                type="button"
+                data-banner-value=""
+                aria-pressed="false"
+              >
+                <span class="profile-banner-option__none">No banner</span>
+              </button>
+            </div>
+            <div class="profile-modal__actions">
+              <button class="co-btn co-btn--ghost" type="button" data-banner-modal-cancel>Cancel</button>
+              <button class="co-btn co-btn--primary" type="button" data-banner-modal-confirm>Use banner</button>
             </div>
           </dialog>
 

@@ -30,10 +30,10 @@ const expectedPages = [
   "forum/index.html",
 ];
 const expectedProfileStyles = new Map([
-  ["profile/index.html", "/static/css/profile.css?v=20260923-4"],
-  ["faction/manage/index.html", "/static/css/profile.css?v=20260923-4"],
-  ["factions/apply/index.html", "/static/css/profile.css?v=20260923-4"],
-  ["factions/review/index.html", "/static/css/profile.css?v=20260923-4"],
+  ["profile/index.html", "/static/css/profile.css?v=20260929-1"],
+  ["faction/manage/index.html", "/static/css/profile.css?v=20260929-1"],
+  ["factions/apply/index.html", "/static/css/profile.css?v=20260929-1"],
+  ["factions/review/index.html", "/static/css/profile.css?v=20260929-1"],
 ]);
 
 const startServer = (handler) =>
@@ -93,6 +93,10 @@ const run = async () => {
     // navbar account avatar handling) can never be served stale from cache.
     assert.doesNotMatch(html, /<script src="\/static\/js\/[^"]+\.js" defer><\/script>/);
     assert.match(html, /<script src="\/static\/js\/navbar\.js\?v=20260929-1" defer>/);
+    // profile.css and social.css changed with the profile banner work: every
+    // reference must carry the current cache-bust version so no page can serve
+    // a stale copy of those stylesheets.
+    assert.doesNotMatch(html, /\/static\/css\/(?:profile|social)\.css(?!\?v=20260929-1)/);
     assert.doesNotMatch(html, /@widgetbot\/crate/);
     assert.doesNotMatch(html, /\/static\/(?:js|css)\/widgetbot\./);
     assert.match(html, /script-src 'self' https:\/\/cdn\.jsdelivr\.net https:\/\/challenges\.cloudflare\.com/);
@@ -158,12 +162,16 @@ const run = async () => {
     assert.doesNotMatch(staticAccount.text, /data-profile-form/);
     assert.doesNotMatch(staticAccount.text, /data-discord-link/);
     assert.doesNotMatch(staticAccount.text, /name="avatar_url"/);
+    assert.doesNotMatch(staticAccount.text, /name="banner_url"/);
     assert.doesNotMatch(staticAccount.text, /type="file"/);
     assert.match(staticProfile.text, /data-profile/);
     assert.match(staticProfile.text, /class="profile-tabs"/);
     assert.match(staticProfile.text, /data-profile-tab="security"/);
     assert.match(staticProfile.text, /data-profile-panel="privacy"/);
     assert.match(staticProfile.text, /data-avatar-modal/);
+    assert.match(staticProfile.text, /data-banner-modal/);
+    assert.match(staticProfile.text, /data-banner-picker-open/);
+    assert.match(staticProfile.text, /name="banner_url"/);
     assert.match(staticProfile.text, /data-badges-modal/);
     assert.match(staticProfile.text, /data-profile-form/);
     assert.match(staticProfile.text, /data-email-form/);
@@ -189,6 +197,7 @@ const run = async () => {
     assert.match(staticFactions.text, />Faction directory</);
     assert.doesNotMatch(staticFactions.text, /section-panel faction-shell/);
     assert.match(staticMember.text, /data-member/);
+    assert.match(staticMember.text, /data-member-banner/);
     assert.match(staticMember.text, /data-friend-action/);
     assert.match(staticMember.text, /data-block-action/);
     assert.match(staticMember.text, /data-member-friends-list/);
@@ -249,6 +258,45 @@ const run = async () => {
       const iconPath = path.join(dist, "assets/profile-images", icon);
       assert.equal(fs.existsSync(iconPath), true, `missing deployed profile image ${icon}`);
       assert.deepEqual([...fs.readFileSync(iconPath).subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+    }
+    const profileBanners = [
+      "AE-Art.webp",
+      "Automatron.webp",
+      "MuralBanner1.webp",
+      "MuralBanner2.webp",
+      "MuralBanner3.webp",
+      "NukaGirl.webp",
+      "Vertibird.webp",
+    ];
+    const bannerBytes = new Map();
+    for (const banner of profileBanners) {
+      assert.ok(
+        staticProfile.text.includes(`/assets/profile-banners/${banner}`),
+        `missing profile banner in rendered profile page ${banner}`
+      );
+      assert.ok(
+        staticProfile.text.includes(`/assets/profile-banners/thumbs/${banner}`),
+        `banner picker must show a thumbnail for ${banner}`
+      );
+      const bannerPath = path.join(dist, "assets/profile-banners", banner);
+      assert.equal(fs.existsSync(bannerPath), true, `missing deployed profile banner ${banner}`);
+      const bytes = fs.readFileSync(bannerPath);
+      bannerBytes.set(banner, bytes.length);
+      assert.deepEqual([...bytes.subarray(0, 4)], [82, 73, 70, 70], `missing RIFF header for ${banner}`);
+      assert.deepEqual([...bytes.subarray(8, 12)], [87, 69, 66, 80], `missing WEBP magic for ${banner}`);
+    }
+    // The picker must not download the multi-megabyte full artwork: verify a
+    // lighter thumbnail is shipped for every banner and actually referenced.
+    for (const [banner, fullSize] of bannerBytes) {
+      const thumbPath = path.join(dist, "assets/profile-banners/thumbs", banner);
+      assert.equal(fs.existsSync(thumbPath), true, `missing deployed banner thumbnail ${banner}`);
+      const thumbBytes = fs.readFileSync(thumbPath);
+      assert.deepEqual([...thumbBytes.subarray(0, 4)], [82, 73, 70, 70], `thumbnail missing RIFF header for ${banner}`);
+      assert.deepEqual([...thumbBytes.subarray(8, 12)], [87, 69, 66, 80], `thumbnail missing WEBP magic for ${banner}`);
+      assert.ok(
+        thumbBytes.length < fullSize,
+        `banner thumbnail must be smaller than full artwork for ${banner}`
+      );
     }
     const iconFetcher = fs.readFileSync(path.join(root, "scripts/fetch-profile-icons.js"), "utf8");
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
@@ -417,6 +465,11 @@ const run = async () => {
       assert.ok(profileJs.includes(icon), `profile.js missing profile image ${icon}`);
       assert.ok(navbarJs.includes(icon), `navbar.js missing profile image ${icon}`);
     }
+    for (const banner of profileBanners) {
+      const src = `/assets/profile-banners/${banner}`;
+      assert.ok(profileJs.includes(src), `profile.js missing profile banner ${src}`);
+    }
+    assert.match(memberJs, /data-member-banner/);
     assert.doesNotMatch(accountJs, /Fallout_Perk_Planner/);
     assert.doesNotMatch(profileJs, /Fallout_Perk_Planner/);
     assert.ok(accountJs.includes('new URL(`${assetBase}/account/`, window.location.origin).href'));

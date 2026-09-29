@@ -28,7 +28,7 @@ const assertVersioned = (rendered, expected) => {
   assert.deepEqual(tags, expected, "rendered page script srcs");
   for (const src of tags) {
     assert.equal((src.match(/\?/g) || []).length, 1, `expected exactly one ? in ${src}`);
-  assert.match(src, /v=20260929-1$/, `expected cache-bust version on ${src}`);
+    assert.match(src, /v=20260929-1$/, `expected cache-bust version on ${src}`);
   }
 };
 
@@ -51,9 +51,9 @@ assertVersioned(
     ],
   }),
   [
-      "/static/js/navbar.js?v=20260929-1",
-      "/static/js/links.js?v=3&v=20260929-1",
-      "/static/js/script.js?x=1&y=2&v=20260929-1",
+    "/static/js/navbar.js?v=20260929-1",
+    "/static/js/links.js?v=3&v=20260929-1",
+    "/static/js/script.js?x=1&y=2&v=20260929-1",
   ]
 );
 
