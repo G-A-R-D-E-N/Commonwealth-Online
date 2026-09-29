@@ -216,6 +216,18 @@ const client = {
           error: null,
         };
       },
+      async maybeSingle() {
+        return {
+          data: {
+            display_name: "Resident",
+            avatar_url: "/assets/profile-icons/armorer.png",
+          },
+          error: null,
+        };
+      },
+      async insert() {
+        return { error: null };
+      },
       update(payload) {
         profileUpdates.push(payload);
         callOrder.push("profile");

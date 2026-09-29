@@ -44,6 +44,7 @@
   const accountUrl = new URL(`${assetBase}/account/`, window.location.origin).href;
 
   let currentUser = null;
+  let profileReady = true;
 
   const setStatus = (message, error = false) => {
     status.hidden = !message;
@@ -222,18 +223,57 @@
   };
 
   const loadProfile = async (user) => {
-    const { data: profile, error } = await client
-      .from("profiles")
-      .select("display_name,avatar_url")
-      .eq("id", user.id)
-      .single();
+    let profileResult;
+    try {
+      profileResult = await client
+        .from("profiles")
+        .select("display_name,avatar_url")
+        .eq("id", user.id)
+        .maybeSingle();
+    } catch {
+      setStatus("Could not load your profile.", true);
+      return false;
+    }
+
+    const { data: profile, error } = profileResult;
 
     if (error) {
       setStatus("Could not load your profile.", true);
       return false;
     }
 
-    renderProfile(user, profile);
+    if (profile) {
+      renderProfile(user, profile);
+      return true;
+    }
+
+    // Accounts created before the profile trigger was installed may not have
+    // a row yet. Bootstrap it from auth metadata instead of leaving the page
+    // unusable. The insert is best-effort so a stale deployment can still
+    // render the profile and be repaired by the migration.
+    const metadataName = user.user_metadata?.display_name || user.user_metadata?.global_name;
+    const fallbackName = String(metadataName || "Member").trim().slice(0, 80) || "Member";
+    const fallbackProfile = {
+      display_name: fallbackName,
+      avatar_url: AVATARS.includes(user.user_metadata?.avatar_url)
+        ? user.user_metadata.avatar_url
+        : AVATARS[0],
+    };
+    let createError = null;
+    try {
+      ({ error: createError } = await client.from("profiles").insert({
+        id: user.id,
+        ...fallbackProfile,
+      }));
+    } catch {
+      createError = true;
+    }
+
+    renderProfile(user, fallbackProfile);
+    profileReady = !createError;
+    if (createError) {
+      setStatus("Your profile is being restored. Please try again shortly.", true);
+    }
     return true;
   };
 
@@ -241,6 +281,10 @@
     event.preventDefault();
     if (!profileForm.checkValidity() || !currentUser) {
       profileForm.reportValidity();
+      return;
+    }
+    if (!profileReady) {
+      setStatus("Your profile is still being restored. Please try again shortly.", true);
       return;
     }
 
@@ -371,7 +415,14 @@
   });
 
   const initialize = async () => {
-    const { data } = await client.auth.getSession();
+    let sessionResult;
+    try {
+      sessionResult = await client.auth.getSession();
+    } catch {
+      setStatus("Could not load your profile.", true);
+      return;
+    }
+    const { data } = sessionResult;
     currentUser = data.session?.user || null;
     if (!currentUser) {
       goToAccount();
