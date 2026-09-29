@@ -26,6 +26,21 @@
   ];
   const AVATARS = PROFILE_PICTURES.map((picture) => picture.src);
 
+  // Canonical profile banner catalog. Keep this in sync with the banner grid
+  // rendered in views/pages/profile.ejs and with the banner allow-list in
+  // supabase/migrations/20260929000000_profile_banners.sql. An empty string
+  // selects "no banner".
+  const PROFILE_BANNERS = [
+    { name: "AE Art", src: "/assets/profile-banners/AE-Art.webp" },
+    { name: "Automatron", src: "/assets/profile-banners/Automatron.webp" },
+    { name: "Mural Banner 01", src: "/assets/profile-banners/MuralBanner1.webp" },
+    { name: "Mural Banner 02", src: "/assets/profile-banners/MuralBanner2.webp" },
+    { name: "Mural Banner 03", src: "/assets/profile-banners/MuralBanner3.webp" },
+    { name: "Nuka Girl", src: "/assets/profile-banners/NukaGirl.webp" },
+    { name: "Vertibird", src: "/assets/profile-banners/Vertibird.webp" },
+  ];
+  const BANNERS = PROFILE_BANNERS.map((banner) => banner.src);
+
   const url = (root.dataset.supabaseUrl || "").replace(/\/+$/, "");
   const key = root.dataset.supabaseKey || "";
   const status = root.querySelector("[data-profile-status]");
@@ -35,6 +50,10 @@
   const profileAvatar = root.querySelector("[data-profile-avatar]");
   const avatarCurrent = root.querySelector("[data-profile-avatar-current]");
   const avatarCurrentName = root.querySelector("[data-profile-avatar-current-name]");
+  const profileCover = root.querySelector("[data-profile-cover]");
+  const bannerPreview = root.querySelector("[data-profile-banner-preview]");
+  const bannerCurrent = root.querySelector("[data-profile-banner-current]");
+  const bannerCurrentName = root.querySelector("[data-profile-banner-current-name]");
   const profileName = root.querySelector("[data-profile-name]");
   const profileEmail = root.querySelector("[data-profile-email]");
   const signOut = root.querySelector("[data-sign-out]");
@@ -54,6 +73,10 @@
   const avatarSrc = (path) => `${assetBase}${AVATARS.includes(path) ? path : AVATARS[0]}`;
   const avatarName = (path) =>
     (PROFILE_PICTURES.find((picture) => picture.src === path) || PROFILE_PICTURES[0]).name;
+
+  const bannerSrc = (path) => (BANNERS.includes(path) ? `${assetBase}${path}` : "");
+  const bannerName = (path) =>
+    (PROFILE_BANNERS.find((banner) => banner.src === path) || { name: "No banner" }).name;
 
   const goToAccount = () => {
     window.location.assign(accountUrl);
@@ -196,6 +219,84 @@
     closeAvatarModal(false);
   });
 
+  /* ── Profile banner picker ─────────────────────────────────── */
+
+  const bannerModal = root.querySelector("[data-banner-modal]");
+  const bannerOptions = [...root.querySelectorAll("[data-banner-value]")];
+  let selectedBanner = "";
+
+  const renderBannerSelection = () => {
+    bannerOptions.forEach((option) => {
+      const selected = option.dataset.bannerValue === selectedBanner;
+      option.classList.toggle("is-selected", selected);
+      option.setAttribute("aria-pressed", String(selected));
+    });
+  };
+
+  bannerOptions.forEach((option) => {
+    option.addEventListener("click", () => {
+      selectedBanner = option.dataset.bannerValue;
+      renderBannerSelection();
+    });
+  });
+
+  const applyBanner = (src) => {
+    selectedBanner = BANNERS.includes(src) ? src : "";
+    if (profileForm?.elements.banner_url) {
+      profileForm.elements.banner_url.value = selectedBanner;
+    }
+    const resolved = bannerSrc(selectedBanner);
+    if (bannerCurrent) {
+      bannerCurrent.src = resolved;
+      bannerCurrent.hidden = !resolved;
+    }
+    if (bannerPreview) {
+      bannerPreview.classList.toggle("is-empty", !resolved);
+    }
+    if (bannerCurrentName) {
+      bannerCurrentName.textContent = selectedBanner ? bannerName(selectedBanner) : "No banner";
+    }
+    if (profileCover) {
+      profileCover.hidden = !resolved;
+      profileCover.style.backgroundImage = resolved ? `url("${resolved}")` : "";
+    }
+    renderBannerSelection();
+  };
+
+  const openBannerModal = () => {
+    if (!bannerModal) return;
+    selectedBanner = BANNERS.includes(profileForm?.elements.banner_url?.value)
+      ? profileForm.elements.banner_url.value
+      : "";
+    renderBannerSelection();
+    if (typeof bannerModal.showModal === "function") {
+      bannerModal.showModal();
+    } else {
+      bannerModal.setAttribute("open", "");
+    }
+  };
+
+  const closeBannerModal = (commit) => {
+    if (!bannerModal) return;
+    if (commit) {
+      applyBanner(selectedBanner);
+    }
+    if (typeof bannerModal.close === "function") {
+      bannerModal.close();
+    } else {
+      bannerModal.removeAttribute("open");
+    }
+  };
+
+  root.querySelector("[data-banner-picker-open]")?.addEventListener("click", openBannerModal);
+  root.querySelector("[data-banner-modal-close]")?.addEventListener("click", () => closeBannerModal(false));
+  root.querySelector("[data-banner-modal-cancel]")?.addEventListener("click", () => closeBannerModal(false));
+  root.querySelector("[data-banner-modal-confirm]")?.addEventListener("click", () => closeBannerModal(true));
+  bannerModal?.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeBannerModal(false);
+  });
+
   if (!url || !key || !window.supabase?.createClient) {
     setStatus("Profile services are temporarily unavailable.", true);
     root.querySelectorAll("input, textarea, select, button:not(.profile-tab)").forEach((control) => {
@@ -214,6 +315,7 @@
     profileName.textContent = username;
     profileEmail.textContent = user.email || "";
     applyAvatar(avatar);
+    applyBanner(profile.banner_url || "");
     profileForm.elements.username.value = username;
     emailForm.elements.email.value = user.email || "";
     if (viewPublicProfile) {
@@ -224,7 +326,7 @@
   const loadProfile = async (user) => {
     const { data: profile, error } = await client
       .from("profiles")
-      .select("display_name,avatar_url")
+      .select("display_name,avatar_url,banner_url")
       .eq("id", user.id)
       .single();
 
@@ -246,12 +348,17 @@
 
     const username = profileForm.elements.username.value.trim();
     const avatar = profileForm.elements.avatar_url.value;
+    const banner = profileForm.elements.banner_url.value;
     if (!username) {
       setStatus("Enter a username.", true);
       return;
     }
     if (!AVATARS.includes(avatar)) {
       setStatus("Choose one of the available profile pictures.", true);
+      return;
+    }
+    if (!BANNERS.includes(banner)) {
+      setStatus("Choose one of the available profile banners.", true);
       return;
     }
 
@@ -262,6 +369,7 @@
       .update({
         display_name: username,
         avatar_url: avatar,
+        banner_url: banner || null,
       })
       .eq("id", currentUser.id);
 
@@ -276,6 +384,7 @@
       data: {
         display_name: username,
         avatar_url: avatar,
+        banner_url: banner || null,
       },
     });
 
@@ -286,6 +395,7 @@
 
     currentUser = authData.user || currentUser;
     applyAvatar(avatar);
+    applyBanner(banner);
     if (viewPublicProfile) {
       viewPublicProfile.href = `${assetBase}/member/?username=${encodeURIComponent(username)}`;
     }

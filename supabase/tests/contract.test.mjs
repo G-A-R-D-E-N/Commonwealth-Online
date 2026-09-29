@@ -137,6 +137,11 @@ const memberUsernameNotificationLinksMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921204800_member_username_notification_links.sql"),
   "utf8"
 );
+
+const profileBannersMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260929000000_profile_banners.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -582,6 +587,45 @@ assert.match(
   memberUsernameNotificationLinksMigration,
   /update public\.user_notifications n[\s\S]*set target_url = '\/member\/\?username=' \|\| p\.display_name[\s\S]*where n\.target_url = '\/member\/\?id=' \|\| p\.id::text/i
 );
+
+const bannerAllowList = [
+  "AE-Art.webp",
+  "Automatron.webp",
+  "MuralBanner1.webp",
+  "MuralBanner2.webp",
+  "MuralBanner3.webp",
+  "NukaGirl.webp",
+  "Vertibird.webp",
+];
+assert.match(profileBannersMigration, /add column if not exists banner_url text/i);
+assert.match(profileBannersMigration, /profiles_banner_url_allowed/i);
+for (const banner of bannerAllowList) {
+  assert.ok(
+    profileBannersMigration.includes(`/assets/profile-banners/${banner}`),
+    `missing banner allow-list entry: ${banner}`
+  );
+}
+assert.match(
+  profileBannersMigration,
+  /grant update \(banner_url\) on public\.profiles to authenticated/i
+);
+assert.match(
+  profileBannersMigration,
+  /grant select \(id, display_name, avatar_url, banner_url, role\)[\s\S]*on public\.profiles[\s\S]*to anon, authenticated/i
+);
+assert.match(
+  profileBannersMigration,
+  /create or replace function private\.get_public_member_profile[\s\S]*banner_url text[\s\S]*security definer/i
+);
+assert.match(
+  profileBannersMigration,
+  /create or replace function public\.get_public_member_profile[\s\S]*security invoker[\s\S]*select \* from private\.get_public_member_profile/i
+);
+assert.match(
+  profileBannersMigration,
+  /grant execute on function public\.get_public_member_profile\(uuid\) to anon, authenticated, service_role/i
+);
+assert.doesNotMatch(profileBannersMigration, /update public\.profiles /i);
 
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
