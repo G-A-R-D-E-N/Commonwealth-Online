@@ -23,6 +23,7 @@ const makeElement = (overrides = {}) => {
     dataset: {},
     elements: {},
     children: [],
+    style: {},
     classList: {
       add(name) { classes.add(name); },
       remove(name) { classes.delete(name); },
@@ -61,6 +62,8 @@ let passwordSubmit;
 let signOutClick;
 let openAvatar;
 let confirmAvatar;
+let openBanner;
+let confirmBanner;
 const authUpdates = [];
 const profileUpdates = [];
 const callOrder = [];
@@ -69,19 +72,24 @@ const status = makeElement({ hidden: true });
 const profileAvatar = makeElement();
 const avatarCurrent = makeElement();
 const avatarCurrentName = makeElement();
+const profileCover = makeElement({ hidden: true });
+const bannerPreview = makeElement();
+const bannerCurrent = makeElement({ hidden: true });
+const bannerCurrentName = makeElement();
 const profileName = makeElement();
 const profileEmail = makeElement();
 const signOut = makeElement();
 const viewPublicProfile = makeElement();
 const username = makeElement();
 const avatarHidden = makeElement({ value: "/assets/profile-icons/armorer.png" });
+const bannerHidden = makeElement({ value: "" });
 const emailField = makeElement();
 const currentPassword = makeElement();
 const newPassword = makeElement();
 const confirmPassword = makeElement();
 
 const profileForm = makeElement({
-  elements: { username, avatar_url: avatarHidden },
+  elements: { username, avatar_url: avatarHidden, banner_url: bannerHidden },
   addEventListener(type, handler) {
     if (type === "submit") profileSubmit = handler;
   },
@@ -105,8 +113,15 @@ const avatarModal = makeElement({ _opened: false });
 avatarModal.showModal = () => { avatarModal._opened = true; };
 avatarModal.close = () => { avatarModal._opened = false; };
 
+const bannerModal = makeElement({ _opened: false });
+bannerModal.showModal = () => { bannerModal._opened = true; };
+bannerModal.close = () => { bannerModal._opened = false; };
+
 const armorerOption = makeElement({ dataset: { avatarValue: "/assets/profile-icons/armorer.png", avatarCategory: "perks" } });
 const riflemanOption = makeElement({ dataset: { avatarValue: "/assets/profile-icons/rifleman.png", avatarCategory: "perks" } });
+
+const vertibirdBanner = makeElement({ dataset: { bannerValue: "/assets/profile-banners/Vertibird.webp" } });
+const noneBanner = makeElement({ dataset: { bannerValue: "" } });
 
 const allFilter = makeElement({ dataset: { avatarFilter: "all" } });
 const openButton = makeElement({
@@ -117,6 +132,16 @@ const openButton = makeElement({
 const confirmButton = makeElement({
   addEventListener(type, handler) {
     if (type === "click") confirmAvatar = handler;
+  },
+});
+const openBannerButton = makeElement({
+  addEventListener(type, handler) {
+    if (type === "click") openBanner = handler;
+  },
+});
+const confirmBannerButton = makeElement({
+  addEventListener(type, handler) {
+    if (type === "click") confirmBanner = handler;
   },
 });
 
@@ -135,6 +160,10 @@ const nodes = new Map([
   ["[data-profile-avatar]", profileAvatar],
   ["[data-profile-avatar-current]", avatarCurrent],
   ["[data-profile-avatar-current-name]", avatarCurrentName],
+  ["[data-profile-cover]", profileCover],
+  ["[data-profile-banner-preview]", bannerPreview],
+  ["[data-profile-banner-current]", bannerCurrent],
+  ["[data-profile-banner-current-name]", bannerCurrentName],
   ["[data-profile-name]", profileName],
   ["[data-profile-email]", profileEmail],
   ["[data-sign-out]", signOut],
@@ -142,6 +171,9 @@ const nodes = new Map([
   ["[data-avatar-modal]", avatarModal],
   ["[data-avatar-picker-open]", openButton],
   ["[data-avatar-modal-confirm]", confirmButton],
+  ["[data-banner-modal]", bannerModal],
+  ["[data-banner-picker-open]", openBannerButton],
+  ["[data-banner-modal-confirm]", confirmBannerButton],
 ]);
 
 const root = makeElement({
@@ -156,6 +188,7 @@ const root = makeElement({
     if (selector === "[data-profile-tab]") return tabs;
     if (selector === "[data-profile-panel]") return panels;
     if (selector === "[data-avatar-value]") return [armorerOption, riflemanOption];
+    if (selector === "[data-banner-value]") return [vertibirdBanner, noneBanner];
     if (selector === "[data-avatar-filter]") return [allFilter];
     return [];
   },
@@ -212,6 +245,7 @@ const client = {
           data: {
             display_name: "Resident",
             avatar_url: "/assets/profile-icons/armorer.png",
+            banner_url: "",
           },
           error: null,
         };
@@ -289,23 +323,33 @@ const run = async () => {
   assert.equal(profileAvatar.src, "/assets/profile-icons/armorer.png");
   assert.equal(avatarCurrent.src, "/assets/profile-icons/armorer.png");
   assert.equal(avatarCurrentName.textContent, "Armorer");
+  assert.equal(bannerHidden.value, "");
+  assert.equal(bannerCurrentName.textContent, "No banner");
+  assert.equal(bannerCurrent.hidden, true);
+  assert.equal(profileCover.hidden, true);
   assert.equal(viewPublicProfile.href, "/member/?username=Resident");
 
   // Saving the profile updates the profiles table and account metadata.
   username.value = "Nomad";
   avatarHidden.value = "/assets/profile-icons/rifleman.png";
+  bannerHidden.value = "/assets/profile-banners/Vertibird.webp";
   await profileSubmit({ preventDefault() {} });
 
   assert.equal(callOrder[0], "profile");
   assert.equal(callOrder[1], "auth");
   assert.equal(profileUpdates[0].display_name, "Nomad");
   assert.equal(profileUpdates[0].avatar_url, "/assets/profile-icons/rifleman.png");
+  assert.equal(profileUpdates[0].banner_url, "/assets/profile-banners/Vertibird.webp");
   assert.equal(authUpdates[0].payload.data.display_name, "Nomad");
   assert.equal(authUpdates[0].payload.data.avatar_url, "/assets/profile-icons/rifleman.png");
+  assert.equal(authUpdates[0].payload.data.banner_url, "/assets/profile-banners/Vertibird.webp");
   assert.equal(authUpdates[0].options, undefined);
   assert.equal(profileName.textContent, "Nomad");
   assert.equal(avatarCurrent.src, "/assets/profile-icons/rifleman.png");
   assert.equal(avatarCurrentName.textContent, "Rifleman");
+  assert.equal(bannerCurrent.src, "/assets/profile-banners/Vertibird.webp");
+  assert.equal(bannerCurrentName.textContent, "Vertibird");
+  assert.equal(profileCover.hidden, false);
   assert.equal(status.textContent, "Profile saved.");
 
   // Rejecting an unknown avatar.
@@ -313,6 +357,13 @@ const run = async () => {
   await profileSubmit({ preventDefault() {} });
   assert.equal(profileUpdates.length, 1, "invalid avatar must not update profiles");
   assert.equal(status.textContent, "Choose one of the available profile pictures.");
+
+  // Rejecting an unknown banner.
+  avatarHidden.value = "/assets/profile-icons/rifleman.png";
+  bannerHidden.value = "/assets/profile-banners/not-real.webp";
+  await profileSubmit({ preventDefault() {} });
+  assert.equal(profileUpdates.length, 1, "invalid banner must not update profiles");
+  assert.equal(status.textContent, "Choose one of the available profile banners.");
 
   // Changing the email flows through the email form with a redirect target.
   emailField.value = "nomad@example.test";
@@ -329,6 +380,20 @@ const run = async () => {
   assert.equal(authUpdates[2].payload.currentPassword, "old-password");
   assert.equal(authUpdates[2].options, undefined);
 
+  // An empty banner ("No banner") is a valid selection and must save through
+  // as NULL rather than blocking the whole profile form.
+  bannerHidden.value = "";
+  await profileSubmit({ preventDefault() {} });
+  assert.equal(profileUpdates.length, 2, "no-banner save must update profiles");
+  assert.equal(profileUpdates[1].display_name, "Nomad");
+  assert.equal(profileUpdates[1].avatar_url, "/assets/profile-icons/rifleman.png");
+  assert.equal(profileUpdates[1].banner_url, null);
+  assert.equal(authUpdates[3].payload.data.banner_url, null);
+  assert.equal(bannerCurrent.hidden, true);
+  assert.equal(bannerCurrentName.textContent, "No banner");
+  assert.equal(profileCover.hidden, true);
+  assert.equal(status.textContent, "Profile saved.");
+
   // The avatar picker modal selects a picture and commits it.
   avatarHidden.value = "/assets/profile-icons/armorer.png";
   openAvatar();
@@ -338,6 +403,27 @@ const run = async () => {
   assert.equal(avatarModal._opened, false);
   assert.equal(avatarHidden.value, "/assets/profile-icons/rifleman.png");
   assert.equal(avatarCurrent.src, "/assets/profile-icons/rifleman.png");
+
+  // The banner picker modal selects a banner and commits it.
+  bannerHidden.value = "";
+  openBanner();
+  assert.equal(bannerModal._opened, true);
+  vertibirdBanner._listeners.get("click")();
+  confirmBanner();
+  assert.equal(bannerModal._opened, false);
+  assert.equal(bannerHidden.value, "/assets/profile-banners/Vertibird.webp");
+  assert.equal(bannerCurrent.src, "/assets/profile-banners/Vertibird.webp");
+  assert.equal(bannerCurrent.hidden, false);
+  assert.equal(profileCover.hidden, false);
+
+  // Picking "No banner" clears the selection.
+  openBanner();
+  noneBanner._listeners.get("click")();
+  confirmBanner();
+  assert.equal(bannerHidden.value, "");
+  assert.equal(bannerCurrent.hidden, true);
+  assert.equal(profileCover.hidden, true);
+  assert.equal(bannerCurrentName.textContent, "No banner");
 
   console.log("profile settings checks passed");
 };
