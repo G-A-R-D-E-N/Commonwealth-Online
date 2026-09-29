@@ -44,7 +44,10 @@
   const accountUrl = new URL(`${assetBase}/account/`, window.location.origin).href;
 
   let currentUser = null;
-  let profileReady = true;
+  // Do not allow profile updates until the profile row has loaded or has been
+  // successfully bootstrapped. A failed read must not look like a usable
+  // profile, since an update would otherwise appear to save nothing.
+  let profileReady = false;
 
   const setStatus = (message, error = false) => {
     status.hidden = !message;
@@ -244,6 +247,7 @@
 
     if (profile) {
       renderProfile(user, profile);
+      profileReady = true;
       return true;
     }
 
@@ -251,7 +255,13 @@
     // a row yet. Bootstrap it from auth metadata instead of leaving the page
     // unusable. The insert is best-effort so a stale deployment can still
     // render the profile and be repaired by the migration.
-    const metadataName = user.user_metadata?.display_name || user.user_metadata?.global_name;
+    const metadataName = [
+      user.user_metadata?.display_name,
+      user.user_metadata?.global_name,
+      user.user_metadata?.full_name,
+      user.user_metadata?.name,
+      user.user_metadata?.user_name,
+    ].find((name) => String(name || "").trim());
     const fallbackName = String(metadataName || "Member").trim().slice(0, 80) || "Member";
     const fallbackProfile = {
       display_name: fallbackName,

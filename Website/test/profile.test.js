@@ -63,6 +63,7 @@ let openAvatar;
 let confirmAvatar;
 const authUpdates = [];
 const profileUpdates = [];
+const profileInserts = [];
 const callOrder = [];
 
 const status = makeElement({ hidden: true });
@@ -165,7 +166,7 @@ const user = {
   id: "user-1",
   email: "member@example.test",
   user_metadata: {
-    display_name: "Resident",
+    full_name: "Resident",
     avatar_url: "/assets/profile-icons/armorer.png",
   },
 };
@@ -218,14 +219,12 @@ const client = {
       },
       async maybeSingle() {
         return {
-          data: {
-            display_name: "Resident",
-            avatar_url: "/assets/profile-icons/armorer.png",
-          },
+          data: null,
           error: null,
         };
       },
-      async insert() {
+      async insert(payload) {
+        profileInserts.push(payload);
         return { error: null };
       },
       update(payload) {
@@ -302,6 +301,9 @@ const run = async () => {
   assert.equal(avatarCurrent.src, "/assets/profile-icons/armorer.png");
   assert.equal(avatarCurrentName.textContent, "Armorer");
   assert.equal(viewPublicProfile.href, "/member/?username=Resident");
+  assert.equal(profileInserts[0].id, "user-1");
+  assert.equal(profileInserts[0].display_name, "Resident");
+  assert.equal(profileInserts[0].avatar_url, "/assets/profile-icons/armorer.png");
 
   // Saving the profile updates the profiles table and account metadata.
   username.value = "Nomad";

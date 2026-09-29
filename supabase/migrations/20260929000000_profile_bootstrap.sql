@@ -44,4 +44,8 @@ create policy "Users can create their own profile"
     and role = 'member'
   );
 
+-- The policy controls which rows may be inserted, while this grant controls
+-- whether the authenticated client may issue the insert at all.
+grant insert (id, display_name, avatar_url) on public.profiles to authenticated;
+
 commit;
