@@ -1,8 +1,11 @@
 begin;
 
 -- Profile banners mirror the profile picture pattern: a curated allow-list of
--- local banner artwork shipped in Website/assets/profile-banners. Storing NULL
--- (or the empty string sent by the picker) means "no banner".
+-- local banner artwork shipped in Website/assets/profile-banners. The picker
+-- uses "" as its client-side "no banner" sentinel, but that must always be
+-- normalized to NULL before writing: the constraint below intentionally
+-- rejects the empty string so the table only ever stores NULL or one of the
+-- allow-listed artwork paths.
 
 alter table public.profiles
   add column if not exists banner_url text;

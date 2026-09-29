@@ -92,6 +92,7 @@
                           alt=""
                           width="480"
                           height="144"
+                          loading="lazy"
                           referrerpolicy="no-referrer"
                           hidden
                         />
@@ -384,7 +385,7 @@
                 data-banner-value="<%= src %>"
                 aria-pressed="false"
               >
-                <img src="<%= src %>" alt="" width="160" height="48" loading="lazy" referrerpolicy="no-referrer" />
+                <img src="<%= src.replace('/assets/profile-banners/', '/assets/profile-banners/thumbs/') %>" alt="" width="160" height="48" loading="lazy" referrerpolicy="no-referrer" />
                 <span><%= label %></span>
               </button>
               <% }) %>

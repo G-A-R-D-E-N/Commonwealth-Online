@@ -28,8 +28,10 @@
 
   // Canonical profile banner catalog. Keep this in sync with the banner grid
   // rendered in views/pages/profile.ejs and with the banner allow-list in
-  // supabase/migrations/20260929000000_profile_banners.sql. An empty string
-  // selects "no banner".
+  // supabase/migrations/20260929000000_profile_banners.sql. An empty string is
+  // the "no banner" sentinel; it is normalized to NULL when saved so the table
+  // only ever stores NULL or one of these paths. The modal shows lightweight
+  // thumbnails from /assets/profile-banners/thumbs/ but stores the full paths.
   const PROFILE_BANNERS = [
     { name: "AE Art", src: "/assets/profile-banners/AE-Art.webp" },
     { name: "Automatron", src: "/assets/profile-banners/Automatron.webp" },

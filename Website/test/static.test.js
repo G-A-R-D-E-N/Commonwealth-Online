@@ -268,16 +268,35 @@ const run = async () => {
       "NukaGirl.webp",
       "Vertibird.webp",
     ];
+    const bannerBytes = new Map();
     for (const banner of profileBanners) {
       assert.ok(
         staticProfile.text.includes(`/assets/profile-banners/${banner}`),
         `missing profile banner in rendered profile page ${banner}`
       );
+      assert.ok(
+        staticProfile.text.includes(`/assets/profile-banners/thumbs/${banner}`),
+        `banner picker must show a thumbnail for ${banner}`
+      );
       const bannerPath = path.join(dist, "assets/profile-banners", banner);
       assert.equal(fs.existsSync(bannerPath), true, `missing deployed profile banner ${banner}`);
       const bytes = fs.readFileSync(bannerPath);
+      bannerBytes.set(banner, bytes.length);
       assert.deepEqual([...bytes.subarray(0, 4)], [82, 73, 70, 70], `missing RIFF header for ${banner}`);
       assert.deepEqual([...bytes.subarray(8, 12)], [87, 69, 66, 80], `missing WEBP magic for ${banner}`);
+    }
+    // The picker must not download the multi-megabyte full artwork: verify a
+    // lighter thumbnail is shipped for every banner and actually referenced.
+    for (const [banner, fullSize] of bannerBytes) {
+      const thumbPath = path.join(dist, "assets/profile-banners/thumbs", banner);
+      assert.equal(fs.existsSync(thumbPath), true, `missing deployed banner thumbnail ${banner}`);
+      const thumbBytes = fs.readFileSync(thumbPath);
+      assert.deepEqual([...thumbBytes.subarray(0, 4)], [82, 73, 70, 70], `thumbnail missing RIFF header for ${banner}`);
+      assert.deepEqual([...thumbBytes.subarray(8, 12)], [87, 69, 66, 80], `thumbnail missing WEBP magic for ${banner}`);
+      assert.ok(
+        thumbBytes.length < fullSize,
+        `banner thumbnail must be smaller than full artwork for ${banner}`
+      );
     }
     const iconFetcher = fs.readFileSync(path.join(root, "scripts/fetch-profile-icons.js"), "utf8");
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
