@@ -149,8 +149,8 @@ if (staticBasePath) {
   const servers = fs
     .readFileSync(serversPath, "utf8")
     .replace(
-      'const DATA_URL = "/data/servers.json";',
-      `const DATA_URL = "${staticBasePath}/data/servers.json";`
+      'const CURATED_URL = "/data/servers.json";',
+      `const CURATED_URL = "${staticBasePath}/data/servers.json";`
     );
   fs.writeFileSync(serversPath, servers);
 
