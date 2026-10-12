@@ -121,6 +121,15 @@ const run = async () => {
     const staticData = JSON.parse(fs.readFileSync(path.join(dist, "data/servers.json"), "utf8"));
     const sourceData = JSON.parse(fs.readFileSync(path.join(root, "servers/server.json"), "utf8"));
     assert.deepEqual(staticData, sourceData, "server data copied unchanged");
+    const publishedServerList = path.join(dist, "servers/server.json");
+    assert.equal(fs.existsSync(publishedServerList), true, "missing servers/server.json for the game client");
+    const publishedServers = JSON.parse(fs.readFileSync(publishedServerList, "utf8"));
+    assert.deepEqual(publishedServers, sourceData, "published server list matches source");
+    assert.equal(Array.isArray(publishedServers.servers), true, "published server list has a servers array");
+    for (const server of publishedServers.servers) {
+      assert.equal(typeof server.host === "string" && server.host.length > 0, true, `server ${server.id} has a host`);
+      assert.equal(Number.isInteger(server.port) && server.port >= 1 && server.port <= 65535, true, `server ${server.id} has a valid port`);
+    }
     for (const image of ["server-browser-direct-connect.webp", "server-browser-recent.webp"]) {
       assert.equal(fs.existsSync(path.join(dist, "assets/images", image)), true, `missing ${image}`);
     }

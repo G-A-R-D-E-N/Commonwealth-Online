@@ -129,6 +129,7 @@ jobs:
           grep -q "href=\"${STATIC_BASE_PATH}/" Website/dist/index.html
           grep -q "src=\"${STATIC_BASE_PATH}/static/" Website/dist/index.html
           grep -q "\"${STATIC_BASE_PATH}/data/servers.json\"" Website/dist/static/js/servers.js
+          test -f Website/dist/servers/server.json
           grep -q "\"${STATIC_BASE_PATH}/updates\"" Website/dist/static/js/links.js
 
       # Pull requests never run the Pages build above, so the base-path rewrite
@@ -147,6 +148,7 @@ jobs:
           cd Website
           npm run build:static
           grep -q "\"${STATIC_BASE_PATH}/data/servers.json\"" dist/static/js/servers.js
+          test -f dist/servers/server.json
           grep -q "\"${STATIC_BASE_PATH}/data/changelogs.json\"" dist/static/js/updates.js
           grep -q "\"${STATIC_BASE_PATH}/updates\"" dist/static/js/links.js
           test -s dist/data/changelogs.json
