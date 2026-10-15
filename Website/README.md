@@ -19,7 +19,8 @@ npm test
 `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` are optional for a local static build. When both are unset, the account page renders without the Supabase browser client and disables account controls safely. `test:static` supports both configured and unconfigured builds, and CI exercises both modes.
 
 The generated site is written to `dist/`. It contains only HTML, CSS,
-JavaScript, assets, the curated `data/servers.json` copy, and the generated
+JavaScript, assets, the curated `data/servers.json` copy, the same list at
+`servers/server.json` for the game client, and the generated
 `data/changelogs.json` release log. This package has
 no production server, local database, migration runner, or mail/Discord client.
 
