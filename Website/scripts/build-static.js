@@ -135,6 +135,8 @@ fs.cpSync(path.join(root, "assets"), path.join(dist, "assets"), { recursive: tru
 fs.cpSync(path.join(root, "static"), path.join(dist, "static"), { recursive: true });
 fs.mkdirSync(path.join(dist, "data"), { recursive: true });
 fs.copyFileSync(path.join(root, "servers", "server.json"), path.join(dist, "data", "servers.json"));
+// The game client requests this legacy path. The site itself still reads /data/servers.json.
+fs.copyFileSync(path.join(root, "servers", "server.json"), path.join(dist, "servers", "server.json"));
 fs.writeFileSync(path.join(dist, "data", "changelogs.json"), `${JSON.stringify(readChangelogs(), null, 2)}\n`);
 
 if (staticBasePath) {

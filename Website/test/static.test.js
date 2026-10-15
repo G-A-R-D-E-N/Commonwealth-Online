@@ -61,7 +61,14 @@ const serveStatic = (req, res) => {
     res.writeHead(404).end();
     return;
   }
-  fs.createReadStream(filePath).on("error", () => res.writeHead(404).end()).pipe(res);
+  if (filePath.endsWith(".json")) {
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+  }
+  fs.createReadStream(filePath).on("error", () => {
+    if (!res.headersSent) {
+      res.writeHead(404).end();
+    }
+  }).pipe(res);
 };
 
 const run = async () => {
@@ -121,6 +128,13 @@ const run = async () => {
     const staticData = JSON.parse(fs.readFileSync(path.join(dist, "data/servers.json"), "utf8"));
     const sourceData = JSON.parse(fs.readFileSync(path.join(root, "servers/server.json"), "utf8"));
     assert.deepEqual(staticData, sourceData, "server data copied unchanged");
+    const clientDirectory = await request(staticBase, "/servers/server.json");
+    assert.equal(clientDirectory.response.status, 200, "/servers/server.json");
+    assert.match(clientDirectory.response.headers.get("content-type") || "", /application\/json/);
+    const clientDirectoryJson = JSON.parse(clientDirectory.text);
+    assert.deepEqual(clientDirectoryJson, sourceData, "game client path serves the curated list unchanged");
+    assert.equal(clientDirectoryJson.servers[0].host, "servers.commonwealth-online.com");
+    assert.equal(clientDirectoryJson.servers[0].port, 7777);
     for (const image of ["server-browser-direct-connect.webp", "server-browser-recent.webp"]) {
       assert.equal(fs.existsSync(path.join(dist, "assets/images", image)), true, `missing ${image}`);
     }
