@@ -85,6 +85,22 @@ body.co-site .site-nav a.site-nav__account.is-active .site-nav__account-icon {
   line-height: 1;
 }
 
+body.co-site .site-nav a.site-nav__download,
+body.co-site .site-nav a.site-nav__download:visited {
+  margin-left: 0.35rem;
+  padding: 0.45rem 0.8rem;
+  color: var(--site-heading);
+  background: transparent;
+  border: 1px solid var(--site-border);
+}
+
+body.co-site .site-nav a.site-nav__download:hover,
+body.co-site .site-nav a.site-nav__download:focus-visible {
+  color: #1a1c18;
+  background: var(--site-btn-primary);
+  border-color: var(--site-btn-primary-hi);
+}
+
 /* ── Disclosure menus ─────────────────────────────────────────── */
 
 .site-nav__group {
@@ -199,6 +215,12 @@ body.co-site .site-nav .site-nav__menu a.site-nav__link.is-active {
     height: 3rem;
     margin: 0.4rem var(--site-gutter);
     padding: 0.25rem;
+  }
+
+  body.co-site .site-nav a.site-nav__download {
+    width: calc(100% - (var(--site-gutter) * 2));
+    margin: 0.35rem var(--site-gutter) 0;
+    justify-content: center;
   }
 
   .site-nav__profile-avatar {

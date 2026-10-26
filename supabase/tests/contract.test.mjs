@@ -16,6 +16,21 @@ const require = createRequire(import.meta.url);
 const { TYPES, TYPE_IDS } = require("../../Website/src/lib/applications.js");
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const migrationFiles = fs.readdirSync(path.join(root, "migrations"));
+const migrationVersions = new Set();
+
+for (const filename of migrationFiles) {
+  assert.match(
+    filename,
+    /^\d{14}_[a-z0-9_]+\.sql$/,
+    `invalid migration filename: ${filename}`,
+  );
+
+  const version = filename.slice(0, 14);
+  assert.ok(!migrationVersions.has(version), `duplicate migration version: ${version}`);
+  migrationVersions.add(version);
+}
+
 const migration = fs.readFileSync(path.join(root, "migrations", "20260920032942_forum.sql"), "utf8");
 const applicationMigration = fs.readFileSync(
   path.join(root, "migrations", "20260920032951_applications.sql"),
@@ -59,6 +74,10 @@ const factionProfileIconsMigration = fs.readFileSync(
 );
 const emoteProfileIconsMigration = fs.readFileSync(
   path.join(root, "migrations", "20260922000000_emote_profile_icons.sql"),
+  "utf8"
+);
+const profileBootstrapMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260929000001_profile_bootstrap.sql"),
   "utf8"
 );
 const userAccountsMigration = fs.readFileSync(
@@ -135,6 +154,11 @@ const publicFactionSlugLinksMigration = fs.readFileSync(
 );
 const memberUsernameNotificationLinksMigration = fs.readFileSync(
   path.join(root, "migrations", "20260921204800_member_username_notification_links.sql"),
+  "utf8"
+);
+
+const profileBannersMigration = fs.readFileSync(
+  path.join(root, "migrations", "20260929000000_profile_banners.sql"),
   "utf8"
 );
 const registerAccount = fs.readFileSync(
@@ -292,6 +316,20 @@ for (const icon of ["CO", "Cool", "Love", "Rage", "Wink"]) {
   );
 }
 assert.doesNotMatch(emoteProfileIconsMigration, /nullif\(new\.raw_user_meta_data ->> 'picture'/i);
+assert.match(
+  profileBootstrapMigration,
+  /nullif\(trim\(users\.raw_user_meta_data ->> 'display_name'\), ''\)/i
+);
+assert.match(
+  profileBootstrapMigration,
+  /nullif\(trim\(users\.raw_user_meta_data ->> 'global_name'\), ''\)/i
+);
+assert.match(
+  profileBootstrapMigration,
+  /grant insert \(id, display_name, avatar_url, banner_url\) on public\.profiles to authenticated/i
+);
+assert.match(profileBootstrapMigration, /users\.raw_user_meta_data ->> 'banner_url'/i);
+assert.match(profileBootstrapMigration, /assets\/profile-banners\/Vertibird\.webp/i);
 
 assert.match(userAccountsMigration, /create table if not exists public\.user_accounts/i);
 assert.match(userAccountsMigration, /alter table public\.user_accounts enable row level security/i);
@@ -583,6 +621,45 @@ assert.match(
   /update public\.user_notifications n[\s\S]*set target_url = '\/member\/\?username=' \|\| p\.display_name[\s\S]*where n\.target_url = '\/member\/\?id=' \|\| p\.id::text/i
 );
 
+const bannerAllowList = [
+  "AE-Art.webp",
+  "Automatron.webp",
+  "MuralBanner1.webp",
+  "MuralBanner2.webp",
+  "MuralBanner3.webp",
+  "NukaGirl.webp",
+  "Vertibird.webp",
+];
+assert.match(profileBannersMigration, /add column if not exists banner_url text/i);
+assert.match(profileBannersMigration, /profiles_banner_url_allowed/i);
+for (const banner of bannerAllowList) {
+  assert.ok(
+    profileBannersMigration.includes(`/assets/profile-banners/${banner}`),
+    `missing banner allow-list entry: ${banner}`
+  );
+}
+assert.match(
+  profileBannersMigration,
+  /grant update \(banner_url\) on public\.profiles to authenticated/i
+);
+assert.match(
+  profileBannersMigration,
+  /grant select \(id, display_name, avatar_url, banner_url, role\)[\s\S]*on public\.profiles[\s\S]*to anon, authenticated/i
+);
+assert.match(
+  profileBannersMigration,
+  /create or replace function private\.get_public_member_profile[\s\S]*banner_url text[\s\S]*security definer/i
+);
+assert.match(
+  profileBannersMigration,
+  /create or replace function public\.get_public_member_profile[\s\S]*security invoker[\s\S]*select \* from private\.get_public_member_profile/i
+);
+assert.match(
+  profileBannersMigration,
+  /grant execute on function public\.get_public_member_profile\(uuid\) to anon, authenticated, service_role/i
+);
+assert.doesNotMatch(profileBannersMigration, /update public\.profiles /i);
+
 assert.match(registerAccount, /consume_signup_rate_limit/);
 assert.match(registerAccount, /captchaToken/);
 assert.match(registerAccount, /website/);
@@ -746,6 +823,7 @@ for (const [name, content] of [
   ["public profile default migration", publicProfileDefaultMigration],
   ["public faction slug links migration", publicFactionSlugLinksMigration],
   ["member username notification links migration", memberUsernameNotificationLinksMigration],
+  ["profile bootstrap migration", profileBootstrapMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],

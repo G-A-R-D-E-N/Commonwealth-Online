@@ -41,6 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
@@ -49,6 +50,18 @@ jobs:
 
       - name: Validate Supabase contract
         run: node supabase/tests/contract.test.mjs
+
+      - name: Prevent changes to committed migrations
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          changed="$(git diff --name-only --diff-filter=MDR "$BASE_SHA" HEAD -- supabase/migrations/)"
+          if [ -n "$changed" ]; then
+            echo "Committed migrations are immutable; add a new migration instead:" >&2
+            echo "$changed" >&2
+            exit 1
+          fi
 
       - name: Whitespace check
         if: always()

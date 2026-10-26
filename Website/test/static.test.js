@@ -30,10 +30,10 @@ const expectedPages = [
   "forum/index.html",
 ];
 const expectedProfileStyles = new Map([
-  ["profile/index.html", "/static/css/profile.css?v=20260923-4"],
-  ["faction/manage/index.html", "/static/css/profile.css?v=20260923-4"],
-  ["factions/apply/index.html", "/static/css/profile.css?v=20260923-4"],
-  ["factions/review/index.html", "/static/css/profile.css?v=20260923-4"],
+  ["profile/index.html", "/static/css/profile.css?v=20260929-1"],
+  ["faction/manage/index.html", "/static/css/profile.css?v=20260929-1"],
+  ["factions/apply/index.html", "/static/css/profile.css?v=20260929-1"],
+  ["factions/review/index.html", "/static/css/profile.css?v=20260929-1"],
 ]);
 
 const startServer = (handler) =>
@@ -61,7 +61,14 @@ const serveStatic = (req, res) => {
     res.writeHead(404).end();
     return;
   }
-  fs.createReadStream(filePath).on("error", () => res.writeHead(404).end()).pipe(res);
+  if (filePath.endsWith(".json")) {
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+  }
+  fs.createReadStream(filePath).on("error", () => {
+    if (!res.headersSent) {
+      res.writeHead(404).end();
+    }
+  }).pipe(res);
 };
 
 const run = async () => {
@@ -87,12 +94,16 @@ const run = async () => {
     assert.equal(/<%|<%=|<%-/.test(html), false, `unresolved EJS in ${filePath}`);
     assert.match(html, /href="\/static\/css\/discord-link\.css\?v=20260921-1"/);
     assert.match(html, /href="\/static\/css\/styles\.css\?v=20260923-1"/);
-    assert.match(html, /href="\/static\/css\/site-shell\.css\?v=20260922-2"/);
+    assert.match(html, /href="\/static\/css\/site-shell\.css\?v=20260924-1"/);
     assert.match(html, /src="\/static\/js\/discord-link\.js\?v=20260921-1"/);
     // Every page script must be cache-busted so changed JS (for example the
     // navbar account avatar handling) can never be served stale from cache.
     assert.doesNotMatch(html, /<script src="\/static\/js\/[^"]+\.js" defer><\/script>/);
-    assert.match(html, /<script src="\/static\/js\/navbar\.js\?v=20260923-1" defer>/);
+    assert.match(html, /<script src="\/static\/js\/navbar\.js\?v=20260929-1" defer>/);
+    // profile.css and social.css changed with the profile banner work: every
+    // reference must carry the current cache-bust version so no page can serve
+    // a stale copy of those stylesheets.
+    assert.doesNotMatch(html, /\/static\/css\/(?:profile|social)\.css(?!\?v=20260929-1)/);
     assert.doesNotMatch(html, /@widgetbot\/crate/);
     assert.doesNotMatch(html, /\/static\/(?:js|css)\/widgetbot\./);
     assert.match(html, /script-src 'self' https:\/\/cdn\.jsdelivr\.net https:\/\/challenges\.cloudflare\.com/);
@@ -117,16 +128,23 @@ const run = async () => {
     const staticData = JSON.parse(fs.readFileSync(path.join(dist, "data/servers.json"), "utf8"));
     const sourceData = JSON.parse(fs.readFileSync(path.join(root, "servers/server.json"), "utf8"));
     assert.deepEqual(staticData, sourceData, "server data copied unchanged");
+    const clientDirectory = await request(staticBase, "/servers/server.json");
+    assert.equal(clientDirectory.response.status, 200, "/servers/server.json");
+    assert.match(clientDirectory.response.headers.get("content-type") || "", /application\/json/);
+    const clientDirectoryJson = JSON.parse(clientDirectory.text);
+    assert.deepEqual(clientDirectoryJson, sourceData, "game client path serves the curated list unchanged");
+    assert.equal(clientDirectoryJson.servers[0].host, "servers.commonwealth-online.com");
+    assert.equal(clientDirectoryJson.servers[0].port, 7777);
     for (const image of ["server-browser-direct-connect.webp", "server-browser-recent.webp"]) {
       assert.equal(fs.existsSync(path.join(dist, "assets/images", image)), true, `missing ${image}`);
     }
 
     const changelogs = JSON.parse(fs.readFileSync(path.join(dist, "data/changelogs.json"), "utf8"));
     assert.equal(changelogs.length > 0, true, "changelog data is populated");
-    assert.equal(changelogs[0].version, "1.1.0");
-    assert.equal(changelogs[0].date, "2026-09-22");
-    assert.match(changelogs[0].markdown, /Iroh/i);
-    assert.match(changelogs[0].markdown, /invite code/i);
+    assert.equal(changelogs[0].version, "2.0.0");
+    assert.equal(changelogs[0].date, "2026-10-18");
+    assert.match(changelogs[0].markdown, /Steam/i);
+    assert.match(changelogs[0].markdown, /Friend Code/i);
 
     const staticApply = await request(staticBase, "/apply/");
     const staticAccount = await request(staticBase, "/account/");
@@ -158,12 +176,16 @@ const run = async () => {
     assert.doesNotMatch(staticAccount.text, /data-profile-form/);
     assert.doesNotMatch(staticAccount.text, /data-discord-link/);
     assert.doesNotMatch(staticAccount.text, /name="avatar_url"/);
+    assert.doesNotMatch(staticAccount.text, /name="banner_url"/);
     assert.doesNotMatch(staticAccount.text, /type="file"/);
     assert.match(staticProfile.text, /data-profile/);
     assert.match(staticProfile.text, /class="profile-tabs"/);
     assert.match(staticProfile.text, /data-profile-tab="security"/);
     assert.match(staticProfile.text, /data-profile-panel="privacy"/);
     assert.match(staticProfile.text, /data-avatar-modal/);
+    assert.match(staticProfile.text, /data-banner-modal/);
+    assert.match(staticProfile.text, /data-banner-picker-open/);
+    assert.match(staticProfile.text, /name="banner_url"/);
     assert.match(staticProfile.text, /data-badges-modal/);
     assert.match(staticProfile.text, /data-profile-form/);
     assert.match(staticProfile.text, /data-email-form/);
@@ -189,6 +211,7 @@ const run = async () => {
     assert.match(staticFactions.text, />Faction directory</);
     assert.doesNotMatch(staticFactions.text, /section-panel faction-shell/);
     assert.match(staticMember.text, /data-member/);
+    assert.match(staticMember.text, /data-member-banner/);
     assert.match(staticMember.text, /data-friend-action/);
     assert.match(staticMember.text, /data-block-action/);
     assert.match(staticMember.text, /data-member-friends-list/);
@@ -249,6 +272,45 @@ const run = async () => {
       const iconPath = path.join(dist, "assets/profile-images", icon);
       assert.equal(fs.existsSync(iconPath), true, `missing deployed profile image ${icon}`);
       assert.deepEqual([...fs.readFileSync(iconPath).subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+    }
+    const profileBanners = [
+      "AE-Art.webp",
+      "Automatron.webp",
+      "MuralBanner1.webp",
+      "MuralBanner2.webp",
+      "MuralBanner3.webp",
+      "NukaGirl.webp",
+      "Vertibird.webp",
+    ];
+    const bannerBytes = new Map();
+    for (const banner of profileBanners) {
+      assert.ok(
+        staticProfile.text.includes(`/assets/profile-banners/${banner}`),
+        `missing profile banner in rendered profile page ${banner}`
+      );
+      assert.ok(
+        staticProfile.text.includes(`/assets/profile-banners/thumbs/${banner}`),
+        `banner picker must show a thumbnail for ${banner}`
+      );
+      const bannerPath = path.join(dist, "assets/profile-banners", banner);
+      assert.equal(fs.existsSync(bannerPath), true, `missing deployed profile banner ${banner}`);
+      const bytes = fs.readFileSync(bannerPath);
+      bannerBytes.set(banner, bytes.length);
+      assert.deepEqual([...bytes.subarray(0, 4)], [82, 73, 70, 70], `missing RIFF header for ${banner}`);
+      assert.deepEqual([...bytes.subarray(8, 12)], [87, 69, 66, 80], `missing WEBP magic for ${banner}`);
+    }
+    // The picker must not download the multi-megabyte full artwork: verify a
+    // lighter thumbnail is shipped for every banner and actually referenced.
+    for (const [banner, fullSize] of bannerBytes) {
+      const thumbPath = path.join(dist, "assets/profile-banners/thumbs", banner);
+      assert.equal(fs.existsSync(thumbPath), true, `missing deployed banner thumbnail ${banner}`);
+      const thumbBytes = fs.readFileSync(thumbPath);
+      assert.deepEqual([...thumbBytes.subarray(0, 4)], [82, 73, 70, 70], `thumbnail missing RIFF header for ${banner}`);
+      assert.deepEqual([...thumbBytes.subarray(8, 12)], [87, 69, 66, 80], `thumbnail missing WEBP magic for ${banner}`);
+      assert.ok(
+        thumbBytes.length < fullSize,
+        `banner thumbnail must be smaller than full artwork for ${banner}`
+      );
     }
     const iconFetcher = fs.readFileSync(path.join(root, "scripts/fetch-profile-icons.js"), "utf8");
     assert.match(iconFetcher, /918547cc872c3288122f9d15ed0416cf33aa8bbf/);
@@ -427,6 +489,11 @@ const run = async () => {
       assert.ok(profileJs.includes(icon), `profile.js missing profile image ${icon}`);
       assert.ok(navbarJs.includes(icon), `navbar.js missing profile image ${icon}`);
     }
+    for (const banner of profileBanners) {
+      const src = `/assets/profile-banners/${banner}`;
+      assert.ok(profileJs.includes(src), `profile.js missing profile banner ${src}`);
+    }
+    assert.match(memberJs, /data-member-banner/);
     assert.doesNotMatch(accountJs, /Fallout_Perk_Planner/);
     assert.doesNotMatch(profileJs, /Fallout_Perk_Planner/);
     assert.ok(accountJs.includes('new URL(`${assetBase}/account/`, window.location.origin).href'));

@@ -225,6 +225,17 @@ body.co-site a.member-tile:focus-visible {
   display: none;
 }
 
+.member-profile__banner {
+  min-height: clamp(8rem, 26vw, 15rem);
+  border: 1px solid var(--site-border-soft);
+  border-bottom: 0;
+  background: var(--site-bg-inset) center / cover no-repeat;
+}
+
+.member-profile__banner[hidden] {
+  display: none;
+}
+
 .member-profile__header {
   display: flex;
   align-items: center;

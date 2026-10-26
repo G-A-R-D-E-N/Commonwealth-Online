@@ -24,6 +24,7 @@
   if (client) window.coSupabase = client;
 
   const els = {
+    banner: root.querySelector("[data-member-banner]"),
     avatar: root.querySelector("[data-member-avatar]"),
     name: root.querySelector("[data-member-name]"),
     presence: root.querySelector("[data-member-presence]"),
@@ -444,6 +445,12 @@
     window.history?.replaceState(null, "", canonicalUrl);
 
     els.avatar.src = assetBase + member.avatar_url;
+    if (els.banner) {
+      els.banner.hidden = !member.banner_url;
+      els.banner.style.backgroundImage = member.banner_url
+        ? `url("${assetBase}${member.banner_url}")`
+        : "";
+    }
     els.name.textContent = member.display_name;
     els.bio.textContent = member.bio || "No bio provided.";
     els.faction.replaceChildren();

@@ -58,6 +58,7 @@ const getNavItems = () => prune(NAV_ITEMS);
 /** Default footer links; pages can override with `page.footerLinks`. */
 const FOOTER_LINKS = [
   { label: "Repository", key: "repository" },
+  { label: "Download", key: "nexus" },
   { label: "Discord", key: "discord" },
   { label: "Apply", key: "applications" },
   { label: "Account", href: "/account" },

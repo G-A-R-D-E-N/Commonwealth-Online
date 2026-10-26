@@ -412,7 +412,7 @@ const PUBLIC_PAGES = [
       description: "Manage your Commonwealth Online profile, security, privacy, friends, and notifications.",
       bodyClass: "co-profile-page",
       activeKey: "account",
-      styles: ["/static/css/profile.css?v=20260923-4", "/static/css/social.css?v=20260923-1"],
+      styles: ["/static/css/profile.css?v=20260929-1", "/static/css/social.css?v=20260929-1"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -436,7 +436,7 @@ const PUBLIC_PAGES = [
       description: "Browse public Commonwealth Online member profiles.",
       bodyClass: "co-members-page",
       activeKey: "members",
-      styles: ["/static/css/social.css?v=20260923-1"],
+      styles: ["/static/css/social.css?v=20260929-1"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -454,7 +454,7 @@ const PUBLIC_PAGES = [
       description: "View a public Commonwealth Online member profile.",
       bodyClass: "co-member-page",
       activeKey: "members",
-      styles: ["/static/css/social.css?v=20260923-1"],
+      styles: ["/static/css/social.css?v=20260929-1"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -474,7 +474,7 @@ const PUBLIC_PAGES = [
       description: "Browse approved Commonwealth Online player factions, lore, focus, and recruitment status.",
       bodyClass: "co-factions-page",
       activeKey: "factions",
-      styles: ["/static/css/social.css", "/static/css/factions.css?v=20260921-2"],
+      styles: ["/static/css/social.css?v=20260929-1", "/static/css/factions.css?v=20260921-2"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -492,7 +492,7 @@ const PUBLIC_PAGES = [
       description: "View a Commonwealth Online faction profile, lore, recruitment status, and roster.",
       bodyClass: "co-faction-page",
       activeKey: "factions",
-      styles: ["/static/css/social.css", "/static/css/factions.css"],
+      styles: ["/static/css/social.css?v=20260929-1", "/static/css/factions.css"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -510,7 +510,7 @@ const PUBLIC_PAGES = [
       description: "Apply to establish a persistent player faction in Commonwealth Online.",
       bodyClass: "co-faction-apply-page",
       activeKey: "factions",
-      styles: ["/static/css/profile.css?v=20260923-4", "/static/css/factions.css?v=20260921-3"],
+      styles: ["/static/css/profile.css?v=20260929-1", "/static/css/factions.css?v=20260921-3"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -528,7 +528,7 @@ const PUBLIC_PAGES = [
       description: "Manage Commonwealth Online faction membership requests, invitations, and roster.",
       bodyClass: "co-faction-manage-page",
       activeKey: "factions",
-      styles: ["/static/css/profile.css?v=20260923-4", "/static/css/social.css?v=20260923-1", "/static/css/factions.css"],
+      styles: ["/static/css/profile.css?v=20260929-1", "/static/css/social.css?v=20260929-1", "/static/css/factions.css"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",
@@ -546,7 +546,7 @@ const PUBLIC_PAGES = [
       description: "Review pending Commonwealth Online faction applications.",
       bodyClass: "co-faction-review-page",
       activeKey: "factions",
-      styles: ["/static/css/profile.css?v=20260923-4", "/static/css/social.css?v=20260923-1", "/static/css/factions.css?v=20260921-4"],
+      styles: ["/static/css/profile.css?v=20260929-1", "/static/css/social.css?v=20260929-1", "/static/css/factions.css?v=20260921-4"],
       scripts: [
         "/static/js/links.js",
         "/static/js/navbar.js",

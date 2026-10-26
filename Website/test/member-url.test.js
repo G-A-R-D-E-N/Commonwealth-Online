@@ -13,6 +13,7 @@ const element = () => ({
   src: "",
   disabled: false,
   children: [],
+  style: {},
   classList: { toggle() {} },
   addEventListener() {},
   append(...items) { this.children.push(...items); },
@@ -21,7 +22,7 @@ const element = () => ({
 
 const nodes = new Map();
 for (const selector of [
-  "[data-member-status]","[data-member-profile]","[data-member-avatar]","[data-member-name]",
+  "[data-member-status]","[data-member-profile]","[data-member-banner]","[data-member-avatar]","[data-member-name]",
   "[data-member-presence]","[data-member-bio]","[data-member-faction]","[data-member-playstyle]",
   "[data-member-joined]","[data-member-joined-row]","[data-member-badges-card]",
   "[data-member-badges-list]","[data-member-username-history-card]",
@@ -76,6 +77,7 @@ const client = {
         data: {
           display_name: "Nomad",
           avatar_url: "/assets/profile-icons/armorer.png",
+          banner_url: "/assets/profile-banners/Vertibird.webp",
           bio: "",
           faction_id: "11111111-2222-3333-4444-555555555555",
           faction_name: "Commonwealth Rangers",
@@ -128,6 +130,7 @@ vm.runInNewContext(source, {
           return [{
             display_name: "Nomad",
             avatar_url: "/assets/profile-icons/armorer.png",
+            banner_url: "/assets/profile-banners/Vertibird.webp",
             bio: "",
             faction_id: "11111111-2222-3333-4444-555555555555",
             faction_name: "Commonwealth Rangers",
@@ -173,6 +176,9 @@ setImmediate(() => {
     );
     assert.doesNotMatch(nodes.get("[data-member-faction]").children[0]?.href || "", /\?id=/);
     assert.equal(nodes.get("[data-member-name]").textContent, "Nomad");
+    assert.equal(nodes.get("[data-member-banner]").hidden, false);
+    assert.match(nodes.get("[data-member-banner]").style.backgroundImage, /assets\/profile-banners\/Vertibird\.webp/);
+    assert.equal(nodes.get("[data-member-avatar]").src, "/assets/profile-icons/armorer.png");
     console.log("member public URL checks passed");
   } catch (error) {
     console.error(error);
