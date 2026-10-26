@@ -1,15 +1,15 @@
 {
   "version": 1,
-  "updatedAt": null,
+  "updatedAt": "2026-10-26T19:35:00Z",
   "servers": [
     {
-      "id": "commonwealth-online-server-one",
-      "name": "Commonwealth Online Server One",
-      "host": "servers.commonwealth-online.com",
+      "id": "commonwealth-online-official-usa",
+      "name": "Commonwealth Online Official USA",
+      "host": "195.26.244.234",
       "port": 7777,
-      "description": "Commonwealth Online Server One",
-      "region": "Oceania",
-      "tags": ["commonwealth", "online", "server", "one"],
+      "description": "Official Commonwealth Online server, co-op story, up to 8 players.",
+      "region": "North America",
+      "tags": ["official", "co-op", "usa"],
       "password": false,
       "modlist": "",
       "discord": ""

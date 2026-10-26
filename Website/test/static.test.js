@@ -133,7 +133,7 @@ const run = async () => {
     assert.match(clientDirectory.response.headers.get("content-type") || "", /application\/json/);
     const clientDirectoryJson = JSON.parse(clientDirectory.text);
     assert.deepEqual(clientDirectoryJson, sourceData, "game client path serves the curated list unchanged");
-    assert.equal(clientDirectoryJson.servers[0].host, "servers.commonwealth-online.com");
+    assert.equal(clientDirectoryJson.servers[0].host, "195.26.244.234");
     assert.equal(clientDirectoryJson.servers[0].port, 7777);
     for (const image of ["server-browser-direct-connect.webp", "server-browser-recent.webp"]) {
       assert.equal(fs.existsSync(path.join(dist, "assets/images", image)), true, `missing ${image}`);
