@@ -316,9 +316,15 @@ const run = async () => {
     assert.match(serversFavoritesJs, /onAuthStateChange/);
     assert.match(serversJs, /data-favorite-server/);
     assert.match(serversJs, /co:servers-rendered/);
-    assert.ok(serversJs.includes("https://oeajjfquvmdxqqtiotfa.supabase.co/functions/v1/server-directory"));
+    const directoryUrlMatch = serversJs.match(/const DIRECTORY_URL = "([^"]+)";/);
+    assert.ok(directoryUrlMatch, "servers.js declares the live directory endpoint");
+    const directoryUrl = new URL(directoryUrlMatch[1]);
+    assert.equal(directoryUrl.protocol, "https:", "live directory endpoint must use https");
+    assert.equal(directoryUrl.host, "oeajjfquvmdxqqtiotfa.supabase.co", "live directory endpoint host");
+    assert.equal(directoryUrl.pathname, "/functions/v1/server-directory", "live directory endpoint path");
     assert.ok(serversJs.includes('const CURATED_URL = "/data/servers.json";'));
     assert.match(serversJs, /Promise\.allSettled/);
+    assert.match(serversJs, /AbortSignal\.timeout\(/);
     assert.match(serversJs, /Live directory unavailable; showing curated servers only/);
     assert.match(profileSocialJs, /Decline/);
     assert.match(profileSocialJs, /status: "declined"/);

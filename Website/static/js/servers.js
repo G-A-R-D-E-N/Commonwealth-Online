@@ -244,7 +244,8 @@
   };
 
   const fetchJson = async (url) => {
-    const response = await fetch(url, { cache: "no-cache" });
+    // A hung request must still fall through to the other source.
+    const response = await fetch(url, { cache: "no-cache", signal: AbortSignal.timeout(8000) });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
