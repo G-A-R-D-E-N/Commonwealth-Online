@@ -1,0 +1,38 @@
+[
+  {
+    "$type": "ModListMetadata, Wabbajack.Lib",
+    "title": "Commonwealth Online - Multiplayer",
+    "description": "Explore the Commonwealth together. Commonwealth Online brings multiplayer to Fallout 4, letting you explore the wasteland with friends, join dedicated servers, or host your own private world. This Wabbajack modlist takes care of the setup for you, installing and configuring everything you need to get started.",
+    "author": "Commonwealth Online",
+    "maintainers": [
+      "github/NomadsReach"
+    ],
+    "game": "fallout4",
+    "tags": [
+      "Multiplayer",
+      "SFW",
+      "Steam"
+    ],
+    "nsfw": false,
+    "image_contains_title": true,
+    "force_down": false,
+    "links": {
+      "$type": "Links, Wabbajack.Lib",
+      "image": "https://raw.githubusercontent.com/G-A-R-D-E-N/Commonwealth-Online/main/images/commonwealth-online-multiplayer.png",
+      "readme": "https://commonwealth-online.com/",
+      "download": "https://authored-files.wabbajack.org/Default.wabbajack_ae60c605-9f00-4df6-bd9d-9cdebc14dcac",
+      "machineURL": "CommonwealthOnlineMultiplayer",
+      "discordURL": "https://discord.com/invite/GyfxYG2gzH"
+    },
+    "download_metadata": {
+      "Hash": "TDdNW1cQ6eA=",
+      "Size": 3169207,
+      "NumberOfArchives": 8,
+      "SizeOfArchives": 320315033,
+      "NumberOfInstalledFiles": 3738,
+      "SizeOfInstalledFiles": 861991198,
+      "TotalSize": 1182306231
+    },
+    "version": "1.0"
+  }
+]
