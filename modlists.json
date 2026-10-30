@@ -1,6 +1,5 @@
 [
   {
-    "$type": "ModListMetadata, Wabbajack.Lib",
     "title": "Commonwealth Online - Multiplayer",
     "description": "Explore the Commonwealth together. Commonwealth Online brings multiplayer to Fallout 4, letting you explore the wasteland with friends, join dedicated servers, or host your own private world. This Wabbajack modlist takes care of the setup for you, installing and configuring everything you need to get started.",
     "author": "Commonwealth Online",
@@ -8,32 +7,38 @@
       "github/NomadsReach"
     ],
     "game": "fallout4",
+    "official": false,
     "tags": [
       "Multiplayer",
       "SFW",
       "Steam"
     ],
     "nsfw": false,
+    "utility_list": false,
     "image_contains_title": true,
+    "DisplayVersionOnlyInInstallerView": false,
     "force_down": false,
     "links": {
-      "$type": "Links, Wabbajack.Lib",
       "image": "https://raw.githubusercontent.com/G-A-R-D-E-N/Commonwealth-Online/main/images/commonwealth-online-multiplayer.png",
       "readme": "https://commonwealth-online.com/",
-      "download": "https://authored-files.wabbajack.org/Default.wabbajack_0e2717fa-04d3-440d-936e-2a95d863e428",
+      "download": "https://authored-files.wabbajack.org/Default.wabbajack_4ef944fd-fd2e-42f9-93b5-9036a0414fe8",
       "machineURL": "CommonwealthOnlineMultiplayer",
-      "discordURL": "https://discord.com/invite/GyfxYG2gzH"
+      "discordURL": "https://discord.com/invite/GyfxYG2gzH",
+      "websiteURL": "",
+      "nexusCollection": null
     },
     "download_metadata": {
-      "$type": "DownloadMetadata, Wabbajack.Lib",
-      "Hash": "sae+3BXmCNc=",
-      "Size": 3169222,
+      "Hash": "+58qZrw3TO0=",
+      "Size": 3169224,
       "NumberOfArchives": 8,
       "SizeOfArchives": 320315033,
       "NumberOfInstalledFiles": 3738,
       "SizeOfInstalledFiles": 861991248,
       "TotalSize": 1182306281
     },
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "dateCreated": "1970-01-01T00:00:00Z",
+    "dateUpdated": "2026-10-30T21:09:31.7155693Z",
+    "repositoryName": ""
   }
 ]
