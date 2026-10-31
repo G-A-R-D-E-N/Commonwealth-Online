@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "game": "Fallout4.esm",
+  "sample": true,
+  "classes": {
+    "story": ["01CA6E:PlaceholderSample.esm", "01CA6F:PlaceholderSample.esm"],
+    "companion": ["01D162:PlaceholderSample.esm"],
+    "vendor": ["01CA70:PlaceholderSample.esm"],
+    "town": ["01CA71:PlaceholderSample.esm"],
+    "settler": ["01CA72:PlaceholderSample.esm"],
+    "enemy": ["01CA73:PlaceholderSample.esm"],
+    "animal": ["01CA74:PlaceholderSample.esm"]
+  },
+  "doors": ["01CA75:PlaceholderSample.esm"]
+}

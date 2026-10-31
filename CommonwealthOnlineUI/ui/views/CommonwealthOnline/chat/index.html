@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Chat</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <section class="co-chat" id="coChat" aria-label="Chat">
+      <header class="co-chat-header">
+        <span class="co-chat-title">CHAT</span>
+        <div class="co-chat-channels" role="tablist" aria-label="Chat channel">
+          <button type="button" class="co-chat-channel" id="coChannelGlobal" role="tab" aria-selected="true">Global</button>
+          <button type="button" class="co-chat-channel" id="coChannelFaction" role="tab" aria-selected="false">Faction</button>
+        </div>
+        <button type="button" class="co-chat-close" id="coChatClose" aria-label="Close chat">&#10005;</button>
+      </header>
+      <ol class="co-chat-list" id="coChatList" aria-live="polite"></ol>
+      <p class="co-chat-status" id="coChatStatus"></p>
+      <div class="co-chat-compose">
+        <input type="text" id="coChatInput" autocomplete="off" placeholder="Message global chat" />
+        <span class="co-chat-count" id="coChatCount">0/256</span>
+      </div>
+      <p class="co-chat-hint">Enter send &middot; Tab channel &middot; Esc close</p>
+    </section>
+    <script src="chat.js"></script>
+  </body>
+</html>

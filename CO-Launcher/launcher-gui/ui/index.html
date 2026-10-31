@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'">
+  <title>Commonwealth Online Launcher</title>
+  <link rel="stylesheet" href="launcher.css">
+</head>
+<body>
+  <div class="app">
+    <div class="stage" id="stage">
+      <aside class="left-panel">
+        <img class="brand-logo" src="logo.svg" alt="Commonwealth Online" width="200" height="49">
+
+        <nav class="menu" id="menu" aria-label="Launcher menu">
+          <button type="button" class="menu-item" data-action="play">
+            <span class="menu-item__label">PLAY</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="menu-item" data-action="mods">
+            <span class="menu-item__label">MODS</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="menu-item" data-action="server">
+            <span class="menu-item__label">SERVER</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="menu-item" data-action="logs">
+            <span class="menu-item__label">LOGS</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="menu-item" data-action="quit">
+            <span class="menu-item__label">QUIT</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+        </nav>
+
+        <p class="launcher-version">LAUNCHER 0.1.0</p>
+      </aside>
+
+      <main class="content">
+        <div class="busy" id="busy" role="status" hidden>
+          <span class="busy__label" id="busyLabel"></span>
+          <span class="busy__track"><span class="busy__bar"></span></span>
+        </div>
+
+        <section class="view" id="viewStatus" aria-label="Status">
+          <h1 class="content__title">STATUS</h1>
+          <div class="status">
+            <div class="notice" id="notice" role="alert" hidden>
+              <p class="notice__text" id="noticeText"></p>
+            </div>
+
+            <p class="status-note" id="playNote" hidden></p>
+
+            <section class="card" aria-label="Game">
+              <dl class="card__grid">
+                <dt>GAME FOLDER</dt>
+                <dd id="gameDir">-</dd>
+                <dt>RUNTIME</dt>
+                <dd id="runtime">-</dd>
+                <dt>EXE VERSION</dt>
+                <dd id="exeVersion">-</dd>
+                <dt>SHA-256</dt>
+                <dd id="sha256">-</dd>
+              </dl>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="viewMods" aria-label="Mods" hidden>
+          <h1 class="content__title">MODS</h1>
+          <div class="status">
+            <div class="notice notice--warn" id="modsWarning" role="alert" hidden>
+              <p class="notice__text" id="modsWarningText"></p>
+            </div>
+            <p class="status-note guide__warn" id="modsFailure" role="alert" hidden></p>
+            <p class="status-note" id="modsWaiting" hidden>Nothing listed yet. Press REFRESH.</p>
+            <p class="status-note" id="modsEmpty" hidden>The Commonwealth Online modlist was not found. Download it with Wabbajack and run this launcher from inside that folder.</p>
+            <div class="mods-list" id="modsList"></div>
+            <div class="actions">
+              <button type="button" class="btn" id="modsRescan">REFRESH</button>
+              <button type="button" class="btn" id="modsBack">BACK</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="viewServer" aria-label="Server" hidden>
+          <h1 class="content__title">SERVER</h1>
+          <div class="status">
+            <div class="mods-tabs" role="tablist" aria-label="Server pages" id="serverPanes">
+              <button type="button" class="btn mods-tab" role="tab" id="serverPane_overview" aria-selected="true">OVERVIEW</button>
+              <button type="button" class="btn mods-tab" role="tab" id="serverPane_players" aria-selected="false">PLAYERS</button>
+              <button type="button" class="btn mods-tab" role="tab" id="serverPane_admin" aria-selected="false">ADMIN</button>
+              <button type="button" class="btn mods-tab" role="tab" id="serverPane_settings" aria-selected="false">SETTINGS</button>
+            </div>
+            <p class="status-note" id="serverPaneHint" hidden></p>
+            <p class="status-note guide__warn" id="serverProblem" role="alert" hidden></p>
+            <div class="notice" id="serverReply" role="status" hidden>
+              <p class="notice__text" id="serverReplyText"></p>
+            </div>
+
+            <div class="srv-pane" id="serverBody_overview">
+              <div class="notice" id="serverNote" hidden>
+                <p class="notice__text" id="serverNoteText"></p>
+              </div>
+              <h2 class="mods-sub">HOW DO YOU WANT TO HOST?</h2>
+              <div class="mods-tabs" role="tablist" aria-label="Hosting mode">
+                <button type="button" class="btn mods-tab" role="tab" id="serverTab_p2p" aria-selected="true">STEAM P2P</button>
+                <button type="button" class="btn mods-tab" role="tab" id="serverTab_dedicated" aria-selected="false">DEDICATED</button>
+              </div>
+              <p class="status-note" id="serverModeNote"></p>
+              <div class="notice notice--danger" id="serverDanger" role="alert" hidden>
+                <p class="notice__text"><strong class="notice__lead">WARNING - FOR EXPERTS.</strong> <span id="serverDangerText"></span></p>
+              </div>
+              <section class="card" aria-label="Server">
+                <dl class="card__grid" id="serverCard"></dl>
+              </section>
+              <div class="actions actions--top">
+                <button type="button" class="btn" id="serverRefresh">REFRESH</button>
+                <button type="button" class="btn" id="serverCheck">CHECK NETWORK</button>
+                <button type="button" class="btn" id="serverStart" hidden>START SERVER</button>
+                <button type="button" class="btn" id="serverStop" hidden>STOP SERVER</button>
+              </div>
+              <h2 class="mods-sub">NETWORK CHECK</h2>
+              <p class="status-note" id="serverChecksEmpty">Press CHECK NETWORK to see whether your setup is safe and ready.</p>
+              <ul class="checklist" id="serverChecks"></ul>
+            </div>
+
+            <div class="srv-pane" id="serverBody_players" hidden>
+              <div class="server-row">
+                <input type="text" class="field field--grow" id="serverReason" maxlength="120" autocomplete="off" placeholder="Reason for a kick or ban (optional)" aria-label="Reason">
+                <select class="field" id="serverMuteFor" aria-label="How long a mute lasts">
+                  <option value="">Mute until unmuted</option>
+                  <option value="300">Mute for 5 minutes</option>
+                  <option value="1800">Mute for 30 minutes</option>
+                  <option value="3600">Mute for 1 hour</option>
+                </select>
+              </div>
+              <h2 class="mods-sub">PLAYERS ONLINE</h2>
+              <div class="mods-list" id="serverPlayers"></div>
+              <h2 class="mods-sub">BANNED</h2>
+              <div class="mods-list" id="serverBans"></div>
+              <h2 class="mods-sub">BAN SOMEONE WHO IS NOT ONLINE</h2>
+              <div class="server-row">
+                <select class="field" id="serverBanKind" aria-label="What to ban">
+                  <option value="ip">IP address</option>
+                  <option value="steam">Steam ID</option>
+                </select>
+                <input type="text" class="field field--grow" id="serverBanValue" maxlength="64" autocomplete="off" placeholder="IP address or 17-digit Steam ID" aria-label="IP address or Steam ID">
+                <button type="button" class="btn" id="serverBanAdd">BAN</button>
+              </div>
+            </div>
+
+            <div class="srv-pane" id="serverBody_admin" hidden>
+              <h2 class="mods-sub">ADMIN COMMAND</h2>
+              <div class="server-row">
+                <input type="text" class="field field--grow" id="serverSlash" maxlength="300" autocomplete="off" spellcheck="false" placeholder="Type / to see every command, for example /status" aria-label="Admin command">
+                <button type="button" class="btn" id="serverSlashSend">RUN</button>
+              </div>
+              <ul class="srv-suggest" id="serverSuggest" role="listbox" hidden></ul>
+              <div class="srv-log-head">
+                <h2 class="mods-sub">RESPONSES</h2>
+                <button type="button" class="btn" id="serverLogClear">CLEAR</button>
+              </div>
+              <div class="srv-log" id="serverLog"></div>
+              <h2 class="mods-sub">ALL COMMANDS</h2>
+              <div class="mods-list" id="serverCommands"></div>
+            </div>
+
+            <div class="srv-pane" id="serverBody_settings" hidden>
+              <p class="status-note" id="serverFormNote"></p>
+              <div class="mods-list" id="serverForm"></div>
+              <div class="actions actions--top">
+                <button type="button" class="btn" id="serverReset">UNDO CHANGES</button>
+                <button type="button" class="btn" id="serverSave">SAVE</button>
+                <button type="button" class="btn" id="serverSaveRestart" hidden>SAVE AND RESTART</button>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn" id="serverBack">BACK</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="viewLogs" aria-label="Logs" hidden>
+          <h1 class="content__title">LOGS</h1>
+          <div class="status">
+            <div class="actions actions--top">
+              <button type="button" class="btn" id="logsShare">SHARE LOGS</button>
+            </div>
+            <p class="status-note">SHARE LOGS saves a zip of your Commonwealth Online, F4SE, PrismaUI and crash logs to your Desktop (or Downloads). Your Windows user name, IP addresses, Steam ID and any tokens are removed first. Send the zip to the team when you report a problem.</p>
+            <p class="status-note guide__warn" id="logsFailure" role="alert" hidden></p>
+            <div class="notice" id="logsDone" hidden>
+              <p class="notice__text" id="logsDoneText"></p>
+              <button type="button" class="btn" id="logsReveal">SHOW IN FOLDER</button>
+            </div>
+            <p class="status-note" id="logsWaiting" hidden>Nothing scanned yet. Press REFRESH.</p>
+            <p class="status-note" id="logsEmpty" hidden>No crashes were found in your logs.</p>
+            <div class="mods-list" id="logsList"></div>
+            <div class="actions">
+              <button type="button" class="btn" id="logsRescan">RESCAN</button>
+              <button type="button" class="btn" id="logsBack">BACK</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <section class="opening" id="opening" role="status" aria-live="polite" hidden>
+      <span class="opening__wheel" aria-hidden="true"></span>
+      <p class="opening__label">OPENING MO2</p>
+    </section>
+
+    <section class="dialog" id="dialog" hidden>
+      <div class="dialog__panel" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+        <h2 class="dialog__title" id="dialogTitle"></h2>
+        <div class="dialog__body" id="dialogBody" hidden></div>
+        <nav class="dialog__options" id="dialogOptions" aria-label="Dialog options"></nav>
+      </div>
+    </section>
+
+    <footer class="prompt-bar" aria-label="Keyboard prompts">
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--text" aria-hidden="true">↑↓</span>
+        <span class="prompt__label">MOVE</span>
+      </div>
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--text" aria-hidden="true">ENTER</span>
+        <span class="prompt__label">SELECT</span>
+      </div>
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--text" aria-hidden="true">ESC</span>
+        <span class="prompt__label">BACK</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="mods.js"></script>
+  <script src="logs.js"></script>
+  <script src="server.js"></script>
+  <script src="server-settings.js"></script>
+  <script src="server-admin.js"></script>
+  <script src="launcher.js"></script>
+</body>
+</html>

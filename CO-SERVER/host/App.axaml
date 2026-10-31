@@ -1,0 +1,213 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="CommonwealthOnline.Host.App"
+             RequestedThemeVariant="Dark">
+
+  <Application.Resources>
+    <ResourceDictionary>
+
+      <!-- ============ Palette ============ -->
+      <Color x:Key="CoBackground">#0A0E07</Color>
+      <Color x:Key="CoBackgroundTop">#12180C</Color>
+      <Color x:Key="CoSurface">#151B0F</Color>
+      <Color x:Key="CoSurface2">#1C2314</Color>
+      <Color x:Key="CoSurface3">#232C18</Color>
+      <Color x:Key="CoBorder">#2C3720</Color>
+      <Color x:Key="CoBorderBright">#43532F</Color>
+      <Color x:Key="CoAccent">#E6D28C</Color>
+      <Color x:Key="CoAccentBright">#F6ECBE</Color>
+      <Color x:Key="CoText">#D8D2BE</Color>
+      <Color x:Key="CoMuted">#8A9068</Color>
+      <Color x:Key="CoGreen">#8BD05C</Color>
+      <Color x:Key="CoGreenDim">#3E5C28</Color>
+      <Color x:Key="CoDanger">#C85450</Color>
+      <Color x:Key="CoDangerDim">#5A2A28</Color>
+
+      <SolidColorBrush x:Key="CoBackgroundBrush" Color="{StaticResource CoBackground}" />
+      <SolidColorBrush x:Key="CoSurfaceBrush" Color="{StaticResource CoSurface}" />
+      <SolidColorBrush x:Key="CoSurface2Brush" Color="{StaticResource CoSurface2}" />
+      <SolidColorBrush x:Key="CoSurface3Brush" Color="{StaticResource CoSurface3}" />
+      <SolidColorBrush x:Key="CoBorderBrush" Color="{StaticResource CoBorder}" />
+      <SolidColorBrush x:Key="CoBorderBrightBrush" Color="{StaticResource CoBorderBright}" />
+      <SolidColorBrush x:Key="CoAccentBrush" Color="{StaticResource CoAccent}" />
+      <SolidColorBrush x:Key="CoAccentBrightBrush" Color="{StaticResource CoAccentBright}" />
+      <SolidColorBrush x:Key="CoTextBrush" Color="{StaticResource CoText}" />
+      <SolidColorBrush x:Key="CoMutedBrush" Color="{StaticResource CoMuted}" />
+      <SolidColorBrush x:Key="CoGreenBrush" Color="{StaticResource CoGreen}" />
+      <SolidColorBrush x:Key="CoDangerBrush" Color="{StaticResource CoDanger}" />
+
+      <!-- ============ Gradients ============ -->
+      <LinearGradientBrush x:Key="CoWindowBrush" StartPoint="0%,0%" EndPoint="0%,100%">
+        <GradientStop Offset="0" Color="{StaticResource CoBackgroundTop}" />
+        <GradientStop Offset="1" Color="{StaticResource CoBackground}" />
+      </LinearGradientBrush>
+
+      <LinearGradientBrush x:Key="CoBarBrush" StartPoint="0%,0%" EndPoint="0%,100%">
+        <GradientStop Offset="0" Color="#1B2212" />
+        <GradientStop Offset="1" Color="#12180C" />
+      </LinearGradientBrush>
+
+      <LinearGradientBrush x:Key="CoAccentButtonBrush" StartPoint="0%,0%" EndPoint="0%,100%">
+        <GradientStop Offset="0" Color="#F0DC9C" />
+        <GradientStop Offset="1" Color="#D8C079" />
+      </LinearGradientBrush>
+
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+
+    <!-- Section header label -->
+    <Style Selector="TextBlock.section">
+      <Setter Property="Foreground" Value="{StaticResource CoAccentBrush}" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="LetterSpacing" Value="2" />
+    </Style>
+
+    <!-- Small muted field label -->
+    <Style Selector="TextBlock.fieldlabel">
+      <Setter Property="Foreground" Value="{StaticResource CoMutedBrush}" />
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="LetterSpacing" Value="1" />
+      <Setter Property="Margin" Value="2,0,0,3" />
+    </Style>
+
+    <!-- Text inputs -->
+    <Style Selector="TextBox">
+      <Setter Property="Background" Value="{StaticResource CoSurface2Brush}" />
+      <Setter Property="Foreground" Value="{StaticResource CoTextBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource CoBorderBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="CaretBrush" Value="{StaticResource CoAccentBrush}" />
+      <Setter Property="SelectionBrush" Value="{StaticResource CoGreenDim}" />
+      <Setter Property="Padding" Value="9,7" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="BorderBrush" Value="{StaticResource CoBorderBrightBrush}" />
+    </Style>
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+      <Setter Property="BorderBrush" Value="{StaticResource CoAccentBrush}" />
+    </Style>
+
+    <!-- Combo -->
+    <Style Selector="ComboBox">
+      <Setter Property="Background" Value="{StaticResource CoSurface2Brush}" />
+      <Setter Property="Foreground" Value="{StaticResource CoTextBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource CoBorderBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="Padding" Value="9,6" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- Checkbox -->
+    <Style Selector="CheckBox">
+      <Setter Property="Foreground" Value="{StaticResource CoTextBrush}" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- Base button -->
+    <Style Selector="Button">
+      <Setter Property="Background" Value="{StaticResource CoSurface3Brush}" />
+      <Setter Property="Foreground" Value="{StaticResource CoTextBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource CoBorderBrightBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="Padding" Value="14,7" />
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.12" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Button:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource CoBorderBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource CoAccentBrush}" />
+    </Style>
+    <Style Selector="Button:disabled">
+      <Setter Property="Opacity" Value="0.4" />
+    </Style>
+
+    <!-- Accent (primary) button -->
+    <Style Selector="Button.accent">
+      <Setter Property="Background" Value="{StaticResource CoAccentButtonBrush}" />
+      <Setter Property="Foreground" Value="#0C1006" />
+      <Setter Property="BorderBrush" Value="{StaticResource CoAccentBrightBrush}" />
+      <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+    <Style Selector="Button.accent:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource CoAccentBrightBrush}" />
+      <Setter Property="Foreground" Value="#0C1006" />
+    </Style>
+
+    <!-- Danger button -->
+    <Style Selector="Button.danger">
+      <Setter Property="Background" Value="#3A1E1D" />
+      <Setter Property="Foreground" Value="{StaticResource CoDangerBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource CoDangerBrush}" />
+      <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+    <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#552726" />
+      <Setter Property="Foreground" Value="#F0B4B2" />
+    </Style>
+
+    <!-- Ghost / outline button -->
+    <Style Selector="Button.ghost">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource CoAccentBrush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource CoBorderBrightBrush}" />
+    </Style>
+    <Style Selector="Button.ghost:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource CoSurface2Brush}" />
+      <Setter Property="BorderBrush" Value="{StaticResource CoAccentBrush}" />
+    </Style>
+
+    <!-- Status dot -->
+    <Style Selector="Ellipse.dot">
+      <Setter Property="Fill" Value="{StaticResource CoDangerBrush}" />
+    </Style>
+    <Style Selector="Ellipse.dot.on">
+      <Setter Property="Fill" Value="{StaticResource CoGreenBrush}" />
+    </Style>
+
+    <!-- Status pill: glow green when running, quiet red when stopped -->
+    <Style Selector="Border.pill">
+      <Setter Property="BorderBrush" Value="{StaticResource CoBorderBrightBrush}" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="BorderBrush" Duration="0:0:0.2" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Border.pill.on">
+      <Setter Property="BorderBrush" Value="{StaticResource CoGreenBrush}" />
+      <Setter Property="BoxShadow" Value="0 0 16 0 #558BD05C" />
+    </Style>
+
+    <!-- Cards lift off the background -->
+    <Style Selector="Border.card">
+      <Setter Property="BoxShadow" Value="0 3 14 0 #4D000000" />
+    </Style>
+
+    <!-- ListBox rows -->
+    <Style Selector="ListBox">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBoxItem">
+      <Setter Property="Padding" Value="6,4" />
+      <Setter Property="CornerRadius" Value="4" />
+    </Style>
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource CoSurface3Brush}" />
+    </Style>
+
+  </Application.Styles>
+
+</Application>

@@ -1,0 +1,129 @@
+name: Windows MSVC compile
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ui-msvc:
+    name: CommonwealthOnlineUI MSVC compile (Windows)
+    if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+    runs-on: windows-latest
+    env:
+      _MSPDBSRV_ENDPOINT_: co-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Initialize CommonLibF4 headers
+        run: |
+          set -euo pipefail
+          git ls-files --stage CommonwealthOnlineUI/ThirdParty/CommonLibF4
+          git config -f .gitmodules --get-regexp '^submodule\..*\.url$'
+          git submodule sync --recursive
+          git submodule update --init --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::re.nomadicinteractive.dev unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://re.nomadicinteractive.dev/ReverseEng/commonlib_NonVR.git" submodule update --init --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4
+          }
+          git submodule status --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4
+          test -s CommonwealthOnlineUI/ThirdParty/CommonLibF4/xmake.lua
+          test -s CommonwealthOnlineUI/ThirdParty/CommonLibF4/lib/commonlib-shared/xmake.lua
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: '3.0.4'
+
+      - name: Compile and audit CommonwealthOnlineUI
+        run: python scripts/windows-compile-ci.py ui
+
+  beta-msvc:
+    name: CO-BETA plugin MSVC compile and tests (Windows)
+    if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+    runs-on: windows-latest
+    env:
+      _MSPDBSRV_ENDPOINT_: co-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Initialize canonical CommonLib
+        run: |
+          set -euo pipefail
+          git ls-files --stage CO-BETA/plugin/lib/commonlibf4
+          git config -f .gitmodules --get-regexp '^submodule\..*\.url$'
+          git submodule sync --recursive
+          git submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::re.nomadicinteractive.dev unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://re.nomadicinteractive.dev/ReverseEng/commonlib_NonVR.git" submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4
+          }
+          git submodule status --recursive -- CO-BETA/plugin/lib/commonlibf4
+          git -C CO-BETA/plugin/lib/commonlibf4 ls-files --error-unmatch xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/lib/commonlib-shared/xmake.lua
+
+      - name: Initialize pinned GameNetworkingSockets
+        run: |
+          set -euo pipefail
+          git submodule update --init --depth 1 -- CO-BETA/ThirdParty/GameNetworkingSockets-src
+          actual="$(git -C CO-BETA/ThirdParty/GameNetworkingSockets-src rev-parse HEAD)"
+          test "$actual" = "f4525e39ee10f6b45181fd92d01fee75f7d71756" \
+            || { echo "::error::GNS pin mismatch: $actual"; exit 1; }
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - name: Compile, test and audit the CO-BETA plugin DLLs
+        run: python scripts/windows-compile-ci.py beta
+
+  report:
+    name: Report to the private PR
+    needs: [ui-msvc, beta-msvc]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=success; description="skipped (all jobs gated off)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-windows-compile" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-windows-compile ($description)"

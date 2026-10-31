@@ -1,0 +1,152 @@
+name: Repository Audit Regressions
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit-regressions:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+      - name: Run repository audit regression contracts
+        run: python3 tests/audit/test_repository_audit_regressions.py
+      - name: Run first-join spawn safety regression
+        run: python3 tests/audit/test_first_join_spawn_safety.py
+      - name: Run onboarding resume bind contract
+        run: python3 tests/audit/test_onboarding_resume_bind.py
+      - name: Run host autostart and server lifetime contracts
+        run: python3 tests/audit/test_host_autostarts_server.py
+      - name: Run join worker ownership contracts
+        run: python3 tests/audit/test_join_worker_ownership.py
+      - name: Run disconnect screen contracts
+        run: python3 tests/audit/test_disconnect_screen_contract.py
+      - name: Run vanilla start onboarding contracts
+        run: python3 tests/audit/test_vanilla_start_onboarding.py
+      - name: Run Steam guest profile key contracts
+        run: python3 tests/audit/test_steam_guest_profile_key_contract.py
+      - name: Run voice steam mute contracts
+        run: python3 tests/audit/test_voice_steam_mute_contract.py
+      - name: Run CommonwealthOnline.esp data contract
+        run: python3 tests/audit/test_esp_content_contract.py
+      - name: Run PR 70 transport and shutdown regressions
+        run: python3 tests/audit/test_pr70_transport_shutdown_regressions.py
+      - name: PR 70 world-state regression contracts
+        run: python3 tests/audit/test_pr70_world_state_regressions.py
+      - name: PR 70 post-commit regression contracts
+        run: python3 tests/audit/test_pr70_post_commit_regressions.py
+      - name: PR 70 admin-token owner regression contracts
+        run: python3 tests/audit/test_pr70_admin_token_owner_regressions.py
+      - name: Admin-token FIFO regression contracts
+        run: python3 tests/audit/test_admin_token_fifo_regressions.py
+      - name: Admin-token POSIX mode regression contracts
+        run: python3 tests/audit/test_admin_token_posix_mode_regressions.py
+      - name: Admin-token TOCTOU regression contracts
+        run: python3 tests/audit/test_admin_token_toctou_regressions.py
+      - name: Papyrus package contract
+        run: python3 tests/audit/test_papyrus_package_contract.py
+      - name: Independent native Linux test ordering
+        run: python3 scripts/test-native-ci-step-order.py
+      - name: Forgejo release publisher contracts
+        run: python3 tests/audit/test_forgejo_release.py
+      - name: UI release provenance contract
+        run: python3 tests/audit/test_ui_release_provenance.py
+      - name: UI API layout contract
+        run: python3 tests/audit/test_ui_api_layout_contract.py
+      - name: Quest menu availability contract
+        run: python3 tests/audit/test_quest_menu_availability.py
+      - name: Steam host lobby contract
+        run: python3 tests/audit/test_steam_host_lobby_contract.py
+      - name: Steam join gaps contract
+        run: python3 tests/audit/test_steam_join_gaps_contract.py
+      - name: Proxy sneak action contract
+        run: python3 tests/audit/test_proxy_sneak_action_contract.py
+      - name: Browser controller routing contract
+        run: python3 tests/audit/test_browser_controller_routing.py
+      - name: In-game server settings bridge contract
+        run: python3 tests/audit/test_server_settings_bridge_contract.py
+      - name: Browser controller API contract
+        run: python3 tests/audit/test_browser_controller_api.py
+      - name: Browser controller binding contract
+        run: python3 tests/audit/test_browser_controller_bindings.py
+      - name: Runner toolchain provisioning contract
+        run: python3 tests/audit/test_runner_toolchain_provisioning.py
+      - name: World policy generator regressions
+        run: python3 tests/test_world_policy_generator.py
+      - name: Mutation ring decoder regression
+        run: python3 tests/test_mutation_ring_decoder.py
+      - name: Networking session shutdown contracts
+        run: python3 tests/audit/test_networking_session_shutdown.py
+      - name: Pip-Boy colour clamp contract
+        run: python3 tests/audit/test_pipboy_colour_clamp_contract.py
+      - name: Settlement access build-list contract
+        run: python3 tests/audit/test_settlement_access_contract.py
+      - name: Settlement access bridge contract
+        run: python3 tests/audit/test_settlement_access_bridge_contract.py
+      - name: Settlement capture ownership UI contract
+        run: python3 tests/audit/test_settlement_capture_ui_contract.py
+      - name: Workshop zones data contract
+        run: python3 tests/audit/test_workshop_zones_data.py
+      - name: Server double-click pause contract
+        run: python3 tests/audit/test_server_double_click_pause_contract.py
+      - name: Share log previous session contract
+        run: python3 tests/audit/test_share_log_previous_session.py
+      - name: Orphan test wiring contract
+        run: python3 tests/audit/test_orphan_tests_wired.py
+      - name: Public listing defaults and test privacy contract
+        run: python3 tests/audit/test_public_listing_defaults_contract.py
+      - name: Workflow path filter contracts
+        run: |
+          python3 -c "import yaml" 2>/dev/null || python3 -m pip install --disable-pip-version-check --target "$RUNNER_TEMP/audit-pylib" pyyaml==6.0.2
+          PYTHONPATH="$RUNNER_TEMP/audit-pylib${PYTHONPATH:+:$PYTHONPATH}" python3 tests/audit/test_workflow_path_filters.py
+      - name: Git hook regressions
+        run: |
+          node .githooks/commit-msg.test.js
+          node .githooks/pre-push.test.js
+          node .githooks/pre-commit-secrets.test.js
+      - name: Browser UI regressions
+        working-directory: CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/tests
+        run: node --test *.test.js
+      - name: Whitespace check
+        if: always()
+        run: git diff --check
+
+  report:
+    name: Report to the private PR
+    needs: [audit-regressions]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=success; description="skipped (all jobs gated off)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-audit-regressions" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-audit-regressions ($description)"
