@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Capture</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="co-capture-hud" id="coCaptureHud" aria-live="polite" hidden>
+      <p class="co-capture-name" id="coCaptureName"></p>
+      <div class="co-capture-bar" id="coCaptureBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="co-capture-fill" id="coCaptureFill"></div>
+      </div>
+      <p class="co-capture-status" id="coCaptureStatus"></p>
+      <p class="co-capture-message" id="coCaptureMessage" hidden></p>
+    </div>
+    <script src="capture-hud.js"></script>
+  </body>
+</html>

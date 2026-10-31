@@ -1,0 +1,319 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:CommonwealthOnline.Host.ViewModels"
+        x:Class="CommonwealthOnline.Host.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="1120" Height="800"
+        MinWidth="960" MinHeight="680"
+        Title="Commonwealth Online — Server Host"
+        Icon="/Assets/logo.png"
+        Background="{StaticResource CoWindowBrush}">
+
+  <Grid RowDefinitions="Auto,*,Auto">
+    <Border Grid.Row="0" Background="{StaticResource CoBarBrush}"
+            BorderBrush="{StaticResource CoBorderBrush}" BorderThickness="0,0,0,1"
+            Padding="20,12">
+      <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+          <Image Source="/Assets/logo.png" Height="42" VerticalAlignment="Center" />
+          <StackPanel VerticalAlignment="Center" Spacing="1">
+            <TextBlock Text="COMMONWEALTH ONLINE" Foreground="{StaticResource CoAccentBrush}"
+                       FontWeight="Bold" FontSize="16" LetterSpacing="3" />
+            <TextBlock Text="DEDICATED SERVER HOST" Foreground="{StaticResource CoMutedBrush}"
+                       FontSize="10" LetterSpacing="4" />
+          </StackPanel>
+        </StackPanel>
+
+        <Border Grid.Column="2" Classes="pill" Classes.on="{Binding IsRunning}"
+                Background="{StaticResource CoSurface2Brush}"
+                BorderThickness="1"
+                CornerRadius="14" Padding="14,7" VerticalAlignment="Center">
+          <StackPanel Orientation="Horizontal" Spacing="9" VerticalAlignment="Center">
+            <Ellipse Classes="dot" Classes.on="{Binding IsRunning}"
+                     Width="10" Height="10" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding StatusText}" Foreground="{StaticResource CoTextBrush}"
+                       FontWeight="SemiBold" FontSize="13" LetterSpacing="1"
+                       VerticalAlignment="Center" />
+            <TextBlock Text="Password protected" IsVisible="{Binding IsPasswordProtected}"
+                       Foreground="{StaticResource CoMutedBrush}" FontSize="11"
+                       VerticalAlignment="Center" />
+          </StackPanel>
+        </Border>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="1" ColumnDefinitions="390,*" Margin="20,18,20,14">
+      <Border Grid.Column="0" Classes="card" Background="{StaticResource CoSurfaceBrush}"
+              BorderBrush="{StaticResource CoBorderBrush}" BorderThickness="1"
+              CornerRadius="8" Padding="0" Margin="0,0,18,0">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="18">
+          <StackPanel Spacing="12">
+            <TextBlock Classes="section" Text="CONFIGURATION" />
+
+            <StackPanel Spacing="4">
+              <TextBlock Classes="fieldlabel" Text="SERVER NAME" />
+              <TextBox Watermark="My Commonwealth server" Text="{Binding ServerName}" />
+            </StackPanel>
+
+            <StackPanel Spacing="4">
+              <TextBlock Classes="fieldlabel" Text="DESCRIPTION" />
+              <TextBox Watermark="Optional server description" Text="{Binding ServerDescription}" />
+            </StackPanel>
+
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,8,0">
+                <TextBlock Classes="fieldlabel" Text="HOST ADDRESS" />
+                <TextBox Watermark="0.0.0.0" Text="{Binding Host}" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" Spacing="4" Width="96">
+                <TextBlock Classes="fieldlabel" Text="PORT" />
+                <TextBox Watermark="7777" Text="{Binding Port}" />
+              </StackPanel>
+            </Grid>
+
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,8,0">
+                <TextBlock Classes="fieldlabel" Text="MAX PLAYERS" />
+                <TextBox Watermark="16" Text="{Binding MaxPlayers}" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" Spacing="4" Width="96">
+                <TextBlock Classes="fieldlabel" Text="ADMIN PORT" />
+                <TextBox Watermark="7779" Text="{Binding AdminPort}" />
+              </StackPanel>
+            </Grid>
+
+            <StackPanel Spacing="4">
+              <TextBlock Classes="fieldlabel" Text="SERVER PASSWORD (OPTIONAL)" />
+              <TextBox PasswordChar="•" Watermark="Server password (optional)" Text="{Binding ServerPassword}" />
+            </StackPanel>
+
+            <StackPanel Spacing="4">
+              <TextBlock Classes="fieldlabel" Text="GAME MODE" />
+              <ComboBox ItemsSource="{Binding GameModeLabels}"
+                        SelectedItem="{Binding GameModeLabel}"
+                        HorizontalAlignment="Stretch" />
+              <TextBlock Text="{Binding GameModeDescription}"
+                         Foreground="{StaticResource CoMutedBrush}" FontSize="11"
+                         TextWrapping="Wrap" />
+            </StackPanel>
+
+            <Border Background="{StaticResource CoSurface2Brush}"
+                    BorderBrush="{StaticResource CoBorderBrush}" BorderThickness="1"
+                    CornerRadius="5" Padding="10,8">
+              <TextBlock Text="Native C++ server: GNS transport is built in and always enabled."
+                         Foreground="{StaticResource CoMutedBrush}" FontSize="11"
+                         TextWrapping="Wrap" />
+            </Border>
+
+            <Border Background="{StaticResource CoSurface2Brush}"
+                    BorderBrush="{StaticResource CoBorderBrush}" BorderThickness="1"
+                    CornerRadius="5" Padding="10,10">
+              <StackPanel Spacing="9">
+                <TextBlock Classes="section" Text="PROTOCOL V2 IDENTITY" />
+                <CheckBox Content="Validated V2 identity (required)"
+                          IsChecked="{Binding RequireV2Identity}"
+                          IsEnabled="False" />
+                <CheckBox Content="Enable durable persistence"
+                          IsChecked="{Binding EnablePersistence}" />
+
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="fieldlabel" Text="CLIENT PACKAGE FOLDER" />
+                  <Grid ColumnDefinitions="*,Auto,Auto">
+                    <TextBox Grid.Column="0" Text="{Binding ClientPackageFolder}"
+                             Watermark="Optional AE/NG/OG client package"
+                             ToolTip.Tip="Select the package that contains CommonwealthOnlineClient.json." />
+                    <Button Grid.Column="1" Content="Browse..." Click="BrowseClientPackage" Margin="8,0,0,0" />
+                    <Button Grid.Column="2" Content="Refresh" Command="{Binding RefreshClientPackageCommand}" Margin="8,0,0,0" />
+                  </Grid>
+                  <TextBlock Text="{Binding ClientPackageStatus}" Foreground="{StaticResource CoMutedBrush}"
+                             FontSize="10" TextWrapping="Wrap" />
+                </StackPanel>
+
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="fieldlabel" Text="DURABLE STATE FILE" />
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBox Grid.Column="0" Text="{Binding DurableStatePath}"
+                             Watermark="durable-state.json"
+                             ToolTip.Tip="Relative paths use the Host package directory." />
+                    <Button Grid.Column="1" Content="Browse..." Click="BrowseStatePath"
+                            Margin="8,0,0,0" IsEnabled="{Binding !IsRunning}" />
+                  </Grid>
+                  <TextBlock Text="{Binding DurableStatePathStatus}" Foreground="{StaticResource CoMutedBrush}"
+                             FontSize="10" TextWrapping="Wrap" />
+                </StackPanel>
+
+                <TextBlock Text="{Binding DetectedIdentityText}" Foreground="{StaticResource CoAccentBrush}"
+                           FontSize="10" TextWrapping="Wrap" />
+
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="fieldlabel" Text="REQUIRED CLIENT VERSION" />
+                  <TextBox Watermark="Optional exact version" Text="{Binding RequiredClientVersion}" />
+                </StackPanel>
+
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="fieldlabel" Text="REQUIRED FALLOUT RUNTIME" />
+                  <TextBox Watermark="Optional exact runtime" Text="{Binding RequiredFalloutRuntimeVersion}" />
+                </StackPanel>
+
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="fieldlabel" Text="CONTENT MANIFEST SHA-256" />
+                  <TextBox Watermark="Optional 64-character fingerprint"
+                           Text="{Binding RequiredContentManifestFingerprint}" />
+                </StackPanel>
+
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="fieldlabel" Text="REQUIRED CAPABILITIES" />
+                  <TextBox Watermark="Comma-separated capabilities"
+                           Text="{Binding RequiredCapabilitiesText}" />
+                  <ListBox ItemsSource="{Binding DetectedCapabilities}"
+                           SelectionChanged="ClientCapabilitiesChanged"
+                           SelectionMode="Multiple" Height="70"
+                           ToolTip.Tip="Only capabilities present in the selected canonical manifest are selectable." />
+                </StackPanel>
+
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="fieldlabel" Text="RESUME TOKEN LIFETIME (HOURS)" />
+                  <TextBox Watermark="720" Text="{Binding ResumeTokenLifetimeHours}" />
+                </StackPanel>
+
+                <CheckBox Content="Announce this server on the local network"
+                          IsChecked="{Binding EnableLanDiscovery}" />
+
+                <StackPanel Spacing="4">
+                  <TextBlock Classes="fieldlabel" Text="LAN DISCOVERY PORT" />
+                  <TextBox Watermark="7778" Text="{Binding LanDiscoveryPort}" />
+                </StackPanel>
+
+                <CheckBox Content="List publicly in the Commonwealth Online server browser"
+                          IsChecked="{Binding ListPublicly}" />
+                <TextBlock Text="{Binding PublicListingStatus}" Foreground="{StaticResource CoMutedBrush}"
+                           TextWrapping="Wrap" />
+                <TextBlock Text="{Binding PublicListingHint}" IsVisible="{Binding ListPublicly}"
+                           Foreground="{StaticResource CoTextBrush}" FontSize="11"
+                           TextWrapping="Wrap" />
+              </StackPanel>
+            </Border>
+
+            <Button Classes="ghost" Content="Save configuration"
+                    Command="{Binding SaveCommand}"
+                    HorizontalAlignment="Stretch" Margin="0,4,0,0" />
+          </StackPanel>
+        </ScrollViewer>
+      </Border>
+
+      <TabControl Grid.Column="1">
+        <TabItem Header="DASHBOARD">
+          <Grid RowDefinitions="*,Auto">
+        <Border Grid.Row="0" Classes="card" Background="{StaticResource CoSurfaceBrush}"
+                BorderBrush="{StaticResource CoBorderBrush}" BorderThickness="1"
+                CornerRadius="8" Padding="0">
+          <Grid RowDefinitions="Auto,*">
+            <Border Grid.Row="0" Background="{StaticResource CoSurface2Brush}"
+                    BorderBrush="{StaticResource CoBorderBrush}" BorderThickness="0,0,0,1"
+                    CornerRadius="8,8,0,0" Padding="14,9">
+              <StackPanel Orientation="Horizontal" Spacing="9">
+                <Ellipse Classes="dot" Classes.on="{Binding IsRunning}"
+                         Width="9" Height="9" VerticalAlignment="Center" />
+                <TextBlock Classes="section" Text="SERVER LOG" VerticalAlignment="Center" />
+              </StackPanel>
+            </Border>
+            <ScrollViewer Grid.Row="1" Padding="14,10" x:Name="LogScroll">
+              <ItemsControl ItemsSource="{Binding Log}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding}" Foreground="{StaticResource CoTextBrush}"
+                               FontFamily="Cascadia Mono,Consolas,Menlo,monospace" FontSize="12"
+                               TextWrapping="Wrap" Margin="0,0,0,1" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </Grid>
+        </Border>
+
+        <Border Grid.Row="1" Classes="card" Background="{StaticResource CoSurfaceBrush}"
+                BorderBrush="{StaticResource CoBorderBrush}" BorderThickness="1"
+                CornerRadius="8" Padding="0" Margin="0,14,0,0" Height="210">
+          <Grid RowDefinitions="Auto,*,Auto">
+            <Border Grid.Row="0" Background="{StaticResource CoSurface2Brush}"
+                    BorderBrush="{StaticResource CoBorderBrush}" BorderThickness="0,0,0,1"
+                    CornerRadius="8,8,0,0" Padding="14,9">
+              <DockPanel>
+                <TextBlock DockPanel.Dock="Left" Classes="section" Text="PLAYERS"
+                           VerticalAlignment="Center" />
+                <TextBlock DockPanel.Dock="Right" Text="{Binding StatsText}"
+                           Foreground="{StaticResource CoMutedBrush}" FontSize="11"
+                           FontFamily="Cascadia Mono,Consolas,monospace"
+                           HorizontalAlignment="Right" VerticalAlignment="Center" />
+              </DockPanel>
+            </Border>
+
+            <ListBox Grid.Row="1" Margin="6,4"
+                     ItemsSource="{Binding Players}" SelectedItem="{Binding SelectedPlayer}">
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:PlayerRow">
+                  <Grid ColumnDefinitions="52,*,Auto">
+                    <TextBlock Grid.Column="0" Text="{Binding PlayerId, StringFormat='#{0}'}"
+                               Foreground="{StaticResource CoAccentBrush}" FontWeight="Bold"
+                               FontFamily="Cascadia Mono,Consolas,monospace" FontSize="12"
+                               VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="0">
+                      <TextBlock Text="{Binding Endpoint}" Foreground="{StaticResource CoTextBrush}"
+                                 FontFamily="Cascadia Mono,Consolas,monospace" FontSize="13" />
+                      <TextBlock Text="{Binding ConnectedAtDisplay, StringFormat='connected {0}'}"
+                                 Foreground="{StaticResource CoMutedBrush}"
+                                 FontFamily="Cascadia Mono,Consolas,monospace" FontSize="10" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="2"
+                               Text="{Binding LastPacketDisplay, StringFormat='last {0}'}"
+                               Foreground="{StaticResource CoMutedBrush}"
+                               FontFamily="Cascadia Mono,Consolas,monospace" FontSize="11"
+                               VerticalAlignment="Center" />
+                  </Grid>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8"
+                        HorizontalAlignment="Right" Margin="10,0,10,10">
+              <Button Content="Kick" Command="{Binding KickCommand}" Padding="22,5" />
+              <Button Classes="danger" Content="Ban" Command="{Binding BanCommand}" Padding="22,5" />
+            </StackPanel>
+          </Grid>
+        </Border>
+          </Grid>
+        </TabItem>
+        <TabItem Header="GUIDE / HELP">
+          <Border Classes="card" Background="{StaticResource CoSurfaceBrush}"
+                  BorderBrush="{StaticResource CoBorderBrush}" BorderThickness="1"
+                  CornerRadius="8" Padding="20">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+              <TextBlock Text="{Binding GuideText}" Foreground="{StaticResource CoTextBrush}"
+                         FontFamily="Cascadia Mono,Consolas,Menlo,monospace" FontSize="12"
+                         TextWrapping="Wrap" />
+            </ScrollViewer>
+          </Border>
+        </TabItem>
+      </TabControl>
+    </Grid>
+
+    <Border Grid.Row="2" Background="{StaticResource CoBarBrush}"
+            BorderBrush="{StaticResource CoBorderBrush}" BorderThickness="0,1,0,0"
+            Padding="20,14">
+      <Grid ColumnDefinitions="*,Auto,Auto">
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <TextBlock Text="●" Foreground="{StaticResource CoMutedBrush}" FontSize="10"
+                     VerticalAlignment="Center" />
+          <TextBlock Text="Local admin channel · 127.0.0.1"
+                     Foreground="{StaticResource CoMutedBrush}" FontSize="11"
+                     FontFamily="Cascadia Mono,Consolas,monospace" VerticalAlignment="Center" />
+        </StackPanel>
+        <Button Grid.Column="1" Classes="accent" Content="▶  START SERVER"
+                Command="{Binding StartCommand}" Margin="0,0,10,0" Padding="26,9"
+                FontSize="14" />
+        <Button Grid.Column="2" Classes="danger" Content="■  STOP"
+                Command="{Binding StopCommand}" Padding="26,9" FontSize="14" />
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

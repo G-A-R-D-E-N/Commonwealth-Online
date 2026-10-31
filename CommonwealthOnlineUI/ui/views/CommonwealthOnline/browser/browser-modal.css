@@ -1,0 +1,108 @@
+/* Commonwealth Online — embedded server browser modal (host provides .browser-view) */
+
+/* Sit fully to the right of the left nav column (24% / min 272px). */
+.browser-view {
+  position: absolute;
+  top: 50%;
+  left: max(
+    calc(var(--co-panel-width, 24%) + 18px * var(--co-ui-scale)),
+    calc(272px * var(--co-ui-scale))
+  );
+  right: calc(24px * var(--co-ui-scale));
+  transform: translateY(calc(-50% + 10px * var(--co-ui-scale)));
+  z-index: 11;
+  width: auto;
+  max-width: none;
+  height: calc(100vh - 48px * var(--co-ui-scale));
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 220ms ease-out,
+    transform 220ms ease-out,
+    visibility 0ms linear 220ms;
+}
+
+.browser-view.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(-50%);
+  transition: none;
+}
+
+.browser-view[hidden] {
+  display: none;
+}
+
+.browser-view .co-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+.browser-view .co-root.co-browser--embedded {
+  background: transparent;
+}
+
+.browser-view .co-panel {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: auto;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .browser-view {
+    transform: translateY(-50%);
+    transition: opacity 120ms ease-out, visibility 0ms linear 120ms;
+  }
+
+  .browser-view.is-open {
+    transition: opacity 120ms ease-out, visibility 0ms linear 0ms;
+  }
+}
+
+.co-password-prompt {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 8, 6, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(14px * var(--co-ui-scale));
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.co-password-prompt.hidden {
+  display: none;
+}
+
+.co-password-prompt label,
+.co-password-title {
+  font-size: calc(15px * var(--co-ui-scale));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--co-text-pale);
+}
+
+.co-password-prompt .co-filter-input {
+  width: min(calc(360px * var(--co-ui-scale)), 80%);
+}
+
+.co-password-prompt .co-filter-input.focused {
+  outline: 1px solid rgba(62, 207, 74, 0.4);
+}
+
+.co-password-actions {
+  display: flex;
+  gap: calc(12px * var(--co-ui-scale));
+}

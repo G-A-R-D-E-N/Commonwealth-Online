@@ -1,0 +1,359 @@
+name: CommonwealthOnlineUI CI
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  retry-compile:
+    name: Retry behavior + C++ compile + browser syntax
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Verify hosted test tools
+        run: |
+          set -euo pipefail
+          for tool in c++ node; do
+            command -v "$tool" >/dev/null || { echo "::error::$tool is missing"; exit 1; }
+          done
+
+      - name: Run retry state regression
+        run: |
+          set -euo pipefail
+          mkdir -p build-hosted
+          tail -n +2 CommonwealthOnlineUI/src/SessionCallbacks.cpp > build-hosted/SessionCallbacks.cpp
+          c++ -std=c++23 -Wall -Wextra -Werror -pthread \
+            -ICommonwealthOnlineUI/ci/hosted \
+            -ICommonwealthOnlineUI/include \
+            build-hosted/SessionCallbacks.cpp \
+            CommonwealthOnlineUI/ci/SessionCallbacksRetryTests.cpp \
+            -o build-hosted/session-callbacks-retry-tests
+          ./build-hosted/session-callbacks-retry-tests
+
+      - name: Validate browser JavaScript syntax
+        run: |
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/select-menus.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/modpack-copy.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/modpack-detail.js
+          node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings.test.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/browser.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/direct-connect.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/browser-markup.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/server-records.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/recent-servers.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/filter-state.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/server-counts.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/join-flow.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/controller-navigation.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/password-prompt.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/steam-friends.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/server-settings.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/directory-refresh.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/alerts/alerts.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.members.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.ownership.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.browse.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.focus.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/chat/chat.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/quests/quests.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/pause-menu/script.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/chat-feed/feed.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/main-menu/script.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/launcher/script.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/downed/downed.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/downed/respawn.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-data.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-voice.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-model.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-native.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-render.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-input.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/pause-menu/session-mode-badge.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/voice-hud/voice-hud.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/capture-hud/capture-hud.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/voice-players.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/shared/prompt-glyphs.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/join-overlay/overlay.js
+
+      - name: Run title-screen UI regression
+        run: node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/main-menu/main-menu.test.js CommonwealthOnlineUI/ui/views/CommonwealthOnline/shared/startup-timing.test.js
+
+      - name: Run launcher UI regression
+        working-directory: CommonwealthOnlineUI/ui/views/CommonwealthOnline/launcher
+        run: node launcher.test.js
+
+      - name: Run alert overlay regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/alerts/alerts.test.js
+
+      - name: Run character select regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/character-select/character-select.test.js
+
+      - name: Run faction window regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.test.js
+
+      - name: Run faction rank regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.rank.test.js
+
+      - name: Run faction profile regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.profile.test.js
+
+      - name: Run build access panel regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.build.test.js
+
+      - name: Run ownership panel regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.ownership.test.js
+
+      - name: Run faction browse regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.browse.test.js
+
+      - name: Run chat window regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/chat/chat.test.js
+
+      - name: Run quest window regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/quests/quests.test.js
+
+      - name: Run chat feed regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/chat-feed/feed.test.js
+
+      - name: Run downed overlay and respawn menu regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/downed/downed.test.js
+
+      - name: Run voice settings regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-voice.test.js
+
+      - name: Run voice HUD regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/voice-hud/voice-hud.test.js
+
+      - name: Run capture HUD regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/capture-hud/capture-hud.test.js
+
+      - name: Run voice player list regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/voice-players.test.js
+      - name: Run pause menu prompt glyph regression
+        run: node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/shared/prompt-glyphs.test.js
+      - name: Run join overlay regression
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/join-overlay/overlay.test.js
+
+      - name: Run stabilization JavaScript contracts
+        run: node CommonwealthOnlineUI/ui/views/CommonwealthOnline/stabilization-contract.test.js
+
+      - name: Run browser controller regressions
+        working-directory: CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/tests
+        run: node --test controller.test.js controller-port.test.js directory-refresh.test.js server-settings.test.js server-settings-controller.test.js server-settings-vats.test.js server-list.test.js bridge-gate.test.js standalone-mount.test.js steam-components.test.js modpack-copy.test.js
+
+      - name: Run browser scroll container regression
+        run: node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/scroll-containers.test.js
+
+      - name: Run modpack detail regression
+        run: node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/modpack-detail.test.js
+
+      - name: Run menu stick axis regression
+        run: python3 CommonwealthOnlineUI/ci/MenuInputAxisTests.py --compiler c++
+
+      - name: Run menu startup ordering regression
+        run: python3 CommonwealthOnlineUI/ci/MenuStartupTests.py --compiler c++
+
+      - name: Initialize CommonLibF4 headers
+        run: |
+          set -euo pipefail
+          git ls-files --stage CommonwealthOnlineUI/ThirdParty/CommonLibF4
+          git config -f .gitmodules --get-regexp '^submodule\..*\.url$'
+          git submodule sync --recursive
+          git submodule update --init --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::re.nomadicinteractive.dev unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://re.nomadicinteractive.dev/ReverseEng/commonlib_NonVR.git" submodule update --init --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4
+          }
+          git submodule status --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: '3.0.4'
+
+      - name: Verify xwin toolchain
+        run: |
+          set -euo pipefail
+          for tool in clang-cl lld-link llvm-ar llvm-rc llvm-dlltool xmake; do
+            command -v "$tool" >/dev/null || { echo "::error::$tool is missing"; exit 1; }
+          done
+          test -d "$XWIN_ROOT/crt/include" || { echo "::error::missing xwin CRT"; exit 1; }
+          test -d "$XWIN_ROOT/sdk/include/ucrt" || { echo "::error::missing xwin SDK"; exit 1; }
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Compile retry C++ slice
+        working-directory: CommonwealthOnlineUI
+        run: |
+          set -euo pipefail
+          rm -rf build-ci .xmake
+          xmake config --file=xmake-ci.lua --plat=windows --arch=x64 --mode=release --builddir=build-ci ${CO_XMAKE_CCACHE:-} --yes
+          xmake build --file=xmake-ci.lua --jobs=2 -vD CommonwealthOnlineUIRetryCompileCheck
+
+      - name: Verify production compile coverage
+        run: python3 CommonwealthOnlineUI/ci/ProductionCompileCoverageTests.py
+
+      - name: Verify exit save ordering contract
+        run: python3 CommonwealthOnlineUI/ci/ExitSaveOrderingTests.py
+
+      - name: Verify voice bridge contract
+        run: python3 CommonwealthOnlineUI/ci/VoiceBridgeContractTests.py
+
+      - name: Compile production browser and input sources
+        working-directory: CommonwealthOnlineUI
+        run: |
+          set -euo pipefail
+          xmake build --file=xmake-ci.lua --jobs=2 -vD CommonwealthOnlineUIProductionCompileCheck
+          xmake build --file=xmake-ci.lua --jobs=2 -vD CommonwealthOnlineUIPrismaCompileCheck
+
+      - name: Verify foreground symbol linkage
+        working-directory: CommonwealthOnlineUI
+        run: |
+          set -euo pipefail
+          ! grep -R -n -E '#include[[:space:]]*["<][^">]*\.cpp[">]' src
+          prisma_obj="build-ci/.objs/CommonwealthOnlineUIPrismaCompileCheck/windows/x64/release/src/F4TPrismaUI.cpp.obj"
+          lifecycle_obj="build-ci/.objs/CommonwealthOnlineUIPrismaCompileCheck/windows/x64/release/src/F4TPrismaUI_Lifecycle.cpp.obj"
+          menu_obj="build-ci/.objs/CommonwealthOnlineUIPrismaCompileCheck/windows/x64/release/src/F4TMenuInput.cpp.obj"
+          for source in F4TPrismaUI_Cursor.cpp F4TPrismaUI_Browser.cpp F4TPrismaUI_Menu.cpp F4TPrismaUI_MainMenu.cpp F4TPrismaUI_Lifecycle.cpp; do
+            test -f "build-ci/.objs/CommonwealthOnlineUIPrismaCompileCheck/windows/x64/release/src/$source.obj"
+          done
+          launcher_obj="build-ci/.objs/CommonwealthOnlineUIPrismaCompileCheck/windows/x64/release/src/F4TMainMenuLauncher.cpp.obj"
+          prisma_objs="$prisma_obj build-ci/.objs/CommonwealthOnlineUIPrismaCompileCheck/windows/x64/release/src/F4TPrismaUI_Cursor.cpp.obj build-ci/.objs/CommonwealthOnlineUIPrismaCompileCheck/windows/x64/release/src/F4TPrismaUI_Browser.cpp.obj build-ci/.objs/CommonwealthOnlineUIPrismaCompileCheck/windows/x64/release/src/F4TPrismaUI_Menu.cpp.obj build-ci/.objs/CommonwealthOnlineUIPrismaCompileCheck/windows/x64/release/src/F4TPrismaUI_MainMenu.cpp.obj $lifecycle_obj $launcher_obj $menu_obj"
+          llvm-nm -C "$prisma_obj" | grep -E " [Tt] .*F4T::PrismaUI::IsGameForeground"
+          llvm-nm -C "$menu_obj" | grep -E " U .*F4T::PrismaUI::IsGameForeground"
+          llvm-nm -C "$lifecycle_obj" | grep -E " [Tt] .*F4T::PrismaUI::RestoreMainMenuFromSinglePlayer\(void\)"
+          llvm-nm -C "$launcher_obj" | grep -E " U .*F4T::PrismaUI::RestoreMainMenuFromSinglePlayer\(void\)"
+          llvm-nm -C "$lifecycle_obj" | grep -E " [Tt] .*F4T::PrismaUI::Internal::RestoreMainMenuFromSinglePlayerInternal"
+          for obj in $prisma_objs; do
+            ! llvm-nm -C "$obj" | grep -E " U .*F4T::PrismaUI::Internal::RestoreMainMenuFromSinglePlayerInternal"
+          done
+
+      - name: Run hosted UI logic tests
+        working-directory: CommonwealthOnlineUI
+        run: |
+          set -euo pipefail
+          rm -rf build-parser-ci .xmake-parser-ci
+          xmake config --file=xmake-parser-ci.lua --mode=debug --builddir=build-parser-ci ${CO_XMAKE_CCACHE:-} --yes
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD MultiplayerProfileTests
+          xmake run --file=xmake-parser-ci.lua MultiplayerProfileTests
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD ServerBrowserBoundsTests
+          xmake run --file=xmake-parser-ci.lua ServerBrowserBoundsTests
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD LauncherEventProvenanceTests
+          xmake run --file=xmake-parser-ci.lua LauncherEventProvenanceTests
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD SettingsRefreshRouteTests
+          xmake run --file=xmake-parser-ci.lua SettingsRefreshRouteTests
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD QuestCallbacksTests
+          xmake run --file=xmake-parser-ci.lua QuestCallbacksTests
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD ExitSaveGateTests
+          xmake run --file=xmake-parser-ci.lua ExitSaveGateTests
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD DownedStateTests
+          xmake run --file=xmake-parser-ci.lua DownedStateTests
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD VoiceBridgeTests
+          xmake run --file=xmake-parser-ci.lua VoiceBridgeTests
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD WorldModeTests
+          xmake run --file=xmake-parser-ci.lua WorldModeTests
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD SteamActionTests
+          xmake run --file=xmake-parser-ci.lua SteamActionTests
+
+      - name: Whitespace check
+        run: git diff --check
+
+  iat-patch-windows:
+    name: IAT patch hook tests (Windows)
+    # Runs on a hosted Windows runner only when the public repository variable
+    # WINDOWS_RUNTIME_SMOKE is 'true'; otherwise the job is skipped.
+    if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+    runs-on: windows-latest
+    env:
+      _MSPDBSRV_ENDPOINT_: co-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: powershell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Invoke-Expression ([IO.File]::ReadAllText('{0}')); if ($LASTEXITCODE) {{ exit $LASTEXITCODE }}"
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: '3.0.4'
+
+      - name: Run IAT patch tests
+        working-directory: CommonwealthOnlineUI
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Remove-Item -Recurse -Force -ErrorAction SilentlyContinue build-parser-ci, .xmake-parser-ci
+          xmake config --file=xmake-parser-ci.lua --mode=debug --builddir=build-parser-ci --yes
+          if ($LASTEXITCODE -ne 0) { throw 'xmake config failed' }
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD IatPatchTests
+          if ($LASTEXITCODE -ne 0) { throw 'IatPatchTests build failed' }
+          xmake run --file=xmake-parser-ci.lua IatPatchTests
+          if ($LASTEXITCODE -ne 0) { throw 'IatPatchTests failed' }
+
+  report:
+    name: Report to the private PR
+    needs: [retry-compile, iat-patch-windows]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=success; description="skipped (all jobs gated off)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-ui-ci" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-ui-ci ($description)"

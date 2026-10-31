@@ -1,0 +1,1062 @@
+{
+  "schema": "commonwealth-online.fo4.map-marker-icon-manifest.v2",
+  "source": {
+    "iconSheet": "MapMarkers.swf exported PNGs, icon_3.png through icon_219.png",
+    "nameGraph": "User-supplied Fallout 4 marker-name graph"
+  },
+  "notes": [
+    "Marker names use the SWF-style names shown in the supplied graph.",
+    "For normal location markers, discovered is the filled glyph and undiscovered is the outline glyph.",
+    "PlayerLocMarker, QuestMarker, and PlayerSetMarker are UI-only markers, so their discovered and undiscovered values are aliases for the default icon.",
+    "Icons listed with markerName null are exported glyphs that were visible in the sheet but were not present in the supplied marker-name graph."
+  ],
+  "manifest": {
+    "AirfieldMarker": {
+      "displayName": "Airfield",
+      "discovered": "icon_218.png",
+      "undiscovered": "icon_219.png"
+    },
+    "BunkerHillMarker": {
+      "displayName": "Bunker Hill",
+      "discovered": "icon_209.png",
+      "undiscovered": "icon_210.png"
+    },
+    "CamperMarker": {
+      "displayName": "Camper",
+      "discovered": "icon_203.png",
+      "undiscovered": "icon_204.png"
+    },
+    "CarMarker": {
+      "displayName": "Car",
+      "discovered": "icon_200.png",
+      "undiscovered": "icon_201.png"
+    },
+    "CaveMarker": {
+      "displayName": "Cave",
+      "discovered": "icon_194.png",
+      "undiscovered": "icon_195.png"
+    },
+    "ChurchMarker": {
+      "displayName": "Church",
+      "discovered": "icon_191.png",
+      "undiscovered": "icon_192.png"
+    },
+    "CityMarker": {
+      "displayName": "City",
+      "discovered": "icon_188.png",
+      "undiscovered": "icon_189.png"
+    },
+    "CountryClubMarker": {
+      "displayName": "Country Club",
+      "discovered": "icon_185.png",
+      "undiscovered": "icon_186.png"
+    },
+    "CustomHouseMarker": {
+      "displayName": "Custom House",
+      "discovered": "icon_182.png",
+      "undiscovered": "icon_183.png"
+    },
+    "DiamondCityMarker": {
+      "displayName": "Diamond City",
+      "discovered": "icon_176.png",
+      "undiscovered": "icon_177.png"
+    },
+    "DriveInMarker": {
+      "displayName": "Drive-In",
+      "discovered": "icon_169.png",
+      "undiscovered": "icon_170.png"
+    },
+    "ElevatedHighwayMarker": {
+      "displayName": "Elevated Highway",
+      "discovered": "icon_166.png",
+      "undiscovered": "icon_167.png"
+    },
+    "EncampmentMarker": {
+      "displayName": "Encampment",
+      "discovered": "icon_163.png",
+      "undiscovered": "icon_164.png"
+    },
+    "FactoryMarker": {
+      "displayName": "Factory",
+      "discovered": "icon_135.png",
+      "undiscovered": "icon_136.png"
+    },
+    "FaneuilHallMarker": {
+      "displayName": "Faneuil Hall",
+      "discovered": "icon_159.png",
+      "undiscovered": "icon_160.png"
+    },
+    "FarmMarker": {
+      "displayName": "Farm",
+      "discovered": "icon_156.png",
+      "undiscovered": "icon_157.png"
+    },
+    "FillingStationMarker": {
+      "displayName": "Filling Station",
+      "discovered": "icon_153.png",
+      "undiscovered": "icon_154.png"
+    },
+    "ForestedMarker": {
+      "displayName": "Forested",
+      "discovered": "icon_150.png",
+      "undiscovered": "icon_151.png"
+    },
+    "GoodneighborMarker": {
+      "displayName": "Goodneighbor",
+      "discovered": "icon_147.png",
+      "undiscovered": "icon_148.png"
+    },
+    "GraveyardMarker": {
+      "displayName": "Graveyard",
+      "discovered": "icon_144.png",
+      "undiscovered": "icon_145.png"
+    },
+    "HospitalMarker": {
+      "displayName": "Hospital",
+      "discovered": "icon_141.png",
+      "undiscovered": "icon_142.png"
+    },
+    "IndustrialDomeMarker": {
+      "displayName": "Industrial Dome",
+      "discovered": "icon_138.png",
+      "undiscovered": "icon_139.png"
+    },
+    "IndustrialStacksMarker": {
+      "displayName": "Industrial Stacks",
+      "discovered": "icon_179.png",
+      "undiscovered": "icon_180.png"
+    },
+    "InstituteMarker": {
+      "displayName": "Institute",
+      "discovered": "icon_132.png",
+      "undiscovered": "icon_133.png"
+    },
+    "IrishPrideMarker": {
+      "displayName": "Irish Pride",
+      "discovered": "icon_129.png",
+      "undiscovered": "icon_130.png"
+    },
+    "JunkyardMarker": {
+      "displayName": "Junkyard",
+      "discovered": "icon_126.png",
+      "undiscovered": "icon_127.png"
+    },
+    "LandmarkMarker": {
+      "displayName": "Landmark",
+      "discovered": "icon_123.png",
+      "undiscovered": "icon_124.png"
+    },
+    "MetroMarker": {
+      "displayName": "Metro",
+      "discovered": "icon_114.png",
+      "undiscovered": "icon_115.png"
+    },
+    "MilitaryBaseMarker": {
+      "displayName": "Military Base",
+      "discovered": "icon_111.png",
+      "undiscovered": "icon_112.png"
+    },
+    "MonumentMarker": {
+      "displayName": "Monument",
+      "discovered": "icon_105.png",
+      "undiscovered": "icon_106.png"
+    },
+    "ObservatoryMarker": {
+      "displayName": "Observatory",
+      "discovered": "icon_102.png",
+      "undiscovered": "icon_103.png"
+    },
+    "OfficeMarker": {
+      "displayName": "Office",
+      "discovered": "icon_99.png",
+      "undiscovered": "icon_100.png"
+    },
+    "PierMarker": {
+      "displayName": "Pier",
+      "discovered": "icon_96.png",
+      "undiscovered": "icon_97.png"
+    },
+    "PondLakeMarker": {
+      "displayName": "Pond/Lake",
+      "discovered": "icon_85.png",
+      "undiscovered": "icon_86.png"
+    },
+    "QuarryMarker": {
+      "displayName": "Quarry",
+      "discovered": "icon_76.png",
+      "undiscovered": "icon_77.png"
+    },
+    "RadioTowerMarker": {
+      "displayName": "Radio Tower",
+      "discovered": "icon_62.png",
+      "undiscovered": "icon_63.png"
+    },
+    "RadioactiveAreaMarker": {
+      "displayName": "Radioactive Area",
+      "discovered": "icon_65.png",
+      "undiscovered": "icon_66.png"
+    },
+    "SalemMarker": {
+      "displayName": "Salem",
+      "discovered": "icon_53.png",
+      "undiscovered": "icon_54.png"
+    },
+    "SancHillsMarker": {
+      "displayName": "Sanctuary Hills",
+      "discovered": "icon_50.png",
+      "undiscovered": "icon_51.png"
+    },
+    "SchoolMarker": {
+      "displayName": "School",
+      "discovered": "icon_44.png",
+      "undiscovered": "icon_45.png"
+    },
+    "SettlementMarker": {
+      "displayName": "Settlement",
+      "discovered": "icon_38.png",
+      "undiscovered": "icon_39.png"
+    },
+    "SewerMarker": {
+      "displayName": "Sewer",
+      "discovered": "icon_35.png",
+      "undiscovered": "icon_36.png"
+    },
+    "ShipwreckMarker": {
+      "displayName": "Shipwreck",
+      "discovered": "icon_32.png",
+      "undiscovered": "icon_33.png"
+    },
+    "SubmarineMarker": {
+      "displayName": "Submarine",
+      "discovered": "icon_29.png",
+      "undiscovered": "icon_30.png"
+    },
+    "SwanPondMarker": {
+      "displayName": "Swan Pond",
+      "discovered": "icon_26.png",
+      "undiscovered": "icon_27.png"
+    },
+    "SynthHeadMarker": {
+      "displayName": "Synth Head",
+      "discovered": "icon_23.png",
+      "undiscovered": "icon_24.png"
+    },
+    "TownMarker": {
+      "displayName": "Town",
+      "discovered": "icon_20.png",
+      "undiscovered": "icon_21.png"
+    },
+    "TownRuinsMarker": {
+      "displayName": "Town Ruins",
+      "discovered": "icon_17.png",
+      "undiscovered": "icon_18.png"
+    },
+    "UrbanRuinsMarker": {
+      "displayName": "Urban Ruins",
+      "discovered": "icon_14.png",
+      "undiscovered": "icon_15.png"
+    },
+    "VaultMarker": {
+      "displayName": "Vault",
+      "discovered": "icon_8.png",
+      "undiscovered": "icon_9.png"
+    },
+    "PlayerLocMarker": {
+      "displayName": "Player Location",
+      "discovered": "icon_94.png",
+      "undiscovered": "icon_94.png",
+      "default": "icon_94.png",
+      "uiOnly": true
+    },
+    "QuestMarker": {
+      "displayName": "Quest Marker",
+      "discovered": "icon_73.png",
+      "undiscovered": "icon_73.png",
+      "default": "icon_73.png",
+      "uiOnly": true
+    },
+    "PlayerSetMarker": {
+      "displayName": "Player Set Marker",
+      "discovered": "icon_91.png",
+      "undiscovered": "icon_91.png",
+      "default": "icon_91.png",
+      "uiOnly": true
+    }
+  },
+  "icons": {
+    "icon_3.png": {
+      "markerName": null,
+      "displayName": "radio_signal",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_8.png": {
+      "markerName": "VaultMarker",
+      "displayName": "Vault",
+      "state": "discovered"
+    },
+    "icon_9.png": {
+      "markerName": "VaultMarker",
+      "displayName": "Vault",
+      "state": "undiscovered"
+    },
+    "icon_11.png": {
+      "markerName": null,
+      "displayName": "sailboat_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_12.png": {
+      "markerName": null,
+      "displayName": "sailboat_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_14.png": {
+      "markerName": "UrbanRuinsMarker",
+      "displayName": "Urban Ruins",
+      "state": "discovered"
+    },
+    "icon_15.png": {
+      "markerName": "UrbanRuinsMarker",
+      "displayName": "Urban Ruins",
+      "state": "undiscovered"
+    },
+    "icon_17.png": {
+      "markerName": "TownRuinsMarker",
+      "displayName": "Town Ruins",
+      "state": "discovered"
+    },
+    "icon_18.png": {
+      "markerName": "TownRuinsMarker",
+      "displayName": "Town Ruins",
+      "state": "undiscovered"
+    },
+    "icon_20.png": {
+      "markerName": "TownMarker",
+      "displayName": "Town",
+      "state": "discovered"
+    },
+    "icon_21.png": {
+      "markerName": "TownMarker",
+      "displayName": "Town",
+      "state": "undiscovered"
+    },
+    "icon_23.png": {
+      "markerName": "SynthHeadMarker",
+      "displayName": "Synth Head",
+      "state": "discovered"
+    },
+    "icon_24.png": {
+      "markerName": "SynthHeadMarker",
+      "displayName": "Synth Head",
+      "state": "undiscovered"
+    },
+    "icon_26.png": {
+      "markerName": "SwanPondMarker",
+      "displayName": "Swan Pond",
+      "state": "discovered"
+    },
+    "icon_27.png": {
+      "markerName": "SwanPondMarker",
+      "displayName": "Swan Pond",
+      "state": "undiscovered"
+    },
+    "icon_29.png": {
+      "markerName": "SubmarineMarker",
+      "displayName": "Submarine",
+      "state": "discovered"
+    },
+    "icon_30.png": {
+      "markerName": "SubmarineMarker",
+      "displayName": "Submarine",
+      "state": "undiscovered"
+    },
+    "icon_32.png": {
+      "markerName": "ShipwreckMarker",
+      "displayName": "Shipwreck",
+      "state": "discovered"
+    },
+    "icon_33.png": {
+      "markerName": "ShipwreckMarker",
+      "displayName": "Shipwreck",
+      "state": "undiscovered"
+    },
+    "icon_35.png": {
+      "markerName": "SewerMarker",
+      "displayName": "Sewer",
+      "state": "discovered"
+    },
+    "icon_36.png": {
+      "markerName": "SewerMarker",
+      "displayName": "Sewer",
+      "state": "undiscovered"
+    },
+    "icon_38.png": {
+      "markerName": "SettlementMarker",
+      "displayName": "Settlement",
+      "state": "discovered"
+    },
+    "icon_39.png": {
+      "markerName": "SettlementMarker",
+      "displayName": "Settlement",
+      "state": "undiscovered"
+    },
+    "icon_41.png": {
+      "markerName": null,
+      "displayName": "bunker_or_roof_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_42.png": {
+      "markerName": null,
+      "displayName": "bunker_or_roof_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_44.png": {
+      "markerName": "SchoolMarker",
+      "displayName": "School",
+      "state": "discovered"
+    },
+    "icon_45.png": {
+      "markerName": "SchoolMarker",
+      "displayName": "School",
+      "state": "undiscovered"
+    },
+    "icon_47.png": {
+      "markerName": null,
+      "displayName": "bird_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_48.png": {
+      "markerName": null,
+      "displayName": "bird_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_50.png": {
+      "markerName": "SancHillsMarker",
+      "displayName": "Sanctuary Hills",
+      "state": "discovered"
+    },
+    "icon_51.png": {
+      "markerName": "SancHillsMarker",
+      "displayName": "Sanctuary Hills",
+      "state": "undiscovered"
+    },
+    "icon_53.png": {
+      "markerName": "SalemMarker",
+      "displayName": "Salem",
+      "state": "discovered"
+    },
+    "icon_54.png": {
+      "markerName": "SalemMarker",
+      "displayName": "Salem",
+      "state": "undiscovered"
+    },
+    "icon_56.png": {
+      "markerName": null,
+      "displayName": "railroad_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_57.png": {
+      "markerName": null,
+      "displayName": "railroad_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_59.png": {
+      "markerName": null,
+      "displayName": "suitcase_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_60.png": {
+      "markerName": null,
+      "displayName": "suitcase_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_62.png": {
+      "markerName": "RadioTowerMarker",
+      "displayName": "Radio Tower",
+      "state": "discovered"
+    },
+    "icon_63.png": {
+      "markerName": "RadioTowerMarker",
+      "displayName": "Radio Tower",
+      "state": "undiscovered"
+    },
+    "icon_65.png": {
+      "markerName": "RadioactiveAreaMarker",
+      "displayName": "Radioactive Area",
+      "state": "discovered"
+    },
+    "icon_66.png": {
+      "markerName": "RadioactiveAreaMarker",
+      "displayName": "Radioactive Area",
+      "state": "undiscovered"
+    },
+    "icon_68.png": {
+      "markerName": null,
+      "displayName": "control_panel",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_69.png": {
+      "markerName": null,
+      "displayName": "chevron_up",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_70.png": {
+      "markerName": null,
+      "displayName": "chevron_down",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_73.png": {
+      "markerName": "QuestMarker",
+      "displayName": "Quest Marker",
+      "state": "default"
+    },
+    "icon_76.png": {
+      "markerName": "QuarryMarker",
+      "displayName": "Quarry",
+      "state": "discovered"
+    },
+    "icon_77.png": {
+      "markerName": "QuarryMarker",
+      "displayName": "Quarry",
+      "state": "undiscovered"
+    },
+    "icon_79.png": {
+      "markerName": null,
+      "displayName": "animal_den_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_80.png": {
+      "markerName": null,
+      "displayName": "animal_den_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_82.png": {
+      "markerName": null,
+      "displayName": "power_armor_or_robot",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_85.png": {
+      "markerName": "PondLakeMarker",
+      "displayName": "Pond/Lake",
+      "state": "discovered"
+    },
+    "icon_86.png": {
+      "markerName": "PondLakeMarker",
+      "displayName": "Pond/Lake",
+      "state": "undiscovered"
+    },
+    "icon_88.png": {
+      "markerName": null,
+      "displayName": "star_shield_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_89.png": {
+      "markerName": null,
+      "displayName": "star_shield_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_91.png": {
+      "markerName": "PlayerSetMarker",
+      "displayName": "Player Set Marker",
+      "state": "default"
+    },
+    "icon_94.png": {
+      "markerName": "PlayerLocMarker",
+      "displayName": "Player Location",
+      "state": "default"
+    },
+    "icon_96.png": {
+      "markerName": "PierMarker",
+      "displayName": "Pier",
+      "state": "discovered"
+    },
+    "icon_97.png": {
+      "markerName": "PierMarker",
+      "displayName": "Pier",
+      "state": "undiscovered"
+    },
+    "icon_99.png": {
+      "markerName": "OfficeMarker",
+      "displayName": "Office",
+      "state": "discovered"
+    },
+    "icon_100.png": {
+      "markerName": "OfficeMarker",
+      "displayName": "Office",
+      "state": "undiscovered"
+    },
+    "icon_102.png": {
+      "markerName": "ObservatoryMarker",
+      "displayName": "Observatory",
+      "state": "discovered"
+    },
+    "icon_103.png": {
+      "markerName": "ObservatoryMarker",
+      "displayName": "Observatory",
+      "state": "undiscovered"
+    },
+    "icon_105.png": {
+      "markerName": "MonumentMarker",
+      "displayName": "Monument",
+      "state": "discovered"
+    },
+    "icon_106.png": {
+      "markerName": "MonumentMarker",
+      "displayName": "Monument",
+      "state": "undiscovered"
+    },
+    "icon_108.png": {
+      "markerName": null,
+      "displayName": "quest_or_objective_star_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_109.png": {
+      "markerName": null,
+      "displayName": "quest_or_objective_star_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_111.png": {
+      "markerName": "MilitaryBaseMarker",
+      "displayName": "Military Base",
+      "state": "discovered"
+    },
+    "icon_112.png": {
+      "markerName": "MilitaryBaseMarker",
+      "displayName": "Military Base",
+      "state": "undiscovered"
+    },
+    "icon_114.png": {
+      "markerName": "MetroMarker",
+      "displayName": "Metro",
+      "state": "discovered"
+    },
+    "icon_115.png": {
+      "markerName": "MetroMarker",
+      "displayName": "Metro",
+      "state": "undiscovered"
+    },
+    "icon_117.png": {
+      "markerName": null,
+      "displayName": "drive_through_or_shop_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_118.png": {
+      "markerName": null,
+      "displayName": "drive_through_or_shop_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_120.png": {
+      "markerName": null,
+      "displayName": "target_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_121.png": {
+      "markerName": null,
+      "displayName": "target_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_123.png": {
+      "markerName": "LandmarkMarker",
+      "displayName": "Landmark",
+      "state": "discovered"
+    },
+    "icon_124.png": {
+      "markerName": "LandmarkMarker",
+      "displayName": "Landmark",
+      "state": "undiscovered"
+    },
+    "icon_126.png": {
+      "markerName": "JunkyardMarker",
+      "displayName": "Junkyard",
+      "state": "discovered"
+    },
+    "icon_127.png": {
+      "markerName": "JunkyardMarker",
+      "displayName": "Junkyard",
+      "state": "undiscovered"
+    },
+    "icon_129.png": {
+      "markerName": "IrishPrideMarker",
+      "displayName": "Irish Pride",
+      "state": "discovered"
+    },
+    "icon_130.png": {
+      "markerName": "IrishPrideMarker",
+      "displayName": "Irish Pride",
+      "state": "undiscovered"
+    },
+    "icon_132.png": {
+      "markerName": "InstituteMarker",
+      "displayName": "Institute",
+      "state": "discovered"
+    },
+    "icon_133.png": {
+      "markerName": "InstituteMarker",
+      "displayName": "Institute",
+      "state": "undiscovered"
+    },
+    "icon_135.png": {
+      "markerName": "FactoryMarker",
+      "displayName": "Factory",
+      "state": "discovered"
+    },
+    "icon_136.png": {
+      "markerName": "FactoryMarker",
+      "displayName": "Factory",
+      "state": "undiscovered"
+    },
+    "icon_138.png": {
+      "markerName": "IndustrialDomeMarker",
+      "displayName": "Industrial Dome",
+      "state": "discovered"
+    },
+    "icon_139.png": {
+      "markerName": "IndustrialDomeMarker",
+      "displayName": "Industrial Dome",
+      "state": "undiscovered"
+    },
+    "icon_141.png": {
+      "markerName": "HospitalMarker",
+      "displayName": "Hospital",
+      "state": "discovered"
+    },
+    "icon_142.png": {
+      "markerName": "HospitalMarker",
+      "displayName": "Hospital",
+      "state": "undiscovered"
+    },
+    "icon_144.png": {
+      "markerName": "GraveyardMarker",
+      "displayName": "Graveyard",
+      "state": "discovered"
+    },
+    "icon_145.png": {
+      "markerName": "GraveyardMarker",
+      "displayName": "Graveyard",
+      "state": "undiscovered"
+    },
+    "icon_147.png": {
+      "markerName": "FaneuilHallMarker",
+      "displayName": "Faneuil Hall",
+      "state": "discovered"
+    },
+    "icon_148.png": {
+      "markerName": "FaneuilHallMarker",
+      "displayName": "Faneuil Hall",
+      "state": "undiscovered"
+    },
+    "icon_150.png": {
+      "markerName": "ForestedMarker",
+      "displayName": "Forested",
+      "state": "discovered"
+    },
+    "icon_151.png": {
+      "markerName": "ForestedMarker",
+      "displayName": "Forested",
+      "state": "undiscovered"
+    },
+    "icon_153.png": {
+      "markerName": "FillingStationMarker",
+      "displayName": "Filling Station",
+      "state": "discovered"
+    },
+    "icon_154.png": {
+      "markerName": "FillingStationMarker",
+      "displayName": "Filling Station",
+      "state": "undiscovered"
+    },
+    "icon_156.png": {
+      "markerName": "FarmMarker",
+      "displayName": "Farm",
+      "state": "discovered"
+    },
+    "icon_157.png": {
+      "markerName": "FarmMarker",
+      "displayName": "Farm",
+      "state": "undiscovered"
+    },
+    "icon_159.png": {
+      "markerName": "GoodneighborMarker",
+      "displayName": "Goodneighbor",
+      "state": "discovered"
+    },
+    "icon_160.png": {
+      "markerName": "GoodneighborMarker",
+      "displayName": "Goodneighbor",
+      "state": "undiscovered"
+    },
+    "icon_163.png": {
+      "markerName": "EncampmentMarker",
+      "displayName": "Encampment",
+      "state": "discovered"
+    },
+    "icon_164.png": {
+      "markerName": "EncampmentMarker",
+      "displayName": "Encampment",
+      "state": "undiscovered"
+    },
+    "icon_166.png": {
+      "markerName": "ElevatedHighwayMarker",
+      "displayName": "Elevated Highway",
+      "state": "discovered"
+    },
+    "icon_167.png": {
+      "markerName": "ElevatedHighwayMarker",
+      "displayName": "Elevated Highway",
+      "state": "undiscovered"
+    },
+    "icon_169.png": {
+      "markerName": "DriveInMarker",
+      "displayName": "Drive-In",
+      "state": "discovered"
+    },
+    "icon_170.png": {
+      "markerName": "DriveInMarker",
+      "displayName": "Drive-In",
+      "state": "undiscovered"
+    },
+    "icon_172.png": {
+      "markerName": null,
+      "displayName": "door",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_176.png": {
+      "markerName": "DiamondCityMarker",
+      "displayName": "Diamond City",
+      "state": "discovered"
+    },
+    "icon_177.png": {
+      "markerName": "DiamondCityMarker",
+      "displayName": "Diamond City",
+      "state": "undiscovered"
+    },
+    "icon_179.png": {
+      "markerName": "IndustrialStacksMarker",
+      "displayName": "Industrial Stacks",
+      "state": "discovered"
+    },
+    "icon_180.png": {
+      "markerName": "IndustrialStacksMarker",
+      "displayName": "Industrial Stacks",
+      "state": "undiscovered"
+    },
+    "icon_182.png": {
+      "markerName": "CustomHouseMarker",
+      "displayName": "Custom House",
+      "state": "discovered"
+    },
+    "icon_183.png": {
+      "markerName": "CustomHouseMarker",
+      "displayName": "Custom House",
+      "state": "undiscovered"
+    },
+    "icon_185.png": {
+      "markerName": "CountryClubMarker",
+      "displayName": "Country Club",
+      "state": "discovered"
+    },
+    "icon_186.png": {
+      "markerName": "CountryClubMarker",
+      "displayName": "Country Club",
+      "state": "undiscovered"
+    },
+    "icon_188.png": {
+      "markerName": "CityMarker",
+      "displayName": "City",
+      "state": "discovered"
+    },
+    "icon_189.png": {
+      "markerName": "CityMarker",
+      "displayName": "City",
+      "state": "undiscovered"
+    },
+    "icon_191.png": {
+      "markerName": "ChurchMarker",
+      "displayName": "Church",
+      "state": "discovered"
+    },
+    "icon_192.png": {
+      "markerName": "ChurchMarker",
+      "displayName": "Church",
+      "state": "undiscovered"
+    },
+    "icon_194.png": {
+      "markerName": "CaveMarker",
+      "displayName": "Cave",
+      "state": "discovered"
+    },
+    "icon_195.png": {
+      "markerName": "CaveMarker",
+      "displayName": "Cave",
+      "state": "undiscovered"
+    },
+    "icon_197.png": {
+      "markerName": null,
+      "displayName": "cannon_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_198.png": {
+      "markerName": null,
+      "displayName": "cannon_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_200.png": {
+      "markerName": "CarMarker",
+      "displayName": "Car",
+      "state": "discovered"
+    },
+    "icon_201.png": {
+      "markerName": "CarMarker",
+      "displayName": "Car",
+      "state": "undiscovered"
+    },
+    "icon_203.png": {
+      "markerName": "CamperMarker",
+      "displayName": "Camper",
+      "state": "discovered"
+    },
+    "icon_204.png": {
+      "markerName": "CamperMarker",
+      "displayName": "Camper",
+      "state": "undiscovered"
+    },
+    "icon_206.png": {
+      "markerName": null,
+      "displayName": "large_vehicle_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_207.png": {
+      "markerName": null,
+      "displayName": "large_vehicle_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_209.png": {
+      "markerName": "BunkerHillMarker",
+      "displayName": "Bunker Hill",
+      "state": "discovered"
+    },
+    "icon_210.png": {
+      "markerName": "BunkerHillMarker",
+      "displayName": "Bunker Hill",
+      "state": "undiscovered"
+    },
+    "icon_212.png": {
+      "markerName": null,
+      "displayName": "residential_buildings_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_213.png": {
+      "markerName": null,
+      "displayName": "residential_buildings_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_215.png": {
+      "markerName": null,
+      "displayName": "currency_or_vendor_filled",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_216.png": {
+      "markerName": null,
+      "displayName": "currency_or_vendor_outline",
+      "state": "unmapped",
+      "notes": "Not present in supplied marker-name graph."
+    },
+    "icon_218.png": {
+      "markerName": "AirfieldMarker",
+      "displayName": "Airfield",
+      "state": "discovered"
+    },
+    "icon_219.png": {
+      "markerName": "AirfieldMarker",
+      "displayName": "Airfield",
+      "state": "undiscovered"
+    }
+  },
+  "aliases": {
+    "airfield": "AirfieldMarker",
+    "bunkerhill": "BunkerHillMarker",
+    "camper": "CamperMarker",
+    "car": "CarMarker",
+    "cave": "CaveMarker",
+    "church": "ChurchMarker",
+    "city": "CityMarker",
+    "countryclub": "CountryClubMarker",
+    "customhouse": "CustomHouseMarker",
+    "diamondcity": "DiamondCityMarker",
+    "drivein": "DriveInMarker",
+    "elevatedhighway": "ElevatedHighwayMarker",
+    "encampment": "EncampmentMarker",
+    "factory": "FactoryMarker",
+    "faneuilhall": "FaneuilHallMarker",
+    "farm": "FarmMarker",
+    "fillingstation": "FillingStationMarker",
+    "forested": "ForestedMarker",
+    "goodneighbor": "GoodneighborMarker",
+    "graveyard": "GraveyardMarker",
+    "hospital": "HospitalMarker",
+    "industrialdome": "IndustrialDomeMarker",
+    "industrialstacks": "IndustrialStacksMarker",
+    "institute": "InstituteMarker",
+    "irishpride": "IrishPrideMarker",
+    "junkyard": "JunkyardMarker",
+    "landmark": "LandmarkMarker",
+    "metro": "MetroMarker",
+    "militarybase": "MilitaryBaseMarker",
+    "monument": "MonumentMarker",
+    "observatory": "ObservatoryMarker",
+    "office": "OfficeMarker",
+    "pier": "PierMarker",
+    "pondlake": "PondLakeMarker",
+    "quarry": "QuarryMarker",
+    "radiotower": "RadioTowerMarker",
+    "radioactivearea": "RadioactiveAreaMarker",
+    "salem": "SalemMarker",
+    "sanchills": "SancHillsMarker",
+    "school": "SchoolMarker",
+    "settlement": "SettlementMarker",
+    "sewer": "SewerMarker",
+    "shipwreck": "ShipwreckMarker",
+    "submarine": "SubmarineMarker",
+    "swanpond": "SwanPondMarker",
+    "synthhead": "SynthHeadMarker",
+    "town": "TownMarker",
+    "townruins": "TownRuinsMarker",
+    "urbanruins": "UrbanRuinsMarker",
+    "vault": "VaultMarker",
+    "playerloc": "PlayerLocMarker",
+    "quest": "QuestMarker",
+    "playerset": "PlayerSetMarker"
+  }
+}

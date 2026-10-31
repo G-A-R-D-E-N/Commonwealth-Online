@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" class="is-preview">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Alert Preview</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Hardcoded so Firefox file:// preview never depends on JS */
+      html,
+      body {
+        background:
+          linear-gradient(165deg, #0b120d 0%, #121810 45%, #080c08 100%) !important;
+      }
+
+      .preview-hint {
+        position: fixed;
+        left: 32px;
+        bottom: 28px;
+        z-index: 1;
+        pointer-events: none;
+        font-family: "Bahnschrift", "Arial Narrow", Arial, sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(154, 168, 152, 0.7);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="co-alerts" id="coAlerts" aria-live="polite"></div>
+    <p class="preview-hint">Alert banner preview · top-right</p>
+    <script src="alerts.js"></script>
+    <script>
+      // Always seed sample banners for this page (no query string needed).
+      document.documentElement.classList.add("is-preview");
+      if (window.setCoAlertInteractionMode) {
+        window.setCoAlertInteractionMode("mouse");
+      }
+      var samples = [
+        {
+          id: "demo-join",
+          category: "Social",
+          title: "Player Requested To Join",
+          message: "VaultDweller_92 wants to join your session.",
+          tone: "invite",
+          durationMs: 0,
+          actions: [
+            { id: "accept", label: "Accept", hotkey: "Y" },
+            { id: "decline", label: "Decline", hotkey: "N" }
+          ]
+        },
+        {
+          id: "demo-friend",
+          category: "Social",
+          title: "Friend Invite Received",
+          message: "LoneWanderer invited you to Commonwealth Eastern.",
+          tone: "invite",
+          durationMs: 0,
+          actions: [
+            { id: "accept", label: "Accept", hotkey: "Y" },
+            { id: "decline", label: "Decline", hotkey: "N" }
+          ]
+        },
+        {
+          id: "demo-connect",
+          category: "Network",
+          title: "Can't Connect To Server",
+          message: "Timed out reaching 192.168.1.40:7777.",
+          tone: "error",
+          durationMs: 0
+        },
+        {
+          id: "demo-dc",
+          category: "Network",
+          title: "Disconnected From Server",
+          message: "Connection lost. Returning to local session.",
+          tone: "warning",
+          durationMs: 0
+        }
+      ];
+      samples.forEach(function (sample, index) {
+        setTimeout(function () {
+          if (window.showCoAlert) {
+            window.showCoAlert(sample);
+          }
+        }, index * 200);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+#!/usr/bin/env node
+const { execSync } = require("child_process");
+
+function git(args) {
+  try { return execSync("git " + args, { stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 }).toString(); }
+  catch { return ""; }
+}
+
+// Only the lines this commit ADDS (a leading '+', excluding the '+++' file
+// header). Removing a leaked secret or a stale note must never be blocked.
+function addedText(pathspec) {
+  const diff = git("diff --cached --no-color" + (pathspec ? ' -- "' + pathspec + '"' : ""));
+  return diff.split(/\r?\n/)
+    .filter((l) => l.startsWith("+") && !l.startsWith("+++"))
+    .map((l) => l.slice(1))
+    .join("\n");
+}
+
+const fail = (lines) => { console.error("\n✖ Commit blocked:\n" + lines.map((l) => "  - " + l).join("\n") + "\n"); process.exit(1); };
+const problems = [];
+
+// 1) Author/committer must not be an AI.
+const ident = git("var GIT_AUTHOR_IDENT") + "\n" + git("var GIT_COMMITTER_IDENT");
+if (/(^|\s|<)(claude|anthropic|codex|chatgpt|openai|copilot|gemini|grok|cursor|antigravity)\b/i.test(ident) || /noreply@(anthropic|openai|xai)\.(com|ai)/i.test(ident)) {
+  problems.push("author/committer identity looks like an AI — commit as the user (fix user.name / user.email).");
+}
+
+// 2) Secrets in ADDED lines only (never printed). Scanning the whole diff would
+//    also match the '-' line of a commit that REMOVES a secret and block it.
+const added = addedText();
+const PATTERNS = [
+  { name: "GitHub token", re: /\bgh[opsru]_[A-Za-z0-9]{30,}\b/ },
+  { name: "GitHub fine-grained PAT", re: /\bgithub_pat_[A-Za-z0-9_]{20,}\b/ },
+  { name: "OpenAI key", re: /\bsk-[A-Za-z0-9]{20,}\b/ },
+  { name: "Private key block", re: /-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----/ },
+  { name: "AWS access key id", re: /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/ },
+  { name: "Google API key", re: /\bAIza[0-9A-Za-z_\-]{35}\b/ },
+  { name: "Slack token", re: /\bxox[baprs]-[A-Za-z0-9-]{10,}\b/ },
+  { name: "Stripe live key", re: /\bsk_live_[A-Za-z0-9]{20,}\b/ },
+  { name: "OpenRouter key", re: /\bsk-or-v1-[A-Za-z0-9]{32,}\b/ },
+  { name: "GitLab token", re: /\bglpat-[A-Za-z0-9_\-]{20,}\b/ },
+  { name: "npm token", re: /\bnpm_[A-Za-z0-9]{36}\b/ },
+  { name: "Hugging Face token", re: /\bhf_[A-Za-z0-9]{34,}\b/ },
+  { name: "SendGrid key", re: /\bSG\.[A-Za-z0-9_\-]{16,}\.[A-Za-z0-9_\-]{30,}\b/ },
+  { name: "hardcoded credential", re: /(?:api[_-]?key|secret|token|passwd|password|access[_-]?key|client[_-]?secret)["']?\s*[:=]\s*["'][A-Za-z0-9_\-\/+=.]{16,}["']/i },
+];
+const secretHits = [...new Set(PATTERNS.filter((p) => p.re.test(added)).map((p) => p.name))];
+if (secretHits.length) problems.push("staged changes look like a secret (" + secretHits.join(", ") + ") — remove it (env var / secret store) and unstage.");
+
+// 3) .pdb debug-symbol files.
+const pdb = git("diff --cached --name-only").split(/\r?\n/).filter((p) => /\.pdb$/i.test(p.trim()));
+if (pdb.length) problems.push(".pdb build artifact(s) staged (" + pdb.slice(0, 10).join(", ") + ") — add *.pdb to .gitignore and unstage.");
+
+// 4) code-notes docs: EVERY heading-delimited entry must carry a code anchor,
+//    checked against the full staged file (not just the added hunk, which let a
+//    single anchor cover an arbitrary number of unanchored notes). Heading
+//    sections with no prose body (pure containers) are skipped.
+const SRC = "c|cc|cxx|cpp|h|hh|hpp|cs|js|jsx|ts|tsx|mjs|cjs|py|lua|psc|rs|go|java|kt|swift|rb|php";
+const anchor = new RegExp("(\\b[\\w./\\\\-]+\\.(?:" + SRC + ")\\b|\\b[A-Za-z_]\\w+::[A-Za-z_]\\w+|`[^`]+:[A-Za-z0-9_]+`)", "i");
+const noteFiles = git("diff --cached --name-only").split(/\r?\n/).filter((f) => /(^|\/)docs\/code-notes\/.+\.md$/i.test(f.trim()));
+for (const f of noteFiles) {
+  const content = git('show ":' + f + '"');
+  if (!content) continue;
+  const lines = content.split(/\r?\n/);
+  const sections = [];
+  let cur = null;
+  for (const l of lines) {
+    const m = /^(#{1,6})\s/.exec(l);
+    if (m) { if (cur) sections.push(cur); cur = { head: l, level: m[1].length, body: [] }; }
+    else if (cur) cur.body.push(l);
+    else cur = { head: "", level: 0, body: [l] };
+  }
+  if (cur) sections.push(cur);
+  for (const s of sections) {
+    if (s.level <= 1) continue;  // H1 doc title / pre-heading preamble — not an entry
+    const hasProse = s.body.some((l) => l.trim().length > 0);
+    if (!hasProse) continue;  // container heading — nothing to anchor
+    const text = s.head + "\n" + s.body.join("\n");
+    if (!anchor.test(text)) {
+      const label = (s.head || s.body.find((l) => l.trim()) || "").replace(/^#+\s*/, "").slice(0, 60);
+      problems.push("code-notes doc " + f + ' has an entry with no code reference (near: "' + label + '") — anchor it to <file>:<symbol> (or a source path / Class::method).');
+    }
+  }
+}
+
+if (problems.length) fail(problems);
+process.exit(0);

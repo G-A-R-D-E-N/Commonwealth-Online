@@ -1,0 +1,608 @@
+name: Beta CI
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  cpp-tests:
+    name: C++ regression tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: CO-BETA
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Initialize canonical CommonLib
+        working-directory: .
+        run: |
+          set -euo pipefail
+          git ls-files --stage CO-BETA/plugin/lib/commonlibf4
+          git config -f .gitmodules --get-regexp '^submodule\..*\.url$'
+          git submodule sync --recursive
+          git submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::re.nomadicinteractive.dev unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://re.nomadicinteractive.dev/ReverseEng/commonlib_NonVR.git" submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4
+          }
+          git submodule status --recursive -- CO-BETA/plugin/lib/commonlibf4
+          git -C CO-BETA/plugin/lib/commonlibf4 ls-files --error-unmatch xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/lib/commonlib-shared/xmake.lua
+
+      - name: Verify reusable CommonLib checkout recovery
+        working-directory: .
+        run: python3 CO-BETA/plugin/tests/F4TCommonLibCheckoutContract.py
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Resolve packages
+        working-directory: CO-BETA/plugin
+        run: xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+
+      - name: Run the engine-independent targets
+        working-directory: CO-BETA/plugin
+        run: xmake test -y || { xmake test -v -y; exit 1; }
+
+  plugin-dll:
+    name: F4SE plugin DLLs (clang-cl/xwin)
+    needs: cpp-tests
+    # Plain runner: clang-cl cross-compiles to Windows natively, so this needs
+    # no wine prefix, no MSVC tree, and no per-runner staged toolchain.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    concurrency:
+      group: co-beta-plugin-build-${{ github.ref }}
+      cancel-in-progress: false
+
+    env:
+      XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
+      PRISMA_WIN_PACKAGES: ${{ vars.PRISMA_WIN_PACKAGES || '/opt/prisma-toolchain/win-packages' }}
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          # Keep the private UI submodule out of CI; CommonLib is initialized below.
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Initialize canonical CommonLib
+        working-directory: .
+        run: |
+          set -euo pipefail
+          git ls-files --stage CO-BETA/plugin/lib/commonlibf4
+          git config -f .gitmodules --get-regexp '^submodule\..*\.url$'
+          git submodule sync --recursive
+          git submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::re.nomadicinteractive.dev unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://re.nomadicinteractive.dev/ReverseEng/commonlib_NonVR.git" submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4
+          }
+          git submodule status --recursive -- CO-BETA/plugin/lib/commonlibf4
+          git -C CO-BETA/plugin/lib/commonlibf4 ls-files --error-unmatch xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/lib/commonlib-shared/xmake.lua
+
+      - name: Initialize pinned GameNetworkingSockets
+        run: |
+          set -euo pipefail
+          git submodule update --init --depth 1 -- CO-BETA/ThirdParty/GameNetworkingSockets-src
+          actual="$(git -C CO-BETA/ThirdParty/GameNetworkingSockets-src rev-parse HEAD)"
+          test "$actual" = "f4525e39ee10f6b45181fd92d01fee75f7d71756" \
+            || { echo "::error::GNS pin mismatch: $actual"; exit 1; }
+
+      - name: Setup native Xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a # v1
+        with:
+          xmake-version: '3.0.4'
+
+      - name: Verify the xwin toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          for tool in clang-cl lld-link llvm-ar llvm-rc llvm-dlltool llvm-readobj xmake file; do
+            command -v "$tool" >/dev/null || { echo "::error::$tool is missing"; exit 1; }
+          done
+          clang-cl --version
+          for required in \
+            "$XWIN_ROOT/crt/include" \
+            "$XWIN_ROOT/crt/lib/x86_64" \
+            "$XWIN_ROOT/sdk/include/ucrt" \
+            "$XWIN_ROOT/sdk/include/um" \
+            "$XWIN_ROOT/sdk/include/shared" \
+            "$XWIN_ROOT/sdk/include/winrt" \
+            "$XWIN_ROOT/sdk/lib/ucrt/x86_64" \
+            "$XWIN_ROOT/sdk/lib/um/x86_64"; do
+            test -d "$required" || { echo "::error::missing xwin path: $required"; exit 1; }
+          done
+          test -d "$PRISMA_WIN_PACKAGES" || { echo "::error::staged Windows packages not found at $PRISMA_WIN_PACKAGES"; exit 1; }
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Build AE, NG, and OG F4SE plugin DLLs
+        shell: bash
+        working-directory: CO-BETA/plugin
+        run: |
+          set -euo pipefail
+          rm -rf build-xwin .xmake
+          xmake config --file=xmake-xwin.lua \
+            --plat=windows \
+            --arch=x64 \
+            --mode=release \
+            --builddir=build-xwin \
+            ${CO_XMAKE_CCACHE:-} \
+            --yes
+          xmake build --file=xmake-xwin.lua --jobs=2 -vD CommonwealthOnline
+          xmake build --file=xmake-xwin.lua --jobs=2 -vD CommonwealthOnlineNG
+          xmake build --file=xmake-xwin.lua --jobs=2 -vD CommonwealthOnlineOG
+          xmake build --file=xmake-xwin.lua --jobs=2 -vD CommonwealthOnlineNpcSyncCompileCheck
+          xmake build --file=xmake-xwin.lua --jobs=2 -vD CommonwealthOnlineProbe
+
+      - name: Confirm AE DLL and F4SE entry points
+        shell: bash
+        working-directory: CO-BETA/plugin
+        run: |
+          set -euo pipefail
+          DLL="$(find build-xwin -type f -name 'CommonwealthOnline.dll' -print -quit)"
+          test -n "$DLL" || { echo "::error::CommonwealthOnline.dll was not produced"; exit 1; }
+          file "$DLL"
+          file "$DLL" | grep -q 'PE32+' || { echo "::error::CommonwealthOnline.dll is not a 64-bit PE"; exit 1; }
+          exports="$(llvm-readobj --coff-exports "$DLL" | awk '/Name:/ {print $2}' | sort -u)"
+          for sym in F4SEPlugin_Load F4SEPlugin_Version; do
+            grep -Fxq "$sym" <<<"$exports" \
+              || { echo "::error::$sym is not exported from CommonwealthOnline.dll"; exit 1; }
+            echo "AE export: $sym"
+          done
+
+      - name: Confirm NG DLL and F4SE entry points
+        shell: bash
+        working-directory: CO-BETA/plugin
+        run: |
+          set -euo pipefail
+          DLL="$(find build-xwin -type f -name 'CommonwealthOnline-NG.dll' -print -quit)"
+          test -n "$DLL" || { echo "::error::CommonwealthOnline-NG.dll was not produced"; exit 1; }
+          file "$DLL"
+          file "$DLL" | grep -q 'PE32+' || { echo "::error::CommonwealthOnline-NG.dll is not a 64-bit PE"; exit 1; }
+          exports="$(llvm-readobj --coff-exports "$DLL" | awk '/Name:/ {print $2}' | sort -u)"
+          for sym in F4SEPlugin_Load F4SEPlugin_Version; do
+            grep -Fxq "$sym" <<<"$exports" \
+              || { echo "::error::$sym is not exported from CommonwealthOnline-NG.dll"; exit 1; }
+            echo "NG export: $sym"
+          done
+
+      - name: Confirm OG DLL and F4SE entry points
+        shell: bash
+        working-directory: CO-BETA/plugin
+        run: |
+          set -euo pipefail
+          DLL="$(find build-xwin -type f -name 'CommonwealthOnline-OG.dll' -print -quit)"
+          test -n "$DLL" || { echo "::error::CommonwealthOnline-OG.dll was not produced"; exit 1; }
+          file "$DLL"
+          file "$DLL" | grep -q 'PE32+' || { echo "::error::CommonwealthOnline-OG.dll is not a 64-bit PE"; exit 1; }
+          exports="$(llvm-readobj --coff-exports "$DLL" | awk '/Name:/ {print $2}' | sort -u)"
+          for sym in F4SEPlugin_Load F4SEPlugin_Version; do
+            grep -Fxq "$sym" <<<"$exports" \
+              || { echo "::error::$sym is not exported from CommonwealthOnline-OG.dll"; exit 1; }
+            echo "OG export: $sym"
+          done
+
+  inline-hook-windows:
+    name: SafetyHook inline hook test (Windows)
+    if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+    runs-on: windows-latest
+    env:
+      _MSPDBSRV_ENDPOINT_: co-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: CO-BETA/plugin
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Initialize canonical CommonLib
+        working-directory: .
+        shell: bash
+        run: |
+          set -euo pipefail
+          git ls-files --stage CO-BETA/plugin/lib/commonlibf4
+          git config -f .gitmodules --get-regexp '^submodule\..*\.url$'
+          git submodule sync --recursive
+          git submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::re.nomadicinteractive.dev unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://re.nomadicinteractive.dev/ReverseEng/commonlib_NonVR.git" submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4
+          }
+          git submodule status --recursive -- CO-BETA/plugin/lib/commonlibf4
+          git -C CO-BETA/plugin/lib/commonlibf4 ls-files --error-unmatch xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/lib/commonlib-shared/xmake.lua
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - name: Configure the Windows x64 test target
+        run: xmake f -y -p windows -a x64 -m releasedbg
+
+      - name: Build the inline hook test
+        run: xmake build -y CommonwealthOnlineInlineHookTests
+
+      - name: Run the inline hook test
+        run: xmake test -y CommonwealthOnlineInlineHookTests/default || { xmake test -v -y CommonwealthOnlineInlineHookTests/default; exit 1; }
+
+      - name: Build the probe capture test
+        run: xmake build -y CommonwealthOnlineProbeCaptureTests
+
+      - name: Run the probe capture test
+        run: xmake test -y CommonwealthOnlineProbeCaptureTests/default || { xmake test -v -y CommonwealthOnlineProbeCaptureTests/default; exit 1; }
+
+      - name: Build the UI API layout test
+        run: xmake build -y CommonwealthOnlineUIApiLayoutTests
+
+      - name: Run the UI API layout test
+        run: xmake test -y CommonwealthOnlineUIApiLayoutTests/default || { xmake test -v -y CommonwealthOnlineUIApiLayoutTests/default; exit 1; }
+
+  content-manifest:
+    name: Content manifest fingerprint (for server pinning)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Build the content-manifest tool
+        working-directory: co-core
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+          xmake build -y CommonwealthOnlineCoreContentManifestTool
+
+      - name: Stage content, compute and record the fingerprint
+        run: |
+          set -euo pipefail
+          STAGE_DIR="$(bash CO-BETA/ci/stage-content.sh)"
+          trap 'rm -rf "$STAGE_DIR"' EXIT
+
+          # Snapshot the fingerprinted tree before the emit below writes into
+          # F4SE\Plugins\ (the client manifest lives outside the fingerprinted
+          # content set), so the recorded fingerprint and the reported set always
+          # agree.
+          CONTENT_COUNT="$(find "$STAGE_DIR" -type f | wc -l)"
+          CONTENT_LIST="$(find "$STAGE_DIR" -type f | sort | sed "s|^$STAGE_DIR/||")"
+
+          FINGERPRINT="$(
+            cd co-core \
+            && xmake run CommonwealthOnlineCoreContentManifestTool \
+              --root "$STAGE_DIR" \
+              --exclude-name CommonwealthOnline.dll \
+              --exclude-name CommonwealthOnline-NG.dll \
+              --exclude-name CommonwealthOnline-OG.dll \
+              --exclude-name commonwealth_online_gns_bridge.dll \
+              --emit-client-json "$STAGE_DIR/F4SE/Plugins/CommonwealthOnlineClient.json"
+          )"
+          if ! [[ "$FINGERPRINT" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "::error::content-manifest tool returned an invalid fingerprint: $FINGERPRINT"
+            exit 1
+          fi
+
+          printf '%s\n' "$FINGERPRINT" > content-manifest-ci.txt
+
+          # The emitted packaged client manifest (clientVersion + fingerprint)
+          # ships next to the DLLs in Data\F4SE\Plugins\; copy it out of the
+          # ephemeral stage for the artifact and sanity-check the value matches
+          # exactly what was recorded above.
+          cp "$STAGE_DIR/F4SE/Plugins/CommonwealthOnlineClient.json" ./CommonwealthOnlineClient.json
+          grep -q "$FINGERPRINT" ./CommonwealthOnlineClient.json \
+            || { echo "::error::emitted client manifest does not carry the recorded fingerprint"; exit 1; }
+
+          {
+            echo "## Content manifest fingerprint (for server pinning)"
+            echo
+            echo "\`$FINGERPRINT\`"
+            echo
+            echo "SHA-256 over $CONTENT_COUNT CO-BETA content files, excluding the four client binaries and the private CommonwealthOnlineUI submodule package:"
+            echo '```'
+            echo "$CONTENT_LIST"
+            echo '```'
+            echo "Pin this value in \`contentManifestFingerprint\` server configuration. Note: the UI package is not staged in CI, so a pin from here binds repo content only."
+            echo
+            echo "Packaged client manifest emitted to \`F4SE/Plugins/CommonwealthOnlineClient.json\` (artifact \`CommonwealthOnlineClient.json\`) - releases place it next to the client DLLs so the client hello attaches exactly this fingerprint."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  script-checks:
+    name: Shell and switch parsing
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: CO-BETA
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Syntax
+        run: bash -n tools/debug-log.sh ci/stage-content.sh
+
+      - name: Identity ordering contract
+        run: python3 plugin/tests/F4TIdentityOrderingContract.py
+
+      - name: Profile store source contract
+        run: python3 plugin/tests/F4TServerProfileStoreSourceContract.py
+
+      - name: Server password store contract
+        run: python3 plugin/tests/F4TServerPasswordStoreContract.py
+
+      - name: Server live settings contract
+        run: python3 plugin/tests/F4TServerLiveContract.py
+
+      - name: VATS policy contract
+        run: python3 plugin/tests/F4TVatsPolicyContract.py
+
+      - name: GNS failure source contract
+        run: python3 plugin/tests/F4TGnsFailureSourceContract.py
+
+      - name: GNS voice contract
+        run: python3 plugin/tests/F4TGnsVoiceContract.py
+
+      - name: Handshake rejection action contract
+        run: python3 plugin/tests/F4THandshakeRejectionActionContract.py
+
+      - name: Modpack auto-fix contract
+        run: python3 plugin/tests/F4TModpackAutoFixContract.py
+
+      - name: Workshop commit hooks contract
+        run: python3 plugin/tests/F4TWorkshopCommitHooksContract.py
+
+      - name: Proxy path predicate contract
+        run: python3 plugin/tests/F4TProxyPathPredicateContract.py
+
+      - name: Proxy weapon draw contract
+        run: python3 plugin/tests/F4TProxyWeaponDrawContract.py
+
+      - name: Hook identity contract
+        run: python3 plugin/tests/F4THookIdentityContract.py
+
+      - name: Verify cancelled join ownership
+        run: python3 plugin/tests/F4TJoinCancellationTests.py
+
+      - name: Verify connection lifecycle ordering
+        run: python3 plugin/tests/F4TConnectionLifecycleTests.py
+
+      - name: Verify send failure cleanup ownership
+        run: python3 plugin/tests/F4TSendCleanupRaceTests.py
+
+      - name: Steam join failure reaches the UI
+        run: python3 plugin/tests/F4TSteamJoinFailureContract.py
+
+      - name: OG plugins export F4SEPlugin_Query
+        run: python3 plugin/tests/F4TOGPluginQueryContract.py
+
+      - name: Permanent task policy linkage contract
+        run: python3 plugin/tests/F4TPermanentTaskPolicyContract.py
+
+      - name: Crash log contract
+        run: python3 plugin/tests/F4TCrashLogContract.py
+
+      - name: Equipment debounce contract
+        run: python3 plugin/tests/F4TEquipmentDebounceContract.py
+
+      - name: Receive terminal notification regression
+        run: python3 plugin/tests/F4TReceiveNotificationTests.py
+
+      - name: Verify replication runtime contract
+        run: python3 plugin/tests/F4TReplicationRuntimeContract.py
+
+      - name: Verify local player transform send contract
+        run: python3 plugin/tests/F4TLocalPlayerTransformSendContract.py
+
+      - name: Verify quest sync wiring contract
+        run: python3 plugin/tests/F4TQuestWiringContract.py
+
+      - name: Verify tutorial quest gate contract
+        run: python3 plugin/tests/F4TTutorialQuestGateContract.py
+
+      - name: Verify quest story order contract
+        run: python3 plugin/tests/F4TQuestStoryOrderContract.py
+
+      - name: Verify NPC sync contract
+        run: python3 plugin/tests/F4TNpcSyncContract.py
+
+      - name: Verify NPC loot contract
+        run: python3 plugin/tests/F4TNpcLootContract.py
+
+      - name: Verify NPC co-op health contract
+        run: python3 plugin/tests/F4TNpcCoopHealthContract.py
+
+      - name: Verify settlement capture contract
+        run: python3 plugin/tests/F4TSettlementCaptureContract.py
+
+      - name: Verify probe decoder contract
+        run: python3 plugin/tests/F4TProbeDecoderContract.py
+
+      - name: Verify probe sites contract
+        run: python3 plugin/tests/F4TProbeSitesContract.py
+
+      - name: Verify NPC suppress grace contract
+        run: python3 plugin/tests/F4TNpcSuppressGraceContract.py
+
+      - name: Verify explicit teleport contract
+        run: python3 plugin/tests/F4TExplicitTeleportContract.py
+
+      - name: Verify player faction gap contract
+        run: python3 plugin/tests/F4TFactionGapContract.py
+
+      - name: Verify player faction invite offer contract
+        run: python3 plugin/tests/F4TFactionInviteOfferContract.py
+
+      - name: Verify save lineage timing contract
+        run: python3 plugin/tests/F4TSaveLineageTimingContract.py
+
+      - name: Verify console guard welcome integration
+        run: python3 plugin/tests/F4TConsoleGuardWelcomeIntegrationContract.py
+
+      - name: Verify console guard second door
+        run: python3 plugin/tests/F4TConsoleGuardSecondDoorContract.py
+
+      - name: Verify console guard single entry
+        run: python3 plugin/tests/F4TConsoleGuardSingleEntryContract.py
+
+      - name: Verify console guard trampoline warns once
+        run: python3 plugin/tests/F4TConsoleGuardTrampolineWarnContract.py
+
+      - name: Verify modpack gate host and player UX contract
+        run: python3 plugin/tests/F4TModpackGateUxContract.py
+      - name: Verify load-order translation integration
+        run: python3 plugin/tests/F4TLoadOrderIntegrationContract.py
+
+      - name: Verify client modpack probe contract
+        run: python3 plugin/tests/F4TClientModpackProbeContract.py
+
+      - name: Verify modpack probe cache contract
+        run: python3 plugin/tests/F4TModpackCacheContract.py
+
+      - name: Verify modpack probe progress contract
+        run: python3 plugin/tests/F4TModpackProgressContract.py
+
+      - name: Verify modpack manifest chunk delivery contract
+        run: python3 plugin/tests/F4TModpackChunksContract.py
+
+      - name: Verify first-join intro quest probe contract
+        run: python3 plugin/tests/F4TIntroQuestProbeContract.py
+
+      - name: Whitespace check
+        run: git diff --check
+
+      - name: Debug switch value matrix
+        run: |
+          set -u
+          fail() { echo "::error::$1"; exit 1; }
+          probe() { COMMONWEALTH_ONLINE_DEBUG="$1" bash -c '. tools/debug-log.sh; co_debug CI msg'; }
+
+          [ -n "$(unset COMMONWEALTH_ONLINE_DEBUG; bash -c '. tools/debug-log.sh; co_debug CI msg')" ] \
+            || fail "unset should fall back to the beta default of on"
+          [ -n "$(probe on)" ] || fail "'on' should log"
+          [ -z "$(probe off)" ] || fail "'off' should be silent"
+          [ -n "$(probe ' ON ')" ] || fail "padded on should log"
+          [ -z "$(probe ' OFF ')" ] || fail "padded off should be silent"
+          [ -z "$(probe disabled)" ] || fail "'disabled' should be silent"
+          [ -n "$(probe maybe)" ] || fail "unrecognised values should fall back to on"
+          echo "all switch values behave as documented"
+
+  report:
+    name: Report to the private PR
+    needs: [cpp-tests, plugin-dll, inline-hook-windows, content-manifest, script-checks]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=success; description="skipped (all jobs gated off)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-beta-ci" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-beta-ci ($description)"
