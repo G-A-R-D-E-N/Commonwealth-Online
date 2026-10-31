@@ -1,0 +1,11 @@
+{
+  "worldspace": "DLC03FarHarbor",
+  "title": "FAR HARBOR",
+  "image": "map.png",
+  "discovery": "native",
+  "calibration": {
+    "mode": "frame",
+    "nwCellX": -16, "nwCellY": 17, "seCellX": 19, "seCellY": -18,
+    "x0": 68.0, "y0": 59.0, "x1": 1985.0, "y1": 1975.0
+  }
+}

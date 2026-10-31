@@ -1,0 +1,35 @@
+#include <F4SE/F4SE.h>
+
+F4SE_PLUGIN_VERSION = []() noexcept {
+    F4SE::PluginVersionData v{};
+    v.PluginVersion({ ${COMMONLIB_PLUGIN_VERSION_MAJOR}, ${COMMONLIB_PLUGIN_VERSION_MINOR}, ${COMMONLIB_PLUGIN_VERSION_PATCH}, 0 });
+    v.PluginName("${COMMONLIB_PLUGIN_NAME}");
+    v.AuthorName("${COMMONLIB_PLUGIN_AUTHOR}");
+    v.UsesAddressLibrary(true);
+    v.UsesAddressLibraryNG(true);
+    v.UsesSigScanning(false);
+    v.IsLayoutDependent(true);
+    v.IsLayoutDependentNG(true);
+    v.HasNoStructUse(false);
+#if defined(F4T_TARGET_AE)
+    v.CompatibleVersions({ F4SE::RUNTIME_1_11_240 });
+#elif defined(F4T_TARGET_NG)
+    v.CompatibleVersions({ F4SE::RUNTIME_1_10_984 });
+#elif defined(F4T_TARGET_OG)
+    v.CompatibleVersions({ F4SE::RUNTIME_1_10_163 });
+#else
+#error "A Commonwealth Online runtime target is required"
+#endif
+    return v;
+}();
+
+#if defined(F4T_TARGET_OG)
+// OG F4SE 0.6.x loads only plugins that export F4SEPlugin_Query; it ignores F4SEPlugin_Version.
+F4SE_PLUGIN_QUERY(const F4SE::QueryInterface* a_f4se, F4SE::PluginInfo* a_info)
+{
+    a_info->infoVersion = F4SE::PluginInfo::kVersion;
+    a_info->name = "${COMMONLIB_PLUGIN_NAME}";
+    a_info->version = ${COMMONLIB_PLUGIN_VERSION_MAJOR};
+    return !a_f4se->IsEditor() && a_f4se->RuntimeVersion() == F4SE::RUNTIME_1_10_163;
+}
+#endif

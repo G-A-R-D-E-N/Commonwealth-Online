@@ -1,0 +1,21 @@
+## Licensing
+
+Unless otherwise noted, original source code in this repository is licensed
+under the Mozilla Public License 2.0.
+
+This licence does not apply to game data, plugins created with the Fallout 4
+Creation Kit, compiled archives, meshes, textures, materials, audio, branding,
+screenshots, documentation specifically marked otherwise, or third-party
+components. See `Licenses/Assets.md` for repository asset terms. Third-party
+components remain subject to their own licenses and notices.
+
+Fallout 4 Script Extender is a separately distributed dependency. Commonwealth
+Online does not redistribute or provide modified versions of F4SE.
+
+TiltedEvolution was consulted as a technical reference during research. No
+TiltedEvolution source code is included in Commonwealth Online.
+
+Fallout, Fallout 4, Bethesda Game Studios, Bethesda Softworks, ZeniMax and
+related names and marks belong to their respective owners.
+
+THIS MATERIAL IS NOT MADE, GUARANTEED OR SUPPORTED BY ZENIMAX OR ITS AFFILIATES.

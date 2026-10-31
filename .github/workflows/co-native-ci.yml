@@ -1,0 +1,281 @@
+name: Native C++ CI
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  linux-tests:
+    name: Native Linux tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Test shared core
+        working-directory: co-core
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+          xmake test -y || { xmake test -v -y; exit 1; }
+
+      - name: Test C++ server protocol and persistence
+        working-directory: CO-SERVER/server-cpp
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+          xmake test -y || { xmake test -v -y; exit 1; }
+
+      - name: Initialize canonical CommonLib
+        run: |
+          set -euo pipefail
+          git submodule sync --recursive -- CO-BETA/plugin/lib/commonlibf4
+          git submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::re.nomadicinteractive.dev unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://re.nomadicinteractive.dev/ReverseEng/commonlib_NonVR.git" submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4
+          }
+          git submodule status --recursive -- CO-BETA/plugin/lib/commonlibf4
+          git -C CO-BETA/plugin/lib/commonlibf4 ls-files --error-unmatch xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/lib/commonlib-shared/xmake.lua
+
+      - name: Test plugin integration
+        working-directory: CO-BETA/plugin
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+          xmake test -y || { xmake test -v -y; exit 1; }
+
+  sanitizers:
+    name: Native sanitizer lanes
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'sanitize')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      # The sanitizer runtimes ship with gcc on the runner image; the default
+      # clang toolchain has no compiler-rt installed.
+      CO_TOOLCHAIN: gcc
+      ASAN_OPTIONS: detect_leaks=1:abort_on_error=1
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+      TSAN_OPTIONS: halt_on_error=1
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Address and undefined-behaviour sanitizers
+        working-directory: CO-SERVER/server-cpp
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-} -o build-asan --policies=build.sanitizer.address,build.sanitizer.undefined
+          xmake test -y || { xmake test -v -y; exit 1; }
+          python3 ../../scripts/verify-native-sanitizers.py --build-dir build-asan --sanitizers asan ubsan
+
+      - name: Thread sanitizer
+        working-directory: CO-SERVER/server-cpp
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-} -o build-tsan --policies=build.sanitizer.thread
+          setarch "$(uname -m)" -R xmake test -y || { setarch "$(uname -m)" -R xmake test -v -y; exit 1; }
+          python3 ../../scripts/verify-native-sanitizers.py --build-dir build-tsan --sanitizers tsan
+
+  windows-native:
+    name: Windows native cross-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: '3.0.4'
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Verify xwin toolchain
+        run: |
+          set -euo pipefail
+          for tool in clang-cl lld-link llvm-ar llvm-rc llvm-dlltool xmake cmake ninja protoc; do
+            command -v "$tool" >/dev/null || { echo "::error::$tool is missing"; exit 1; }
+          done
+          test -d "$XWIN_ROOT/crt/include" || { echo "::error::missing xwin CRT"; exit 1; }
+          test -d "$XWIN_ROOT/sdk/include/ucrt" || { echo "::error::missing xwin SDK"; exit 1; }
+
+      - name: Cross-build shared core
+        working-directory: co-core
+        run: |
+          set -euo pipefail
+          rm -rf build-xwin .xmake
+          xmake config --file=xmake-xwin.lua \
+            --plat=windows \
+            --arch=x64 \
+            --mode=debug \
+            --builddir=build-xwin \
+            ${CO_XMAKE_CCACHE:-} \
+            --yes
+          xmake build --file=xmake-xwin.lua --jobs=2 -vD
+
+      - name: Cross-build C++ server tests
+        working-directory: CO-SERVER/server-cpp
+        run: |
+          set -euo pipefail
+          rm -rf build-xwin .xmake
+          xmake config --file=xmake-xwin.lua \
+            --plat=windows \
+            --arch=x64 \
+            --mode=debug \
+            --builddir=build-xwin \
+            ${CO_XMAKE_CCACHE:-} \
+            --yes
+          for target in \
+            CommonwealthOnlineServerProtocolTests \
+            CommonwealthOnlineServerInterestTests \
+            CommonwealthOnlineServerReplayTests \
+            CommonwealthOnlineServerWorldCombatTests \
+            CommonwealthOnlineServerIdentityGateTests \
+            CommonwealthOnlineServerIdentityGateSteamTests \
+            CommonwealthOnlineServerSteamIdentityLinkTests \
+            CommonwealthOnlineServerSteamIdentityRegistryTests \
+            CommonwealthOnlineServerSteamWebApiVerifierTests \
+            CommonwealthOnlineServerBanStoreTests \
+            CommonwealthOnlineServerAdminTokenStoreTests \
+            CommonwealthOnlineServerAdminCommandDispatcherTests \
+            CommonwealthOnlineServerPersistenceTests \
+            CommonwealthOnlineServerPersistenceGateTests \
+            CommonwealthOnlineServerEquipmentSyncTests \
+            CommonwealthOnlineServerDropSyncTests \
+            CommonwealthOnlineServerInventoryReadyDeliveryTests \
+            CommonwealthOnlineServerQuestTests \
+            CommonwealthOnlineServerQuestStoryTests \
+            CommonwealthOnlineServerQuestAdminTests \
+            CommonwealthOnlineServerInventoryTransferTests; do
+            xmake build --file=xmake-xwin.lua --jobs=2 -vD "$target"
+          done
+
+      - name: Cross-build and audit Windows GNS bridge
+        run: |
+          set -euo pipefail
+          deps="$RUNNER_TEMP/co-native-win-gns-deps-${{ github.run_id }}-${{ github.run_attempt }}"
+          build="$RUNNER_TEMP/co-native-win-gns-build-${{ github.run_id }}-${{ github.run_attempt }}"
+          trap 'rm -rf "$deps" "$build"' EXIT
+          bash CO-SERVER/server/scripts/build-gns-bridge-windows-cross.sh "$deps" "$build"
+          bash CO-SERVER/server-cpp/scripts/audit-windows-native-server.sh "$build/commonwealth_online_gns_bridge.dll"
+
+  report:
+    name: Report to the private PR
+    needs: [linux-tests, sanitizers, windows-native]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=success; description="skipped (all jobs gated off)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-native-ci" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-native-ci ($description)"

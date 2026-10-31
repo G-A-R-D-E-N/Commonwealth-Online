@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+const { execSync } = require("child_process");
+const remoteName = process.argv[2] || "";
+let remoteUrl = process.argv[3] || "";
+if (!remoteUrl && remoteName) {
+  try { remoteUrl = execSync("git remote get-url " + remoteName, { stdio: ["ignore", "pipe", "ignore"] }).toString(); } catch {}
+}
+if (/dear-modding-fo4/i.test(remoteUrl) || /dear-modding-fo4/i.test(remoteName)) {
+  console.error("\n✖ Push blocked: Dear-Modding-FO4/commonlibf4 is read-only for this project.");
+  console.error("  Contribute only to our own repositories. (remote: " + (remoteUrl || remoteName).trim() + ")\n");
+  process.exit(1);
+}
+const ours = /nomadicinteractive\.dev[:\/](?:\d+\/)?GARDEN\/CommonwealthOnline/i.test(remoteUrl);
+if (ours && process.env.CO_ALLOW_MAIN_PUSH !== "1") {
+  let refs = "";
+  try { refs = require("fs").readFileSync(0, "utf8"); } catch {}
+  const toMain = refs.split(/\r?\n/).some((l) => l.trim().split(/\s+/)[2] === "refs/heads/main");
+  if (toMain) {
+    console.error("\n✖ Push blocked: refs/heads/main is protected. Push a branch and open a PR into nomad-dev.");
+    console.error("  The owner can override with CO_ALLOW_MAIN_PUSH=1.\n");
+    process.exit(1);
+  }
+}
+process.exit(0);

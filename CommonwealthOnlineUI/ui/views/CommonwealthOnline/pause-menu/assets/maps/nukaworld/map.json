@@ -1,0 +1,11 @@
+{
+  "worldspace": "NukaWorld",
+  "title": "NUKA-WORLD",
+  "image": "map.png",
+  "discovery": "native",
+  "calibration": {
+    "mode": "frame",
+    "nwCellX": -18, "nwCellY": 17, "seCellX": 16, "seCellY": -18,
+    "x0": 64.0, "y0": 56.0, "x1": 1984.0, "y1": 1985.0
+  }
+}
