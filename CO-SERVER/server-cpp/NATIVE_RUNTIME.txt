@@ -1,0 +1,18 @@
+Commonwealth Online native server runtime
+
+Linux x64
+- The native server and GNS bridge are shipped together in the package directory.
+- The server resolves libcommonwealth_online_gns_bridge.so from its own directory via $ORIGIN.
+- GameNetworkingSockets is linked into the packaged bridge and is not required as a loose shared library.
+- Resume-token random generation and SHA-256 use the operating system OpenSSL libcrypto shared library.
+- Standard Linux system libraries (glibc/libm/dl/threading and the C++ runtime selected by the toolchain) remain system dependencies.
+- native-server-dependencies.txt and native-bridge-dependencies.txt record the exact loader dependencies of the packaged build.
+
+Windows x64
+- commonwealth_online_gns_bridge.dll is shipped beside CommonwealthOnline.Server.exe.
+- The server and bridge use Windows BCrypt for secure randomness/hash support and do not require OpenSSL.
+- The packaged native server is built with the static MSVC C/C++ runtime and must not import vcruntime*.dll or msvcp*.dll.
+- GameNetworkingSockets and protobuf are linked into the packaged bridge and must not appear as loose runtime DLL dependencies.
+- Windows system DLLs such as bcrypt.dll, ws2_32.dll and kernel32.dll are expected operating-system dependencies.
+
+The package verifier rejects mixed managed/native layouts and unexpected loose native runtime dependencies.

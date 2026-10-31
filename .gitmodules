@@ -1,0 +1,16 @@
+[submodule "CO-BETA/ThirdParty/GameNetworkingSockets-src"]
+	path = CO-BETA/ThirdParty/GameNetworkingSockets-src
+	url = https://github.com/ValveSoftware/GameNetworkingSockets.git
+[submodule "CO-BETA/ThirdParty/CommonwealthOnlineUI"]
+	path = CO-BETA/ThirdParty/CommonwealthOnlineUI
+	url = ssh://git@git.zambazosmedia.group:2223/Commonwealth-Online/CommonwealthOnlineUI.git
+[submodule "CommonwealthOnlineUI/ThirdParty/CommonLibF4"]
+	path = CommonwealthOnlineUI/ThirdParty/CommonLibF4
+	url = https://github.com/G-A-R-D-E-N/commonlibf4-nomad.git
+
+[submodule "CO-BETA/plugin/lib/commonlibf4"]
+	path = CO-BETA/plugin/lib/commonlibf4
+	url = https://github.com/G-A-R-D-E-N/commonlibf4-nomad.git
+[submodule "CommonwealthOnlineUI/ThirdParty/Prisma2.0"]
+	path = CommonwealthOnlineUI/ThirdParty/Prisma2.0
+	url = https://github.com/PRISMA-USER-INTERFACE-FRAMEWORK/Prisma2.0.git

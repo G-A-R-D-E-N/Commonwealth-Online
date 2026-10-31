@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "probes": [
+    {
+      "name": "selftest",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 64
+    },
+    {
+      "name": "res408-unload-insert",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    },
+    {
+      "name": "res408-command-execute-dispatch",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    },
+    {
+      "name": "res553-vmbridge-read",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    },
+    {
+      "name": "res408-console-compile",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    },
+    {
+      "name": "res364-vslot1-owner",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    },
+    {
+      "name": "res361-ng-entry",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    },
+    {
+      "name": "res349-taskunpack-case4a",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    },
+    {
+      "name": "res410-ae-global-call-arg",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    },
+    {
+      "name": "res410-handler-a-og",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    },
+    {
+      "name": "res410-handler-a-ng",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    },
+    {
+      "name": "res385-setvolume-entry",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    },
+    {
+      "name": "res407-pitch-channel-copy",
+      "enabled": true,
+      "sampling": 1,
+      "perProbeCap": 1024
+    }
+  ]
+}

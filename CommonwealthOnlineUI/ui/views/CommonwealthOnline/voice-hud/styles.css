@@ -1,0 +1,65 @@
+:root {
+  --co-ui-scale: 1;
+  --co-green: #3ecf4a;
+  --co-amber: #c9a84a;
+  --co-text-pale: #d8ddd0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;
+  font-family: "Futura PT Demibold", "Roboto Condensed", "Bahnschrift", "Arial Narrow", Arial, sans-serif;
+  font-weight: 600;
+  color: var(--co-text-pale);
+  pointer-events: none;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.co-voice-hud {
+  position: fixed;
+  top: calc(28px * var(--co-ui-scale));
+  left: calc(2vw * var(--co-ui-scale));
+  display: flex;
+  flex-direction: column;
+  gap: calc(4px * var(--co-ui-scale));
+  font-size: calc(18px * var(--co-ui-scale));
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.co-voice-mic {
+  display: flex;
+  align-items: center;
+  gap: calc(6px * var(--co-ui-scale));
+  color: var(--co-green);
+}
+
+.co-voice-mic svg {
+  width: calc(18px * var(--co-ui-scale));
+  height: calc(18px * var(--co-ui-scale));
+  fill: currentColor;
+}
+
+.co-voice-speakers {
+  list-style: none;
+  color: var(--co-amber);
+}
+
+.co-voice-pending {
+  font-size: calc(15px * var(--co-ui-scale));
+}

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commonwealth Online — Pause Menu</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../settings/settings.css">
+</head>
+<body>
+  <div class="pause-screen" id="pauseScreen">
+    <!-- Map + markers share one filter so blur/unblur stays in lockstep -->
+    <div class="map-world" id="mapWorld" aria-hidden="true">
+      <div class="map-layer"></div>
+      <div class="map-markers" id="mapMarkers"></div>
+    </div>
+    <div class="map-overlay" aria-hidden="true"></div>
+
+    <!-- Allies the map is not drawing because they are in another worldspace -->
+    <p class="map-elsewhere" id="mapElsewhere" aria-live="polite" hidden></p>
+
+    <!-- CRT / HUD texture overlays -->
+    <div class="screen-effects" aria-hidden="true"></div>
+
+    <!-- Left pause menu panel -->
+    <aside class="left-panel">
+      <img
+        class="brand-logo"
+        src="../shared/logo.svg"
+        alt="Commonwealth Online"
+        width="220"
+        height="54"
+      >
+
+      <nav class="menu" id="menu" aria-label="Pause menu">
+        <button type="button" class="menu-item" data-index="0" data-action="resume">
+          <span class="menu-item__label">RESUME</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+
+        <button type="button" class="menu-item" data-index="1" data-action="map">
+          <span class="menu-item__label">MAP</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+
+        <button type="button" class="menu-item" data-index="2" data-action="social">
+          <span class="menu-item__label">SOCIAL</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+
+        <button type="button" class="menu-item" data-index="3" data-action="quests">
+          <span class="menu-item__label">QUESTS</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+
+        <button type="button" class="menu-item" data-index="4" data-action="server">
+          <span class="menu-item__label">SERVER</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+
+        <button type="button" class="menu-item" data-index="5" data-action="settings">
+          <span class="menu-item__label">SETTINGS</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+
+        <button type="button" class="menu-item" data-index="6" data-action="help">
+          <span class="menu-item__label">HELP</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+
+        <button type="button" class="menu-item" data-index="7" data-action="quit">
+          <span class="menu-item__label">QUIT</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Top-right server info (filled by setCurrentServerInfo from C++) -->
+    <section class="server-panel is-offline" id="serverPanel" aria-label="Current server">
+      <h2 class="server-panel__heading">CURRENT SERVER</h2>
+      <div class="server-panel__row">
+        <span class="signal-bars signal-bars--unknown" id="serverSignalBars" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </span>
+        <span class="server-panel__ping" id="serverPing">—</span>
+        <p class="server-panel__name" id="serverName">—</p>
+      </div>
+      <p class="server-panel__mode" id="serverModeBadge" hidden></p>
+      <h2 class="server-panel__heading">PLAYERS ONLINE</h2>
+      <p class="server-panel__players" id="serverPlayers">—</p>
+    </section>
+
+    <!-- Settings view (content mounted by ../settings/settings.js) -->
+    <section class="settings-view" id="settingsPanel" aria-label="Settings" hidden></section>
+
+    <!-- Quit confirmation -->
+    <section class="quit-confirm" id="quitConfirmPanel" aria-label="Quit confirmation" hidden>
+      <div class="quit-confirm__dialog" role="dialog" aria-modal="true" aria-labelledby="quitConfirmTitle">
+        <h2 class="quit-confirm__title" id="quitConfirmTitle">LEAVE GAME?</h2>
+        <p class="quit-save-status" hidden></p>
+        <nav class="quit-confirm__options" id="quitConfirmOptions" aria-label="Quit confirmation options">
+          <button type="button" class="menu-item quit-confirm__option" data-index="0" data-choice="mainMenu">
+            <span class="menu-item__label">DISCONNECT TO MAIN MENU</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="menu-item quit-confirm__option" data-index="1" data-choice="desktop">
+            <span class="menu-item__label">QUIT TO DESKTOP</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="menu-item quit-confirm__option" data-index="2" data-choice="cancel">
+            <span class="menu-item__label">CANCEL</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Forced session lockout (kick / ban) -->
+    <section class="quit-confirm session-lockout" id="sessionLockoutPanel" aria-label="Session ended" hidden>
+      <div class="quit-confirm__dialog" role="dialog" aria-modal="true" aria-labelledby="sessionLockoutTitle">
+        <h2 class="quit-confirm__title" id="sessionLockoutTitle">YOU HAVE BEEN BANNED</h2>
+        <p class="quit-save-status" hidden></p>
+        <div class="session-lockout__reason" aria-label="Ban reason">
+          <h3 class="session-lockout__reason-heading">REASON</h3>
+          <p class="session-lockout__reason-text" id="sessionLockoutReason">No reason provided.</p>
+        </div>
+        <nav class="quit-confirm__options" id="sessionLockoutOptions" aria-label="Session lockout options">
+          <button type="button" class="menu-item quit-confirm__option is-selected" data-index="0" data-choice="mainMenu">
+            <span class="menu-item__label">RETURN TO MAIN MENU</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="menu-item quit-confirm__option" data-index="1" data-choice="desktop">
+            <span class="menu-item__label">QUIT TO DESKTOP</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Fast travel confirmation (map mode) -->
+    <section class="quit-confirm travel-confirm" id="travelConfirmPanel" aria-label="Fast travel confirmation" hidden>
+      <div class="quit-confirm__dialog" role="dialog" aria-modal="true" aria-labelledby="travelConfirmTitle">
+        <h2 class="quit-confirm__title" id="travelConfirmTitle">TRAVEL TO LOCATION?</h2>
+        <p class="travel-confirm__destination" id="travelConfirmDestination"></p>
+        <nav class="quit-confirm__options" id="travelConfirmOptions" aria-label="Fast travel confirmation options">
+          <button type="button" class="menu-item quit-confirm__option" data-index="0" data-choice="travel">
+            <span class="menu-item__label">YES</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="menu-item quit-confirm__option" data-index="1" data-choice="cancel">
+            <span class="menu-item__label">NO</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Bottom controller prompts (pause menu) -->
+    <footer class="prompt-bar" id="pausePromptBar" aria-label="Controller prompts">
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_A_White_Alt.png" src="../shared/icons/Xbox/T_X_A_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">SELECT</span>
+      </div>
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_B_White_Alt.png" src="../shared/icons/Xbox/T_X_B_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">BACK</span>
+      </div>
+    </footer>
+
+    <!-- Settings mode prompt bar -->
+    <footer class="prompt-bar prompt-bar--settings" id="settingsPromptBar" aria-label="Settings prompts" hidden>
+      <div class="prompt" data-prompt="move">
+        <span class="prompt__glyph prompt__glyph--text" aria-hidden="true">↑↓</span>
+        <span class="prompt__label">MOVE</span>
+      </div>
+      <div class="prompt" data-prompt="change">
+        <span class="prompt__glyph prompt__glyph--text" aria-hidden="true">←→</span>
+        <span class="prompt__label">CHANGE</span>
+      </div>
+      <div class="prompt" data-prompt="select">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_A_White_Alt.png" src="../shared/icons/Xbox/T_X_A_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">SELECT</span>
+      </div>
+      <div class="prompt" data-prompt="apply">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_X_White_Alt.png" src="../shared/icons/Xbox/T_X_X_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">APPLY</span>
+      </div>
+      <div class="prompt" data-prompt="back">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_B_White_Alt.png" src="../shared/icons/Xbox/T_X_B_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">BACK</span>
+      </div>
+      <div class="prompt" data-prompt="tab">
+        <span class="prompt__glyph prompt__glyph--text" aria-hidden="true">TAB</span>
+        <span class="prompt__label">SWITCH FOCUS</span>
+      </div>
+    </footer>
+
+    <!-- PC back button (map mode only) -->
+    <button type="button" class="map-pc-back" id="mapBackButton" aria-hidden="true">
+      <span class="map-pc-back__key" aria-hidden="true">ESC</span>
+      <span class="map-pc-back__label">BACK</span>
+    </button>
+
+    <!-- Map mode prompt bar (controller: LS MOVE / RS ZOOM / LB/RB CYCLE / A SELECT / B BACK) -->
+    <footer class="prompt-bar prompt-bar--map-mode" id="mapPromptBar" aria-label="Map mode prompts" hidden>
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--icon prompt__glyph--icon-stick" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_L_2D_Alt.png" src="../shared/icons/Xbox/T_X_L_2D_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">MOVE</span>
+      </div>
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--icon prompt__glyph--icon-stick" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_R_Y_Alt.png" src="../shared/icons/Xbox/T_X_R_Y_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">ZOOM</span>
+      </div>
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_LB_Alt.png" src="../shared/icons/Xbox/T_X_LB_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_RB_Alt.png" src="../shared/icons/Xbox/T_X_RB_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">CYCLE</span>
+      </div>
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_A_White_Alt.png" src="../shared/icons/Xbox/T_X_A_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label" id="mapSelectPromptLabel">SELECT</span>
+      </div>
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_B_White_Alt.png" src="../shared/icons/Xbox/T_X_B_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">BACK</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Early stub so Prisma InteropCall can resolve the name before settings.js finishes.
+    window.dispatchCoSettingsEvent = window.dispatchCoSettingsEvent || function (payload) {
+      window.__coSettingsEventQueue = window.__coSettingsEventQueue || [];
+      window.__coSettingsEventQueue.push(payload);
+    };
+    window.CO_VoiceEvents = [];
+    window.coVoiceEvent = function (event) {
+      window.CO_VoiceEvents.push(event);
+    };
+  </script>
+  <script src="../settings/settings-data.js"></script>
+  <script src="../settings/settings-model.js"></script>
+  <script src="../settings/settings-native.js"></script>
+  <script src="../settings/settings-render.js"></script>
+  <script src="../settings/settings-input.js"></script>
+  <script src="../settings/settings.js"></script>
+  <script src="../settings/settings-voice.js"></script>
+  <script src="../shared/prompt-glyphs.js"></script>
+  <script src="server-panel.js"></script>
+  <script src="script.js"></script>
+  <script src="session-mode-badge.js"></script>
+</body>
+</html>

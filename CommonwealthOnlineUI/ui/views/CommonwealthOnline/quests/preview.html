@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Quests preview</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+  </head>
+  <body>
+    <main class="quests" id="coQuests"></main>
+    <script src="quests.js"></script>
+    <script>
+      window.coQuestAction = function (json) { console.log("coQuestAction", json); };
+      window.coQuestSetState({
+        enabled: true, mode: "coop-story", inFaction: true,
+        quests: [
+          { quest: "A", name: "Out of Time", stage: 10, scope: "shared", category: "main", friends: [{ id: "3", name: "Ricky", stage: 10 }] },
+          { quest: "B", name: "When Freedom Calls", stage: 20, scope: "solo", category: "main", friends: [] },
+          { quest: "C", name: "Reunions", stage: 1, scope: "shared", category: "main", friends: [], nextStep: true },
+          { quest: "D", name: "Join the Minutemen", stage: 2, scope: "party", category: "faction", friends: [] },
+          { quest: "E", name: "Kids in a Cage", stage: 3, scope: "solo", category: "side", friends: [] }
+        ],
+        notices: [{ text: "Party formed", time: "9m" }]
+      });
+    </script>
+  </body>
+</html>
