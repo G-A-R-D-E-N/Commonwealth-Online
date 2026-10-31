@@ -1,0 +1,72 @@
+local co_core_include = path.join(os.scriptdir(), "../../co-core/include")
+
+target("CommonwealthOnlineQuestLogicTests")
+    set_kind("binary")
+    add_deps("CommonwealthOnlineCore")
+    add_files("src/F4TQuestLogic.cpp", "tests/F4TQuestLogicTests.cpp")
+    add_includedirs("src", "include", co_core_include)
+    add_forceincludes("F4TAssertionsEnabled.h")
+    add_undefines("NDEBUG")
+    add_tests("default")
+
+target("CommonwealthOnlineQuestLogicStoryTests")
+    set_kind("binary")
+    add_deps("CommonwealthOnlineCore")
+    add_files("src/F4TQuestLogic.cpp", "tests/F4TQuestLogicStoryTests.cpp")
+    add_includedirs("src", "include", co_core_include)
+    add_forceincludes("F4TAssertionsEnabled.h")
+    add_undefines("NDEBUG")
+    add_tests("default")
+
+target("CommonwealthOnlineQuestNoticesTests")
+    set_kind("binary")
+    add_deps("CommonwealthOnlineCore")
+    add_files("src/F4TQuestNotices.cpp", "tests/F4TQuestNoticesTests.cpp")
+    add_includedirs("include", co_core_include)
+    add_packages("nlohmann_json")
+    add_forceincludes("F4TAssertionsEnabled.h")
+    add_undefines("NDEBUG")
+    add_tests("default")
+
+target("CommonwealthOnlineQuestReadyGateTests")
+    set_kind("binary")
+    add_files("src/F4TQuestReadyGate.cpp", "tests/F4TQuestReadyGateTests.cpp")
+    add_includedirs("include", co_core_include)
+    add_forceincludes("F4TAssertionsEnabled.h")
+    add_undefines("NDEBUG")
+    add_tests("default")
+
+target("CommonwealthOnlineQuestWireTests")
+    set_kind("binary")
+    add_deps("CommonwealthOnlineCore")
+    add_files("src/F4TQuestLogic.cpp", "src/F4TQuestWire.cpp", "tests/F4TQuestWireTests.cpp")
+    add_includedirs("src", "include", co_core_include)
+    add_packages("nlohmann_json")
+    add_forceincludes("F4TAssertionsEnabled.h")
+    add_undefines("NDEBUG")
+    add_tests("default")
+
+target("CommonwealthOnlineQuestInboundTests")
+    set_kind("binary")
+    add_deps("CommonwealthOnlineCore")
+    add_files(
+        "src/F4TQuestInbound.cpp",
+        "src/F4TQuestLogic.cpp",
+        "src/F4TQuestWire.cpp",
+        "src/F4TQuestNotices.cpp",
+        "tests/F4TDebugLoggingTestStub.cpp",
+        "tests/F4TQuestInboundTests.cpp")
+    add_includedirs("src", "include", co_core_include)
+    add_packages("nlohmann_json")
+    add_forceincludes("F4TAssertionsEnabled.h")
+    add_undefines("NDEBUG")
+    add_tests("default")
+
+target("CommonwealthOnlineQuestApplyTests")
+    set_kind("binary")
+    add_deps("CommonwealthOnlineCore")
+    add_files("src/F4TQuestApply.cpp", "src/F4TQuestLogic.cpp", "tests/F4TQuestApplyTests.cpp")
+    add_includedirs("src", "include", co_core_include)
+    add_forceincludes("F4TAssertionsEnabled.h")
+    add_undefines("NDEBUG")
+    add_tests("default")

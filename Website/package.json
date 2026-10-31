@@ -1,0 +1,26 @@
+{
+  "name": "commonwealth-online-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Commonwealth Online website - Express + EJS server with SQLite storage, prepared for forum, applications and API.",
+  "main": "server.js",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "migrate": "node scripts/migrate.js",
+    "test": "node test/applications.test.js && node test/discord-verification.test.js && node test/application-verification-routes.test.js && node test/rate-limit.test.js && node test/servers-browse.test.js && node test/servers-json-route.test.js && node test/servers-ipv6.test.js && node --import tsx --test ../supabase/functions/server-directory/handler.test.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.2.0",
+    "discord.js": "^14.27.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "nodemailer": "^10.0.10"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.6"
+  }
+}

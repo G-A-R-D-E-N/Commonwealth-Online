@@ -1,0 +1,21 @@
+[package]
+name = "launcher-gui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "launcher-gui"
+path = "src/main.rs"
+
+[dependencies]
+dirs = "7.0.0"
+launcher-core = { path = "../launcher-core" }
+open = "5.4.5"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.154", features = ["preserve_order"] }
+tao = "0.37.2"
+wry = "0.57.1"
+
+[dev-dependencies]
+tempfile = "3.27.0"

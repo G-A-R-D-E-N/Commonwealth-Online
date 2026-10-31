@@ -1,0 +1,761 @@
+{
+  "version": 1,
+  "zones": [
+    {
+      "buildZoneId": 1,
+      "name": "AbernathyFarm",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -76967.41,
+      "centerY": 67777.91,
+      "centerZ": 7529,
+      "radius": 6946.84,
+      "workbench": {
+        "x": -76967.41,
+        "y": 67777.91,
+        "z": 7529
+      },
+      "captureRadius": 6946.84,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 2,
+      "name": "BostonAirport",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 46842.82,
+      "centerY": -4646.61,
+      "centerZ": 575.99,
+      "radius": 3664.17,
+      "workbench": {
+        "x": 46842.82,
+        "y": -4646.61,
+        "z": 575.99
+      },
+      "captureRadius": 3664.17,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 3,
+      "name": "BunkerHill",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 17321.81,
+      "centerY": 13151.21,
+      "centerZ": 1191.91,
+      "radius": 4624.7,
+      "workbench": {
+        "x": 17321.81,
+        "y": 13151.21,
+        "z": 1191.91
+      },
+      "captureRadius": 4624.7,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 4,
+      "name": "CoastalCottage",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 69546.16,
+      "centerY": 88423.57,
+      "centerZ": 1795.57,
+      "radius": 4472.03,
+      "workbench": {
+        "x": 69546.16,
+        "y": 88423.57,
+        "z": 1795.57
+      },
+      "captureRadius": 4472.03,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 5,
+      "name": "Covenant",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -6392.31,
+      "centerY": 46395.61,
+      "centerZ": 1105.74,
+      "radius": 3197.94,
+      "workbench": {
+        "x": -6392.31,
+        "y": 46395.61,
+        "z": 1105.74
+      },
+      "captureRadius": 3197.94,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 6,
+      "name": "CountyCrossing",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 38521.23,
+      "centerY": 31611.44,
+      "centerZ": 898.89,
+      "radius": 4790.36,
+      "workbench": {
+        "x": 38521.23,
+        "y": 31611.44,
+        "z": 898.89
+      },
+      "captureRadius": 4790.36,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 7,
+      "name": "CroupManor",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 90857.59,
+      "centerY": 37769.87,
+      "centerZ": 992.44,
+      "radius": 3866.84,
+      "workbench": {
+        "x": 90857.59,
+        "y": 37769.87,
+        "z": 992.44
+      },
+      "captureRadius": 3866.84,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 8,
+      "name": "EgretToursMarina",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -30583.13,
+      "centerY": -64083.1,
+      "centerZ": 1463.82,
+      "radius": 4713.99,
+      "workbench": {
+        "x": -30583.13,
+        "y": -64083.1,
+        "z": 1463.82
+      },
+      "captureRadius": 4713.99,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 9,
+      "name": "FinchFarm",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 55392,
+      "centerY": 47605.3,
+      "centerZ": 731.47,
+      "radius": 4421.9,
+      "workbench": {
+        "x": 55392,
+        "y": 47605.3,
+        "z": 731.47
+      },
+      "captureRadius": 4421.9,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 10,
+      "name": "Graygarden",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -47565,
+      "centerY": 16621.47,
+      "centerZ": 2671.99,
+      "radius": 4013.67,
+      "workbench": {
+        "x": -47565,
+        "y": 16621.47,
+        "z": 2671.99
+      },
+      "captureRadius": 4013.67,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 11,
+      "name": "GreentopNursery",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 29790.29,
+      "centerY": 66834.8,
+      "centerZ": 2156.95,
+      "radius": 4519.43,
+      "workbench": {
+        "x": 29790.29,
+        "y": 66834.8,
+        "z": 2156.95
+      },
+      "captureRadius": 4519.43,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 12,
+      "name": "HangmanAlley",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -20706.63,
+      "centerY": -18532.13,
+      "centerZ": 715.8,
+      "radius": 2703.63,
+      "workbench": {
+        "x": -20706.63,
+        "y": -18532.13,
+        "z": 715.8
+      },
+      "captureRadius": 2703.63,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "attributed by marker chain (REFR 1F0711, LCTN 1B8C53, marker 16CA1D)"
+    },
+    {
+      "buildZoneId": 13,
+      "name": "JamaicaPlain",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 8712.39,
+      "centerY": -65830.34,
+      "centerZ": 532.82,
+      "radius": 3021.9,
+      "workbench": {
+        "x": 8712.39,
+        "y": -65830.34,
+        "z": 532.82
+      },
+      "captureRadius": 3021.9,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 14,
+      "name": "KingsportLighthouse",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 90560.85,
+      "centerY": 60331.67,
+      "centerZ": 1246.82,
+      "radius": 4687.26,
+      "workbench": {
+        "x": 90560.85,
+        "y": 60331.67,
+        "z": 1246.82
+      },
+      "captureRadius": 4687.26,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 15,
+      "name": "Murkwater",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 5143.5,
+      "centerY": -95302.77,
+      "centerZ": 624.72,
+      "radius": 3414.19,
+      "workbench": {
+        "x": 5143.5,
+        "y": -95302.77,
+        "z": 624.72
+      },
+      "captureRadius": 3414.19,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 16,
+      "name": "NordhagenBeach",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 64136.28,
+      "centerY": 3531.74,
+      "centerZ": 669.35,
+      "radius": 5090.38,
+      "workbench": {
+        "x": 64136.28,
+        "y": 3531.74,
+        "z": 669.35
+      },
+      "captureRadius": 5090.38,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 17,
+      "name": "OberlandStation",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -45666.39,
+      "centerY": -4482.37,
+      "centerZ": 1583.14,
+      "radius": 3015.88,
+      "workbench": {
+        "x": -45666.39,
+        "y": -4482.37,
+        "z": 1583.14
+      },
+      "captureRadius": 3015.88,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 18,
+      "name": "OutpostZimonja",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -10832.56,
+      "centerY": 100275.74,
+      "centerZ": 3856,
+      "radius": 3536.2,
+      "workbench": {
+        "x": -10832.56,
+        "y": 100275.74,
+        "z": 3856
+      },
+      "captureRadius": 3536.2,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 19,
+      "name": "RedRocket",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -70384.33,
+      "centerY": 79519.95,
+      "centerZ": 7360.03,
+      "radius": 5288.77,
+      "workbench": {
+        "x": -70384.33,
+        "y": 79519.95,
+        "z": 7360.03
+      },
+      "captureRadius": 5288.77,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 20,
+      "name": "SanctuaryHills",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -79047.53,
+      "centerY": 89586.51,
+      "centerZ": 7846,
+      "radius": 9179.26,
+      "workbench": {
+        "x": -79047.53,
+        "y": 89586.51,
+        "z": 7846
+      },
+      "captureRadius": 9179.26,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 21,
+      "name": "Slog",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 50747.33,
+      "centerY": 70409.78,
+      "centerZ": 1392.68,
+      "radius": 5442.82,
+      "workbench": {
+        "x": 50747.33,
+        "y": 70409.78,
+        "z": 1392.68
+      },
+      "captureRadius": 5442.82,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 22,
+      "name": "SomervillePlace",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -35732.77,
+      "centerY": -91515.23,
+      "centerZ": 1831.88,
+      "radius": 4735.06,
+      "workbench": {
+        "x": -35732.77,
+        "y": -91515.23,
+        "z": 1831.88
+      },
+      "captureRadius": 4735.06,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "inferred (Farm05 REFR 1E81EA by elimination)"
+    },
+    {
+      "buildZoneId": 23,
+      "name": "SpectacleIsland",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 76494.48,
+      "centerY": -64030.71,
+      "centerZ": 1464.63,
+      "radius": 14253.3,
+      "workbench": {
+        "x": 76494.48,
+        "y": -64030.71,
+        "z": 1464.63
+      },
+      "captureRadius": 14253.3,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 24,
+      "name": "StarlightDriveIn",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -40650.17,
+      "centerY": 60418.43,
+      "centerZ": 3906.36,
+      "radius": 6949.04,
+      "workbench": {
+        "x": -40650.17,
+        "y": 60418.43,
+        "z": 3906.36
+      },
+      "captureRadius": 6949.04,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 25,
+      "name": "SunshineTidings",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -85924.73,
+      "centerY": 38877.23,
+      "centerZ": 6650.6,
+      "radius": 4878.29,
+      "workbench": {
+        "x": -85924.73,
+        "y": 38877.23,
+        "z": 6650.6
+      },
+      "captureRadius": 4878.29,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 26,
+      "name": "TaffingtonBoathouse",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 6169.99,
+      "centerY": 46319.42,
+      "centerZ": 499.52,
+      "radius": 4148.75,
+      "workbench": {
+        "x": 6169.99,
+        "y": 46319.42,
+        "z": 499.52
+      },
+      "captureRadius": 4148.75,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 27,
+      "name": "TenPinesBluff",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -22190.01,
+      "centerY": 89346.05,
+      "centerZ": 6139.54,
+      "radius": 3464.17,
+      "workbench": {
+        "x": -22190.01,
+        "y": 89346.05,
+        "z": 6139.54
+      },
+      "captureRadius": 3464.17,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 28,
+      "name": "TheCastle",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 49563.08,
+      "centerY": -46795.05,
+      "centerZ": 831.99,
+      "radius": 6434.21,
+      "workbench": {
+        "x": 49563.08,
+        "y": -46795.05,
+        "z": 831.99
+      },
+      "captureRadius": 6434.21,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 29,
+      "name": "WarwickHomestead",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 56640.95,
+      "centerY": -76524.32,
+      "centerZ": 519.22,
+      "radius": 5812.6,
+      "workbench": {
+        "x": 56640.95,
+        "y": -76524.32,
+        "z": 519.22
+      },
+      "captureRadius": 5812.6,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 30,
+      "name": "DaltonFarm",
+      "space": {
+        "plugin": "DLCCoast.esm",
+        "localFormId": 2831
+      },
+      "centerX": 4067.42,
+      "centerY": 61930.87,
+      "centerZ": 602.6,
+      "radius": 7047.06,
+      "workbench": {
+        "x": 4067.42,
+        "y": 61930.87,
+        "z": 602.6
+      },
+      "captureRadius": 7047.06,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 31,
+      "name": "LongfellowCabin",
+      "space": {
+        "plugin": "DLCCoast.esm",
+        "localFormId": 2831
+      },
+      "centerX": 55640.21,
+      "centerY": 42610.6,
+      "centerZ": 1061.82,
+      "radius": 9164.74,
+      "workbench": {
+        "x": 55640.21,
+        "y": 42610.6,
+        "z": 1061.82
+      },
+      "captureRadius": 9164.74,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 32,
+      "name": "EchoLakeLumber",
+      "space": {
+        "plugin": "DLCCoast.esm",
+        "localFormId": 2831
+      },
+      "centerX": -21793.06,
+      "centerY": 4657.16,
+      "centerZ": 782,
+      "radius": 5678.65,
+      "workbench": {
+        "x": -21793.06,
+        "y": 4657.16,
+        "z": 782
+      },
+      "captureRadius": 5678.65,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 33,
+      "name": "NationalParkVisitorCenter",
+      "space": {
+        "plugin": "DLCCoast.esm",
+        "localFormId": 2831
+      },
+      "centerX": 24161.47,
+      "centerY": 44910.05,
+      "centerZ": 1560.15,
+      "radius": 8309.92,
+      "workbench": {
+        "x": 24161.47,
+        "y": 44910.05,
+        "z": 1560.15
+      },
+      "captureRadius": 8309.92,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 34,
+      "name": "NukaWorldRedRocket",
+      "space": {
+        "plugin": "DLCNukaWorld.esm",
+        "localFormId": 10511
+      },
+      "centerX": 21882.12,
+      "centerY": 31539.97,
+      "centerZ": 949.63,
+      "radius": 7636.53,
+      "workbench": {
+        "x": 21882.12,
+        "y": 31539.97,
+        "z": 949.63
+      },
+      "captureRadius": 7636.53,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 35,
+      "name": "Vault88",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": 1666.9,
+      "centerY": 8097.7,
+      "centerZ": 96,
+      "radius": 23655.05,
+      "workbench": {
+        "x": 1666.9,
+        "y": 8097.7,
+        "z": 96
+      },
+      "captureRadius": 23655.05,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    },
+    {
+      "buildZoneId": 36,
+      "name": "MechanistLair",
+      "space": {
+        "plugin": "Fallout4.esm",
+        "localFormId": 60
+      },
+      "centerX": -2600,
+      "centerY": 1920,
+      "centerZ": -128,
+      "radius": 3798.65,
+      "workbench": {
+        "x": -2600,
+        "y": 1920,
+        "z": -128
+      },
+      "captureRadius": 3798.65,
+      "maxScale": 2,
+      "maxObjects": 2048,
+      "provenance": "radicle"
+    }
+  ]
+}

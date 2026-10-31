@@ -1,0 +1,363 @@
+/* Commonwealth Online — corner alert banners
+ * FO76-inspired stacked toasts, styled to match CO HUD panels.
+ */
+
+@font-face {
+  font-family: "Futura PT Demibold";
+  src: url("../../fonts/futura-pt-demibold.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  --co-ui-scale: 1;
+
+  --co-black: #0a0c0a;
+  --co-panel-bg: rgba(6, 12, 8, 0.88);
+  --co-green: #3ecf4a;
+  --co-green-dim: rgba(62, 207, 74, 0.35);
+  --co-amber: #c9a84a;
+  --co-amber-muted: rgba(201, 168, 74, 0.55);
+  --co-text-pale: #d8ddd0;
+  --co-text-muted: #9aa898;
+  --co-select-yellow: #c4a84b;
+  --co-select-text: #1a1c18;
+  --co-border: rgba(201, 168, 74, 0.45);
+  --co-danger: #e07070;
+  --co-info: #7eb8a2;
+  --co-font: "Futura PT Demibold", "Roboto Condensed", "Bahnschrift", "Arial Narrow", Arial, sans-serif;
+  /* Keep transitions minimal for overlay HUD responsiveness. */
+  --co-transition: 0ms linear;
+
+  --co-alert-width: calc(340px * var(--co-ui-scale));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--co-font);
+  font-weight: 600;
+  color: var(--co-text-pale);
+  background: transparent;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  pointer-events: none;
+}
+
+/* Preview backdrop must beat the transparent in-game body rule */
+html.is-preview,
+html.is-preview body {
+  background:
+    linear-gradient(165deg, #0b120d 0%, #121810 45%, #080c08 100%);
+}
+
+.co-alerts {
+  position: fixed;
+  top: calc(28px * var(--co-ui-scale));
+  right: calc(32px * var(--co-ui-scale));
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: calc(10px * var(--co-ui-scale));
+  width: var(--co-alert-width);
+  max-width: calc(100vw - 48px);
+  pointer-events: none;
+}
+
+/* ── Banner card ─────────────────────────────────────────────── */
+
+.co-alert {
+  position: relative;
+  width: 100%;
+  pointer-events: auto;
+  background: var(--co-panel-bg);
+  border: 1px solid var(--co-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.co-alert::after {
+  /* Angular clipped corner — FO76-adjacent, not a blunt pill toast */
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: calc(18px * var(--co-ui-scale));
+  height: calc(18px * var(--co-ui-scale));
+  background: linear-gradient(
+    225deg,
+    rgba(201, 168, 74, 0.35) 0%,
+    rgba(201, 168, 74, 0.35) 48%,
+    transparent 50%
+  );
+  pointer-events: none;
+}
+
+.co-alert.is-closing {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.co-alert__rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: calc(4px * var(--co-ui-scale));
+  background: var(--co-amber);
+}
+
+.co-alert--info .co-alert__rail {
+  background: var(--co-info);
+}
+
+.co-alert--success .co-alert__rail,
+.co-alert--invite .co-alert__rail {
+  background: var(--co-green);
+}
+
+.co-alert--warning .co-alert__rail {
+  background: var(--co-amber);
+}
+
+.co-alert--error .co-alert__rail {
+  background: var(--co-danger);
+}
+
+.co-alert__body {
+  position: relative;
+  z-index: 1;
+  padding:
+    calc(12px * var(--co-ui-scale))
+    calc(14px * var(--co-ui-scale))
+    calc(12px * var(--co-ui-scale))
+    calc(16px * var(--co-ui-scale));
+}
+
+.co-alert__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: calc(10px * var(--co-ui-scale));
+  margin-bottom: calc(4px * var(--co-ui-scale));
+}
+
+.co-alert__meta {
+  min-width: 0;
+  flex: 1;
+}
+
+.co-alert__category {
+  display: block;
+  font-size: calc(10px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--co-amber);
+  margin-bottom: calc(2px * var(--co-ui-scale));
+}
+
+.co-alert--info .co-alert__category {
+  color: var(--co-info);
+}
+
+.co-alert--success .co-alert__category,
+.co-alert--invite .co-alert__category {
+  color: var(--co-green);
+}
+
+.co-alert--error .co-alert__category {
+  color: var(--co-danger);
+}
+
+.co-alert__title {
+  font-size: calc(15px * var(--co-ui-scale));
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--co-text-pale);
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.co-alert__dismiss {
+  flex-shrink: 0;
+  width: calc(22px * var(--co-ui-scale));
+  height: calc(22px * var(--co-ui-scale));
+  border: 1px solid rgba(154, 168, 152, 0.35);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--co-text-muted);
+  font-family: inherit;
+  font-size: calc(12px * var(--co-ui-scale));
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color var(--co-transition),
+    border-color var(--co-transition),
+    background var(--co-transition);
+}
+
+.co-alert__dismiss:hover,
+.co-alert__dismiss:focus-visible {
+  color: var(--co-text-pale);
+  border-color: var(--co-amber-muted);
+  background: rgba(201, 168, 74, 0.18);
+  outline: none;
+}
+
+.co-alert__message {
+  font-size: calc(12px * var(--co-ui-scale));
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.45;
+  color: var(--co-text-muted);
+  word-break: break-word;
+  white-space: pre-line;
+}
+
+.co-alert__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(8px * var(--co-ui-scale));
+  margin-top: calc(12px * var(--co-ui-scale));
+}
+
+/* Mouse / menu mode — clickable buttons */
+
+.co-alert__btn {
+  appearance: none;
+  border: 1px solid var(--co-border);
+  background: rgba(10, 16, 12, 0.7);
+  color: var(--co-text-pale);
+  font-family: inherit;
+  font-size: calc(11px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding:
+    calc(6px * var(--co-ui-scale))
+    calc(12px * var(--co-ui-scale));
+  cursor: pointer;
+  transition:
+    background var(--co-transition),
+    border-color var(--co-transition),
+    color var(--co-transition);
+}
+
+.co-alert__btn:hover,
+.co-alert__btn:focus-visible {
+  background: var(--co-select-yellow);
+  border-color: var(--co-select-yellow);
+  color: var(--co-select-text);
+  outline: none;
+}
+
+.co-alert__btn--primary {
+  border-color: rgba(62, 207, 74, 0.55);
+  color: var(--co-green);
+}
+
+.co-alert__btn--primary:hover,
+.co-alert__btn--primary:focus-visible {
+  background: var(--co-green);
+  border-color: var(--co-green);
+  color: #0a100c;
+}
+
+.co-alert__btn--danger {
+  border-color: rgba(224, 112, 112, 0.45);
+  color: var(--co-danger);
+}
+
+.co-alert__btn--danger:hover,
+.co-alert__btn--danger:focus-visible {
+  background: var(--co-danger);
+  border-color: var(--co-danger);
+  color: #1a0c0c;
+}
+
+/* In-world mode — hotkey prompts instead of mouse buttons */
+
+.co-alert__prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(7px * var(--co-ui-scale));
+  margin-right: calc(6px * var(--co-ui-scale));
+}
+
+.co-alert__key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: calc(22px * var(--co-ui-scale));
+  height: calc(20px * var(--co-ui-scale));
+  padding: 0 calc(5px * var(--co-ui-scale));
+  border: 1px solid var(--co-amber-muted);
+  background: rgba(201, 168, 74, 0.12);
+  color: var(--co-amber);
+  font-size: calc(11px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.co-alert__prompt-label {
+  font-size: calc(11px * var(--co-ui-scale));
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--co-text-muted);
+}
+
+.co-alert__progress {
+  position: absolute;
+  left: calc(4px * var(--co-ui-scale));
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(201, 168, 74, 0.15);
+  overflow: hidden;
+  z-index: 2;
+}
+
+.co-alert__progress-bar {
+  height: 100%;
+  width: 100%;
+  background: var(--co-amber);
+  opacity: 0.75;
+  /* Width driven by JS timer — avoids CSS transform animations on the HUD overlay. */
+}
+
+.co-alert--info .co-alert__progress-bar {
+  background: var(--co-info);
+}
+
+.co-alert--success .co-alert__progress-bar,
+.co-alert--invite .co-alert__progress-bar {
+  background: var(--co-green);
+}
+
+.co-alert--error .co-alert__progress-bar {
+  background: var(--co-danger);
+}
+
+@media (max-width: 720px) {
+  :root {
+    --co-alert-width: calc(100vw - 48px);
+  }
+
+  .co-alerts {
+    right: 16px;
+    top: 16px;
+  }
+}

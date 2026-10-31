@@ -1,0 +1,266 @@
+@font-face {
+  font-family: "Futura PT Demibold";
+  src: url("../../fonts/futura-pt-demibold.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  --co-ui-scale: 1;
+  --co-panel-bg: rgba(8, 14, 10, 0.94);
+  --co-green: #3ecf4a;
+  --co-green-dim: rgba(62, 207, 74, 0.35);
+  --co-amber: #c9a84a;
+  --co-amber-muted: rgba(201, 168, 74, 0.55);
+  --co-text-pale: #d8ddd0;
+  --co-text-muted: #9aa898;
+  --co-select-yellow: #c4a84b;
+  --co-select-yellow-bright: #d4bc62;
+  --co-select-text: #1a1c18;
+  --co-danger: #d0634a;
+  --co-downed-green: #62f271;
+  --co-downed-green-bright: #9bff9f;
+  --co-border: rgba(201, 168, 74, 0.45);
+  --co-font: "Futura PT Demibold", "Roboto Condensed", "Bahnschrift", "Arial Narrow", Arial, sans-serif;
+  --co-transition: 120ms ease-out;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--co-font);
+  font-weight: 600;
+  color: var(--co-text-pale);
+  background: transparent;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.co-downed-body {
+  pointer-events: none;
+}
+
+.co-downed {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: calc(18px * var(--co-ui-scale));
+}
+
+.co-downed-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: calc(10px * var(--co-ui-scale));
+  width: min(calc(560px * var(--co-ui-scale)), 76vw);
+  padding: calc(16px * var(--co-ui-scale)) calc(22px * var(--co-ui-scale)) calc(14px * var(--co-ui-scale));
+  /* Faint scanlines over a dark green wash, the same read as the Pip-Boy HUD. */
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(120, 240, 140, 0.045) 0,
+      rgba(120, 240, 140, 0.045) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    rgba(10, 30, 15, 0.9);
+  border: 1px solid rgba(110, 235, 130, 0.5);
+  box-shadow:
+    0 0 calc(26px * var(--co-ui-scale)) rgba(0, 0, 0, 0.65),
+    inset 0 0 calc(22px * var(--co-ui-scale)) rgba(28, 104, 46, 0.28);
+  color: var(--co-downed-green);
+}
+
+.co-downed-card.is-revive {
+  border-color: rgba(110, 235, 130, 0.75);
+}
+
+.co-downed-title {
+  font-size: calc(21px * var(--co-ui-scale));
+  line-height: 1.32;
+  letter-spacing: 0.05em;
+  color: var(--co-downed-green);
+  text-shadow: 0 0 calc(8px * var(--co-ui-scale)) rgba(98, 242, 113, 0.35);
+}
+
+.co-downed-clock,
+.co-downed-unit {
+  color: inherit;
+}
+
+.co-downed-name {
+  color: var(--co-downed-green-bright);
+}
+
+.co-downed-bar {
+  position: relative;
+  width: 100%;
+  height: calc(9px * var(--co-ui-scale));
+  background: rgba(4, 18, 9, 0.9);
+  border: 1px solid rgba(110, 235, 130, 0.45);
+}
+
+/* End caps, like the two ticks either side of the reference bar. */
+.co-downed-bar::before,
+.co-downed-bar::after {
+  content: "";
+  position: absolute;
+  top: calc(-3px * var(--co-ui-scale));
+  bottom: calc(-3px * var(--co-ui-scale));
+  width: calc(2px * var(--co-ui-scale));
+  background: var(--co-downed-green);
+}
+
+.co-downed-bar::before {
+  left: calc(-7px * var(--co-ui-scale));
+}
+
+.co-downed-bar::after {
+  right: calc(-7px * var(--co-ui-scale));
+}
+
+.co-downed-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(98, 242, 113, 0.65) 0%, var(--co-downed-green) 100%);
+  transition: width var(--co-transition);
+}
+
+.co-downed-bar.is-revive .co-downed-fill {
+  background: var(--co-downed-green-bright);
+}
+
+.co-downed-rescuer,
+.co-downed-hint {
+  font-size: calc(13px * var(--co-ui-scale));
+  letter-spacing: 0.12em;
+  color: rgba(160, 240, 170, 0.85);
+}
+
+.co-downed-rescuer {
+  color: var(--co-downed-green);
+}
+
+.co-respawn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.72);
+  font-size: calc(18px * var(--co-ui-scale));
+}
+
+.co-respawn-panel::-webkit-scrollbar {
+  width: calc(4px * var(--co-ui-scale));
+}
+
+.co-respawn-panel::-webkit-scrollbar-thumb {
+  background: var(--co-amber-muted);
+}
+
+.co-respawn-panel {
+  width: min(calc(560px * var(--co-ui-scale)), 92vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--co-amber-muted) transparent;
+  padding: calc(22px * var(--co-ui-scale));
+  background: var(--co-panel-bg);
+  border: 1px solid var(--co-border);
+  box-shadow: 0 0 calc(24px * var(--co-ui-scale)) rgba(0, 0, 0, 0.6);
+}
+
+.co-respawn-title {
+  padding-bottom: calc(12px * var(--co-ui-scale));
+  margin-bottom: calc(10px * var(--co-ui-scale));
+  border-bottom: 1px solid var(--co-border);
+  font-size: calc(30px * var(--co-ui-scale));
+  letter-spacing: 0.18em;
+  color: var(--co-danger);
+}
+
+.co-respawn-note {
+  margin-bottom: calc(6px * var(--co-ui-scale));
+  color: var(--co-text-muted);
+  font-size: calc(15px * var(--co-ui-scale));
+}
+
+.co-respawn-section {
+  margin-top: calc(16px * var(--co-ui-scale));
+}
+
+.co-respawn-section h2 {
+  margin-bottom: calc(8px * var(--co-ui-scale));
+  font-size: calc(15px * var(--co-ui-scale));
+  letter-spacing: 0.16em;
+  color: var(--co-amber-muted);
+}
+
+.co-respawn-list {
+  display: flex;
+  flex-direction: column;
+  gap: calc(6px * var(--co-ui-scale));
+}
+
+.co-respawn-muted {
+  color: var(--co-text-muted);
+}
+
+.co-respawn-btn {
+  width: 100%;
+  padding: calc(9px * var(--co-ui-scale)) calc(14px * var(--co-ui-scale));
+  background: transparent;
+  border: 1px solid var(--co-border);
+  color: var(--co-text-pale);
+  font-family: inherit;
+  font-size: calc(16px * var(--co-ui-scale));
+  letter-spacing: 0.1em;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--co-transition), color var(--co-transition);
+  outline: none;
+}
+
+.co-respawn-btn.is-primary {
+  border-color: var(--co-green-dim);
+  color: var(--co-green);
+}
+
+.co-respawn-btn:hover,
+.co-respawn-btn:focus-visible {
+  background: var(--co-select-yellow);
+  border-color: var(--co-select-yellow-bright);
+  color: var(--co-select-text);
+}
+
+.co-respawn-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.co-respawn-btn:disabled:hover {
+  background: transparent;
+  border-color: var(--co-border);
+  color: var(--co-text-pale);
+}
+
+.co-respawn-btn.is-primary:disabled:hover {
+  border-color: var(--co-green-dim);
+  color: var(--co-green);
+}

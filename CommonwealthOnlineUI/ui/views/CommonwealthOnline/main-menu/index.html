@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Commonwealth Online — Main Menu</title>
+  <script src="../shared/startup-timing.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../settings/settings.css">
+  <link rel="stylesheet" href="../browser/styles.css">
+  <link rel="stylesheet" href="../browser/modpack-detail.css">
+  <link rel="stylesheet" href="../browser/components/keyboard.css">
+  <link rel="stylesheet" href="../browser/components/server-settings.css">
+  <link rel="stylesheet" href="../browser/browser-modal.css">
+</head>
+<body>
+  <div class="main-screen" id="mainScreen">
+    <!-- Left main menu panel -->
+    <aside class="left-panel">
+      <img
+        class="brand-logo"
+        src="../shared/logo.svg"
+        alt="Commonwealth Online"
+        width="220"
+        height="54"
+      >
+
+      <nav class="menu" id="menu" aria-label="Main menu">
+        <button type="button" class="menu-item" data-index="0" data-action="multiplayer">
+          <span class="menu-item__label">MULTIPLAYER</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+
+
+        <button type="button" class="menu-item" data-index="1" data-action="singlePlayer">
+          <span class="menu-item__label">RETURN TO SINGLE PLAYER</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+
+        <button type="button" class="menu-item" data-index="2" data-action="settings">
+          <span class="menu-item__label">SETTINGS</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+
+        <button type="button" class="menu-item" data-index="3" data-action="quit">
+          <span class="menu-item__label">QUIT</span>
+          <span class="menu-item__bar" aria-hidden="true"></span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Settings view (content mounted by ../settings/settings.js) -->
+    <section class="settings-view" id="settingsPanel" aria-label="Settings" hidden></section>
+
+    <!-- Server browser view (content mounted by ../browser/browser.js) -->
+    <section class="browser-view" id="browserPanel" aria-label="Server browser" hidden></section>
+
+
+    <!-- Quit confirmation -->
+    <section class="quit-confirm" id="quitConfirmPanel" aria-label="Quit confirmation" hidden>
+      <div class="quit-confirm__dialog" role="dialog" aria-modal="true" aria-labelledby="quitConfirmTitle">
+        <h2 class="quit-confirm__title" id="quitConfirmTitle">EXIT GAME?</h2>
+        <nav class="quit-confirm__options" id="quitConfirmOptions" aria-label="Quit confirmation options">
+          <button type="button" class="menu-item quit-confirm__option" data-index="0" data-choice="yes">
+            <span class="menu-item__label">YES</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="menu-item quit-confirm__option" data-index="1" data-choice="no">
+            <span class="menu-item__label">NO</span>
+            <span class="menu-item__bar" aria-hidden="true"></span>
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Bottom controller prompts (main menu) -->
+    <footer class="prompt-bar" id="mainPromptBar" aria-label="Controller prompts">
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_A_White_Alt.png" src="../shared/icons/Xbox/T_X_A_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">SELECT</span>
+      </div>
+      <div class="prompt">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_B_White_Alt.png" src="../shared/icons/Xbox/T_X_B_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">BACK</span>
+      </div>
+    </footer>
+
+    <!-- Settings mode prompt bar -->
+    <footer class="prompt-bar prompt-bar--settings" id="settingsPromptBar" aria-label="Settings prompts" hidden>
+      <div class="prompt" data-prompt="move">
+        <span class="prompt__glyph prompt__glyph--text" aria-hidden="true">↑↓</span>
+        <span class="prompt__label">MOVE</span>
+      </div>
+      <div class="prompt" data-prompt="change">
+        <span class="prompt__glyph prompt__glyph--text" aria-hidden="true">←→</span>
+        <span class="prompt__label">CHANGE</span>
+      </div>
+      <div class="prompt" data-prompt="select">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_A_White_Alt.png" src="../shared/icons/Xbox/T_X_A_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">SELECT</span>
+      </div>
+      <div class="prompt" data-prompt="apply">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_X_White_Alt.png" src="../shared/icons/Xbox/T_X_X_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">APPLY</span>
+      </div>
+      <div class="prompt" data-prompt="back">
+        <span class="prompt__glyph prompt__glyph--icon" aria-hidden="true">
+          <img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_B_White_Alt.png" src="../shared/icons/Xbox/T_X_B_White_Alt.png" alt="" draggable="false">
+        </span>
+        <span class="prompt__label">BACK</span>
+      </div>
+      <div class="prompt" data-prompt="tab">
+        <span class="prompt__glyph prompt__glyph--text" aria-hidden="true">TAB</span>
+        <span class="prompt__label">SWITCH FOCUS</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Early stub so Prisma InteropCall can resolve the name before settings.js finishes.
+    window.dispatchCoSettingsEvent = window.dispatchCoSettingsEvent || function (payload) {
+      window.__coSettingsEventQueue = window.__coSettingsEventQueue || [];
+      window.__coSettingsEventQueue.push(payload);
+    };
+    window.CO_VoiceEvents = [];
+    window.coVoiceEvent = function (event) {
+      window.CO_VoiceEvents.push(event);
+    };
+  </script>
+  <script src="../settings/settings-data.js"></script>
+  <script src="../settings/settings-model.js"></script>
+  <script src="../settings/settings-native.js"></script>
+  <script src="../settings/settings-render.js"></script>
+  <script src="../settings/settings-input.js"></script>
+  <script src="../settings/settings.js"></script>
+  <script src="../settings/settings-voice.js"></script>
+  <script src="../browser/components/layout.js"></script>
+  <script src="../browser/components/theme.js"></script>
+  <script src="../browser/components/mock-data.js"></script>
+  <script src="../browser/components/tabs.js"></script>
+  <script src="../browser/components/filters.js"></script>
+  <script src="../browser/components/select-menus.js"></script>
+  <script src="../browser/components/server-list.js"></script>
+  <script src="../browser/components/server-details.js"></script>
+  <script src="../browser/components/controller-glyphs.js"></script>
+  <script src="../browser/components/controller-icons.js"></script>
+  <script src="../browser/components/controller-prompts.js"></script>
+  <script src="../browser/components/direct-connect.js"></script>
+  <script src="../browser/components/steam-lan.js"></script>
+  <script src="../browser/components/steam-friends.js"></script>
+  <script src="../browser/components/server-settings.js"></script>
+  <script src="../browser/components/hover.js"></script>
+  <script src="../browser/components/text-focus.js"></script>
+  <script src="../browser/components/controller-input.js"></script>
+  <script src="../browser/components/keyboard.js"></script>
+  <script src="../browser/components/controller-trace.js"></script>
+  <script src="../browser/components/browser-markup.js"></script>
+  <script src="../browser/components/modpack-detail.js"></script>
+  <script src="../browser/components/modpack-copy.js"></script>
+  <script src="../browser/components/share-log.js"></script>
+  <script src="../browser/components/server-records.js"></script>
+  <script src="../browser/components/recent-servers.js"></script>
+  <script src="../browser/components/filter-state.js"></script>
+  <script src="../browser/components/server-counts.js"></script>
+  <script src="../browser/components/join-flow.js"></script>
+  <script src="../browser/components/password-prompt.js"></script>
+  <script src="../browser/components/controller-navigation.js"></script>
+  <script src="../browser/components/directory-refresh.js"></script>
+  <script src="../browser/browser.js"></script>
+  <script src="keyboard-navigation.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

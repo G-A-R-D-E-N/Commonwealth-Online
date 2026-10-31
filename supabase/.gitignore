@@ -1,0 +1,9 @@
+# Supabase CLI local state
+.branches
+.temp
+
+# Local function secrets
+functions/.env
+.env
+.env.*
+!functions/.env.example
