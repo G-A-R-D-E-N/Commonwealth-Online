@@ -1,0 +1,11 @@
+{
+  "worldspace": "Commonwealth",
+  "title": "COMMONWEALTH",
+  "image": "map.png",
+  "discovery": "native",
+  "calibration": {
+    "mode": "frame",
+    "nwCellX": -33, "nwCellY": 25, "seCellX": 28, "seCellY": -36,
+    "x0": 67.46763287, "y0": 0.0, "x1": 2008.84518231, "y1": 2048.0
+  }
+}

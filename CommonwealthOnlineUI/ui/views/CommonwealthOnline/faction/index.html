@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Factions</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+    <link rel="stylesheet" href="../browser/components/keyboard.css" />
+  </head>
+  <body>
+    <nav class="faction-tabs" role="tablist" aria-label="Social">
+      <button type="button" class="faction-tab" id="coTabFaction" role="tab" aria-selected="true">Faction</button>
+      <button type="button" class="faction-tab" id="coTabVoice" role="tab" aria-selected="false">Voice</button>
+    </nav>
+    <main class="faction" id="coFaction" aria-live="polite"></main>
+    <section class="faction" id="coVoice" hidden>
+      <div class="faction-panel chat-panel">
+        <p class="faction-muted voice-status" id="coVoiceStatus" aria-live="polite"></p>
+        <ol class="chat-list" id="coVoiceList"></ol>
+      </div>
+    </section>
+    <script src="../browser/components/keyboard.js"></script>
+    <script src="faction.members.js"></script>
+    <script src="faction.build.js"></script>
+    <script src="faction.ownership.js"></script>
+    <script src="faction.browse.js"></script>
+    <script src="faction.focus.js"></script>
+    <script src="faction.js"></script>
+    <script src="faction.friends.js"></script>
+    <script src="voice-players.js"></script>
+  </body>
+</html>

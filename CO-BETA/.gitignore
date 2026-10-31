@@ -1,0 +1,91 @@
+# Build outputs
+build/
+bin/
+obj/
+out/
+dist/
+*.dll
+*.exe
+*.pdb
+*.lib
+*.exp
+*.ilk
+
+# Visual Studio
+.vs/
+*.sln.docstates
+*.user
+*.vcxproj.user
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+# XMake
+.xmake/
+
+# Editor workspace files
+.cursor/
+*.code-workspace
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Logs
+*.log
+logs/
+
+# Local machine Fallout 4 install path (written by resolve-fallout4-path.bat)
+.fallout4-path
+
+# Local Sandboxie FileRootPath for launch-two-fallout4.bat
+.sandbox-file-root
+
+# Controller icons copied from ui/Icons by sync-shared-assets.bat / deploy-ui.bat
+ui/views/CommonwealthOnline/shared/icons/
+
+# Fallout 4 files
+Fallout4.exe
+Fallout4Launcher.exe
+*.ba2
+*.bsa
+*.esm
+
+# Mod manager files
+modlist.txt
+loadorder.txt
+plugins.txt
+
+# Creation Kit temporary files
+*.tes
+*.bak
+
+# Releases
+releases/
+
+_deps/
+ThirdParty/common/common/**/x64_vc11/Release/
+ThirdParty/xse_common/x64_vc11/Release/
+# Ad-hoc source-cleaning scripts (comment stripping, whitespace passes).
+# These are throwaway tooling; keep them out of the tree.
+comment_tool.py
+strip_comments*.py
+clean_comments*.py
+*_comment_strip.py
+scratchpad/
+
+# AI assistant / agent scaffolding. Process artifacts, not project source.
+# Engineering findings belong in docs/ (see docs/reverse-engineering/), not in these.
+.planning/
+docs/superpowers/
+.claude/
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.aider*
+.github/copilot-instructions.md

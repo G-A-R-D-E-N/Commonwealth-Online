@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "updatedAt": null,
+  "servers": [
+    {
+      "id": "commonwealth-online-server-one",
+      "name": "Commonwealth Online Server One",
+      "host": "servers.commonwealth-online.com",
+      "port": 7777,
+      "description": "Commonwealth Online Server One",
+      "region": "Oceania",
+      "tags": ["commonwealth", "online", "server", "one"],
+      "password": false,
+      "modlist": "",
+      "discord": ""
+    }
+  ]
+}

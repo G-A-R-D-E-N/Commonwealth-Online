@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commonwealth Online &mdash; Character Creator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="creator" id="creator">
+    <div class="creator__scrim" aria-hidden="true"></div>
+
+    <aside class="creator__panel">
+      <header class="creator__header">
+        <h1 class="creator__title">CHARACTER</h1>
+        <span class="creator__generation" id="generation">SESSION &mdash;</span>
+      </header>
+
+      <nav class="creator__tabs" id="tabs" aria-label="Creator categories">
+        <button type="button" class="creator__tab is-active" data-tab="overview">OVERVIEW</button>
+        <button type="button" class="creator__tab" data-tab="head">HEAD</button>
+        <button type="button" class="creator__tab" data-tab="tints">TINTS</button>
+      </nav>
+
+      <section class="creator__body" id="body">
+        <div class="creator__tabpanel is-active" data-panel="overview" id="panel-overview"></div>
+        <div class="creator__tabpanel" data-panel="head" id="panel-head"></div>
+        <div class="creator__tabpanel" data-panel="tints" id="panel-tints"></div>
+      </section>
+
+      <footer class="creator__footer">
+        <div class="creator__controls" id="controls"></div>
+        <div class="creator__actions">
+          <button type="button" class="creator__action" id="confirm">CONFIRM</button>
+          <button type="button" class="creator__action" id="undo">UNDO</button>
+          <button type="button" class="creator__action" id="refresh">REFRESH</button>
+        </div>
+        <p class="creator__note" id="note">
+          Commands are sent to the live Fallout 4 chargen menu's own code object. A command the
+          running movie does not expose is refused, not approximated.
+        </p>
+      </footer>
+    </aside>
+  </div>
+
+  <script src="components/render.js"></script>
+  <script src="components/controls.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

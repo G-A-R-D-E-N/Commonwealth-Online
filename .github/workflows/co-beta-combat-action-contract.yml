@@ -1,0 +1,144 @@
+name: Combat Action Contract
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    name: Combat action sequence and send contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Stage nlohmann/json headers
+        env:
+          JSON_HPP_SHA256: aaf127c04cb31c406e5b04a63f1ae89369fccde6d8fa7cdda1ed4f32dfc5de63
+        run: |
+          mkdir -p "$RUNNER_TEMP/co-json-include/nlohmann"
+          curl -fsSL --retry 3 \
+            https://raw.githubusercontent.com/nlohmann/json/v3.12.0/single_include/nlohmann/json.hpp \
+            -o "$RUNNER_TEMP/co-json-include/nlohmann/json.hpp"
+          echo "${JSON_HPP_SHA256}  $RUNNER_TEMP/co-json-include/nlohmann/json.hpp" | sha256sum -c -
+
+      - name: Verify source contract
+        run: python3 CO-BETA/plugin/tests/F4TCombatActionSourceContract.py
+
+      - name: Verify PvP combat contract
+        run: python3 CO-BETA/plugin/tests/F4TPvPCombatContract.py
+
+      - name: Build sequence regression
+        run: |
+          c++ -std=c++20 -Wall -Wextra -Werror \
+            -ICO-BETA/plugin/include \
+            -Ico-core/include \
+            -I"$RUNNER_TEMP/co-json-include" \
+            CO-BETA/plugin/tests/F4TActionSequenceTests.cpp \
+            -o "$RUNNER_TEMP/co-action-sequence-test"
+
+      - name: Run sequence regression
+        run: '"$RUNNER_TEMP/co-action-sequence-test"'
+
+      - name: Build combat behavior regression
+        run: |
+          c++ -std=c++20 -Wall -Wextra -Werror \
+            -ICO-BETA/plugin/include \
+            -Ico-core/include \
+            -I"$RUNNER_TEMP/co-json-include" \
+            CO-BETA/plugin/tests/F4TCombatActionBehaviorTests.cpp \
+            -o "$RUNNER_TEMP/co-combat-action-behavior-test"
+
+      - name: Run combat behavior regression
+        run: '"$RUNNER_TEMP/co-combat-action-behavior-test"'
+
+      - name: Build PvP combat behavior regression
+        run: |
+          c++ -std=c++20 -Wall -Wextra -Werror \
+            -ICO-BETA/plugin/include \
+            -Ico-core/include \
+            -I"$RUNNER_TEMP/co-json-include" \
+            CO-BETA/plugin/tests/F4TPvPCombatBehaviorTests.cpp \
+            -o "$RUNNER_TEMP/co-pvp-combat-behavior-test"
+
+      - name: Run PvP combat behavior regression
+        run: '"$RUNNER_TEMP/co-pvp-combat-behavior-test"'
+
+      - name: Verify replication runtime contract
+        run: python3 CO-BETA/plugin/tests/F4TReplicationRuntimeContract.py
+
+      - name: Build replication runtime regression
+        run: |
+          c++ -std=c++20 -Wall -Wextra -Werror \
+            -ICO-BETA/plugin/include \
+            -Ico-core/include \
+            -I"$RUNNER_TEMP/co-json-include" \
+            CO-BETA/plugin/tests/F4TReplicationRuntimeTests.cpp \
+            -o "$RUNNER_TEMP/co-replication-runtime-test"
+
+      - name: Run replication runtime regression
+        run: '"$RUNNER_TEMP/co-replication-runtime-test"'
+
+      - name: Verify reliable outbox contract
+        run: python3 CO-BETA/plugin/tests/F4TReliableOutboxContract.py
+
+      - name: Build reliable outbox regression
+        run: |
+          c++ -std=c++20 -Wall -Wextra -Werror \
+            -ICO-BETA/plugin/include \
+            -I"$RUNNER_TEMP/co-json-include" \
+            CO-BETA/plugin/tests/F4TReliableOutboxTests.cpp \
+            -o "$RUNNER_TEMP/co-reliable-outbox-test"
+
+      - name: Run reliable outbox regression
+        run: '"$RUNNER_TEMP/co-reliable-outbox-test"'
+
+      - name: Verify receive thread ownership
+        run: python3 CO-BETA/plugin/tests/F4TReceiveThreadOwnershipTests.py
+
+      - name: Verify cancelled join ownership
+        run: python3 CO-BETA/plugin/tests/F4TJoinCancellationTests.py
+
+      - name: Verify connection lifecycle ordering
+        run: python3 CO-BETA/plugin/tests/F4TConnectionLifecycleTests.py
+
+      - name: Receive terminal notification regression
+        run: python3 CO-BETA/plugin/tests/F4TReceiveNotificationTests.py
+
+  report:
+    name: Report to the private PR
+    needs: [contract]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=success; description="skipped (all jobs gated off)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-beta-combat-action-contract" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-beta-combat-action-contract ($description)"

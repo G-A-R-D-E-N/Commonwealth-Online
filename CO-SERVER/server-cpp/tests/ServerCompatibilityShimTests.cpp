@@ -1,0 +1,1 @@
+%:include "ServerCompatibilityShimTests.inc"

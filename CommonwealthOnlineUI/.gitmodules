@@ -1,0 +1,6 @@
+[submodule "ThirdParty/CommonLibF4"]
+	path = ThirdParty/CommonLibF4
+	url = https://github.com/G-A-R-D-E-N/commonlibf4-nomad.git
+[submodule "ThirdParty/Prisma2.0"]
+	path = ThirdParty/Prisma2.0
+	url = https://github.com/PRISMA-USER-INTERFACE-FRAMEWORK/Prisma2.0.git
