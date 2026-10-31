@@ -1,0 +1,203 @@
+name: Client Protocol Acceptance
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  client-protocol:
+    name: CO-BETA adapter to native server
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Verify build dependencies
+        run: |
+          set -euo pipefail
+          for tool in git cmake ninja protoc c++ ss; do
+            command -v "$tool" >/dev/null || { echo "::error::missing build dependency: $tool"; exit 1; }
+          done
+          test -f /usr/include/openssl/ssl.h || { echo "::error::missing libssl-dev headers"; exit 1; }
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - name: Configure acceptance scratch
+        run: |
+          echo "CO_GNS_DEPS_DIR=$RUNNER_TEMP/co-client-acceptance-gns-deps-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+          echo "CO_GNS_BUILD_DIR=$RUNNER_TEMP/co-client-acceptance-server-bridge-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+          echo "CO_GNS_CLIENT_BUILD_DIR=$RUNNER_TEMP/co-client-acceptance-client-bridge-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+
+      - name: Build native server transport
+        env:
+          CO_REQUIRE_LIVE_GNS: "1"
+        run: bash CO-SERVER/server/scripts/build-gns-bridge.sh
+
+      - name: Build actual CO-BETA client bridge
+        run: |
+          set -euo pipefail
+          cmake -S CO-BETA/plugin/gns-bridge -B "$CO_GNS_CLIENT_BUILD_DIR" -G Ninja \
+            -DGNS_SOURCE_DIR="$CO_GNS_DEPS_DIR/GameNetworkingSockets-src" \
+            -DCO_GNS_BUILD_TESTS=ON \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build "$CO_GNS_CLIENT_BUILD_DIR" --parallel 2
+          ctest --test-dir "$CO_GNS_CLIENT_BUILD_DIR" --output-on-failure
+          bridge="$CO_GNS_CLIENT_BUILD_DIR/bin/libcommonwealth_online_gns_bridge.so"
+          test -s "$bridge" || { echo "::error::CO-BETA client bridge was not produced"; exit 1; }
+          if ldd "$bridge" | grep -q GameNetworkingSockets; then
+            echo "::error::CO-BETA client bridge unexpectedly depends on shared GameNetworkingSockets"
+            exit 1
+          fi
+          echo "CO_GNS_CLIENT_BRIDGE=$bridge" >> "$GITHUB_ENV"
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Build native server
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+          xmake build -y CommonwealthOnlineServerCpp
+
+      - name: Build client adapter acceptance harness
+        working-directory: CO-BETA/ci/protocol-acceptance
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+          xmake build -y CommonwealthOnlineClientProtocolAcceptance
+
+      - name: Run AE, NG, and OG adapter handshakes against native server
+        env:
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/co-client-protocol-${{ github.run_id }}-${{ github.run_attempt }}.log"
+          config_dir="$RUNNER_TEMP/co-client-protocol-config-${{ github.run_id }}-${{ github.run_attempt }}"
+          : > "$log"
+          mkdir -p "$config_dir"
+          server_pids=()
+          cleanup() {
+            for pid in "${server_pids[@]}"; do
+              kill -TERM "$pid" 2>/dev/null || true
+              wait "$pid" 2>/dev/null || true
+            done
+            cat "$log" || true
+            rm -rf "$CO_GNS_DEPS_DIR" "$CO_GNS_BUILD_DIR" "$CO_GNS_CLIENT_BUILD_DIR" "$config_dir"
+          }
+          trap cleanup EXIT
+
+          client_version=$(sed -n 's/.*kClientVersion = "\([^"]*\)".*/\1/p' co-core/include/F4TClientCompatibility.h)
+          runtime_version=$(sed -n 's/.*kAeRuntimeVersion = "\([^"]*\)".*/\1/p' co-core/include/F4TClientCompatibility.h)
+          [[ -n "$client_version" && -n "$runtime_version" ]] || { echo "::error::could not read client or runtime version from F4TClientCompatibility.h"; exit 1; }
+          fingerprint=$(printf 'a%.0s' {1..64})
+          printf '%s\n' "{\"required_client_version\": \"$client_version\", \"required_fallout_runtime_version\": \"$runtime_version\", \"required_content_manifest_fingerprint\": \"$fingerprint\", \"required_capabilities\": [\"acceptance-required\"]}" > "$config_dir/requirements.json"
+          printf '%s\n' '{"max_players": 1, "resume_token_lifetime_seconds": 1}' > "$config_dir/capacity.json"
+
+          start_server() {
+            local config_path="$1" admin_port
+            server_port=$(bash CO-SERVER/server-cpp/scripts/free-port.sh udp)
+            admin_port=$(bash CO-SERVER/server-cpp/scripts/free-port.sh tcp)
+            while [[ "$admin_port" == "$server_port" ]]; do admin_port=$((admin_port + 1)); done
+
+            local args=(--bind 127.0.0.1 --port "$server_port" --admin-port "$admin_port" --no-lan-discovery)
+            if [[ -n "$config_path" ]]; then args+=(--config "$config_path"); fi
+            CO-SERVER/server-cpp/build/linux/x86_64/debug/CommonwealthOnlineServerCpp "${args[@]}" >>"$log" 2>&1 &
+            local server_pid=$!
+            server_pids+=("$server_pid")
+
+            local ready=0
+            for _ in $(seq 1 600); do
+              if ! kill -0 "$server_pid" 2>/dev/null; then
+                echo "::error::native server exited before client acceptance"
+                exit 1
+              fi
+              if grep -q "listening on 127.0.0.1:$server_port (GNS)" "$log"; then
+                ready=1
+                break
+              fi
+              sleep 0.05
+            done
+            [[ "$ready" == 1 ]] || { echo "::error::native server did not become ready"; exit 1; }
+          }
+
+          client="CO-BETA/ci/protocol-acceptance/build/linux/x86_64/debug/CommonwealthOnlineClientProtocolAcceptance"
+          test -x "$client" || { echo "::error::client adapter acceptance binary missing"; exit 1; }
+          for target in current ng og; do
+            start_server ""
+            "$client" "$CO_GNS_CLIENT_BRIDGE" 127.0.0.1 "$server_port" "$target"
+          done
+          start_server "$config_dir/requirements.json"
+          "$client" "$CO_GNS_CLIENT_BRIDGE" 127.0.0.1 "$server_port" current requirements
+          start_server "$config_dir/capacity.json"
+          "$client" "$CO_GNS_CLIENT_BRIDGE" 127.0.0.1 "$server_port" current capacity
+
+      - name: Whitespace check
+        if: always()
+        run: git diff --check
+
+  report:
+    name: Report to the private PR
+    needs: [client-protocol]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=success; description="skipped (all jobs gated off)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-client-protocol-acceptance" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-client-protocol-acceptance ($description)"

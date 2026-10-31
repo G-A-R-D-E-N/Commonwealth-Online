@@ -1,0 +1,114 @@
+@font-face {
+  font-family: "Futura PT Demibold";
+  src: url("../../fonts/futura-pt-demibold.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  --co-ui-scale: 1;
+  --co-amber: #c9a84a;
+  --co-text-pale: #d8ddd0;
+  --co-font: "Futura PT Demibold", "Roboto Condensed", "Bahnschrift", "Arial Narrow", Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--co-font);
+  font-weight: 600;
+  color: var(--co-text-pale);
+  background: transparent;
+  user-select: none;
+  pointer-events: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+#coJoinOverlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: block;
+  pointer-events: none;
+}
+
+#coJoinOverlay[hidden] {
+  display: none;
+}
+
+#coJoinOverlay::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(300px * var(--co-ui-scale));
+  background: linear-gradient(
+    to top,
+    rgba(4, 8, 6, 0.74) 0%,
+    rgba(4, 8, 6, 0.34) 44%,
+    rgba(4, 8, 6, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.co-join-overlay {
+  position: absolute;
+  left: 50%;
+  bottom: calc(54px * var(--co-ui-scale));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(10px * var(--co-ui-scale));
+  pointer-events: none;
+}
+
+.co-join-overlay__logo {
+  width: calc(196px * var(--co-ui-scale));
+  height: auto;
+  opacity: 0.92;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.65));
+}
+
+.co-join-overlay__status {
+  font-size: calc(19px * var(--co-ui-scale));
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--co-text-pale);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+.co-join-overlay__track {
+  display: block;
+  width: calc(224px * var(--co-ui-scale));
+  height: calc(2px * var(--co-ui-scale));
+  background: rgba(216, 221, 208, 0.18);
+  pointer-events: none;
+}
+
+.co-join-overlay__fill {
+  display: block;
+  height: 100%;
+  background: var(--co-amber);
+  transition: width 220ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .co-join-overlay__fill {
+    transition: none;
+  }
+}

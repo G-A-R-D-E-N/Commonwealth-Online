@@ -1,0 +1,9 @@
+
+newmtl Material.000001
+Ka 1 1 1
+Kd 1 1 1
+Ks 1 1 1
+d 1
+Ns 33
+map_Kd textures\Interiors\Vault\VltHallResPaneled01_d.dds
+map_Kn textures\Interiors\Vault\VltHallResPaneled01_n.dds

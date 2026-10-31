@@ -1,0 +1,515 @@
+name: Acceptance (native GNS)
+
+on:
+  push:
+    branches: ["ci/**"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  acceptance:
+    name: Native GNS acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Verify native build dependencies
+        run: |
+          set -euo pipefail
+          for tool in git cmake protoc ss; do
+            command -v "$tool" >/dev/null || { echo "::error::missing build dependency: $tool"; exit 1; }
+          done
+          test -f /usr/include/openssl/ssl.h || { echo "::error::missing libssl-dev headers"; exit 1; }
+          test -f /usr/include/openssl/rand.h || { echo "::error::missing OpenSSL random headers"; exit 1; }
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - name: Configure native acceptance scratch
+        run: |
+          echo "CO_GNS_DEPS_DIR=$RUNNER_TEMP/co-acceptance-gns-deps-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+          echo "CO_GNS_BUILD_DIR=$RUNNER_TEMP/co-acceptance-gns-build-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+
+      - name: Build and test pinned native GNS bridge
+        env:
+          CO_REQUIRE_LIVE_GNS: "1"
+        run: bash CO-SERVER/server/scripts/build-gns-bridge.sh
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Run native protocol regression suite
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+          xmake test -y || { xmake test -v -y; exit 1; }
+
+      - name: Build native server and live GNS acceptance clients
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          xmake build -y CommonwealthOnlineServerCpp
+          xmake build -y CommonwealthOnlineServerLiveNamedGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveNetworkFaultGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveProtocolFaultGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveAuthorityChurnGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveAdmissionGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveReconnectChurnGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveProfileBanGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveVoiceFloodGnsSmoke
+
+      - name: Run live native GNS behavior acceptance
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/co-native-acceptance-${{ github.run_id }}-${{ github.run_attempt }}.log"
+          : > "$log"
+          port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" udp)
+          admin_port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" tcp)
+          while [[ "$admin_port" == "$port" ]]; do admin_port=$((admin_port + 1)); done
+
+          ./build/linux/x86_64/debug/CommonwealthOnlineServerCpp \
+            --bind 127.0.0.1 \
+            --no-lan-discovery \
+            --port "$port" \
+            --admin-port "$admin_port" >"$log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill -TERM "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+            cat "$log" || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for _ in $(seq 1 600); do
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              echo "::error::native server exited before acceptance"
+              exit 1
+            fi
+            if grep -q "listening on 127.0.0.1:$port (GNS)" "$log"; then
+              ready=1
+              break
+            fi
+            sleep 0.05
+          done
+          [[ "$ready" == 1 ]] || { echo "::error::native server did not become ready"; exit 1; }
+
+          xmake run CommonwealthOnlineServerLiveNamedGnsSmoke 127.0.0.1 "$port"
+
+      # Its own server, like every suite below. Sharing one meant a suite
+      # inherited whatever connect-attempt budget the previous one had spent,
+      # which is not a property either suite is meant to be testing.
+      - name: Run live native network-fault acceptance
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/co-native-network-fault-${{ github.run_id }}-${{ github.run_attempt }}.log"
+          : > "$log"
+          port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" udp)
+          admin_port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" tcp)
+          while [[ "$admin_port" == "$port" ]]; do admin_port=$((admin_port + 1)); done
+
+          ./build/linux/x86_64/debug/CommonwealthOnlineServerCpp \
+            --bind 127.0.0.1 \
+            --no-lan-discovery \
+            --port "$port" \
+            --admin-port "$admin_port" >"$log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill -TERM "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+            cat "$log" || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for _ in $(seq 1 600); do
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              echo "::error::native server exited before network-fault acceptance"
+              exit 1
+            fi
+            if grep -q "listening on 127.0.0.1:$port (GNS)" "$log"; then
+              ready=1
+              break
+            fi
+            sleep 0.05
+          done
+          [[ "$ready" == 1 ]] || { echo "::error::native server did not become ready"; exit 1; }
+
+          xmake run CommonwealthOnlineServerLiveNetworkFaultGnsSmoke 127.0.0.1 "$port"
+
+      - name: Run live native protocol-fault and rate-limit acceptance
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/co-native-protocol-fault-${{ github.run_id }}-${{ github.run_attempt }}.log"
+          : > "$log"
+          port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" udp)
+          admin_port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" tcp)
+          while [[ "$admin_port" == "$port" ]]; do admin_port=$((admin_port + 1)); done
+
+          ./build/linux/x86_64/debug/CommonwealthOnlineServerCpp \
+            --bind 127.0.0.1 \
+            --no-lan-discovery \
+            --port "$port" \
+            --admin-port "$admin_port" >"$log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill -TERM "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+            cat "$log" || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for _ in $(seq 1 600); do
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              echo "::error::native server exited before protocol-fault acceptance"
+              exit 1
+            fi
+            if grep -q "listening on 127.0.0.1:$port (GNS)" "$log"; then
+              ready=1
+              break
+            fi
+            sleep 0.05
+          done
+          [[ "$ready" == 1 ]] || { echo "::error::protocol-fault server did not become ready"; exit 1; }
+
+          xmake run CommonwealthOnlineServerLiveProtocolFaultGnsSmoke 127.0.0.1 "$port"
+
+      - name: Run live native NPC authority churn acceptance
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/co-native-authority-churn-${{ github.run_id }}-${{ github.run_attempt }}.log"
+          : > "$log"
+          port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" udp)
+          admin_port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" tcp)
+          while [[ "$admin_port" == "$port" ]]; do admin_port=$((admin_port + 1)); done
+
+          ./build/linux/x86_64/debug/CommonwealthOnlineServerCpp \
+            --bind 127.0.0.1 \
+            --no-lan-discovery \
+            --port "$port" \
+            --admin-port "$admin_port" >"$log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill -TERM "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+            cat "$log" || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for _ in $(seq 1 600); do
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              echo "::error::native server exited before authority churn acceptance"
+              exit 1
+            fi
+            if grep -q "listening on 127.0.0.1:$port (GNS)" "$log"; then
+              ready=1
+              break
+            fi
+            sleep 0.05
+          done
+          [[ "$ready" == 1 ]] || { echo "::error::authority churn server did not become ready"; exit 1; }
+
+          xmake run CommonwealthOnlineServerLiveAuthorityChurnGnsSmoke 127.0.0.1 "$port"
+
+      - name: Run live native reconnect churn acceptance
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/co-native-reconnect-churn-${{ github.run_id }}-${{ github.run_attempt }}.log"
+          : > "$log"
+          port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" udp)
+          admin_port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" tcp)
+          while [[ "$admin_port" == "$port" ]]; do admin_port=$((admin_port + 1)); done
+
+          ./build/linux/x86_64/debug/CommonwealthOnlineServerCpp \
+            --bind 127.0.0.1 \
+            --no-lan-discovery \
+            --port "$port" \
+            --admin-port "$admin_port" >"$log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill -TERM "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+            cat "$log" || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for _ in $(seq 1 600); do
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              echo "::error::native server exited before reconnect churn acceptance"
+              exit 1
+            fi
+            if grep -q "listening on 127.0.0.1:$port (GNS)" "$log"; then
+              ready=1
+              break
+            fi
+            sleep 0.05
+          done
+          [[ "$ready" == 1 ]] || { echo "::error::reconnect churn server did not become ready"; exit 1; }
+
+          xmake run CommonwealthOnlineServerLiveReconnectChurnGnsSmoke 127.0.0.1 "$port"
+
+          # Credential ageing needs its own server: the scenarios above assume a
+          # long-lived resume token.
+          expiry_log="$RUNNER_TEMP/co-native-reconnect-expiry-${{ github.run_id }}-${{ github.run_attempt }}.log"
+          : > "$expiry_log"
+          expiry_port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" udp)
+          expiry_admin_port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" tcp)
+          while [[ "$expiry_admin_port" == "$expiry_port" ]]; do expiry_admin_port=$((expiry_admin_port + 1)); done
+
+          ./build/linux/x86_64/debug/CommonwealthOnlineServerCpp \
+            --bind 127.0.0.1 \
+            --port "$expiry_port" \
+            --admin-port "$expiry_admin_port" \
+            --resume-token-lifetime-seconds 3 \
+            --no-lan-discovery >"$expiry_log" 2>&1 &
+          expiry_pid=$!
+          cleanup_expiry() {
+            kill -TERM "$expiry_pid" 2>/dev/null || true
+            wait "$expiry_pid" 2>/dev/null || true
+            cat "$expiry_log" || true
+          }
+          trap 'cleanup; cleanup_expiry' EXIT
+
+          expiry_ready=0
+          for _ in $(seq 1 600); do
+            if ! kill -0 "$expiry_pid" 2>/dev/null; then
+              echo "::error::short-lifetime server exited before reconnect expiry acceptance"
+              exit 1
+            fi
+            if grep -q "listening on 127.0.0.1:$expiry_port (GNS)" "$expiry_log"; then
+              expiry_ready=1
+              break
+            fi
+            sleep 0.05
+          done
+          [[ "$expiry_ready" == 1 ]] || { echo "::error::short-lifetime server did not become ready"; exit 1; }
+
+          xmake run CommonwealthOnlineServerLiveReconnectChurnGnsSmoke 127.0.0.1 "$expiry_port" 3
+
+      - name: Run live native capacity admission acceptance
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/co-native-admission-${{ github.run_id }}-${{ github.run_attempt }}.log"
+          : > "$log"
+          port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" udp)
+          admin_port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" tcp)
+          while [[ "$admin_port" == "$port" ]]; do admin_port=$((admin_port + 1)); done
+
+          ./build/linux/x86_64/debug/CommonwealthOnlineServerCpp \
+            --bind 127.0.0.1 \
+            --no-lan-discovery \
+            --port "$port" \
+            --admin-port "$admin_port" \
+            --max-players 2 >"$log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill -TERM "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+            cat "$log" || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for _ in $(seq 1 600); do
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              echo "::error::native server exited before capacity admission acceptance"
+              exit 1
+            fi
+            if grep -q "listening on 127.0.0.1:$port (GNS)" "$log"; then
+              ready=1
+              break
+            fi
+            sleep 0.05
+          done
+          [[ "$ready" == 1 ]] || { echo "::error::capacity admission server did not become ready"; exit 1; }
+
+          xmake run CommonwealthOnlineServerLiveAdmissionGnsSmoke 127.0.0.1 "$port"
+
+      - name: Run live profile-ban acceptance
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/co-native-profile-ban-${{ github.run_id }}-${{ github.run_attempt }}.log"
+          : > "$log"
+          port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" udp)
+          admin_port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" tcp)
+          while [[ "$admin_port" == "$port" ]]; do admin_port=$((admin_port + 1)); done
+          rm -f .admin-token
+
+          ./build/linux/x86_64/debug/CommonwealthOnlineServerCpp \
+            --bind 127.0.0.1 \
+            --no-lan-discovery \
+            --port "$port" \
+            --admin-port "$admin_port" >"$log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill -TERM "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+            rm -f .admin-token
+            cat "$log" || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for _ in $(seq 1 600); do
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              echo "::error::profile-ban server exited before acceptance"
+              exit 1
+            fi
+            if grep -q "listening on 127.0.0.1:$port (GNS)" "$log"; then
+              ready=1
+              break
+            fi
+            sleep 0.05
+          done
+          [[ "$ready" == 1 ]] || { echo "::error::profile-ban server did not become ready"; exit 1; }
+          for _ in $(seq 1 80); do
+            [[ -s .admin-token ]] && break
+            sleep 0.05
+          done
+          [[ -s .admin-token ]] || { echo "::error::profile-ban admin token was not created"; exit 1; }
+
+          xmake run CommonwealthOnlineServerLiveProfileBanGnsSmoke 127.0.0.1 "$port" "$admin_port" "$PWD/.admin-token"
+
+      - name: Run live native voice flood acceptance
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/co-native-voice-flood-${{ github.run_id }}-${{ github.run_attempt }}.log"
+          : > "$log"
+          port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" udp)
+          admin_port=$(bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/free-port.sh" tcp)
+          while [[ "$admin_port" == "$port" ]]; do admin_port=$((admin_port + 1)); done
+
+          ./build/linux/x86_64/debug/CommonwealthOnlineServerCpp \
+            --bind 127.0.0.1 \
+            --port "$port" \
+            --admin-port "$admin_port" >"$log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill -TERM "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+            cat "$log" || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for _ in $(seq 1 600); do
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              echo "::error::native server exited before voice flood acceptance"
+              exit 1
+            fi
+            if grep -q "listening on 127.0.0.1:$port (GNS)" "$log"; then
+              ready=1
+              break
+            fi
+            sleep 0.05
+          done
+          [[ "$ready" == 1 ]] || { echo "::error::voice flood server did not become ready"; exit 1; }
+
+          xmake run CommonwealthOnlineServerLiveVoiceFloodGnsSmoke 127.0.0.1 "$port"
+
+      - name: Clean native acceptance scratch
+        if: always()
+        run: rm -rf "$CO_GNS_DEPS_DIR" "$CO_GNS_BUILD_DIR"
+
+  report:
+    name: Report to the private PR
+    needs: [acceptance]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=success; description="skipped (all jobs gated off)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-server-acceptance" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-server-acceptance ($description)"

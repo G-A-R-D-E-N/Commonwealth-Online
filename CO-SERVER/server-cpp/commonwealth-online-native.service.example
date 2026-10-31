@@ -1,0 +1,25 @@
+[Unit]
+Description=Commonwealth Online Native Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=commonwealth
+Group=commonwealth
+WorkingDirectory=/opt/commonwealth-online
+ExecStart=/opt/commonwealth-online/CommonwealthOnline.Server --config /opt/commonwealth-online/commonwealth-server.json
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/commonwealth-online
+# Optional Steam ID verification: a root-only (0600) file containing CO_STEAM_WEB_API_KEY=<key>.
+#EnvironmentFile=-/etc/commonwealth-online/steam-web-api.env
+
+[Install]
+WantedBy=multi-user.target

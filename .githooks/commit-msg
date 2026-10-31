@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+const fs = require("fs");
+const msgPath = process.argv[2];
+let msg = "";
+try { msg = fs.readFileSync(msgPath, "utf8"); } catch { process.exit(0); }
+
+const AI = String.raw`claude|anthropic|codex|chatgpt|openai|gpt|copilot|gemini|grok|cursor|antigravity|deepseek|opencode|qwen|kimi`;
+const MODEL = String.raw`(?:sonnet|opus|haiku|fable)\b(?:[ \t-]*[0-9][0-9.]*)?[ \t]*(?:<|\(|$)`;
+const NAME = String.raw`(?:(?:github|google|openai|microsoft)[ \t]+)?(?:${AI})(?![a-z])|${MODEL}`;
+const TRAILER = String.raw`^[^\w\n]*(?:co-?authored|signed-off|assisted|generated)-by:`;
+const BAD = [
+  { re: new RegExp(String.raw`${TRAILER}[^\w\n]*(?:${NAME})`, "im"), why: "AI attribution trailer" },
+  { re: new RegExp(String.raw`${TRAILER}[^\n]*@(?:anthropic\.com|openai\.com|cursor\.com|x\.ai|opencode\.ai|deepseek\.com)\b`, "im"), why: "AI attribution trailer (email)" },
+  { re: new RegExp(String.raw`^[^\w\n]*generated (?:with|by|using)[ \t]+[^\w\n]*(?:${NAME})`, "im"), why: "\"Generated with\" AI footer" },
+  { re: /noreply@(?:anthropic\.com|openai\.com|x\.ai|xai\.com|opencode\.ai)/i, why: "AI noreply email" },
+];
+const hit = BAD.find((b) => b.re.test(msg));
+if (hit) {
+  console.error("\n✖ Commit blocked: message attributes to an AI (" + hit.why + ").");
+  console.error("  Contribute as the user only — remove the attribution and recommit.\n");
+  process.exit(1);
+}
+process.exit(0);

@@ -1,0 +1,53 @@
+:root {
+  --co-ui-scale: 1;
+  --co-amber: #c9a84a;
+  --co-text-pale: #d8ddd0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;
+  font-family: "Futura PT Demibold", "Roboto Condensed", "Bahnschrift", "Arial Narrow", Arial, sans-serif;
+  font-weight: 600;
+  color: var(--co-text-pale);
+  pointer-events: none;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.chat-feed {
+  position: fixed;
+  right: calc(24px * var(--co-ui-scale));
+  bottom: calc(88px * var(--co-ui-scale));
+  display: flex;
+  flex-direction: column;
+  gap: calc(4px * var(--co-ui-scale));
+  width: min(calc(420px * var(--co-ui-scale)), 32vw);
+  list-style: none;
+  font-size: calc(18px * var(--co-ui-scale));
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.chat-feed-line {
+  overflow-wrap: anywhere;
+}
+
+.chat-feed-channel {
+  color: var(--co-amber);
+}
+
+.chat-feed-name {
+  font-weight: 700;
+  color: var(--co-amber);
+}

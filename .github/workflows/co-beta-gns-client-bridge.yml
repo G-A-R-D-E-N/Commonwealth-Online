@@ -1,0 +1,332 @@
+name: GNS Client Bridge
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GNS_SHA: f4525e39ee10f6b45181fd92d01fee75f7d71756
+  PROTOBUF_TAG: v21.12
+  BRIDGE_BUILD_DIR: /tmp/co-beta-gns-client-${{ github.run_id }}-${{ github.run_attempt }}
+
+jobs:
+  linux-contract:
+    name: Pinned GNS bridge contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: CO-BETA
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Initialize canonical CommonLib
+        working-directory: .
+        run: |
+          set -euo pipefail
+          git ls-files --stage CO-BETA/plugin/lib/commonlibf4
+          git config -f .gitmodules --get-regexp '^submodule\..*\.url$'
+          git submodule sync --recursive
+          git submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::re.nomadicinteractive.dev unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://re.nomadicinteractive.dev/ReverseEng/commonlib_NonVR.git" submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4
+          }
+          git submodule status --recursive -- CO-BETA/plugin/lib/commonlibf4
+          git -C CO-BETA/plugin/lib/commonlibf4 ls-files --error-unmatch xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/lib/commonlib-shared/xmake.lua
+
+      - name: Verify build dependencies
+        run: |
+          set -euo pipefail
+          missing=0
+          for tool in cmake ninja protoc c++; do
+            command -v "$tool" >/dev/null 2>&1 || { echo "::error::missing build dependency: $tool"; missing=1; }
+          done
+          test -f /usr/include/openssl/ssl.h || { echo "::error::missing libssl-dev headers"; missing=1; }
+          test "$missing" -eq 0
+
+      - name: Initialize pinned GameNetworkingSockets
+        run: |
+          set -euo pipefail
+          git submodule update --init --depth 1 -- ThirdParty/GameNetworkingSockets-src
+          actual="$(git -C ThirdParty/GameNetworkingSockets-src rev-parse HEAD)"
+          test "$actual" = "$GNS_SHA" || { echo "::error::GNS pin mismatch: $actual"; exit 1; }
+
+      - name: Configure bridge contract
+        run: |
+          set -euo pipefail
+          rm -rf "$BRIDGE_BUILD_DIR"
+          cmake -S plugin/gns-bridge -B "$BRIDGE_BUILD_DIR" -G Ninja \
+            -DGNS_SOURCE_DIR="$GITHUB_WORKSPACE/CO-BETA/ThirdParty/GameNetworkingSockets-src" \
+            -DCO_GNS_BUILD_TESTS=ON \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Verify COG2 wire contract
+        run: |
+          set -euo pipefail
+          c++ -std=c++20 -Wall -Wextra -Werror \
+            -I../co-core/include \
+            ../co-core/tests/F4TGnsSnapshotEnvelopeTests.cpp \
+            -o "$BRIDGE_BUILD_DIR/co-gns-snapshot-envelope-test"
+          "$BRIDGE_BUILD_DIR/co-gns-snapshot-envelope-test"
+
+      - name: Build and run export smoke test
+        run: |
+          set -euo pipefail
+          cmake --build "$BRIDGE_BUILD_DIR" --parallel 2
+          ctest --test-dir "$BRIDGE_BUILD_DIR" --output-on-failure
+
+      - name: Verify static GNS linkage
+        run: |
+          set -euo pipefail
+          bridge="$BRIDGE_BUILD_DIR/bin/libcommonwealth_online_gns_bridge.so"
+          test -s "$bridge" || { echo "::error::client bridge artifact missing"; exit 1; }
+          if ldd "$bridge" | grep 'GameNetworkingSockets' >/dev/null; then
+            echo "::error::bridge unexpectedly depends on a shared GameNetworkingSockets runtime"
+            exit 1
+          fi
+          ldd "$bridge"
+
+      - name: Clean bridge build
+        if: always()
+        run: rm -rf "$BRIDGE_BUILD_DIR"
+
+  windows-package:
+    name: Windows package and F4SE integration (clang-cl/xwin)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
+      PRISMA_WIN_PACKAGES: ${{ vars.PRISMA_WIN_PACKAGES || '/opt/prisma-toolchain/win-packages' }}
+    defaults:
+      run:
+        working-directory: CO-BETA
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Initialize canonical CommonLib
+        working-directory: .
+        run: |
+          set -euo pipefail
+          git ls-files --stage CO-BETA/plugin/lib/commonlibf4
+          git config -f .gitmodules --get-regexp '^submodule\..*\.url$'
+          git submodule sync --recursive
+          git submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::re.nomadicinteractive.dev unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://re.nomadicinteractive.dev/ReverseEng/commonlib_NonVR.git" submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4
+          }
+          git submodule status --recursive -- CO-BETA/plugin/lib/commonlibf4
+          git -C CO-BETA/plugin/lib/commonlibf4 ls-files --error-unmatch xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/xmake.lua
+          test -s CO-BETA/plugin/lib/commonlibf4/lib/commonlib-shared/xmake.lua
+
+      - name: Setup native Xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a # v1
+        with:
+          xmake-version: '3.0.4'
+
+      - name: Prepare pinned bridge sources
+        run: |
+          set -euo pipefail
+          git submodule update --init --depth 1 -- ThirdParty/GameNetworkingSockets-src
+          actual="$(git -C ThirdParty/GameNetworkingSockets-src rev-parse HEAD)"
+          test "$actual" = "$GNS_SHA" || { echo "::error::GNS pin mismatch: $actual"; exit 1; }
+
+      - name: Verify cross-toolchain dependencies
+        run: |
+          set -euo pipefail
+          missing=0
+          for tool in cmake ninja clang-cl lld-link llvm-lib llvm-rc llvm-mt llvm-readobj protoc xmake; do
+            command -v "$tool" >/dev/null 2>&1 || { echo "::error::missing cross-build tool: $tool"; missing=1; }
+          done
+          test -d "$XWIN_ROOT/crt" -a -d "$XWIN_ROOT/sdk" || { echo "::error::$XWIN_ROOT CRT or SDK tree is missing"; missing=1; }
+          test -d "$PRISMA_WIN_PACKAGES" || { echo "::error::staged Windows packages not found at $PRISMA_WIN_PACKAGES"; missing=1; }
+          test "$missing" -eq 0
+
+      - name: Cross-build Windows protobuf runtime (runner-local cache)
+        run: |
+          set -euo pipefail
+          # Cached on the runner rather than in Actions cache storage: the org is
+          # already over its Actions storage quota, and this runner is persistent.
+          # The key covers the protobuf tag and the toolchain file, so any change
+          # to either forces a rebuild.
+          tc_hash="$(sha256sum ci/toolchains/xwin-clang-cl.cmake | cut -c1-16)"
+          PB_INSTALL="$HOME/.cache/co-beta/protobuf-${PROTOBUF_TAG}-${tc_hash}"
+          if [[ -f "$PB_INSTALL/lib/libprotobuf.lib" ]]; then
+            echo "protobuf cache hit: $PB_INSTALL"
+          else
+            echo "protobuf cache miss; cross-building $PROTOBUF_TAG"
+            work="$(mktemp -d)"
+            trap 'rm -rf "$work"' EXIT
+            git clone --depth 1 --branch "$PROTOBUF_TAG" \
+              https://github.com/protocolbuffers/protobuf.git "$work/src"
+            test "$(git -C "$work/src" describe --tags --exact-match)" = "$PROTOBUF_TAG"
+            # protoc binaries are deliberately not built: a Windows protoc.exe would
+            # need emulation to run, and native /usr/bin/protoc does the generation.
+            # MSVC_STATIC_RUNTIME=OFF keeps protobuf on /MD to match the bridge.
+            cmake -S "$work/src" -B "$work/build" -G Ninja \
+              -DCMAKE_TOOLCHAIN_FILE="$PWD/ci/toolchains/xwin-clang-cl.cmake" \
+              -DCMAKE_BUILD_TYPE=Release \
+              -Dprotobuf_BUILD_TESTS=OFF \
+              -Dprotobuf_BUILD_PROTOC_BINARIES=OFF \
+              -Dprotobuf_BUILD_SHARED_LIBS=OFF \
+              -Dprotobuf_MSVC_STATIC_RUNTIME=OFF \
+              -Dprotobuf_WITH_ZLIB=OFF
+            cmake --build "$work/build" --parallel 4
+            rm -rf "$PB_INSTALL"
+            cmake --install "$work/build" --prefix "$PB_INSTALL"
+          fi
+          test -f "$PB_INSTALL/lib/libprotobuf.lib" || { echo "::error::protobuf cross-build produced no libprotobuf.lib"; exit 1; }
+          printf 'PB_INSTALL=%s\n' "$PB_INSTALL" >> "$GITHUB_ENV"
+
+      - name: Cross-build the Windows bridge with clang-cl + xwin
+        run: |
+          set -euo pipefail
+          # Fully wine-free: clang-cl/xwin cross-compiles and lld-link links the
+          # bridge natively. Its export/wire tests run on Linux in the "Pinned GNS
+          # bridge contract" job, so nothing here needs a Windows emulator.
+          rm -rf plugin/build/gns-bridge
+          cmake -S plugin/gns-bridge -B plugin/build/gns-bridge -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE="$PWD/ci/toolchains/xwin-clang-cl.cmake" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DGNS_SOURCE_DIR="$PWD/ThirdParty/GameNetworkingSockets-src" \
+            -DCO_GNS_BUILD_TESTS=OFF \
+            -DProtobuf_INCLUDE_DIR="$PB_INSTALL/include" \
+            -DProtobuf_LIBRARY="$PB_INSTALL/lib/libprotobuf.lib" \
+            -DProtobuf_LIBRARY_RELEASE="$PB_INSTALL/lib/libprotobuf.lib" \
+            -DProtobuf_LITE_LIBRARY="$PB_INSTALL/lib/libprotobuf-lite.lib" \
+            -DProtobuf_PROTOC_EXECUTABLE=/usr/bin/protoc
+          cmake --build plugin/build/gns-bridge --parallel 4
+
+      - name: Verify Windows bridge artifact and exports
+        run: |
+          set -euo pipefail
+          DLL="plugin/build/gns-bridge/bin/commonwealth_online_gns_bridge.dll"
+          test -s "$DLL" || { echo "::error::commonwealth_online_gns_bridge.dll was not produced"; exit 1; }
+          file "$DLL" | grep 'PE32+.*x86-64' >/dev/null || { file "$DLL"; echo "::error::bridge is not a 64-bit Windows PE DLL"; exit 1; }
+          for sym in co_gns_client_create co_gns_client_destroy co_gns_client_poll co_gns_client_send co_gns_client_disconnect; do
+            strings -a "$DLL" | grep -x "$sym" >/dev/null || { echo "::error::$sym is missing from the DLL"; exit 1; }
+          done
+          ls -l "$DLL"
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Build the F4SE plugin DLLs with clang-cl + xwin
+        working-directory: CO-BETA/plugin
+        run: |
+          set -euo pipefail
+          rm -rf build-xwin .xmake
+          xmake config --file=xmake-xwin.lua \
+            --plat=windows \
+            --arch=x64 \
+            --mode=release \
+            --builddir=build-xwin \
+            ${CO_XMAKE_CCACHE:-} \
+            --yes
+          # xmake build takes a single target argument, so build each explicitly.
+          xmake build --file=xmake-xwin.lua --jobs=2 CommonwealthOnline
+          xmake build --file=xmake-xwin.lua --jobs=2 CommonwealthOnlineNG
+          xmake build --file=xmake-xwin.lua --jobs=2 CommonwealthOnlineOG
+
+      - name: Confirm both 64-bit F4SE plugin DLLs
+        working-directory: CO-BETA/plugin
+        run: |
+          set -euo pipefail
+          for dll in CommonwealthOnline.dll CommonwealthOnline-NG.dll CommonwealthOnline-OG.dll; do
+            path="$(find build-xwin -type f -name "$dll" -print -quit)"
+            test -n "$path" || { echo "::error::$dll was not produced"; exit 1; }
+            file "$path" | grep 'PE32+' >/dev/null || { file "$path"; echo "::error::$dll is not a 64-bit Windows PE DLL"; exit 1; }
+            for sym in F4SEPlugin_Load F4SEPlugin_Version; do
+              strings -a "$path" | grep -x "$sym" >/dev/null || { echo "::error::$dll is missing $sym"; exit 1; }
+            done
+            echo "ok: $path"
+          done
+
+      - name: Record package checksums
+        working-directory: CO-BETA/plugin
+        run: |
+          set -euo pipefail
+          co="$(find build-xwin -type f -name CommonwealthOnline.dll -print -quit)"
+          ng="$(find build-xwin -type f -name CommonwealthOnline-NG.dll -print -quit)"
+          og="$(find build-xwin -type f -name CommonwealthOnline-OG.dll -print -quit)"
+          sha256sum build/gns-bridge/bin/commonwealth_online_gns_bridge.dll "$co" "$ng" "$og"
+
+  report:
+    name: Report to the private PR
+    needs: [linux-contract, windows-package]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=success; description="skipped (all jobs gated off)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-beta-gns-client-bridge" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-beta-gns-client-bridge ($description)"
