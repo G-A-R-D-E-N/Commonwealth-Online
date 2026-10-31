@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" class="is-preview">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Capture HUD Preview</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      html,
+      body {
+        background: linear-gradient(165deg, #0b120d 0%, #121810 45%, #080c08 100%) !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="co-capture-hud" id="coCaptureHud" aria-live="polite" hidden>
+      <p class="co-capture-name" id="coCaptureName"></p>
+      <div class="co-capture-bar" id="coCaptureBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="co-capture-fill" id="coCaptureFill"></div>
+      </div>
+      <p class="co-capture-status" id="coCaptureStatus"></p>
+      <p class="co-capture-message" id="coCaptureMessage" hidden></p>
+    </div>
+    <script src="capture-hud.js"></script>
+    <script>
+      var samples = [
+        { settlements: [{ buildZoneId: 1, state: "capturing", progressPercent: 45, secondsLeft: 66 }], nearBuildZoneId: 1, localProgress: 45 },
+        { settlements: [{ buildZoneId: 1, state: "contested", progressPercent: 30, secondsLeft: 0 }], nearBuildZoneId: 1, localProgress: null },
+        { settlements: [], nearBuildZoneId: null, localProgress: null }
+      ];
+      var sampleIndex = 0;
+      function showSample() {
+        window.coCaptureSetState(JSON.stringify(samples[sampleIndex]));
+        sampleIndex = (sampleIndex + 1) % samples.length;
+      }
+      showSample();
+      setInterval(showSample, 3000);
+    </script>
+  </body>
+</html>

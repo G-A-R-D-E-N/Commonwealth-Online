@@ -1,0 +1,134 @@
+name: Release Acceptance
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  linux-release:
+    name: Linux native release runtime acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.tool_cache }}/dotnet
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - name: Verify native release dependencies
+        run: |
+          set -euo pipefail
+          for tool in git cmake ninja protoc clang xmake readelf ldd ss; do
+            command -v "$tool" >/dev/null || { echo "::error::missing build dependency: $tool"; exit 1; }
+          done
+          test -f /usr/include/openssl/ssl.h || { echo "::error::missing libssl-dev headers"; exit 1; }
+          test -f /usr/include/openssl/rand.h || { echo "::error::missing OpenSSL random headers"; exit 1; }
+
+      - name: Configure native release scratch
+        run: |
+          echo "CO_GNS_DEPS_DIR=$RUNNER_TEMP/co-release-gns-deps-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+          echo "CO_GNS_BUILD_DIR=$RUNNER_TEMP/co-release-gns-build-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+          echo "CO_NATIVE_PACKAGE_DIR=$RUNNER_TEMP/co-release-native-linux-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Build clean native Linux release package
+        run: |
+          set -euo pipefail
+          env_file="$RUNNER_TEMP/co-release-linux-env-${{ github.run_id }}-${{ github.run_attempt }}"
+          bash CO-SERVER/server-cpp/scripts/build-native-package-ci.sh \
+            linux-x64 "$CO_NATIVE_PACKAGE_DIR" | tee "$env_file"
+          grep '^CO_NATIVE_' "$env_file" >> "$GITHUB_ENV"
+
+      - name: Verify Host launches the packaged native server
+        run: |
+          dotnet run --project CO-SERVER/host-tests/CommonwealthOnline.Host.Tests.csproj -c Release -- \
+            --package-smoke "$CO_NATIVE_PACKAGE_DIR" "$CO_NATIVE_PACKAGE_DIR/commonwealth-server.json"
+
+      - name: Verify packaged gameplay transport
+        run: |
+          bash CO-SERVER/server-cpp/scripts/smoke-native-linux-package.sh \
+            "$CO_NATIVE_PACKAGE_DIR" "$CO_NATIVE_SMOKE" "$CO_NATIVE_BRIDGE_DIR"
+
+      - name: Verify packaged identity, restart persistence, and admin control
+        run: |
+          bash CO-SERVER/server-cpp/scripts/smoke-native-linux-release.sh \
+            "$CO_NATIVE_PACKAGE_DIR" \
+            "$CO_NATIVE_IDENTITY_SMOKE" \
+            "$CO_NATIVE_PERSISTENCE_SMOKE" \
+            "$CO_NATIVE_ADMIN_SMOKE" \
+            "$CO_NATIVE_PROFILE_BAN_SMOKE" \
+            "$CO_NATIVE_BRIDGE_DIR"
+
+      - name: Clean Linux release scratch
+        if: always()
+        run: rm -rf "$CO_GNS_DEPS_DIR" "$CO_GNS_BUILD_DIR" "$CO_NATIVE_PACKAGE_DIR"
+
+  report:
+    name: Report to the private PR
+    needs: [linux-release]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=success; description="skipped (all jobs gated off)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-server-release-acceptance" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-server-release-acceptance ($description)"

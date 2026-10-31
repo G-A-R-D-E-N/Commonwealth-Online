@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Voice</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="co-voice-hud">
+      <p class="co-voice-mic" id="coVoiceMic" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="9" y="2" width="6" height="12" rx="3" />
+          <path d="M5 11a7 7 0 0 0 14 0h-2a5 5 0 0 1-10 0z" />
+          <rect x="11" y="18" width="2" height="4" />
+          <rect x="8" y="21" width="8" height="2" />
+        </svg>
+        <span>Mic on</span>
+      </p>
+      <ol class="co-voice-speakers" id="coVoiceSpeakers"></ol>
+      <p class="co-voice-pending" id="coVoicePending" hidden>Syncing voice settings</p>
+    </div>
+    <script src="voice-hud.js"></script>
+  </body>
+</html>

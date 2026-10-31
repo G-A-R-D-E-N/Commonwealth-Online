@@ -1,0 +1,295 @@
+name: Server Package Validation
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  linux-package:
+    name: Linux native clean-copy package + release smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.tool_cache }}/dotnet
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - name: Verify native package dependencies
+        run: |
+          set -euo pipefail
+          for tool in git cmake ninja protoc clang xmake readelf ldd ss; do
+            command -v "$tool" >/dev/null || { echo "::error::missing build dependency: $tool"; exit 1; }
+          done
+          test -f /usr/include/openssl/ssl.h || { echo "::error::missing libssl-dev headers"; exit 1; }
+          test -f /usr/include/openssl/rand.h || { echo "::error::missing OpenSSL random headers"; exit 1; }
+
+      - name: Configure native package scratch
+        run: |
+          echo "CO_GNS_DEPS_DIR=$RUNNER_TEMP/co-package-gns-deps-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+          echo "CO_GNS_BUILD_DIR=$RUNNER_TEMP/co-package-gns-build-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+          echo "CO_NATIVE_PACKAGE_DIR=$RUNNER_TEMP/co-package-native-linux-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Build and compose native Linux package
+        run: |
+          set -euo pipefail
+          env_file="$RUNNER_TEMP/co-package-linux-env-${{ github.run_id }}-${{ github.run_attempt }}"
+          bash CO-SERVER/server-cpp/scripts/build-native-package-ci.sh \
+            linux-x64 "$CO_NATIVE_PACKAGE_DIR" | tee "$env_file"
+          grep '^CO_NATIVE_' "$env_file" >> "$GITHUB_ENV"
+
+      - name: Run Host launch contract against clean native package
+        run: |
+          dotnet run --project CO-SERVER/host-tests/CommonwealthOnline.Host.Tests.csproj -c Release -- \
+            --package-smoke "$CO_NATIVE_PACKAGE_DIR" "$CO_NATIVE_PACKAGE_DIR/commonwealth-server.json"
+
+      - name: Run packaged native GNS gameplay smoke
+        run: |
+          bash CO-SERVER/server-cpp/scripts/smoke-native-linux-package.sh \
+            "$CO_NATIVE_PACKAGE_DIR" "$CO_NATIVE_SMOKE" "$CO_NATIVE_BRIDGE_DIR"
+
+      - name: Run packaged identity, restart persistence, and admin smoke
+        run: |
+          bash CO-SERVER/server-cpp/scripts/smoke-native-linux-release.sh \
+            "$CO_NATIVE_PACKAGE_DIR" \
+            "$CO_NATIVE_IDENTITY_SMOKE" \
+            "$CO_NATIVE_PERSISTENCE_SMOKE" \
+            "$CO_NATIVE_ADMIN_SMOKE" \
+            "$CO_NATIVE_PROFILE_BAN_SMOKE" \
+            "$CO_NATIVE_BRIDGE_DIR"
+
+      - name: Clean native package scratch
+        if: always()
+        run: rm -rf "$CO_GNS_DEPS_DIR" "$CO_GNS_BUILD_DIR" "$CO_NATIVE_PACKAGE_DIR"
+
+  windows-package:
+    name: Windows native clean-copy package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.tool_cache }}/dotnet
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: '3.0.4'
+
+      - name: Verify xwin package toolchain
+        run: |
+          set -euo pipefail
+          for tool in clang-cl lld-link llvm-ar llvm-rc llvm-dlltool llvm-readobj xmake cmake ninja protoc; do
+            command -v "$tool" >/dev/null || { echo "::error::$tool is missing"; exit 1; }
+          done
+          test -d "$XWIN_ROOT/crt/include" || { echo "::error::missing xwin CRT"; exit 1; }
+          test -d "$XWIN_ROOT/sdk/include/ucrt" || { echo "::error::missing xwin SDK"; exit 1; }
+
+      - name: Configure Windows package scratch
+        run: |
+          echo "CO_WIN_DEPS_DIR=$RUNNER_TEMP/co-package-win-deps-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+          echo "CO_WIN_BUILD_DIR=$RUNNER_TEMP/co-package-win-build-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+          echo "CO_NATIVE_PACKAGE_DIR=$RUNNER_TEMP/co-package-native-win-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+
+      - name: Enable ccache when installed
+        run: bash "$GITHUB_WORKSPACE/scripts/ci-ccache-env.sh"
+
+      - name: Build and compose native Windows package
+        run: |
+          set -euo pipefail
+          bash CO-SERVER/server-cpp/scripts/build-native-package-ci.sh \
+            win-x64 "$CO_NATIVE_PACKAGE_DIR"
+
+      # The runtime smoke runs on a Windows machine, so its inputs cross
+      # runners. That has to be artifacts: Actions caches are keyed per
+      # operating system, so a Linux-saved entry is invisible to a Windows job.
+      #
+      # Artifact storage is a small shared quota, so only what the smoke
+      # consumes is staged — the server, its bridge and the native marker, plus
+      # the cross-built clients, about 2 MB in total. The Host is not involved,
+      # and full packages upload from main only.
+      - name: Stage Windows runtime smoke inputs
+        run: |
+          set -euo pipefail
+          smoke_src="$CO_NATIVE_PACKAGE_DIR-smoke"
+          staging="$GITHUB_WORKSPACE/winsmoke"
+          rm -rf "$staging"
+          mkdir -p "$staging/runtime" "$staging/smokes"
+          for required in CommonwealthOnline.Server.exe \
+                          commonwealth_online_gns_bridge.dll \
+                          CommonwealthOnline.Server.native \
+                          NATIVE_RUNTIME.txt \
+                          commonwealth-server.json; do
+            cp "$CO_NATIVE_PACKAGE_DIR/$required" "$staging/runtime/"
+          done
+          cp "$smoke_src"/* "$staging/smokes/"
+          echo "CO_NATIVE_WIN_SMOKE_DIR=$smoke_src" >> "$GITHUB_ENV"
+
+      - name: Pack Windows runtime smoke inputs
+        if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+        run: tar -czf "$GITHUB_WORKSPACE/winsmoke.tar.gz" -C "$GITHUB_WORKSPACE/winsmoke" .
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+        with:
+          name: winsmoke-${{ github.run_attempt }}
+          path: winsmoke.tar.gz
+          retention-days: 1
+
+      - name: Clean Windows package scratch
+        if: always()
+        run: rm -rf -- "$CO_WIN_DEPS_DIR" "$CO_WIN_BUILD_DIR" "$CO_NATIVE_PACKAGE_DIR" "${CO_NATIVE_PACKAGE_DIR:+$CO_NATIVE_PACKAGE_DIR-smoke}" "$GITHUB_WORKSPACE/winsmoke"
+
+  windows-runtime-smoke:
+    name: Windows native package runtime smoke
+    # Runs on a hosted Windows runner only when the public repository variable
+    # WINDOWS_RUNTIME_SMOKE is 'true'; otherwise the job is skipped.
+    if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+    needs: windows-package
+    runs-on: windows-latest
+    env:
+      _MSPDBSRV_ENDPOINT_: co-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+    timeout-minutes: 20
+    defaults:
+      run:
+        # The runner ships Windows PowerShell 5.1, not pwsh, and its execution
+        # policy refuses generated .ps1 files. Bypass it for these invocations
+        # rather than loosening the machine's policy.
+        shell: powershell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Invoke-Expression ([IO.File]::ReadAllText('{0}')); if ($LASTEXITCODE) {{ exit $LASTEXITCODE }}"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+          sparse-checkout: |
+            CO-SERVER/host/
+            CO-SERVER/host-tests/
+            CO-SERVER/server-cpp/scripts/smoke-native-windows-package.ps1
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.tool_cache }}/dotnet
+        with:
+          dotnet-version: "8.0.x"
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: winsmoke-${{ github.run_attempt }}
+
+      - name: Unpack Windows runtime smoke inputs
+        run: |
+          New-Item -ItemType Directory -Path winsmoke -Force | Out-Null
+          tar -xzf winsmoke.tar.gz -C winsmoke
+          if ($LASTEXITCODE -ne 0) { throw 'failed to unpack smoke inputs' }
+
+      - name: Run packaged Windows runtime smoke
+        run: |
+          ./CO-SERVER/server-cpp/scripts/smoke-native-windows-package.ps1 -PackageDir winsmoke/runtime -SmokeDir winsmoke/smokes
+
+      - name: Run Host controller Windows runtime smoke
+        run: |
+          dotnet run --project CO-SERVER/host-tests/CommonwealthOnline.Host.Tests.csproj -c Release -- `
+            --package-smoke winsmoke/runtime winsmoke/runtime/commonwealth-server.json
+
+      - name: Stop .NET build servers
+        if: always()
+        continue-on-error: true
+        run: dotnet build-server shutdown
+
+  report:
+    name: Report to the private PR
+    needs: [linux-package, windows-package, windows-runtime-smoke]
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=success; description="skipped (all jobs gated off)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-server-package" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-server-package ($description)"
