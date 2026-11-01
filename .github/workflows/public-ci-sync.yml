@@ -1,0 +1,108 @@
+name: Public CI sync
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+env:
+  PUBLIC_REPO: G-A-R-D-E-N/Commonwealth-Online
+  PRIVATE_REPO: G-A-R-D-E-N/Commonwealth-Online-Private
+
+jobs:
+  sync:
+    name: Export open PRs and mainline heads
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Initialise the workspace repository
+        run: git init -q "$GITHUB_WORKSPACE"
+
+      - name: Export open PRs and mainline heads to the public repository
+        env:
+          TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          REPOSITORY: ${{ env.PRIVATE_REPO }}
+          GIT_AUTHOR_NAME: NomadsReach
+          GIT_AUTHOR_EMAIL: 144523850+NomadsReach@users.noreply.github.com
+          GIT_COMMITTER_NAME: NomadsReach
+          GIT_COMMITTER_EMAIL: 144523850+NomadsReach@users.noreply.github.com
+        run: |
+          set -euo pipefail
+          [ -n "$TOKEN" ] || { echo "::error::CO_PUBLIC_CI_TOKEN is not set"; exit 1; }
+          public_url="https://x-access-token:${TOKEN}@github.com/${PUBLIC_REPO}.git"
+          private_url="https://x-access-token:${TOKEN}@github.com/${REPOSITORY}.git"
+          work="$RUNNER_TEMP/public-ci-sync"
+          mkdir -p "$work"
+          gh api --paginate "repos/${REPOSITORY}/pulls?state=open&per_page=100" --jq ".[] | select(.head.repo.full_name == \"${REPOSITORY}\") | \"\(.number) \(.head.sha) \(.base.sha)\"" > "$work/prs.txt"
+          cut -d' ' -f1 "$work/prs.txt" > "$work/open.txt"
+
+          export_one() {
+            local branch=$1 head=$2 base=$3 pr=$4 current source message commit workflow name state description
+            current=$(git ls-remote "$public_url" "refs/heads/$branch" | cut -f1) || return 1
+            if [ -n "$current" ]; then
+              source=$(gh api "repos/${PUBLIC_REPO}/commits/${current}" --jq .commit.message) || return 1
+              if grep -qx "Source-Commit: ${head}" <<<"$source"; then return 0; fi
+            fi
+            git fetch -q --no-tags --depth 1 "$private_url" "$head" || return 1
+            git checkout -q --detach FETCH_HEAD || return 1
+            mkdir -p "$GITHUB_WORKSPACE/.trusted-export" || return 1
+            if [ -n "$base" ]; then
+              git fetch -q --no-tags --depth 1 "$private_url" "$base" || return 1
+              git show "$base:scripts/export-public-ci.py" > "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
+            else
+              cp scripts/export-public-ci.py "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
+            fi
+            : > "$work/changed.txt"
+            if [ -n "$pr" ]; then
+              gh api --paginate "repos/${REPOSITORY}/pulls/${pr}/files" --jq '.[] | .filename, (.previous_filename // empty)' > "$work/changed.txt" || return 1
+              [ "$(wc -l < "$work/changed.txt")" -lt 2900 ] || : > "$work/changed.txt"
+            fi
+            : > "$work/skipped.txt"
+            if git grep -n -E -e '-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----' -e 'gh[opsru]_[A-Za-z0-9]{30,}' -e 'github_pat_[A-Za-z0-9_]{20,}' -e 'sk-live-[A-Za-z0-9]{20,}' -e 'xox[baprs]-[A-Za-z0-9-]{10,}' HEAD -- . ':!scripts/export-public-ci.py' ':!.github/workflows/public-ci-export.yml' ':!.github/public-ci/sync/public-ci-sync.yml'; then
+              echo "::error::secret-like pattern found in ${head}; refusing public export"
+              return 1
+            fi
+            message=$(printf 'Commonwealth Online %s\n\nSource-Commit: %s' "$branch" "$head")
+            commit=$(PUBLIC_CI_CHANGED_FILE="$work/changed.txt" PUBLIC_CI_SKIPPED_FILE="$work/skipped.txt" python3 "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" HEAD "$message") || return 1
+            for workflow in $(grep -l 'context="public-ci/' .github/public-ci/workflows/*.yml); do
+              name=$(basename "$workflow" .yml)
+              state=pending; description="Building on GitHub-hosted runners"
+              if grep -qx "$name" "$work/skipped.txt"; then state=success; description="Not affected by the files this PR changes"; fi
+              gh api "repos/${REPOSITORY}/statuses/${head}" -f state="$state" -f context="public-ci/${name}" \
+                -f target_url="https://github.com/${PUBLIC_REPO}/actions?query=branch%3A${branch}" \
+                -f description="$description" >/dev/null || return 1
+            done
+            git push -q --force "https://x-access-token:${TOKEN}@github.com/${PUBLIC_REPO}.git" "${commit}:refs/heads/${branch}" || return 1
+            echo "exported ${head:0:8} as ${commit:0:8} to ${PUBLIC_REPO} ${branch}"
+          }
+
+          failed=0
+          while IFS=' ' read -r pr head base; do
+            if ! export_one "ci/pr-${pr}" "$head" "$base" "$pr"; then
+              echo "::error::export failed for PR #${pr}"
+              failed=1
+            fi
+          done < "$work/prs.txt"
+          for branch in main nomad-dev; do
+            head=$(gh api "repos/${REPOSITORY}/git/ref/heads/${branch}" --jq .object.sha) || { echo "::error::cannot read ${branch}"; failed=1; continue; }
+            if ! export_one "ci/${branch}" "$head" "" ""; then
+              echo "::error::export failed for ${branch}"
+              failed=1
+            fi
+          done
+          git ls-remote --heads "$public_url" "refs/heads/ci/pr-*" > "$work/public-prs.txt"
+          while IFS=$'\t' read -r _ ref; do
+            number=${ref##*/ci/pr-}
+            if ! grep -qx "$number" "$work/open.txt"; then
+              git push -q "$public_url" --delete "${ref#refs/heads/}" || failed=1
+            fi
+          done < "$work/public-prs.txt"
+          exit "$failed"
