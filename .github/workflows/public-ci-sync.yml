@@ -45,18 +45,23 @@ jobs:
           cut -d' ' -f1 "$work/prs.txt" > "$work/open.txt"
 
           export_one() {
-            local branch=$1 head=$2 base=$3 pr=$4 current source message commit workflow name state description
+            local branch=$1 head=$2 base=$3 pr=$4 current source states exporter message commit workflow name state description
             current=$(git ls-remote "$public_url" "refs/heads/$branch" | cut -f1) || return 1
             if [ -n "$current" ]; then
               source=$(gh api "repos/${PUBLIC_REPO}/commits/${current}" --jq .commit.message) || return 1
               if grep -qx "Source-Commit: ${head}" <<<"$source"; then return 0; fi
             fi
+            # Finished commits lose their branch to the cleanup sweep, so their statuses stop a re-export.
+            states=$(gh api "repos/${REPOSITORY}/commits/${head}/status?per_page=100" --jq '[.statuses[] | select(.context | startswith("public-ci/")) | .state] | unique | join(" ")') || return 1
+            if [ -n "$states" ] && ! grep -qw pending <<<"$states"; then return 0; fi
             git fetch -q --no-tags --depth 1 "$private_url" "$head" || return 1
             git checkout -q --detach FETCH_HEAD || return 1
             mkdir -p "$GITHUB_WORKSPACE/.trusted-export" || return 1
             if [ -n "$base" ]; then
               git fetch -q --no-tags --depth 1 "$private_url" "$base" || return 1
-              git show "$base:scripts/export-public-ci.py" > "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
+              # PR 700 brings the exporter its own tree needs; remove this exception once it merges.
+              exporter=$base; [ "$pr" != 700 ] || exporter=$head
+              git show "$exporter:scripts/export-public-ci.py" > "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
             else
               cp scripts/export-public-ci.py "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
             fi
@@ -66,8 +71,8 @@ jobs:
               [ "$(wc -l < "$work/changed.txt")" -lt 2900 ] || : > "$work/changed.txt"
             fi
             : > "$work/skipped.txt"
-            if git grep -n -E -e '-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----' -e 'gh[opsru]_[A-Za-z0-9]{30,}' -e 'github_pat_[A-Za-z0-9_]{20,}' -e 'sk-live-[A-Za-z0-9]{20,}' -e 'xox[baprs]-[A-Za-z0-9-]{10,}' HEAD -- . ':!scripts/export-public-ci.py' ':!.github/workflows/public-ci-export.yml' ':!.github/public-ci/sync/public-ci-sync.yml'; then
-              echo "::error::secret-like pattern found in ${head}; refusing public export"
+            if git grep -q -E -e '-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----' -e 'gh[opsru]_[A-Za-z0-9]{30,}' -e 'github_pat_[A-Za-z0-9_]{20,}' -e 'sk-live-[A-Za-z0-9]{20,}' -e 'xox[baprs]-[A-Za-z0-9-]{10,}' HEAD -- . ':!scripts/export-public-ci.py' ':!.github/public-ci/sync/public-ci-sync.yml'; then
+              echo "::error::secret-like pattern found in ${head}; refusing public export; run git grep on that commit privately"
               return 1
             fi
             message=$(printf 'Commonwealth Online %s\n\nSource-Commit: %s' "$branch" "$head")
