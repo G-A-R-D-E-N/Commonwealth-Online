@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "*/10 * * * *"
   workflow_dispatch:
+    inputs:
+      force:
+        description: Export again even if the commit already has finished results
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -27,6 +32,7 @@ jobs:
 
       - name: Export open PRs and mainline heads to the public repository
         env:
+          FORCE: ${{ inputs.force }}
           TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
           GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
           REPOSITORY: ${{ env.PRIVATE_REPO }}
@@ -45,7 +51,7 @@ jobs:
           cut -d' ' -f1 "$work/prs.txt" > "$work/open.txt"
 
           export_one() {
-            local branch=$1 head=$2 base=$3 pr=$4 current source states exporter message commit workflow name state description
+            local branch=$1 head=$2 base=$3 pr=$4 current source states exporter scan message commit workflow name state description
             current=$(git ls-remote "$public_url" "refs/heads/$branch" | cut -f1) || return 1
             if [ -n "$current" ]; then
               source=$(gh api "repos/${PUBLIC_REPO}/commits/${current}" --jq .commit.message) || return 1
@@ -53,7 +59,7 @@ jobs:
             fi
             # Finished commits lose their branch to the cleanup sweep, so their statuses stop a re-export.
             states=$(gh api "repos/${REPOSITORY}/commits/${head}/status?per_page=100" --jq '[.statuses[] | select(.context | startswith("public-ci/")) | .state] | unique | join(" ")') || return 1
-            if [ -n "$states" ] && ! grep -qw pending <<<"$states"; then return 0; fi
+            if [ "$FORCE" != true ] && [ -n "$states" ] && ! grep -qw pending <<<"$states"; then return 0; fi
             git fetch -q --no-tags --depth 1 "$private_url" "$head" || return 1
             git checkout -q --detach FETCH_HEAD || return 1
             mkdir -p "$GITHUB_WORKSPACE/.trusted-export" || return 1
@@ -71,7 +77,9 @@ jobs:
               [ "$(wc -l < "$work/changed.txt")" -lt 2900 ] || : > "$work/changed.txt"
             fi
             : > "$work/skipped.txt"
-            if git grep -q -E -e '-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----' -e 'gh[opsru]_[A-Za-z0-9]{30,}' -e 'github_pat_[A-Za-z0-9_]{20,}' -e 'sk-live-[A-Za-z0-9]{20,}' -e 'xox[baprs]-[A-Za-z0-9-]{10,}' HEAD -- . ':!scripts/export-public-ci.py' ':!.github/public-ci/sync/public-ci-sync.yml'; then
+            scan=0; git grep -q -E -e '-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----' -e 'gh[opsru]_[A-Za-z0-9]{30,}' -e 'github_pat_[A-Za-z0-9_]{20,}' -e 'sk-live-[A-Za-z0-9]{20,}' -e 'xox[baprs]-[A-Za-z0-9-]{10,}' HEAD -- . ':!scripts/export-public-ci.py' ':!.github/public-ci/sync/public-ci-sync.yml' || scan=$?
+            [ "$scan" -le 1 ] || return 1
+            if [ "$scan" = 0 ]; then
               echo "::error::secret-like pattern found in ${head}; refusing public export; run git grep on that commit privately"
               return 1
             fi
