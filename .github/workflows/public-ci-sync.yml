@@ -67,8 +67,10 @@ jobs:
               git fetch -q --no-tags --depth 1 "$private_url" "$base" || return 1
               # PR 700 brings the exporter its own tree needs; remove this exception once it merges.
               exporter=$base; [ "$pr" != 700 ] || exporter=$head
+              git cat-file -e "$exporter:scripts/export-public-ci.py" 2>/dev/null || { echo "::warning::no exporter on the base of #${pr}; skipped"; return 0; }
               git show "$exporter:scripts/export-public-ci.py" > "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
             else
+              [ -f scripts/export-public-ci.py ] || { echo "::warning::no exporter in ${branch}; skipped"; return 0; }
               cp scripts/export-public-ci.py "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
             fi
             : > "$work/changed.txt"
