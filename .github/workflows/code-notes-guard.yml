@@ -3,6 +3,9 @@ name: code-notes-guard
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   no-code-notes:
     runs-on: ubuntu-latest
