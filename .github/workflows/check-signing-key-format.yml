@@ -19,29 +19,16 @@ jobs:
           KEY: ${{ secrets.CO_UPDATE_SIGNING_KEY }}
           EXPECTED: ${{ vars.CO_UPDATE_PUBLIC_KEY }}
         run: |
-          flag() { if printf '%s' "$KEY" | grep -q -- "$1"; then echo "$2: yes"; else echo "$2: no"; fi; }
-          echo "bytes: $(printf '%s' "$KEY" | wc -c)"
-          echo "lines: $(printf '%s\n' "$KEY" | wc -l)"
-          flag 'BEGIN PRIVATE KEY' 'plain begin line'
-          flag 'END PRIVATE KEY' 'plain end line'
-          flag 'BEGIN ENCRYPTED' 'encrypted key'
-          flag 'BEGIN PUBLIC' 'public key'
-          flag 'BEGIN OPENSSH' 'openssh key'
-          flag 'BEGIN EC\|BEGIN RSA' 'ec or rsa key'
-          flag '\\n' 'literal backslash n'
-          flag "$(printf '\r')" 'carriage returns'
-          flag '^["'"'"']' 'starts with a quote'
-          flag '^[0-9a-fA-F]\{64\}$' 'only 64 hex'
-          try() {
-            actual="$(openssl pkey -pubout -outform DER 2>/dev/null | tail -c 32 | od -An -tx1 | tr -d ' \n')"
-            if [ -z "$actual" ]; then echo "$1: unreadable"
-            elif [ "$actual" = "$EXPECTED" ]; then echo "$1: reads and matches"
-            else echo "$1: reads, different key"; fi
-          }
-          printf '%s\n' "$KEY" | try 'as saved'
-          printf '%s\n' "$KEY" | tr -d '\r' | try 'without carriage returns'
-          printf '%b\n' "$KEY" | try 'backslash n as newlines'
-          printf '%s\n' "$KEY" | tr -d "\"'" | try 'without quotes'
-          printf '%s' "$KEY" | base64 -d 2>/dev/null | try 'base64 decoded'
-          printf '%s' "$KEY" | tr -d ' \r\n' | sed -e 's/-----BEGINPRIVATEKEY-----/-----BEGIN PRIVATE KEY-----\n/' -e 's/-----ENDPRIVATEKEY-----/\n-----END PRIVATE KEY-----\n/' | try 'rebuilt line breaks'
-          printf '%s' "$KEY" | tr -d ' \r\n' | { printf -- '-----BEGIN PRIVATE KEY-----\n'; cat; printf '\n-----END PRIVATE KEY-----\n'; } | try 'body without header lines'
+          printf '%s\n' "$KEY" | awk '{ print "line " NR " length: " length($0) }'
+          first="$(printf '%s\n' "$KEY" | sed -n 1p)"
+          body="$(printf '%s\n' "$KEY" | sed -n 2p)"
+          last="$(printf '%s\n' "$KEY" | sed -n 3p)"
+          if [ "$first" = "-----BEGIN PRIVATE KEY-----" ]; then echo "first line exact: yes"; else echo "first line exact: no"; fi
+          if [ "$last" = "-----END PRIVATE KEY-----" ]; then echo "last line exact: yes"; else echo "last line exact: no"; fi
+          if printf '%s' "$body" | grep -Eq '^[A-Za-z0-9+/]+=*$'; then echo "middle only base64 letters: yes"; else echo "middle only base64 letters: no"; fi
+          echo "middle starts like an ed25519 key: $(printf '%s' "$body" | grep -q '^MC4CAQAwBQYDK2Vw' && echo yes || echo no)"
+          echo "middle spaces: $(printf '%s' "$body" | tr -cd ' ' | wc -c)"
+          actual="$({ printf -- '-----BEGIN PRIVATE KEY-----\n%s\n-----END PRIVATE KEY-----\n' "$body"; } | openssl pkey -pubout -outform DER 2>/dev/null | tail -c 32 | od -An -tx1 | tr -d ' \n')"
+          if [ -z "$actual" ]; then echo "middle with clean first and last lines: unreadable"
+          elif [ "$actual" = "$EXPECTED" ]; then echo "middle with clean first and last lines: reads and matches"
+          else echo "middle with clean first and last lines: reads, different key"; fi
