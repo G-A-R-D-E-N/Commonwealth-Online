@@ -1,71 +1,90 @@
 <%- include("../partials/head") %>
 <%- include("../partials/navbar") %>
 
-      <main class="site-main">
-        <section class="section-panel updates-hero" aria-labelledby="updates-title">
-          <div class="updates-hero__head">
-            <div>
-              <h1 id="updates-title">Release log</h1>
-              <p class="updates-hero__desc">
-                Release notes for Commonwealth Online builds for Fallout 4 Anniversary Edition and the original
-                release. Optional DLC, mods and Creation Club content are only needed when other
-                players have them.
+      <main class="site-main site-main--subpage">
+        <section class="subpage-hero" aria-labelledby="updates-title">
+          <div class="subpage-hero__media" aria-hidden="true">
+            <img
+              src="/assets/images/user/zulu3.jpg"
+              alt="Commonwealth Online Fallout 4 Multiplayer Releases"
+              width="1920"
+              height="1080"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </div>
+          <div class="subpage-hero__shade" aria-hidden="true"></div>
+          <div class="subpage-hero__content">
+            <div class="subpage-hero__inner">
+              <div class="subpage-hero__head">
+                <div>
+                  <p class="subpage-hero__kicker">RELEASES // VERSION ARCHIVE</p>
+                  <h1 id="updates-title">Release Log &amp; Build Notes</h1>
+                  <p class="subpage-hero__desc">
+                    Release notes for Commonwealth Online builds supporting Fallout 4 Anniversary Edition (AE), Next-Gen (NG),
+                    and the original release (OG). Synchronized with repository releases and build tags. Optional DLC, mods and Creation Club
+                    content are only needed when specified by host servers.
+                  </p>
+                </div>
+                <div class="subpage-hero__actions">
+                  <a
+                    class="co-btn co-btn--primary"
+                    href="#"
+                    data-co-link="nexus"
+                  >
+                    Download mod &amp; server
+                  </a>
+                  <a class="co-btn co-btn--ghost" href="#" data-co-link="githubReleases">GitHub releases</a>
+                  <a class="co-btn co-btn--ghost" href="#" data-co-link="repository">Browse source</a>
+                </div>
+              </div>
+
+              <p class="repo-status is-busy" id="updates-status" role="status">
+                <span class="status-pulse">Fetching releases</span><span class="blink-cursor" aria-hidden="true"></span>
               </p>
             </div>
-            <div class="updates-hero__actions">
-              <a
-                class="co-btn co-btn--primary"
-                href="#"
-                data-co-link="nexus"
-              >
-                Download mod &amp; server
-              </a>
-              <a class="co-btn co-btn--ghost" href="#" data-co-link="githubReleases">GitHub releases</a>
-              <a class="co-btn co-btn--ghost" href="#" data-co-link="repository">Browse source</a>
-            </div>
           </div>
-
-          <p class="repo-status is-busy" id="updates-status" role="status">
-            <span class="status-pulse">Fetching releases</span><span class="blink-cursor" aria-hidden="true"></span>
-          </p>
         </section>
 
-        <section class="section-panel updates-feed-panel" aria-labelledby="updates-feed-title">
-          <div class="section-head">
-            <h2 id="updates-feed-title">Latest updates</h2>
-          </div>
+        <div class="site-wrap">
+          <section class="section-panel updates-feed-panel" aria-labelledby="updates-feed-title">
+            <div class="section-head">
+              <p class="section-kicker">01 // BUILD FEED</p>
+              <h2 id="updates-feed-title">Latest updates</h2>
+            </div>
 
-          <div class="updates-feed" id="updates-feed" aria-busy="true">
-            <div class="repo-loading" data-loading="updates">
-              <p class="repo-loading__label">
-                <span class="status-pulse">Loading release notes</span><span class="blink-cursor" aria-hidden="true"></span>
-              </p>
-              <div class="updates-skel" aria-hidden="true">
-                <article class="updates-skel__card">
-                  <span class="repo-skel-line repo-skel-line--xs"></span>
-                  <span class="repo-skel-line repo-skel-line--title"></span>
-                  <span class="repo-skel-line repo-skel-line--sm"></span>
-                  <span class="repo-skel-line repo-skel-line--lg"></span>
-                  <span class="repo-skel-line repo-skel-line--md"></span>
-                </article>
-                <article class="updates-skel__card">
-                  <span class="repo-skel-line repo-skel-line--xs"></span>
-                  <span class="repo-skel-line repo-skel-line--title"></span>
-                  <span class="repo-skel-line repo-skel-line--sm"></span>
-                  <span class="repo-skel-line repo-skel-line--lg"></span>
-                  <span class="repo-skel-line repo-skel-line--md"></span>
-                </article>
-                <article class="updates-skel__card">
-                  <span class="repo-skel-line repo-skel-line--xs"></span>
-                  <span class="repo-skel-line repo-skel-line--title"></span>
-                  <span class="repo-skel-line repo-skel-line--sm"></span>
-                  <span class="repo-skel-line repo-skel-line--lg"></span>
-                  <span class="repo-skel-line repo-skel-line--md"></span>
-                </article>
+            <div class="updates-feed" id="updates-feed" aria-busy="true">
+              <div class="repo-loading" data-loading="updates">
+                <p class="repo-loading__label">
+                  <span class="status-pulse">Loading release notes</span><span class="blink-cursor" aria-hidden="true"></span>
+                </p>
+                <div class="updates-skel" aria-hidden="true">
+                  <article class="updates-skel__card">
+                    <span class="repo-skel-line repo-skel-line--xs"></span>
+                    <span class="repo-skel-line repo-skel-line--title"></span>
+                    <span class="repo-skel-line repo-skel-line--sm"></span>
+                    <span class="repo-skel-line repo-skel-line--lg"></span>
+                    <span class="repo-skel-line repo-skel-line--md"></span>
+                  </article>
+                  <article class="updates-skel__card">
+                    <span class="repo-skel-line repo-skel-line--xs"></span>
+                    <span class="repo-skel-line repo-skel-line--title"></span>
+                    <span class="repo-skel-line repo-skel-line--sm"></span>
+                    <span class="repo-skel-line repo-skel-line--lg"></span>
+                    <span class="repo-skel-line repo-skel-line--md"></span>
+                  </article>
+                  <article class="updates-skel__card">
+                    <span class="repo-skel-line repo-skel-line--xs"></span>
+                    <span class="repo-skel-line repo-skel-line--title"></span>
+                    <span class="repo-skel-line repo-skel-line--sm"></span>
+                    <span class="repo-skel-line repo-skel-line--lg"></span>
+                    <span class="repo-skel-line repo-skel-line--md"></span>
+                  </article>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </main>
 
 <%- include("../partials/footer") %>

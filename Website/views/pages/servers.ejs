@@ -5,35 +5,35 @@
         <section class="section-panel servers-hero" aria-labelledby="servers-title">
           <div class="servers-hero__head">
             <div>
-              <h1 id="servers-title">Public servers</h1>
+              <p class="section-kicker">DIRECTORY // LIVE SERVER LIST</p>
+              <h1 id="servers-title">Public Servers</h1>
               <p class="servers-hero__desc">
-                Community and official servers listed for Commonwealth Online on Fallout 4 Anniversary Edition and the original release. DLC,
-                mods and Creation Club content are not required unless other players on that server have them.
+                Official and community dedicated servers running Commonwealth Online across Fallout 4 Anniversary Edition (AE), Next-Gen (NG), and the original release (OG).
+                DLC, mods, and Creation Club content are strictly optional unless the host server specifies them.
               </p>
             </div>
             <div class="servers-hero__actions">
-              <a class="co-btn co-btn--primary" href="#" data-co-link="nexus">Download mod</a>
-              <a class="co-btn co-btn--ghost" href="/hosting">Hosting guide</a>
-              <a class="co-btn co-btn--ghost" href="#" data-co-link="discord">Join Discord</a>
+              <a class="co-btn co-btn--primary" href="#" data-co-link="discord">Join Host Squad Discord</a>
             </div>
           </div>
 
           <ul class="servers-stats" id="servers-stats" aria-label="Server list summary" hidden>
-            <li><span>LISTED</span><strong id="stat-server-count">0</strong></li>
-            <li><span>UPDATED</span><strong id="stat-server-updated">-</strong></li>
+            <li><span>SERVERS LISTED</span><strong id="stat-server-count">0</strong></li>
+            <li><span>LAST SYNCED</span><strong id="stat-server-updated">-</strong></li>
           </ul>
 
           <p class="repo-status is-busy" id="servers-status" role="status">
-            <span class="status-pulse">Loading server list</span><span class="blink-cursor" aria-hidden="true"></span>
+            <span class="status-pulse">Scanning server directory</span><span class="blink-cursor" aria-hidden="true"></span>
           </p>
         </section>
 
         <section class="section-panel servers-list-panel" aria-labelledby="servers-list-title">
           <div class="section-head">
-            <h2 id="servers-list-title">Server list</h2>
+            <p class="section-kicker">01 // BROWSE REALMS</p>
+            <h2 id="servers-list-title">Active Server Frequency Roster</h2>
           </div>
 
-          <div class="servers-feed" id="servers-feed" aria-busy="true">
+          <div class="servers-feed" id="servers-feed" aria-busy="true" data-directory-enabled="false">
             <div class="repo-loading" data-loading="servers">
               <p class="repo-loading__label">
                 <span class="status-pulse">Reading server list</span><span class="blink-cursor" aria-hidden="true"></span>
