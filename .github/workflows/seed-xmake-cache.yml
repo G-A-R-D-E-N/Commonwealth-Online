@@ -1,0 +1,27 @@
+name: Seed xmake cache
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/actions/co-xmake/**
+      - .github/workflows/seed-xmake-cache.yml
+  schedule:
+    - cron: '0 9 * * 1,4'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seed:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/co-xmake
