@@ -400,9 +400,11 @@ jobs:
 
   launcher:
     name: Build the launcher
-    needs: [source, host]
+    needs: source
     runs-on: windows-latest
     timeout-minutes: 60
+    env:
+      RELEASE_TAG: ${{ inputs.version }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -412,11 +414,28 @@ jobs:
           submodules: false
           persist-credentials: false
 
+      - name: Compile the launcher while the server builds
+        env:
+          CO_LAUNCHER_VERSION: ${{ inputs.version }}
+        run: cargo build --release -p launcher-gui --manifest-path CO-Launcher/Cargo.toml --target-dir "$RUNNER_TEMP/launcher-target"
+
+      - name: Wait for the Windows server package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          name="CommonwealthOnline.Host-win-x64-$RELEASE_TAG.tar.gz"
+          for _ in $(seq 90); do
+            state="$(gh release view "$DLL_TAG" -R "$GITHUB_REPOSITORY" --json assets --jq ".assets[] | select(.name == \"$name\") | .state" || true)"
+            if [ "$state" = uploaded ]; then exit 0; fi
+            sleep 30
+          done
+          echo "::error::$name did not reach $DLL_TAG within 45 minutes; check the host job"
+          exit 1
+
       - name: Build the launcher with the server inside
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ inputs.version }}
         run: |
           $ErrorActionPreference = "Stop"
           $PSNativeCommandUseErrorActionPreference = $true
@@ -431,12 +450,12 @@ jobs:
           $serverZip = Join-Path $temp "CommonwealthOnline-server.zip"
           $names = @(Get-ChildItem -LiteralPath $server -Name)
           & $tar -a -cf $serverZip -C $server @names
-          ./CO-Launcher/scripts/package-launcher.ps1 -Version $env:RELEASE_TAG -OutDir $out -ServerZip $serverZip
+          ./CO-Launcher/scripts/package-launcher.ps1 -Version $env:RELEASE_TAG -OutDir $out -ServerZip $serverZip -TargetDir (Join-Path $temp "launcher-target")
           gh release upload $env:DLL_TAG -R $env:GITHUB_REPOSITORY (Join-Path $out "CommonwealthOnline-Launcher-$env:RELEASE_TAG.zip") --clobber
 
   publish:
     name: Publish ${{ inputs.version }}
-    needs: [source, package, launcher]
+    needs: [source, host, package, launcher]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     environment: release
