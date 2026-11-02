@@ -1,0 +1,47 @@
+name: Check Signing Key Format
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/check-signing-key-format.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  key-format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment: release
+    steps:
+      - name: Report the key format
+        env:
+          KEY: ${{ secrets.CO_UPDATE_SIGNING_KEY }}
+          EXPECTED: ${{ vars.CO_UPDATE_PUBLIC_KEY }}
+        run: |
+          flag() { if printf '%s' "$KEY" | grep -q -- "$1"; then echo "$2: yes"; else echo "$2: no"; fi; }
+          echo "bytes: $(printf '%s' "$KEY" | wc -c)"
+          echo "lines: $(printf '%s\n' "$KEY" | wc -l)"
+          flag 'BEGIN PRIVATE KEY' 'plain begin line'
+          flag 'END PRIVATE KEY' 'plain end line'
+          flag 'BEGIN ENCRYPTED' 'encrypted key'
+          flag 'BEGIN PUBLIC' 'public key'
+          flag 'BEGIN OPENSSH' 'openssh key'
+          flag 'BEGIN EC\|BEGIN RSA' 'ec or rsa key'
+          flag '\\n' 'literal backslash n'
+          flag "$(printf '\r')" 'carriage returns'
+          flag '^["'"'"']' 'starts with a quote'
+          flag '^[0-9a-fA-F]\{64\}$' 'only 64 hex'
+          try() {
+            actual="$(openssl pkey -pubout -outform DER 2>/dev/null | tail -c 32 | od -An -tx1 | tr -d ' \n')"
+            if [ -z "$actual" ]; then echo "$1: unreadable"
+            elif [ "$actual" = "$EXPECTED" ]; then echo "$1: reads and matches"
+            else echo "$1: reads, different key"; fi
+          }
+          printf '%s\n' "$KEY" | try 'as saved'
+          printf '%s\n' "$KEY" | tr -d '\r' | try 'without carriage returns'
+          printf '%b\n' "$KEY" | try 'backslash n as newlines'
+          printf '%s\n' "$KEY" | tr -d "\"'" | try 'without quotes'
+          printf '%s' "$KEY" | base64 -d 2>/dev/null | try 'base64 decoded'
+          printf '%s' "$KEY" | tr -d ' \r\n' | sed -e 's/-----BEGINPRIVATEKEY-----/-----BEGIN PRIVATE KEY-----\n/' -e 's/-----ENDPRIVATEKEY-----/\n-----END PRIVATE KEY-----\n/' | try 'rebuilt line breaks'
+          printf '%s' "$KEY" | tr -d ' \r\n' | { printf -- '-----BEGIN PRIVATE KEY-----\n'; cat; printf '\n-----END PRIVATE KEY-----\n'; } | try 'body without header lines'
