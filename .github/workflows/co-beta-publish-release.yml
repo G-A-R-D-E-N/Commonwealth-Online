@@ -1,0 +1,393 @@
+name: Publish Release
+
+# Public repo: never add upload-artifact, because public artifacts and logs are world-readable.
+# Build outputs pass between jobs as a draft release, which only people with write access can see.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, e.g. 0.0.0.4 (used in asset names and as the tag)"
+        required: true
+        type: string
+      target:
+        description: "Commit SHA or tag of G-A-R-D-E-N/Commonwealth-Online-Private to build and release (default: main)"
+        required: false
+        default: main
+        type: string
+      prerelease:
+        description: "Publish as a pre-release"
+        required: false
+        default: true
+        type: boolean
+      draft:
+        description: "Create as a draft"
+        required: false
+        default: false
+        type: boolean
+      build_ui:
+        description: "Required, must stay true: latest.json (schema 2) needs the CommonwealthOnlineUI archive. The run fails early when false."
+        required: false
+        default: true
+        type: boolean
+      min_launcher:
+        description: "Optional minimum launcher version (dotted digits) allowed to install this release. Empty: the default in CO-BETA/ci/make-latest-json.py."
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  DLL_TAG: ci-dlls-${{ github.run_id }}-${{ github.run_attempt }}
+
+concurrency:
+  group: co-publish-release-${{ inputs.version }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  windows-dlls:
+    name: Build the Windows DLLs (MSVC)
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: windows-latest
+    timeout-minutes: 150
+    environment: release
+    env:
+      PRIVATE_REPO: G-A-R-D-E-N/Commonwealth-Online-Private
+      COMMONLIB_MIRROR: ${{ vars.COMMONLIB_MIRROR }}
+    outputs:
+      sha: ${{ steps.source.outputs.sha }}
+    steps:
+      - name: Check the dispatch inputs
+        env:
+          BUILD_UI: ${{ inputs.build_ui }}
+          MIN_LAUNCHER: ${{ inputs.min_launcher }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_TARGET: ${{ inputs.target }}
+        run: |
+          set -euo pipefail
+          if ! printf '%s' "$INPUT_VERSION" | grep -Eq '^[0-9]+(\.[0-9]+){2,3}$'; then
+            echo "::error::version must be 3 or 4 dotted digits, got $INPUT_VERSION"
+            exit 1
+          fi
+          if ! printf '%s' "$INPUT_TARGET" | grep -Eq '^[A-Za-z0-9._/-]+$'; then
+            echo "::error::target must be a plain branch, tag or sha"
+            exit 1
+          fi
+          if [ "$BUILD_UI" != "true" ]; then
+            echo "::error::build_ui must be true: latest.json (schema 2) needs the CommonwealthOnlineUI archive"
+            exit 1
+          fi
+          if [ -n "$MIN_LAUNCHER" ] && ! printf '%s' "$MIN_LAUNCHER" | grep -Eq '^[0-9]+(\.[0-9]+)*$'; then
+            echo "::error::min_launcher must be dotted digits, got $MIN_LAUNCHER"
+            exit 1
+          fi
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: G-A-R-D-E-N/Commonwealth-Online-Private
+          ref: ${{ inputs.target }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          submodules: false
+          persist-credentials: false
+
+      - name: Record the built commit
+        id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Require green CI on the commit being released
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          SHA: ${{ steps.source.outputs.sha }}
+        run: |
+          set -euo pipefail
+          on_branch=false
+          for branch in main nomad-dev; do
+            case "$(gh api "repos/$PRIVATE_REPO/compare/$SHA...$branch" --jq .status)" in
+              ahead|identical) on_branch=true ;;
+            esac
+          done
+          "$on_branch" || { echo "::error::the release commit is not on the private main or nomad-dev branch"; exit 1; }
+          statuses="$(gh api "repos/$PRIVATE_REPO/commits/$SHA/status?per_page=100" --jq '.statuses[] | select(.context | startswith("public-ci/")) | "\(.state) \(.context)"')"
+          test -n "$statuses" || { echo "::error::the release commit has no public CI results"; exit 1; }
+          printf '%s\n' "$statuses" | grep -qx 'success public-ci/co-contracts' || { echo "::error::the release commit has no green contracts result"; exit 1; }
+          if printf '%s\n' "$statuses" | grep -v '^success '; then
+            echo "::error::the release commit has public CI results that are not green"
+            exit 1
+          fi
+
+      - name: Initialize canonical CommonLib
+        run: |
+          set -euo pipefail
+          git submodule sync --recursive
+          git submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::primary commonlib remote unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://github.com/G-A-R-D-E-N/commonlibf4-nomad.git" submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4
+          }
+          test -s CO-BETA/plugin/lib/commonlibf4/xmake.lua
+
+      - name: Initialize the UI CommonLib
+        run: |
+          set -euo pipefail
+          git submodule update --init --recursive --force --checkout -- CommonwealthOnlineUI/ThirdParty/CommonLibF4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::primary commonlib remote unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://github.com/G-A-R-D-E-N/commonlibf4-nomad.git" submodule update --init --recursive --force --checkout -- CommonwealthOnlineUI/ThirdParty/CommonLibF4
+          }
+          test -s CommonwealthOnlineUI/ThirdParty/CommonLibF4/xmake.lua
+
+      - name: Initialize pinned GameNetworkingSockets
+        run: |
+          set -euo pipefail
+          git submodule update --init --depth 1 -- CO-BETA/ThirdParty/GameNetworkingSockets-src
+          actual="$(git -C CO-BETA/ThirdParty/GameNetworkingSockets-src rev-parse HEAD)"
+          test "$actual" = "f4525e39ee10f6b45181fd92d01fee75f7d71756" \
+            || { echo "::error::GNS pin mismatch: $actual"; exit 1; }
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - name: Build the Windows DLLs
+        run: python scripts/windows-compile-ci.py release windows-dlls
+
+      - name: Send the DLLs to the publish job
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create "$DLL_TAG" -R "$GITHUB_REPOSITORY" --draft --title "$DLL_TAG" \
+            --notes "Build transfer between release jobs; deleted when this run ends." windows-dlls/*.dll
+
+  package:
+    name: Build the mods and server
+    needs: windows-dlls
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
+      PRISMA_WIN_PACKAGES: ${{ vars.PRISMA_WIN_PACKAGES || '/opt/prisma-toolchain/win-packages' }}
+      RELEASE_TAG: ${{ inputs.version }}
+      CCACHE_DISABLE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: G-A-R-D-E-N/Commonwealth-Online-Private
+          ref: ${{ needs.windows-dlls.outputs.sha }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo --preserve-env=XWIN_ROOT,PRISMA_WIN_PACKAGES python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.tool_cache }}/dotnet
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Verify release build dependencies
+        run: |
+          set -euo pipefail
+          tools="git cmake ninja protoc clang-cl lld-link llvm-ar llvm-rc llvm-dlltool llvm-readobj xmake python3 tar dotnet openssl curl gh"
+          for tool in $tools; do
+            command -v "$tool" >/dev/null || { echo "::error::missing build dependency: $tool"; exit 1; }
+          done
+          test -f /usr/include/openssl/ssl.h || { echo "::error::missing libssl-dev headers"; exit 1; }
+          test -d "$XWIN_ROOT/crt/include" || { echo "::error::missing xwin CRT"; exit 1; }
+          test -d "$XWIN_ROOT/sdk/include/ucrt" || { echo "::error::missing xwin SDK"; exit 1; }
+
+      - name: Download the Windows DLLs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/windows-dlls"
+          gh release download "$DLL_TAG" -R "$GITHUB_REPOSITORY" --pattern '*.dll' --dir "$RUNNER_TEMP/windows-dlls"
+          for dll in CommonwealthOnline.dll CommonwealthOnline-NG.dll CommonwealthOnline-OG.dll CommonwealthOnlineUI.dll commonwealth_online_gns_bridge.dll; do
+            test -s "$RUNNER_TEMP/windows-dlls/$dll" || { echo "::error::Windows DLL $dll is missing from $DLL_TAG"; exit 1; }
+          done
+
+      - name: Build and package the release assets
+        env:
+          CO_VERSION: ${{ env.RELEASE_TAG }}
+          CO_OUT: ${{ github.workspace }}/release-out
+          CO_BUILD_UI: ${{ inputs.build_ui && '1' || '0' }}
+          CO_BUILD_HOST_PACKAGES: '1'
+          CO_WINDOWS_DLLS: ${{ runner.temp }}/windows-dlls
+        run: bash CO-BETA/ci/package-release.sh
+
+      - name: Send the packages to the next jobs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$DLL_TAG" -R "$GITHUB_REPOSITORY" release-out/*
+
+  launcher:
+    name: Build the launcher
+    needs: [windows-dlls, package]
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: G-A-R-D-E-N/Commonwealth-Online-Private
+          ref: ${{ needs.windows-dlls.outputs.sha }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          submodules: false
+          persist-credentials: false
+
+      - name: Build the launcher with the server inside
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.version }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          $tar = Join-Path $env:SystemRoot "System32\tar.exe"
+          $temp = $env:RUNNER_TEMP
+          $server = Join-Path $temp "server"
+          $out = Join-Path $temp "launcher"
+          New-Item -ItemType Directory -Path $server, $out -Force | Out-Null
+          gh release download $env:DLL_TAG -R $env:GITHUB_REPOSITORY --pattern "CommonwealthOnline.Host-win-x64-*.tar.gz" --dir $temp
+          $archive = Join-Path $temp "CommonwealthOnline.Host-win-x64-$env:RELEASE_TAG.tar.gz"
+          & $tar -xzf $archive -C $server
+          $serverZip = Join-Path $temp "CommonwealthOnline-server.zip"
+          $names = @(Get-ChildItem -LiteralPath $server -Name)
+          & $tar -a -cf $serverZip -C $server @names
+          ./CO-Launcher/scripts/package-launcher.ps1 -Version $env:RELEASE_TAG -OutDir $out -ServerZip $serverZip
+          gh release upload $env:DLL_TAG -R $env:GITHUB_REPOSITORY (Join-Path $out "CommonwealthOnline-Launcher-$env:RELEASE_TAG.zip")
+
+  publish:
+    name: Publish ${{ inputs.version }}
+    needs: [windows-dlls, launcher]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: release
+    env:
+      RELEASE_TAG: ${{ inputs.version }}
+      PUBLIC_RELEASE_REPO: G-A-R-D-E-N/Commonwealth-Online
+      PUBLIC_RELEASE_BASE: https://github.com/G-A-R-D-E-N/Commonwealth-Online/releases/download/${{ inputs.version }}
+      CO_INPUT_PRERELEASE: ${{ inputs.prerelease && '1' || '0' }}
+      CO_INPUT_DRAFT: ${{ inputs.draft && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: G-A-R-D-E-N/Commonwealth-Online-Private
+          ref: ${{ needs.windows-dlls.outputs.sha }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          submodules: false
+          persist-credentials: false
+
+      - name: Download the packages and launcher
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "$DLL_TAG" -R "$GITHUB_REPOSITORY" --pattern '*.zip' --pattern '*.tar.gz' --dir release-out
+
+      - name: Write latest.json
+        env:
+          MIN_LAUNCHER: ${{ inputs.min_launcher }}
+        run: |
+          set -euo pipefail
+          launcher="release-out/CommonwealthOnline-Launcher-$RELEASE_TAG.zip"
+          args=(--dir release-out --version "$RELEASE_TAG" --base-url "$PUBLIC_RELEASE_BASE")
+          if [ -n "$MIN_LAUNCHER" ]; then args+=(--min-launcher "$MIN_LAUNCHER"); fi
+          if [ -f "$launcher" ]; then args+=(--launcher-zip "$launcher"); fi
+          python3 CO-BETA/ci/make-latest-json.py "${args[@]}"
+          cat release-out/latest.json
+
+      - name: Sign latest.json
+        env:
+          CO_UPDATE_SIGNING_KEY: ${{ secrets.CO_UPDATE_SIGNING_KEY }}
+          EXPECTED_UPDATE_PUBLIC_KEY: ${{ vars.CO_UPDATE_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "$EXPECTED_UPDATE_PUBLIC_KEY" ]; then
+            echo "::error::the CO_UPDATE_PUBLIC_KEY repository variable is not set: it must hold the hex of UPDATE_PUBLIC_KEY in CO-Launcher/launcher-core/src/update/mod.rs so a mismatched signing key cannot publish."
+            exit 1
+          fi
+          if [ -z "$CO_UPDATE_SIGNING_KEY" ]; then
+            echo "::error::CO_UPDATE_SIGNING_KEY is not set: an unsigned release can never be installed by a launcher. Set the secret (CO-BETA/ci/gen-update-key.py) and rerun."
+            exit 1
+          fi
+          args=(release-out/latest.json)
+          args+=(--expect-public-key-hex "$EXPECTED_UPDATE_PUBLIC_KEY")
+          python3 CO-BETA/ci/sign-latest-json.py "${args[@]}"
+          ls -l release-out/latest.json.sig
+
+      - name: Select the public release assets
+        run: |
+          set -euo pipefail
+          python3 CO-BETA/ci/public-release-assets.py release-out > public-assets.txt
+          ls release-out/CommonwealthOnline.Host-*.tar.gz >> public-assets.txt
+          test -s public-assets.txt
+
+      - name: Create or update the public release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          printf 'Commonwealth Online %s. Install through the Commonwealth Online launcher.\n' "$RELEASE_TAG" > public-release-notes.md
+          flags=(--title "$RELEASE_TAG dev build" --notes-file public-release-notes.md)
+          if [ "$CO_INPUT_PRERELEASE" = "1" ]; then
+            flags+=(--prerelease)
+          fi
+          if [ "$CO_INPUT_DRAFT" = "1" ]; then
+            flags+=(--draft)
+          fi
+          if gh release view "$RELEASE_TAG" -R "$PUBLIC_RELEASE_REPO" >/dev/null 2>&1; then
+            echo "public release $RELEASE_TAG already exists; uploading assets"
+            gh release edit "$RELEASE_TAG" -R "$PUBLIC_RELEASE_REPO" "${flags[@]}"
+          else
+            gh release create "$RELEASE_TAG" -R "$PUBLIC_RELEASE_REPO" "${flags[@]}"
+          fi
+          mapfile -t assets < public-assets.txt
+          gh release upload "$RELEASE_TAG" -R "$PUBLIC_RELEASE_REPO" "${assets[@]}" --clobber
+          echo "Public release: https://github.com/$PUBLIC_RELEASE_REPO/releases/tag/$RELEASE_TAG" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Summarize
+        run: |
+          {
+            echo "## Published $RELEASE_TAG"
+            echo
+            echo "Assets:"
+            while read -r asset; do echo "- \`$(basename "$asset")\`"; done < public-assets.txt
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  delete-dll-transfer:
+    name: Delete the Windows DLL transfer release
+    needs: [windows-dlls, package, launcher, publish]
+    if: always() && needs.windows-dlls.result != 'skipped'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Delete the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release delete "$DLL_TAG" -R "$GITHUB_REPOSITORY" --yes || echo "::warning::could not delete the transfer release $DLL_TAG"
