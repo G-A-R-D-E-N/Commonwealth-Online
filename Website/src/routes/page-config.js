@@ -18,7 +18,7 @@ const ROADMAP_PHASES = [
     systems: [
       {
         name: "Dedicated server runtime",
-        detail: "External server process with multiple clients, JSON configuration, a graphical host, LAN/TCP hosting and Iroh internet hosting.",
+        detail: "External server process with multiple clients, JSON configuration, a graphical host, LAN discovery and Steam P2P hosting.",
       },
       {
         name: "Remote player proxies",
@@ -84,7 +84,7 @@ const ROADMAP_PHASES = [
       },
       {
         name: "Server browser",
-        detail: "Public Browse, LAN discovery, favourites, recent servers, TCP/Iroh Direct Connect, password prompts and controller support.",
+        detail: "Public Browse, LAN discovery, favourites, recent servers, Direct Connect, Steam friends hosting, password prompts and controller support.",
       },
       {
         name: "Server-based characters",
@@ -92,13 +92,13 @@ const ROADMAP_PHASES = [
       },
       {
         name: "Internet hosting & host tools",
-        detail: "Graphical hosting, private invite codes, optional public listing, passwords, connected-player status, kick/ban controls, CLI tools and deployment scripts.",
+        detail: "Graphical hosting, Steam friend codes, optional public listing, passwords, connected-player status, kick/ban controls, CLI tools and deployment scripts.",
       },
     ],
     note:
       "Version 1.1.0 completes the practical hosting path: home hosts can use Iroh without port forwarding, keep a world private by sharing an invite code, or opt into authenticated public discovery. The server browser and controller path are usable surfaces while the relay remains independently deployable.",
     doneWhen:
-      "A host can start and moderate a private or public session, share an Iroh invite code, and players can browse, reconnect or directly join from the in-game tools.",
+      "A host can start and moderate a Steam or dedicated-server session, and players can browse, reconnect or directly join from the in-game tools.",
   },
   {
     id: "combat-capacity",
@@ -268,7 +268,7 @@ const MULTIPLAYER_GATES = [
     statusLabel: "Hardening",
     title: "Identity, resume & recovery",
     summary:
-      "Persistent client/server Iroh identities, EndpointId-keyed profiles, authenticated directory ownership and reconnect metadata are now working; broader identity policy and legacy activation retirement remain active work.",
+      "Persistent Steam-linked identities, profile-keyed records, authenticated directory ownership and reconnect metadata are now working; broader identity policy and legacy activation retirement remain active work.",
   },
   {
     id: "validation",
@@ -276,7 +276,7 @@ const MULTIPLAYER_GATES = [
     statusLabel: "Hardening",
     title: "Validation & abuse resistance",
     summary:
-      "Packet bounds, admission framing, EndpointId rate limits, Argon2id password checks, persistent bans, authenticated admin access and server-side trust boundaries protect the session; new gameplay systems must preserve those gates.",
+      "Packet bounds, admission framing, per-player rate limits, Argon2id password checks, persistent bans, authenticated admin access and server-side trust boundaries protect the session; new gameplay systems must preserve those gates.",
   },
   {
     id: "acceptance",
@@ -296,7 +296,7 @@ const PUBLIC_PAGES = [
     page: {
       title: "Commonwealth Online",
       description:
-        "Commonwealth Online 1.1.0 is a Fallout 4 multiplayer framework with dedicated servers, Iroh internet hosting, private invite codes, authenticated public discovery, remote player sync, appearance and equipment replication, shared world state and custom PrismaUI menus. Supports both Fallout 4 Anniversary Edition and the original release.",
+        "Commonwealth Online 1.1.0 is a Fallout 4 multiplayer framework with dedicated servers, Steam P2P hosting, Steam friend codes, authenticated public discovery, remote player sync, appearance and equipment replication, shared world state and custom PrismaUI menus. Supports both Fallout 4 Anniversary Edition and the original release.",
       bodyClass: "co-home-page",
       activeKey: "home",
       roadmap: ROADMAP_PHASES,
@@ -326,6 +326,7 @@ const PUBLIC_PAGES = [
         "A detailed, Fallout-themed field briefing for Commonwealth Online multiplayer framework milestones, from the working network foundation through future shared-world systems.",
       bodyClass: "co-roadmap-page",
       activeKey: "roadmap",
+      styles: ["/static/css/roadmap.css"],
       roadmap: ROADMAP_PHASES,
       multiplayerGates: MULTIPLAYER_GATES,
       roadmapArt: [
@@ -358,7 +359,7 @@ const PUBLIC_PAGES = [
     page: {
       title: "Hosting Guide - Commonwealth Online",
       description:
-        "Host a private Commonwealth Online Fallout 4 session, share an Iroh invite code, and join through Direct Connect or TCP / LAN.",
+        "Host a Commonwealth Online world through Steam with a Friend Code, or run a dedicated server and join it through Direct Connect.",
       bodyClass: "co-hosting-page",
       activeKey: "hosting",
       styles: ["/static/css/hosting.css"],

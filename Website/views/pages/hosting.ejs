@@ -7,137 +7,181 @@
             <p class="hosting-sidebar__title">Hosting guide</p>
             <ul class="hosting-sidebar__list">
               <li><a href="#hosting-top">Overview</a></li>
-              <li><a href="#internet-hosting">Internet invite code</a></li>
-              <li><a href="#lan-hosting">Same PC and LAN</a></li>
+              <li><a href="#steam-hosting">Steam hosting</a></li>
+              <li><a href="#direct-connect">Direct Connect</a></li>
+              <li><a href="#dedicated-server">Dedicated server</a></li>
+              <li><a href="#ports">Ports</a></li>
               <li><a href="#hosting-help">Troubleshooting</a></li>
-              <li><a href="#hosting-scope">What syncs today</a></li>
             </ul>
           </nav>
           <div class="hosting-content">
         <section class="section-panel hosting-hero" id="hosting-top" aria-labelledby="hosting-title">
           <div class="hosting-hero__signal" aria-hidden="true">
-            <span>CO_HOST // SECURE HANDSHAKE</span>
-            <span>INVITE CHANNEL // READY</span>
+            <span>CO_HOST // TWO ROUTES</span>
+            <span>STEAM P2P // DEDICATED</span>
           </div>
-          <p class="section-kicker">Operator briefing // server access</p>
-          <h1 id="hosting-title">Host a world. Share the signal.</h1>
+          <p class="section-kicker">Hosting guide</p>
+          <h1 id="hosting-title">Host through Steam, or run a dedicated server.</h1>
           <p class="hosting-hero__lead">
-            Start a private Commonwealth Online session, copy the host invite code, and let your crew join through
-            <strong>Multiplayer → Direct Connect</strong> without sharing a home IP address.
+            Steam hosting runs your world from your own PC, and friends join through Steam.
+            A dedicated server runs on a VPS or an always-on PC, and players connect to its address and port.
           </p>
           <div class="hosting-hero__actions">
-            <a class="co-btn co-btn--primary" href="#" data-co-link="nexus">Download server software</a>
-            <a class="co-btn co-btn--ghost" href="#internet-hosting">Internet invite code</a>
-            <a class="co-btn co-btn--ghost" href="#lan-hosting">TCP / LAN setup</a>
+            <a class="co-btn co-btn--primary" href="#steam-hosting">Steam hosting</a>
+            <a class="co-btn co-btn--ghost" href="#direct-connect">Direct Connect</a>
+            <a class="co-btn co-btn--ghost" href="#dedicated-server">Dedicated server</a>
           </div>
         </section>
 
-        <section class="hosting-callout section-panel" aria-label="Important connection detail">
+        <section class="hosting-callout section-panel" aria-label="The short version">
           <div class="hosting-callout__icon" aria-hidden="true">01</div>
           <div>
             <p class="section-kicker">The short version</p>
-            <h2>The invite code is the host's EndpointId</h2>
+            <h2>Steam hosting needs no router setup</h2>
             <p>
-              It is a 64-character hexadecimal identity. Players paste it into the <strong>EndpointId</strong> field
-              after choosing <strong>Internet via Iroh</strong> in Direct Connect. They do not enter the host's LAN
-              address or port for this route.
+              Steam hosting needs Steam running and signed in. Players who join can see your internet address (IP),
+              so only host for people you trust. A dedicated server works the same way: players connect to its address and port.
             </p>
           </div>
         </section>
 
-        <section class="hosting-section" id="internet-hosting" aria-labelledby="internet-hosting-title">
+        <section class="hosting-section" id="steam-hosting" aria-labelledby="steam-hosting-title">
           <div class="section-head">
-            <p class="section-kicker">Recommended path</p>
-            <h2 id="internet-hosting-title">Internet hosting with an invite code</h2>
+            <p class="section-kicker">Recommended for friends</p>
+            <h2 id="steam-hosting-title">Steam hosting</h2>
           </div>
           <div class="hosting-grid hosting-grid--two">
             <article class="hosting-card">
               <header class="hosting-card__header">
                 <span class="hosting-card__index">HOST // 01</span>
-                <h3>Start the private world</h3>
+                <h3>Start a Steam world</h3>
               </header>
               <ol class="hosting-step-list">
-                <li>Open the host launcher or run the host window from the server pack.</li>
-                <li>Set the world name, player limit, and game port in <strong>World setup</strong>.</li>
-                <li>Enable <strong>Allow internet players</strong>.</li>
-                <li>Optionally enable <strong>Require a password</strong> and set the password.</li>
-                <li>Click <strong>Start hosting</strong> and wait for <strong>Connection: Online</strong>.</li>
-                <li>Click <strong>Copy invite code</strong> and send it to your players.</li>
+                <li>Leave Vault 111 and reach the open world. Invites only work from there.</li>
+                <li>Open <strong>Friends (Steam)</strong> in the server browser.</li>
+                <li>Check <strong>Listed server name</strong> and <strong>Max players</strong> under <strong>Server settings</strong>. Friends see them.</li>
+                <li>Optionally enter a <strong>Server password</strong>.</li>
+                <li>Click <strong>Start Hosting</strong>. The lobby shows your <strong>Friend Code</strong>.</li>
+                <li>Click <strong>Copy</strong>, or <strong>Invite Steam friends</strong>.</li>
+                <li>When your friends are ready, click <strong>Enter world</strong>. <strong>Friends connected</strong> counts who has joined.</li>
               </ol>
-              <p class="hosting-card__note">Keep the host window open for the whole session. Stop hosting when the session is over.</p>
+              <p class="hosting-card__note">
+                <strong>Stop Hosting</strong> ends the lobby. By default only your Steam friends can join, so add people as friends first
+                or in the Launcher's Server settings turn off <strong>Steam friends only</strong> and set a password.
+              </p>
             </article>
 
             <article class="hosting-card">
               <header class="hosting-card__header">
                 <span class="hosting-card__index">PLAYER // 02</span>
-                <h3>Join through Direct Connect</h3>
+                <h3>Join a Steam world</h3>
               </header>
               <ol class="hosting-step-list">
-                <li>Launch Fallout 4 through F4SE and open <strong>Multiplayer</strong>.</li>
-                <li>Open the <strong>Direct Connect</strong> tab.</li>
-                <li>Set <strong>Connection type</strong> to <strong>Internet via Iroh</strong>.</li>
-                <li>Paste the invite code into <strong>EndpointId</strong>.</li>
-                <li>Enter the password if the host requires one.</li>
-                <li>Select <strong>Connect</strong>.</li>
+                <li>Open <strong>Friends (Steam)</strong> in the server browser.</li>
+                <li>Under <strong>Join</strong>, paste the host's <strong>Friend Code</strong>, or part of their Steam name.</li>
+                <li>Enter the password if the host set one.</li>
+                <li>Click <strong>Join</strong>.</li>
               </ol>
-              <p class="hosting-card__note">Paste the code exactly as copied: no label, quotes, or extra spaces.</p>
+              <p class="hosting-card__note">
+                Leave the code empty to join a friend who is already hosting. Their world appears in the host list with its own <strong>Join</strong> button.
+              </p>
             </article>
           </div>
         </section>
 
-        <section class="hosting-screenshot section-panel" aria-labelledby="hosting-screenshot-title">
+        <section class="hosting-screenshot section-panel" id="direct-connect" aria-labelledby="direct-connect-title">
           <div class="hosting-screenshot__copy">
-            <p class="section-kicker">Field reference</p>
-            <h2 id="hosting-screenshot-title">Find Direct Connect in Multiplayer</h2>
+            <p class="section-kicker">Dedicated servers</p>
+            <h2 id="direct-connect-title">Join with Direct Connect</h2>
             <p>
-              The connection form lives inside the in-game Multiplayer menu. The current internet path adds the Iroh
-              connection type and EndpointId field to this same Direct Connect workflow.
+              Use Direct Connect to join a dedicated server by its address. Open the <strong>Direct Connect</strong> tab
+              in the server browser. <strong>Server Address</strong> starts at 127.0.0.1 and <strong>Port</strong> at 7777.
+              Enter the host's IP or domain, its port, and the password if it has one, then click <strong>Connect</strong>.
+              You can also paste <code>host:port</code> or <code>[IPv6]:port</code> into the address field.
             </p>
           </div>
           <figure>
             <div class="hosting-screenshot__frame">
               <img
                 src="/assets/images/server-browser-direct-connect.webp"
-                alt="Fallout 4 Multiplayer menu showing the Direct Connect screen"
+                alt="Commonwealth Online server browser showing the Direct Connect screen"
                 loading="lazy"
                 width="1985"
                 height="922"
               />
             </div>
-            <figcaption>Multiplayer → Direct Connect // enter the host identity, then connect.</figcaption>
+            <figcaption>Server browser → Direct Connect // address, port, password, Connect.</figcaption>
           </figure>
         </section>
 
-        <section class="hosting-section" id="lan-hosting" aria-labelledby="lan-hosting-title">
+        <section class="hosting-section" id="dedicated-server" aria-labelledby="dedicated-server-title">
           <div class="section-head">
-            <p class="section-kicker">Local route</p>
-            <h2 id="lan-hosting-title">Same-PC and LAN hosting</h2>
+            <p class="section-kicker">Always-on server</p>
+            <h2 id="dedicated-server-title">Run a dedicated server</h2>
+          </div>
+          <div class="hosting-grid hosting-grid--two">
+            <article class="hosting-card">
+              <header class="hosting-card__header">
+                <span class="hosting-card__index">HOST // 03</span>
+                <h3>Start it from the Launcher</h3>
+              </header>
+              <ol class="hosting-step-list">
+                <li>Open the Launcher and go to the <strong>Server</strong> page.</li>
+                <li>Choose the <strong>DEDICATED</strong> tab. Steam P2P is the other tab.</li>
+                <li>Read the warning. A dedicated server is meant for a VPS or a PC that is always on.</li>
+                <li>In Settings, set the game port. It defaults to 7777.</li>
+                <li>Start the server and give players your address and port.</li>
+              </ol>
+            </article>
+
+            <article class="hosting-card">
+              <header class="hosting-card__header">
+                <span class="hosting-card__index">PLAYER // 04</span>
+                <h3>Connect to it</h3>
+              </header>
+              <ol class="hosting-step-list">
+                <li>Open the server browser and go to <strong>Direct Connect</strong>.</li>
+                <li>Enter the server's IP or domain as <strong>Server Address</strong>.</li>
+                <li>Enter the port the host gave you, then the password if there is one.</li>
+                <li>Click <strong>Connect</strong>.</li>
+              </ol>
+              <p class="hosting-card__note">
+                Servers on your own network also appear in the <strong>Friends (Steam)</strong> tab, under the LAN list.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="hosting-section" id="ports" aria-labelledby="ports-title">
+          <div class="section-head">
+            <p class="section-kicker">Network</p>
+            <h2 id="ports-title">Ports for a dedicated server</h2>
           </div>
           <div class="hosting-grid hosting-grid--two">
             <article class="hosting-card hosting-card--compact">
               <header class="hosting-card__header">
-                <span class="hosting-card__index">HOST // TCP</span>
-                <h3>Show the local address</h3>
+                <span class="hosting-card__index">GAME // UDP</span>
+                <h3>Game port: 7777</h3>
               </header>
-              <p>Leave <strong>Allow internet players</strong> disabled, start hosting, and copy the value beside <strong>Local connection</strong>.</p>
-              <ul class="hosting-bullet-list">
-                <li>Same PC: <code>127.0.0.1:7777</code></li>
-                <li>Same LAN: <code>192.168.x.x:7777</code></li>
-                <li>The port changes if the host chooses a custom game port.</li>
-              </ul>
+              <p>
+                Players connect on UDP <code>7777</code> by default. Forward it on your router and allow it through the
+                firewall to let players in from outside your network.
+              </p>
             </article>
             <article class="hosting-card hosting-card--compact">
               <header class="hosting-card__header">
-                <span class="hosting-card__index">PLAYER // TCP</span>
-                <h3>Enter the LAN endpoint</h3>
+                <span class="hosting-card__index">LAN // UDP</span>
+                <h3>LAN discovery: 7778</h3>
               </header>
-              <p>In Direct Connect, choose <strong>TCP / LAN</strong>, enter the host name or IP under <strong>Server Address</strong>, enter the displayed port, and select <strong>Connect</strong>.</p>
-              <p class="hosting-card__note">The Local tab can discover servers on the same network. Manual Direct Connect is the fallback.</p>
+              <p>
+                LAN discovery uses UDP <code>7778</code> so the server shows up for players on the same network.
+                You can change the port or turn <strong>LAN discovery</strong> off in the server settings.
+              </p>
             </article>
           </div>
           <div class="hosting-firewall">
-            <strong>LAN firewall note</strong>
-            <span>Allow inbound TCP <code>7777</code> (or the custom game port) and UDP <code>7778</code> for LAN discovery.</span>
+            <strong>Keep the admin port closed</strong>
+            <span>The admin port listens on TCP <code>127.0.0.1:7779</code> only. Do not forward it.</span>
           </div>
         </section>
 
@@ -148,31 +192,30 @@
           </div>
           <div class="hosting-troubleshooting">
             <details open>
-              <summary>EndpointId validation fails</summary>
-              <p>The code must be exactly 64 hexadecimal characters. Re-copy it from the host and make sure the connection type is <strong>Internet via Iroh</strong>.</p>
+              <summary>Invite Steam friends does nothing</summary>
+              <p>Invites only work in the open world. Leave Vault 111, then invite again.</p>
             </details>
             <details>
-              <summary>The host invite field is blank</summary>
-              <p>Enable <strong>Allow internet players</strong>, start hosting, and wait for <strong>Connection: Online</strong>. If the state becomes <strong>Needs attention</strong>, read the host Activity log and restart it.</p>
+              <summary>"This host only lets their Steam friends join."</summary>
+              <p>Add the player as a Steam friend. Or, in the Launcher's Server settings, turn off <strong>Steam friends only</strong> and set a server password so anyone with the password can join.</p>
             </details>
             <details>
-              <summary>Joining fails immediately</summary>
-              <p>Confirm the host is still running, the password is correct, both players use the same Fallout 4/F4SE/mod setup, and the player limit has not been reached.</p>
+              <summary>The Friend Code is rejected</summary>
+              <p>Use the code from the host's lobby, or part of their Steam name. A Friend Code is a number from the host's Steam profile.</p>
             </details>
             <details>
-              <summary>LAN discovery finds nothing</summary>
-              <p>Confirm both PCs are on the same network and Windows Firewall allows UDP <code>7778</code> and TCP <code>7777</code>. Then use TCP / LAN with the host's address manually.</p>
+              <summary>Locked out after wrong passwords</summary>
+              <p>After five wrong passwords, that Steam account is locked out for five minutes. Wait, then try again with the right password.</p>
+            </details>
+            <details>
+              <summary>The server directory is unavailable</summary>
+              <p>Join with <strong>Direct Connect</strong> instead, using the server's address and port.</p>
+            </details>
+            <details>
+              <summary>LAN servers don't appear</summary>
+              <p>Both PCs must be on the same network. The host must have LAN discovery on, and UDP <code>7778</code> must be allowed through its firewall.</p>
             </details>
           </div>
-        </section>
-
-        <section class="hosting-scope section-panel" id="hosting-scope" aria-labelledby="hosting-scope-title">
-          <p class="section-kicker">Current build boundary</p>
-          <h2 id="hosting-scope-title">What the session synchronizes today</h2>
-          <p>
-            Commonwealth Online currently provides shared player presence and visual replication. Quests, combat,
-            inventory, NPCs, settlements, VATS, and full campaign co-op are not synchronized yet.
-          </p>
         </section>
           </div>
         </div>
