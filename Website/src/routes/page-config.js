@@ -130,11 +130,11 @@ const ROADMAP_PHASES = [
   {
     id: "player-control",
     number: "05",
-    status: "next",
-    statusLabel: "Next",
+    status: "complete",
+    statusLabel: "Complete",
     title: "Player control & server administration",
     summary:
-      "The next dispatch expands what players and server operators can control while they are connected to a session.",
+      "Shipped in 2.1.0: the in-game admin menu, live server settings, bans, kicks and strikes, combat options, raid settings, multiplayer settings and the pause-menu map.",
     systems: [
       {
         name: "Multiplayer settings",
@@ -154,18 +154,18 @@ const ROADMAP_PHASES = [
       },
     ],
     note:
-      "These are operator and session-management surfaces. Their order can change as the combat and capacity work exposes new requirements.",
+      "Shipped in 2.1.0.",
     doneWhen:
       "Players can configure their session and operators can manage, moderate and protect a running server without leaving the game workflow.",
   },
   {
     id: "social",
     number: "06",
-    status: "future",
-    statusLabel: "Future",
+    status: "complete",
+    statusLabel: "Complete",
     title: "Social layer",
     summary:
-      "Once the session and combat foundations are stable, the roadmap turns toward communication, identity and coordinated travel through the Commonwealth.",
+      "Shipped in 2.1.0: voice chat, chat channels, a saved friends list, factions with ranks and their own chat, and a live map with fog of war.",
     systems: [
       {
         name: "Map & markers",
@@ -185,38 +185,53 @@ const ROADMAP_PHASES = [
       },
     ],
     note:
-      "Social features depend on trustworthy player identity and server ownership rules. They belong after the core session can preserve state predictably.",
+      "Built on the identity and ownership rules that shipped in 2.1.0.",
     doneWhen:
       "Players can identify, communicate with and coordinate with one another while reconnects and permissions remain predictable.",
   },
   {
     id: "living-commonwealth",
     number: "07",
-    status: "future",
-    statusLabel: "Future",
+    status: "next",
+    statusLabel: "Next",
     title: "A living Commonwealth",
     summary:
-      "The long-range work is shared world simulation: interactions, creatures, progression, settlements and the public infrastructure needed to support it.",
+      "The next dispatch brings the shared world to life: enemies and NPCs every player sees, shared loot, and selected quest progress that stays in step across clients.",
     systems: [
-      {
-        name: "Interaction sync",
-        detail: "Doors, containers, terminals, workbenches, pickups and dialogue with shared versus local rules.",
-      },
       {
         name: "Enemy & NPC sync",
         detail: "Shared positions, combat state, health, death, loot and basic AI coordination.",
       },
       {
+        name: "Interaction sync",
+        detail: "Doors, containers, terminals, workbenches, pickups and dialogue with shared versus local rules, beyond the settlement doors shipped in 2.1.0.",
+      },
+      {
         name: "Quest & world progression",
-        detail: "Selected quest stages, discovery, cleared locations, workshops and world-state changes.",
+        detail: "Selected quest stages, discovery, cleared locations and world-state changes beyond the fireteam quests shipped in 2.1.0.",
+      },
+    ],
+    note:
+      "Each subsystem needs its own ownership, persistence and compatibility rules before it ships.",
+    doneWhen:
+      "Enemies, NPCs, loot and selected quest stages match across clients and survive reconnects.",
+  },
+  {
+    id: "long-horizon",
+    number: "08",
+    status: "future",
+    statusLabel: "Future",
+    title: "Power armour, trade & public servers",
+    summary:
+      "Later work: power armour state, a deeper trade and settlement economy, and public server infrastructure with moderation support.",
+    systems: [
+      {
+        name: "Power armour sync",
+        detail: "Interactive power armour state: frame entry and exit, equipped plates, fusion core drain and field repair shared between players.",
       },
       {
-        name: "Settlements, power armour & trade",
-        detail: "Cooperative construction, power armour state, inventory transfers, trading and shared persistence.",
-      },
-      {
-        name: "Mod compatibility",
-        detail: "Load-order checks, version negotiation and warnings when peers use content a client does not have.",
+        name: "Trade & settlement economy",
+        detail: "Inventory transfers and shared persistence beyond the 2.1.0 trade window.",
       },
       {
         name: "Public server infrastructure",
@@ -224,9 +239,9 @@ const ROADMAP_PHASES = [
       },
     ],
     note:
-      "This is the long horizon, not a claim that every Fallout system will be synchronized. Each subsystem needs its own ownership, persistence and compatibility rules first.",
+      "This is the long horizon. Scope is set after the next dispatch ships.",
     doneWhen:
-      "Shared interactions, NPCs, progression, settlements and trade remain consistent across clients, reconnects and supported content sets.",
+      "Power armour, trade and public listings stay consistent across clients, reconnects and supported content sets.",
   },
 ];
 
