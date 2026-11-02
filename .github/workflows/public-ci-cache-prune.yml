@@ -1,0 +1,53 @@
+name: Public CI cache prune
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+env:
+  PUBLIC_REPO: G-A-R-D-E-N/Commonwealth-Online
+  PRIVATE_REPO: G-A-R-D-E-N/Commonwealth-Online-Private
+
+jobs:
+  prune:
+    name: Delete stale compile caches
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Delete stale caches from the public repository
+        env:
+          TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          [ -n "$TOKEN" ] || { echo "::error::CO_PUBLIC_CI_TOKEN is not set"; exit 1; }
+          work="$RUNNER_TEMP/public-ci-cache-prune"
+          mkdir -p "$work"
+          GH_TOKEN="$TOKEN" gh api --paginate "repos/${PRIVATE_REPO}/pulls?state=open&per_page=100" --jq '.[].number' > "$work/open.txt"
+          gh api --paginate "repos/${PUBLIC_REPO}/actions/caches?per_page=100" > "$work/caches.json"
+          open_json=$(jq -Rsc 'split("\n") | map(select(length > 0))' "$work/open.txt")
+          jq -rs --argjson open "$open_json" '
+            (
+              [.[].actions_caches[] | select(.key | startswith("co-ccache-"))]
+              | group_by([.ref, (.key | sub("-[0-9a-f]{40}$"; ""))])
+              | .[] | sort_by(.created_at) | .[:-1] | .[]
+            ),
+            (
+              .[].actions_caches[]
+              | select(.ref | test("^refs/heads/ci/pr-[0-9]+$"))
+              | select((.ref | sub("^refs/heads/ci/pr-"; "")) as $n | $open | any(. == $n) | not)
+            )
+            | .id
+          ' "$work/caches.json" > "$work/stale.txt"
+          while read -r id; do
+            gh api -X DELETE "repos/${PUBLIC_REPO}/actions/caches/${id}" >/dev/null || echo "::warning::could not delete cache ${id}"
+          done < "$work/stale.txt"
+          echo "found $(wc -l < "$work/stale.txt") stale caches"
