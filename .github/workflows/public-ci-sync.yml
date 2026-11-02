@@ -120,9 +120,10 @@ jobs:
           exit "$failed"
 
       - name: Start the next sync
-        if: always()
+        if: ${{ !cancelled() && github.repository == 'G-A-R-D-E-N/Commonwealth-Online' }}
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
         run: |
           sleep 240
-          gh workflow run public-ci-sync.yml --repo "$PUBLIC_REPO" --ref main
+          gh workflow run public-ci-sync.yml --repo "$GITHUB_REPOSITORY" --ref main
