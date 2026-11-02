@@ -1,15 +1,73 @@
 /* ── Hosting guide ─────────────────────────────────────────────── */
 .hosting-page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
   padding-bottom: 2.5rem;
+}
+
+.hosting-layout {
+  display: grid;
+  grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
+  gap: 2.6rem;
+  align-items: start;
+  padding: 2.5rem var(--site-gutter) 0;
+}
+
+.hosting-sidebar {
+  position: sticky;
+  top: calc(var(--site-header-h) + 1.25rem);
+}
+
+.hosting-sidebar__title {
+  margin-bottom: 0.7rem;
+  color: var(--site-text-faint);
+  font-family: var(--site-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hosting-sidebar__list {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hosting-sidebar__list a {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  color: var(--site-text-muted);
+  font-family: var(--site-font-display);
+  font-size: 0.98rem;
+  text-decoration: none;
+  border-left: 2px solid var(--site-border-soft);
+}
+
+.hosting-sidebar__list a:hover,
+.hosting-sidebar__list a:focus-visible {
+  color: var(--site-heading);
+  background: var(--site-surface);
+  border-left-color: var(--site-brand-gold);
+}
+
+.hosting-content {
+  min-width: 0;
+}
+
+.hosting-page section[id] {
+  scroll-margin-top: calc(var(--site-header-h) + 1rem);
 }
 
 .hosting-hero,
 .hosting-callout,
 .hosting-screenshot,
 .hosting-scope {
-  width: min(var(--site-max), calc(100% - (var(--site-gutter) * 2)));
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .hosting-hero {
@@ -125,8 +183,8 @@
 }
 
 .hosting-section {
-  width: min(var(--site-max), calc(100% - (var(--site-gutter) * 2)));
-  margin: 3.1rem auto 0;
+  width: 100%;
+  margin: 3.1rem 0 0;
 }
 
 .hosting-grid {
@@ -313,15 +371,31 @@
   background: var(--site-surface-alt);
 }
 
-@media (max-width: 760px) {
-  .hosting-hero,
-  .hosting-callout,
-  .hosting-screenshot,
-  .hosting-scope,
-  .hosting-section {
-    width: min(var(--site-max), calc(100% - 2rem));
+@media (max-width: 860px) {
+  .hosting-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.4rem;
+    padding-top: 1.5rem;
   }
 
+  .hosting-sidebar {
+    position: static;
+  }
+
+  .hosting-sidebar__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .hosting-sidebar__list a {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--site-border-soft);
+  }
+}
+
+@media (max-width: 760px) {
   .hosting-hero {
     padding-top: 2rem;
   }

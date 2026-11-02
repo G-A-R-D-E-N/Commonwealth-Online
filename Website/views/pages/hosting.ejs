@@ -2,7 +2,19 @@
 <%- include("../partials/navbar") %>
 
       <main class="site-main hosting-page">
-        <section class="section-panel hosting-hero" aria-labelledby="hosting-title">
+        <div class="hosting-layout">
+          <nav class="hosting-sidebar" aria-label="Hosting guide sections">
+            <p class="hosting-sidebar__title">Hosting guide</p>
+            <ul class="hosting-sidebar__list">
+              <li><a href="#hosting-top">Overview</a></li>
+              <li><a href="#internet-hosting">Internet invite code</a></li>
+              <li><a href="#lan-hosting">Same PC and LAN</a></li>
+              <li><a href="#hosting-help">Troubleshooting</a></li>
+              <li><a href="#hosting-scope">What syncs today</a></li>
+            </ul>
+          </nav>
+          <div class="hosting-content">
+        <section class="section-panel hosting-hero" id="hosting-top" aria-labelledby="hosting-title">
           <div class="hosting-hero__signal" aria-hidden="true">
             <span>CO_HOST // SECURE HANDSHAKE</span>
             <span>INVITE CHANNEL // READY</span>
@@ -129,7 +141,7 @@
           </div>
         </section>
 
-        <section class="hosting-section" aria-labelledby="hosting-help-title">
+        <section class="hosting-section" id="hosting-help" aria-labelledby="hosting-help-title">
           <div class="section-head">
             <p class="section-kicker">Signal repair</p>
             <h2 id="hosting-help-title">Quick troubleshooting</h2>
@@ -154,7 +166,7 @@
           </div>
         </section>
 
-        <section class="hosting-scope section-panel" aria-labelledby="hosting-scope-title">
+        <section class="hosting-scope section-panel" id="hosting-scope" aria-labelledby="hosting-scope-title">
           <p class="section-kicker">Current build boundary</p>
           <h2 id="hosting-scope-title">What the session synchronizes today</h2>
           <p>
@@ -162,6 +174,8 @@
             inventory, NPCs, settlements, VATS, and full campaign co-op are not synchronized yet.
           </p>
         </section>
+          </div>
+        </div>
       </main>
 
 <%- include("../partials/footer") %>
