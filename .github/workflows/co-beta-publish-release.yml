@@ -42,10 +42,8 @@ on:
         type: string
 
 permissions:
+  actions: read
   contents: write
-
-env:
-  DLL_TAG: ci-dlls-${{ github.run_id }}
 
 concurrency:
   group: co-publish-release-${{ inputs.version }}
@@ -82,8 +80,11 @@ jobs:
     timeout-minutes: 10
     env:
       PRIVATE_REPO: G-A-R-D-E-N/Commonwealth-Online-Private
+      DLL_TAG: ci-dlls-${{ github.run_id }}-${{ github.run_attempt }}
     outputs:
       sha: ${{ steps.source.outputs.sha }}
+      transfer_tag: ${{ steps.source.outputs.transfer_tag }}
+      transfer_attempt: ${{ steps.source.outputs.transfer_attempt }}
     steps:
       - name: Check the dispatch inputs
         env:
@@ -120,13 +121,16 @@ jobs:
 
       - name: Record the built commit
         id: source
-        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "transfer_tag=$DLL_TAG" >> "$GITHUB_OUTPUT"
+          echo "transfer_attempt=$GITHUB_RUN_ATTEMPT" >> "$GITHUB_OUTPUT"
 
       - name: Verify the packaging script uses prebuilt Windows DLLs
         run: |
           set -euo pipefail
           actual="$(git hash-object CO-BETA/ci/package-release.sh)"
-          test "$actual" = 6207b3ef44d6750ae7067682b216b20bdfd79142 || {
+          test "$actual" = b970544cbad7f3b128e1b1cb594e7ac0aaea5b20 || {
             echo "::error::The selected ref does not have the reviewed packaging script. Update the release workflow after reviewing its packaging script; older scripts can build game DLLs on Linux."
             exit 1
           }
@@ -177,6 +181,7 @@ jobs:
           - { file: CommonwealthOnline.dll, project: CO-BETA/plugin, target: CommonwealthOnline }
           - { file: commonwealth_online_gns_bridge.dll, project: CO-BETA/plugin, target: bridge }
     env:
+      DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
       COMMONLIB_MIRROR: ${{ vars.COMMONLIB_MIRROR }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -255,6 +260,7 @@ jobs:
       matrix:
         platform: [linux-x64, win-x64]
     env:
+      DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
       XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
       PRISMA_WIN_PACKAGES: ${{ vars.PRISMA_WIN_PACKAGES || '/opt/prisma-toolchain/win-packages' }}
       RELEASE_TAG: ${{ inputs.version }}
@@ -312,6 +318,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
+      DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
       XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
       PRISMA_WIN_PACKAGES: ${{ vars.PRISMA_WIN_PACKAGES || '/opt/prisma-toolchain/win-packages' }}
       RELEASE_TAG: ${{ inputs.version }}
@@ -373,6 +380,15 @@ jobs:
             test -s "$RUNNER_TEMP/windows-dlls/$dll" || { echo "::error::Windows DLL $dll is missing from $DLL_TAG"; exit 1; }
           done
 
+      - name: Download and verify the PrismaUI runtime
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+        run: |
+          set -euo pipefail
+          name=PrismaUI_F4-runtime-a036340eb2d8f44266690ce86c8f7a1ddc517ef3e01b1adbd8848bce8753d1bb.zip
+          gh release download prisma-runtime-input -R G-A-R-D-E-N/Commonwealth-Online-Private --pattern "$name" --dir "$RUNNER_TEMP"
+          printf '%s  %s\n' a036340eb2d8f44266690ce86c8f7a1ddc517ef3e01b1adbd8848bce8753d1bb "$RUNNER_TEMP/$name" | sha256sum -c -
+
       - name: Build and package the release assets
         env:
           CO_VERSION: ${{ env.RELEASE_TAG }}
@@ -380,6 +396,7 @@ jobs:
           CO_BUILD_UI: ${{ inputs.build_ui && '1' || '0' }}
           CO_BUILD_HOST_PACKAGES: '0'
           CO_WINDOWS_DLLS: ${{ runner.temp }}/windows-dlls
+          CO_PRISMA_RUNTIME: ${{ runner.temp }}/PrismaUI_F4-runtime-a036340eb2d8f44266690ce86c8f7a1ddc517ef3e01b1adbd8848bce8753d1bb.zip
         run: bash CO-BETA/ci/package-release.sh
 
       - name: Send the packages to the next jobs
@@ -393,6 +410,8 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 60
     env:
+      DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
+      TRANSFER_ATTEMPT: ${{ needs.source.outputs.transfer_attempt }}
       RELEASE_TAG: ${{ inputs.version }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -412,13 +431,22 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           name="CommonwealthOnline.Host-win-x64-$RELEASE_TAG.tar.gz"
           for _ in $(seq 90); do
-            state="$(gh release view "$DLL_TAG" -R "$GITHUB_REPOSITORY" --json assets --jq ".assets[] | select(.name == \"$name\") | .state" || true)"
-            if [ "$state" = uploaded ]; then exit 0; fi
+            job="$(gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?filter=all&per_page=100" --jq '[.[].jobs[] | select(.name == "Build the win-x64 server")] | max_by(.run_attempt) | select(. != null) | [.run_attempt, .status, .conclusion] | @tsv' || true)"
+            read -r attempt status conclusion <<< "$job"
+            if [ "$status" = completed ] && [ "$conclusion" = success ] &&
+               { [ "$attempt" = "$GITHUB_RUN_ATTEMPT" ] || [ "$TRANSFER_ATTEMPT" != "$GITHUB_RUN_ATTEMPT" ]; }; then
+              state="$(gh release view "$DLL_TAG" -R "$GITHUB_REPOSITORY" --json assets --jq ".assets[] | select(.name == \"$name\") | .state" || true)"
+              if [ "$state" = uploaded ]; then exit 0; fi
+            elif [ "$status" = completed ] && [ "${attempt:-0}" = "$GITHUB_RUN_ATTEMPT" ]; then
+              echo "::error::Windows server job finished with $conclusion"
+              exit 1
+            fi
             sleep 30
           done
-          echo "::error::$name did not reach $DLL_TAG within 45 minutes; check the host job"
+          echo "::error::Windows server job or $name did not complete within 45 minutes"
           exit 1
 
       - name: Build the launcher with the server inside
@@ -449,6 +477,7 @@ jobs:
     timeout-minutes: 20
     environment: release
     env:
+      DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
       RELEASE_TAG: ${{ inputs.version }}
       PUBLIC_RELEASE_REPO: G-A-R-D-E-N/Commonwealth-Online
       PUBLIC_RELEASE_BASE: https://github.com/G-A-R-D-E-N/Commonwealth-Online/releases/download/${{ inputs.version }}
@@ -540,8 +569,10 @@ jobs:
 
   delete-dll-transfer:
     name: Delete the transfer release
-    needs: publish
+    needs: [source, publish]
     runs-on: ubuntu-24.04
+    env:
+      DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
     steps:
       - name: Delete the draft release
         env:
