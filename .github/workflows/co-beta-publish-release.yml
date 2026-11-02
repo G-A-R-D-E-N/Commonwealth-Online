@@ -188,7 +188,7 @@ jobs:
           persist-credentials: false
 
       - name: Initialize canonical CommonLib
-        if: matrix.project == 'CO-BETA/plugin'
+        if: matrix.target != 'bridge'
         run: |
           set -euo pipefail
           git submodule sync --recursive
@@ -209,9 +209,8 @@ jobs:
             || { echo "::error::GNS pin mismatch: $actual"; exit 1; }
 
       - name: Set up xmake
-        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
-        with:
-          xmake-version: v3.1.0
+        if: matrix.target != 'bridge'
+        uses: G-A-R-D-E-N/Commonwealth-Online/.github/actions/co-xmake@fb68442309ddaab8d1bbeae0aae93c69daac19c2
 
       - name: Restore vcpkg binary cache
         if: matrix.target == 'bridge'
@@ -288,9 +287,7 @@ jobs:
           sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
 
       - name: Set up xmake
-        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
-        with:
-          xmake-version: v3.1.0
+        uses: G-A-R-D-E-N/Commonwealth-Online/.github/actions/co-xmake@fb68442309ddaab8d1bbeae0aae93c69daac19c2
 
       - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
         env:
@@ -346,9 +343,7 @@ jobs:
           sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
 
       - name: Set up xmake
-        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
-        with:
-          xmake-version: v3.1.0
+        uses: G-A-R-D-E-N/Commonwealth-Online/.github/actions/co-xmake@fb68442309ddaab8d1bbeae0aae93c69daac19c2
 
       - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
         env:
