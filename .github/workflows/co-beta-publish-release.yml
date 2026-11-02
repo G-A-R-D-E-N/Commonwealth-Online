@@ -130,7 +130,7 @@ jobs:
         run: |
           set -euo pipefail
           actual="$(git hash-object CO-BETA/ci/package-release.sh)"
-          test "$actual" = b970544cbad7f3b128e1b1cb594e7ac0aaea5b20 || {
+          test "$actual" = a7179d6051a755de80cd11c5f651bb2cc287e75e || {
             echo "::error::The selected ref does not have the reviewed packaging script. Update the release workflow after reviewing its packaging script; older scripts can build game DLLs on Linux."
             exit 1
           }
