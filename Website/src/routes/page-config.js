@@ -326,7 +326,7 @@ const PUBLIC_PAGES = [
         "A detailed, Fallout-themed field briefing for Commonwealth Online multiplayer framework milestones, from the working network foundation through future shared-world systems.",
       bodyClass: "co-roadmap-page",
       activeKey: "roadmap",
-      styles: ["/static/css/roadmap.css"],
+      styles: ["/static/css/roadmap.css?v=20261102-2"],
       roadmap: ROADMAP_PHASES,
       multiplayerGates: MULTIPLAYER_GATES,
       roadmapArt: [
