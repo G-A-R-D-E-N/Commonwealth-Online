@@ -60,11 +60,11 @@ jobs:
             # Finished commits lose their branch to the cleanup sweep, so their statuses stop a re-export.
             states=$(gh api "repos/${REPOSITORY}/commits/${head}/status?per_page=100" --jq '[.statuses[] | select(.context | startswith("public-ci/")) | .state] | unique | join(" ")') || return 1
             if [ "$FORCE" != true ] && [ -n "$states" ] && ! grep -qw pending <<<"$states"; then return 0; fi
-            git fetch -q --no-tags --depth 1 "$private_url" "$head" || return 1
+            git fetch -q --no-tags --depth 1 "$private_url" "$head" || { sleep 3; git fetch -q --no-tags --depth 1 "$private_url" "$head"; } || return 1
             git checkout -q --detach FETCH_HEAD || return 1
             [ -n "$(git ls-tree -d HEAD .github/public-ci/workflows)" ] || { echo "::warning::no public CI workflows on ${branch}; skipped"; return 0; }
             mkdir -p "$GITHUB_WORKSPACE/.trusted-export" || return 1
-            git fetch -q --no-tags --depth 1 "$private_url" "+refs/heads/nomad-dev:refs/trusted/nomad-dev" || return 1
+            git fetch -q --no-tags --depth 1 "$private_url" "+refs/heads/nomad-dev:refs/trusted/nomad-dev" || { sleep 3; git fetch -q --no-tags --depth 1 "$private_url" "+refs/heads/nomad-dev:refs/trusted/nomad-dev"; } || return 1
             git show refs/trusted/nomad-dev:scripts/export-public-ci.py > "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
             : > "$work/changed.txt"
             if [ -n "$pr" ]; then
