@@ -1,6 +1,10 @@
 (() => {
   const DIRECTORY_URL = "https://oeajjfquvmdxqqtiotfa.supabase.co/functions/v1/server-directory";
   const CURATED_URL = "/data/servers.json";
+  const LIVE_REFRESH_MS = 10000;
+
+  let loading = false;
+  let lastFeedHtml = "";
 
   const els = {
     status: document.getElementById("servers-status"),
@@ -212,7 +216,7 @@
     });
   };
 
-  const render = (payload) => {
+  const render = (payload, { silent = false } = {}) => {
     const servers = Array.isArray(payload?.servers)
       ? payload.servers.map(normalizeServer).filter(Boolean)
       : [];
@@ -228,13 +232,18 @@
     }
 
     els.feed.removeAttribute("aria-busy");
-    els.feed.innerHTML = servers.length
+    const html = servers.length
       ? `<div class="servers-list">${servers.map(renderServer).join("")}</div>`
       : renderEmpty();
-
-    bindCopyButtons();
+    if (html !== lastFeedHtml) {
+      lastFeedHtml = html;
+      els.feed.innerHTML = html;
+      bindCopyButtons();
+      if (!silent) {
+        revealContent(els.feed);
+      }
+    }
     document.dispatchEvent(new CustomEvent("co:servers-rendered"));
-    revealContent(els.feed);
 
     setStatus(
       servers.length
@@ -252,16 +261,28 @@
     return response.json();
   };
 
-  const load = async () => {
-    setStatus("Loading server list", false, { busy: true });
-    els.feed.setAttribute("aria-busy", "true");
+  const load = async ({ silent = false } = {}) => {
+    if (loading) {
+      return;
+    }
+    loading = true;
+    if (!silent) {
+      setStatus("Loading server list", false, { busy: true });
+      els.feed.setAttribute("aria-busy", "true");
+    }
 
     const [live, curated] = await Promise.allSettled([
       fetchJson(DIRECTORY_URL),
       fetchJson(CURATED_URL),
     ]);
+    loading = false;
+
+    if (silent && (live.status === "rejected" || curated.status === "rejected")) {
+      return;
+    }
 
     if (live.status === "rejected" && curated.status === "rejected") {
+      lastFeedHtml = "";
       els.feed.removeAttribute("aria-busy");
       els.feed.innerHTML = `
         <div class="servers-empty">
@@ -276,12 +297,20 @@
     render(mergeListings(
       live.status === "fulfilled" ? live.value : null,
       curated.status === "fulfilled" ? curated.value : null,
-    ));
+    ), { silent });
 
     if (live.status === "rejected") {
       setStatus("Live directory unavailable; showing curated servers only", true);
     }
   };
 
+  const refreshWhileVisible = () => {
+    if (!document.hidden) {
+      load({ silent: true });
+    }
+  };
+
   load();
+  window.setInterval(refreshWhileVisible, LIVE_REFRESH_MS);
+  document.addEventListener("visibilitychange", refreshWhileVisible);
 })();
