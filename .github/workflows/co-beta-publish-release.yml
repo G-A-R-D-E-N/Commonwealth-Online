@@ -11,9 +11,9 @@ on:
         required: true
         type: string
       target:
-        description: "Commit SHA or tag of G-A-R-D-E-N/Commonwealth-Online-Private to build and release (default: main)"
+        description: "Commit SHA or tag of G-A-R-D-E-N/Commonwealth-Online-Private to build and release (default: nomad-dev)"
         required: false
-        default: main
+        default: nomad-dev
         type: string
       prerelease:
         description: "Publish as a pre-release"
@@ -122,6 +122,15 @@ jobs:
         id: source
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
+      - name: Verify the packaging script uses prebuilt Windows DLLs
+        run: |
+          set -euo pipefail
+          actual="$(git hash-object CO-BETA/ci/package-release.sh)"
+          test "$actual" = 6207b3ef44d6750ae7067682b216b20bdfd79142 || {
+            echo "::error::The selected ref does not have the reviewed packaging script. Update the release workflow after reviewing its packaging script; older scripts can build game DLLs on Linux."
+            exit 1
+          }
+
       - name: Require green CI on the commit being released
         env:
           GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
@@ -166,9 +175,6 @@ jobs:
       matrix:
         include:
           - { file: CommonwealthOnline.dll, project: CO-BETA/plugin, target: CommonwealthOnline }
-          - { file: CommonwealthOnline-NG.dll, project: CO-BETA/plugin, target: CommonwealthOnlineNG }
-          - { file: CommonwealthOnline-OG.dll, project: CO-BETA/plugin, target: CommonwealthOnlineOG }
-          - { file: CommonwealthOnlineUI.dll, project: CommonwealthOnlineUI, target: CommonwealthOnlineUI }
           - { file: commonwealth_online_gns_bridge.dll, project: CO-BETA/plugin, target: bridge }
     env:
       COMMONLIB_MIRROR: ${{ vars.COMMONLIB_MIRROR }}
@@ -192,18 +198,6 @@ jobs:
             git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://github.com/G-A-R-D-E-N/commonlibf4-nomad.git" submodule update --init --recursive --force --checkout -- CO-BETA/plugin/lib/commonlibf4
           }
           test -s CO-BETA/plugin/lib/commonlibf4/xmake.lua
-
-      - name: Initialize the UI CommonLib
-        if: matrix.project == 'CommonwealthOnlineUI'
-        run: |
-          set -euo pipefail
-          git submodule sync --recursive
-          git submodule update --init --recursive --force --checkout -- CommonwealthOnlineUI/ThirdParty/CommonLibF4 || {
-            test -n "${COMMONLIB_MIRROR:-}" || exit 1
-            echo "::warning::primary commonlib remote unreachable; using CI commonlib mirror"
-            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://github.com/G-A-R-D-E-N/commonlibf4-nomad.git" submodule update --init --recursive --force --checkout -- CommonwealthOnlineUI/ThirdParty/CommonLibF4
-          }
-          test -s CommonwealthOnlineUI/ThirdParty/CommonLibF4/xmake.lua
 
       - name: Initialize pinned GameNetworkingSockets
         if: matrix.project == 'CO-BETA/plugin'
@@ -380,7 +374,7 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/windows-dlls"
           gh release download "$DLL_TAG" -R "$GITHUB_REPOSITORY" --pattern '*.dll' --dir "$RUNNER_TEMP/windows-dlls"
-          for dll in CommonwealthOnline.dll CommonwealthOnline-NG.dll CommonwealthOnline-OG.dll CommonwealthOnlineUI.dll commonwealth_online_gns_bridge.dll; do
+          for dll in CommonwealthOnline.dll commonwealth_online_gns_bridge.dll; do
             test -s "$RUNNER_TEMP/windows-dlls/$dll" || { echo "::error::Windows DLL $dll is missing from $DLL_TAG"; exit 1; }
           done
 
