@@ -1,16 +1,31 @@
 <%- include("../partials/head") %>
 <%- include("../partials/navbar") %>
 
-      <main class="site-main">
-        <section class="section-panel apply-hero" aria-labelledby="apply-form-title">
-          <div class="servers-hero__head">
-            <div>
-              <p class="section-kicker"><%= form.kicker %></p>
-              <h1 id="apply-form-title"><%= form.title %></h1>
-              <p class="servers-hero__desc"><%= form.description %></p>
-            </div>
-            <div class="servers-hero__actions">
-              <a class="co-btn co-btn--ghost" href="/apply">All forms</a>
+      <main class="site-main site-main--subpage">
+        <section class="subpage-hero" aria-labelledby="apply-form-title">
+          <div class="subpage-hero__media" aria-hidden="true">
+            <img
+              src="/assets/images/user/zulu3.jpg"
+              alt="Commonwealth Online Application"
+              width="1920"
+              height="1080"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </div>
+          <div class="subpage-hero__shade" aria-hidden="true"></div>
+          <div class="subpage-hero__content">
+            <div class="subpage-hero__inner">
+              <div class="servers-hero__head">
+                <div>
+                  <p class="subpage-hero__kicker"><%= form.kicker %></p>
+                  <h1 id="apply-form-title"><%= form.title %></h1>
+                  <p class="subpage-hero__desc"><%= form.description %></p>
+                </div>
+                <div class="servers-hero__actions">
+                  <a class="co-btn co-btn--ghost" href="/apply">All forms</a>
+                </div>
+              </div>
             </div>
           </div>
         </section>

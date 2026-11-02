@@ -1,48 +1,86 @@
 <%- include("../partials/head") %>
 <%- include("../partials/navbar") %>
 
-      <main class="site-main">
-        <section class="section-panel apply-hero" aria-labelledby="apply-title">
-          <div class="servers-hero__head">
-            <div>
-              <p class="section-kicker">Applications</p>
-              <h1 id="apply-title">Apply to help build the Commonwealth</h1>
-              <p class="servers-hero__desc">
-                Two ways in: join the team that ships the framework, or apply as a beta tester and help us break
-                builds before players do. Submissions are stored here and reviewed by the team on Discord.
-              </p>
-            </div>
-            <div class="servers-hero__actions">
-              <a class="co-btn co-btn--ghost" href="#" data-co-link="discord">Join Discord</a>
+      <main class="site-main site-main--subpage">
+        <section class="subpage-hero" aria-labelledby="apply-title">
+          <div class="subpage-hero__media" aria-hidden="true">
+            <img
+              src="/assets/images/user/zulu2.png"
+              alt="Commonwealth Online Wasteland Concept Backgrounds"
+              width="1920"
+              height="1080"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </div>
+          <div class="subpage-hero__shade" aria-hidden="true"></div>
+          <div class="subpage-hero__content">
+            <div class="subpage-hero__inner">
+              <div class="subpage-hero__head">
+                <div>
+                  <p class="subpage-hero__kicker">APPLICATIONS // ENLISTMENT</p>
+                  <h1 id="apply-title">Apply to Help Build the Commonwealth</h1>
+                  <p class="subpage-hero__desc">
+                    Two ways in: join the core team developing and shipping the multiplayer framework, or apply as a
+                    dedicated beta tester to test multiplayer builds before release. Submissions are securely stored and
+                    reviewed by the team on Discord.
+                  </p>
+                </div>
+                <div class="subpage-hero__actions">
+                  <a class="co-btn co-btn--primary" href="#" data-co-link="discord">Join Squad Discord</a>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        <section class="section-panel" aria-labelledby="apply-choose-title">
-          <div class="section-head">
-            <p class="section-kicker">Choose a form</p>
-            <h2 id="apply-choose-title">What are you applying for?</h2>
-          </div>
+        <div class="site-wrap">
+          <section class="section-panel" aria-labelledby="apply-choose-title">
+            <div class="section-head">
+              <p class="section-kicker">Choose a Path</p>
+              <h2 id="apply-choose-title">What are you applying for?</h2>
+            </div>
 
-          <div class="apply-choice">
-            <a class="apply-choice__card" href="/apply/team">
-              <p class="apply-choice__kicker">Team</p>
-              <h3>Join the team</h3>
-              <p>
-                Development, art, writing, community or QA. Tell us what you can contribute and how to reach you.
-              </p>
-              <span class="apply-choice__cta">Open team form</span>
-            </a>
-            <a class="apply-choice__card" href="/apply/beta">
-              <p class="apply-choice__kicker">Playtest</p>
-              <h3>Become a beta tester</h3>
-              <p>
-                Run sessions, file bug reports and keep unreleased builds private. You will need Fallout 4 and Discord.
-              </p>
-              <span class="apply-choice__cta">Open tester form</span>
-            </a>
-          </div>
-        </section>
+            <div class="apply-choice">
+              <a class="apply-choice__card" href="/apply/team">
+                <div class="apply-choice__media">
+                  <img
+                    src="/assets/images/user/image-23.png"
+                    alt="Vault-Tec C.A.M.P. 3D fabrication workstation"
+                    loading="eager"
+                    decoding="sync"
+                  />
+                </div>
+                <div class="apply-choice__body">
+                  <p class="apply-choice__kicker">01 // CORE TEAM</p>
+                  <h3>Join the Development Team</h3>
+                  <p>
+                    Framework development, native C++ plugins, networking, Pip-Boy UI, 3D modeling, audio, QA testing, or community management. Tell us what you want to build.
+                  </p>
+                  <span class="apply-choice__cta">Open team form &rarr;</span>
+                </div>
+              </a>
+              <a class="apply-choice__card" href="/apply/beta">
+                <div class="apply-choice__media">
+                  <img
+                    src="/assets/images/user/image99.png"
+                    alt="Two operatives exploring the Commonwealth ruins in synchronized multiplayer"
+                    loading="eager"
+                    decoding="sync"
+                  />
+                </div>
+                <div class="apply-choice__body">
+                  <p class="apply-choice__kicker">02 // SQUAD PLAYTESTING</p>
+                  <h3>Become a Beta Tester</h3>
+                  <p>
+                    Participate in scheduled multiplayer stress tests, file bug reproduction steps, and stress-test synchronization across Fallout 4 AE, NG, and OG versions. You will need Fallout 4 and Discord.
+                  </p>
+                  <span class="apply-choice__cta">Open tester form &rarr;</span>
+                </div>
+              </a>
+            </div>
+          </section>
+        </div>
       </main>
 
 <%- include("../partials/footer") %>
