@@ -1,172 +1,68 @@
 <%- include("../partials/head") %>
 <%- include("../partials/navbar") %>
 
-      <main class="site-main">
-        <section class="roadmap-hero" aria-labelledby="roadmap-title">
-          <div class="roadmap-hero__terminal-feed" aria-hidden="true">
-            <span>&gt; CO_NODE // HANDSHAKE ACCEPTED // DEDICATED HOST</span>
-            <span>&gt; WORLDSPACE COMMONWEALTH // REMOTE ACTORS 02</span>
-            <span>&gt; REPLICATION CHANNEL // BASELINE LOCKED</span>
-            <span>&gt; COMBAT DISPATCH // CAPACITY CHECK ACTIVE</span>
-            <span>&gt; NEXT QUEUE // SHARED WORLD AND NPC SYNC</span>
+      <main class="site-main roadmap-page">
+        <section class="roadmap-intro" aria-labelledby="roadmap-title">
+          <div class="roadmap-intro__content">
+            <p class="section-kicker">The road ahead</p>
+            <h1 id="roadmap-title">Fallout is better together.</h1>
+            <p>See what Commonwealth Online is building, from exploring with friends to a more connected Commonwealth.</p>
+            <a class="co-btn co-btn--primary" href="#roadmap-features">Explore the roadmap <span aria-hidden="true">↓</span></a>
           </div>
-          <div class="roadmap-hero__terminal">
-            <span>VAULT-TEC DEVELOPMENT TERMINAL</span>
-            <span>CHANNEL: COMMONWEALTH ONLINE</span>
-          </div>
-          <p class="section-kicker">Field briefing // development status</p>
-          <h1 id="roadmap-title">The Commonwealth Online roadmap</h1>
-          <p class="roadmap-hero__lead">
-            A capability-based readout of the multiplayer framework: what is operational, what is under active fire,
-            what is queued for the next dispatch and what remains beyond the current horizon.
-          </p>
-          <div class="roadmap-readout">
-            <div><span>CORE LINK</span><strong>ONLINE</strong></div>
-            <div><span>ACTIVE DISPATCH</span><strong>COMBAT / CAPACITY</strong></div>
-          </div>
+          <figure class="roadmap-intro__image">
+            <img src="/assets/images/playerimages/UserOptcron-1.webp" alt="Two Commonwealth Online players on a ruined road" width="1920" height="1080" />
+            <figcaption>Community screenshot</figcaption>
+          </figure>
         </section>
 
-        <% const activePhase = page.roadmap.find((phase) => phase.status === "active"); %>
-        <% const nextPhase = page.roadmap.find((phase) => phase.status === "next"); %>
-        <% const longRangePhase = page.roadmap.find((phase) => phase.status === "future"); %>
-        <section class="roadmap-glance" aria-labelledby="roadmap-glance-title">
-          <div class="section-head">
-            <p class="section-kicker">Dispatch board</p>
-            <h2 id="roadmap-glance-title">Where the work is moving</h2>
-          </div>
-          <div class="roadmap-glance__grid">
-            <% [
-              { label: "Current", phase: activePhase },
-              { label: "Next", phase: nextPhase },
-              { label: "Long range", phase: longRangePhase },
-            ].forEach((item) => { %>
-            <article class="roadmap-glance__card is-<%= item.phase.status %>">
-              <p class="roadmap-glance__status"><span><%= item.label %></span> // <%= item.phase.statusLabel %></p>
-              <h3><%= item.phase.title %></h3>
-              <p><%= item.phase.summary %></p>
-              <a href="#<%= item.phase.id %>">Open phase brief <span aria-hidden="true">→</span></a>
-            </article>
-            <% }) %>
-          </div>
-        </section>
+        <nav class="roadmap-nav" aria-label="Roadmap sections">
+          <a href="#play-together">Play together</a>
+          <a href="#shared-world">A shared world</a>
+          <a href="#road-ahead">The road ahead</a>
+        </nav>
 
-        <section class="roadmap-legend" aria-labelledby="roadmap-legend-title">
-          <div>
-            <p class="section-kicker">Status codes</p>
-            <h2 id="roadmap-legend-title">Roadmap status</h2>
+        <div id="roadmap-features" class="roadmap-content">
+          <div class="roadmap-heading">
+            <p class="section-kicker">Development roadmap</p>
+            <h2>What we're building</h2>
+            <p>Commonwealth Online is in active development. These features are at different stages, and the development branch may contain work that has not reached a public release. Plans and priorities can change. Each player still runs their own game; full campaign co-op is not available. “Implemented · testing” means the development branch contains the feature; it does not guarantee it is in a public release.</p>
           </div>
-          <p>
-            This public readout tracks user-visible capabilities, not every internal component migration. Status
-            describes the current project state: complete means the capability is working;
-            active means it is being refined; next is queued work; future is intentionally unscheduled exploration.
-          </p>
-          <ul class="roadmap-status-list" aria-label="Roadmap status legend">
-            <li class="is-complete"><span>Complete</span><small>Operational capability</small></li>
-            <li class="is-active"><span>Active</span><small>Current engineering focus</small></li>
-            <li class="is-next"><span>Next</span><small>Queued after active work</small></li>
-            <li class="is-future"><span>Future</span><small>Long-range direction</small></li>
-          </ul>
-        </section>
 
-        <section class="roadmap-gallery" aria-labelledby="roadmap-gallery-title">
-          <div class="section-head">
-            <p class="section-kicker">Multiplayer doctrine</p>
-            <h2 id="roadmap-gallery-title">The systems behind the spectacle</h2>
-          </div>
-          <div class="roadmap-gallery__grid">
-            <% page.roadmapArt.forEach((art) => { %>
-            <figure class="roadmap-art">
-              <div class="roadmap-art__image"><img src="<%= art.src %>" alt="<%= art.alt %>" loading="lazy" width="<%= art.width %>" height="<%= art.height %>" /></div>
-              <figcaption>
-                <span><%= art.kicker %></span>
-                <h3><%= art.title %></h3>
-                <p><%= art.copy %></p>
-              </figcaption>
-            </figure>
-            <% }) %>
-          </div>
-        </section>
+          <section id="play-together" class="roadmap-section" aria-labelledby="play-together-title">
+            <div class="roadmap-section__heading">
+              <span class="roadmap-section__number">01</span>
+              <div><p class="section-kicker">Meet up in the wasteland</p><h2 id="play-together-title">Play together</h2><p>The essentials for finding a server, making a character and sharing the Commonwealth.</p></div>
+            </div>
+            <div class="roadmap-cards">
+              <article id="foundation" class="roadmap-card"><span class="roadmap-card__tag">Implemented · testing</span><h3>Join a world</h3><p>Find a server or host a session, then explore the Commonwealth alongside other players.</p></article>
+              <article id="replication" class="roadmap-card"><span class="roadmap-card__tag">Implemented · testing</span><h3>Bring your character</h3><p>See other players move through the world with their own appearance, clothing and equipment.</p></article>
+              <article id="operations" class="roadmap-card"><span class="roadmap-card__tag">Implemented · testing</span><h3>Host your way</h3><p>Server browsing and hosting tools help players connect and give hosts ways to manage a session.</p></article>
+              <article id="social" class="roadmap-card"><span class="roadmap-card__tag">Experimental</span><h3>Talk and team up</h3><p>Voice and text chat, friends and factions are being tested and refined to help players stay connected.</p></article>
+              <article id="player-control" class="roadmap-card"><span class="roadmap-card__tag">In development</span><h3>Make it your session</h3><p>In-game settings, a multiplayer map and administration tools give players and hosts more control.</p></article>
+              <article id="combat-capacity" class="roadmap-card"><span class="roadmap-card__tag">In development</span><h3>Fight and survive</h3><p>Combat, player movement and reviving teammates are being developed and refined for multiplayer.</p></article>
+            </div>
+          </section>
 
-        <section class="roadmap-gates" aria-labelledby="roadmap-gates-title">
-          <div class="section-head">
-            <p class="section-kicker">Readiness audit</p>
-            <h2 id="roadmap-gates-title">Multiplayer gates before the next frontier</h2>
-          </div>
-          <p class="roadmap-gates__intro">
-            These are the engineering gates behind a credible multiplayer project. The public feature phases show what
-            players will feel; this audit shows what has to be true underneath before those features can scale.
-          </p>
-          <ol class="roadmap-gate-list">
-            <% page.multiplayerGates.forEach((gate) => { %>
-            <li class="roadmap-gate is-<%= gate.status %>">
-              <div class="roadmap-gate__status"><span><%= gate.statusLabel %></span></div>
-              <div>
-                <h3><%= gate.title %></h3>
-                <p><%= gate.summary %></p>
-              </div>
-            </li>
-            <% }) %>
-          </ol>
-        </section>
+          <section id="shared-world" class="roadmap-section" aria-labelledby="shared-world-title">
+            <div class="roadmap-section__heading">
+              <span class="roadmap-section__number">02</span>
+              <div><p class="section-kicker">More to do together</p><h2 id="shared-world-title">A shared world</h2><p>Building a world where your actions and adventures can matter to the people playing with you.</p></div>
+            </div>
+            <div class="roadmap-cards">
+              <article id="living-commonwealth" class="roadmap-card"><span class="roadmap-card__tag">In development</span><h3>Enemies and NPCs</h3><p>Work is underway on sharing characters, creatures and combat across players' games.</p></article>
+              <article class="roadmap-card"><span class="roadmap-card__tag">In development</span><h3>Quests and progress</h3><p>Quest sharing is being developed so groups can experience more of the Commonwealth together.</p></article>
+              <article class="roadmap-card"><span class="roadmap-card__tag">In development</span><h3>Trade and settlements</h3><p>Trading and settlement systems are being developed for a more cooperative world.</p></article>
+            </div>
+          </section>
 
-        <section class="roadmap-phases" aria-labelledby="roadmap-phases-title">
-          <div class="section-head">
-            <p class="section-kicker">Operations log</p>
-            <h2 id="roadmap-phases-title">Milestones from the terminal archive</h2>
-          </div>
-          <ol class="roadmap-phase-list">
-            <% page.roadmap.forEach((phase) => { %>
-            <li id="<%= phase.id %>" class="roadmap-phase is-<%= phase.status %>">
-              <div class="roadmap-phase__marker" aria-hidden="true"><%= phase.number %></div>
-              <article class="roadmap-phase__card">
-                <header class="roadmap-phase__header">
-                  <div>
-                    <p class="roadmap-phase__status"><span><%= phase.statusLabel %></span> // PHASE <%= phase.number %></p>
-                    <h3><%= phase.title %></h3>
-                  </div>
-                  <span class="roadmap-phase__signal" aria-hidden="true"></span>
-                </header>
-                <p class="roadmap-phase__summary"><%= phase.summary %></p>
-                <div class="roadmap-phase__body">
-                  <div>
-                    <h4>Systems on the manifest</h4>
-                    <ul class="roadmap-system-list">
-                      <% phase.systems.forEach((system) => { %>
-                      <li>
-                        <strong><%= system.name %></strong>
-                        <span><%= system.detail %></span>
-                      </li>
-                      <% }) %>
-                    </ul>
-                  </div>
-                  <aside class="roadmap-phase__note">
-                    <span class="roadmap-phase__note-label">Definition of done</span>
-                    <p><%= phase.doneWhen %></p>
-                    <span class="roadmap-phase__note-label">Field note</span>
-                    <p><%= phase.note %></p>
-                  </aside>
-                </div>
-              </article>
-            </li>
-            <% }) %>
-          </ol>
-        </section>
-
-        <section class="roadmap-briefing section-panel" aria-labelledby="roadmap-briefing-title">
-          <p class="section-kicker">Operator briefing</p>
-          <h2 id="roadmap-briefing-title">The short version</h2>
-          <p>
-            Version 2.1.0 shipped character slots, voice chat, downed and revive, factions, settlement capture, a
-            live map, Steam hosting and a full Launcher. The present push is combat fidelity and capacity. Shared NPCs,
-            enemies, quests and persistent world simulation come next, once their ownership and compatibility rules are
-            safe to ship.
-          </p>
-          <div class="hero__actions">
-            <a class="co-btn co-btn--primary" href="#" data-co-link="nexus">Download mod</a>
-            <a class="co-btn co-btn--ghost" href="/servers">Check active servers</a>
-            <a class="co-btn co-btn--ghost" href="/updates">Read project updates</a>
-          </div>
-        </section>
+          <section id="road-ahead" class="roadmap-section roadmap-future" aria-labelledby="road-ahead-title">
+            <div id="long-horizon" class="roadmap-section__heading">
+              <span class="roadmap-section__number">03</span>
+              <div><p class="section-kicker">Looking forward</p><h2 id="road-ahead-title">The road ahead</h2><p>Making these systems reliable together is ongoing work. Future improvements depend on testing, feedback and what the team learns along the way.</p></div>
+            </div>
+            <div class="roadmap-cards roadmap-future__cards"><article class="roadmap-card"><span class="roadmap-card__tag">Planned</span><h3>More combat details</h3><p>Improve how weapons and combat actions appear to other players.</p></article><article class="roadmap-card"><span class="roadmap-card__tag">Planned</span><h3>Power armor</h3><p>Work toward showing power armor and its state to other players.</p></article><article class="roadmap-card"><span class="roadmap-card__tag">Possible later</span><h3>More ways to play</h3><p>Explore broader mod compatibility, arena sessions and support for more players.</p></article></div><div class="roadmap-actions"><a class="co-btn co-btn--primary" href="#" data-co-link="nexus">Download the mod</a><a class="co-btn co-btn--ghost" href="/updates">Read project updates</a><a class="co-btn co-btn--ghost" href="/servers">Find a server</a></div>
+          </section>
+        </div>
       </main>
 
 <%- include("../partials/footer") %>

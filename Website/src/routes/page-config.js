@@ -245,49 +245,6 @@ const ROADMAP_PHASES = [
   },
 ];
 
-const MULTIPLAYER_GATES = [
-  {
-    id: "transport",
-    status: "complete",
-    statusLabel: "Foundation",
-    title: "Message semantics",
-    summary:
-      "Reliable control traffic, snapshot baselines and deltas, per-peer publication and client interpolation give the session a usable replication spine.",
-  },
-  {
-    id: "authority",
-    status: "next",
-    statusLabel: "Queued",
-    title: "Authority & relevancy",
-    summary:
-      "The server already filters interest by cell and worldspace. Per-entity authority, priority, instancing and epoch handoff are the next trust and bandwidth boundary.",
-  },
-  {
-    id: "identity",
-    status: "active",
-    statusLabel: "Hardening",
-    title: "Identity, resume & recovery",
-    summary:
-      "Persistent Steam-linked identities, profile-keyed records, authenticated directory ownership and reconnect metadata are now working; broader identity policy and legacy activation retirement remain active work.",
-  },
-  {
-    id: "validation",
-    status: "active",
-    statusLabel: "Hardening",
-    title: "Validation & abuse resistance",
-    summary:
-      "Packet bounds, admission framing, per-player rate limits, Argon2id password checks, persistent bans, authenticated admin access and server-side trust boundaries protect the session; new gameplay systems must preserve those gates.",
-  },
-  {
-    id: "acceptance",
-    status: "next",
-    statusLabel: "Proof gate",
-    title: "Multi-client acceptance",
-    summary:
-      "A multiplayer feature is not ready from source tests alone. Capacity, loss and jitter, reconnects, persistence recovery, cross-version sessions and real two-client gameplay need repeatable release evidence.",
-  },
-];
-
 const PUBLIC_PAGES = [
   {
     route: "/",
@@ -323,32 +280,10 @@ const PUBLIC_PAGES = [
     page: {
       title: "Roadmap - Commonwealth Online",
       description:
-        "A detailed, Fallout-themed field briefing for Commonwealth Online multiplayer framework milestones, from the working network foundation through future shared-world systems.",
+        "Explore the Commonwealth Online roadmap, from playing together to the future of a shared world.",
       bodyClass: "co-roadmap-page",
       activeKey: "roadmap",
-      styles: ["/static/css/roadmap.css?v=20261102-2"],
-      roadmap: ROADMAP_PHASES,
-      multiplayerGates: MULTIPLAYER_GATES,
-      roadmapArt: [
-        {
-          src: "/assets/images/playerimages/UserOptcron-1.webp",
-          width: 1920,
-          height: 1080,
-          alt: "Fallout 4 gameplay capture showing two Commonwealth Online players on a ruined road.",
-          kicker: "COMMUNITY CAPTURE // 01",
-          title: "A shared world needs a shared signal",
-          copy: "The foundation is not just moving actors. It is deciding who owns a state, who needs to receive it and what happens when the connection gets rough.",
-        },
-        {
-          src: "/assets/images/playerimages/UserOptcron-3.webp",
-          width: 1920,
-          height: 1080,
-          alt: "Fallout 4 gameplay capture showing a player moving through a Commonwealth neighborhood.",
-          kicker: "COMMUNITY CAPTURE // 02",
-          title: "The long game is a world that survives",
-          copy: "Social systems, settlements, inventory and quests only become multiplayer features when ownership, persistence and recovery are explicit.",
-        },
-      ],
+      styles: ["/static/css/roadmap.css?v=20261102-3"],
       scripts: ["/static/js/links.js", "/static/js/navbar.js", "/static/js/script.js"],
     },
   },
