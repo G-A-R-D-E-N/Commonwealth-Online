@@ -45,7 +45,7 @@ permissions:
   contents: write
 
 env:
-  DLL_TAG: ci-dlls-${{ github.run_id }}-${{ github.run_attempt }}
+  DLL_TAG: ci-dlls-${{ github.run_id }}
 
 concurrency:
   group: co-publish-release-${{ inputs.version }}
@@ -74,16 +74,14 @@ jobs:
           [ "$actual" = "$EXPECTED_UPDATE_PUBLIC_KEY" ] \
             || { echo "::error::CO_UPDATE_SIGNING_KEY does not match CO_UPDATE_PUBLIC_KEY"; exit 1; }
 
-  windows-dlls:
-    name: Build the Windows DLLs (MSVC)
+  source:
+    name: Check the release inputs
     needs: check-signing-key
     if: github.ref_name == github.event.repository.default_branch
-    runs-on: windows-latest
-    timeout-minutes: 150
-    environment: release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     env:
       PRIVATE_REPO: G-A-R-D-E-N/Commonwealth-Online-Private
-      COMMONLIB_MIRROR: ${{ vars.COMMONLIB_MIRROR }}
     outputs:
       sha: ${{ steps.source.outputs.sha }}
     steps:
@@ -150,7 +148,41 @@ jobs:
             exit 1
           fi
 
+      - name: Create the transfer release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$DLL_TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
+            || gh release create "$DLL_TAG" -R "$GITHUB_REPOSITORY" --draft --title "$DLL_TAG" \
+              --notes "Build transfer between release jobs; deleted when this release publishes."
+
+  windows-dlls:
+    name: Build ${{ matrix.file }} (MSVC)
+    needs: source
+    runs-on: windows-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { file: CommonwealthOnline.dll, project: CO-BETA/plugin, target: CommonwealthOnline }
+          - { file: CommonwealthOnline-NG.dll, project: CO-BETA/plugin, target: CommonwealthOnlineNG }
+          - { file: CommonwealthOnline-OG.dll, project: CO-BETA/plugin, target: CommonwealthOnlineOG }
+          - { file: CommonwealthOnlineUI.dll, project: CommonwealthOnlineUI, target: CommonwealthOnlineUI }
+          - { file: commonwealth_online_gns_bridge.dll, project: CO-BETA/plugin, target: bridge }
+    env:
+      COMMONLIB_MIRROR: ${{ vars.COMMONLIB_MIRROR }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: G-A-R-D-E-N/Commonwealth-Online-Private
+          ref: ${{ needs.source.outputs.sha }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          submodules: false
+          persist-credentials: false
+
       - name: Initialize canonical CommonLib
+        if: matrix.project == 'CO-BETA/plugin'
         run: |
           set -euo pipefail
           git submodule sync --recursive
@@ -162,8 +194,10 @@ jobs:
           test -s CO-BETA/plugin/lib/commonlibf4/xmake.lua
 
       - name: Initialize the UI CommonLib
+        if: matrix.project == 'CommonwealthOnlineUI'
         run: |
           set -euo pipefail
+          git submodule sync --recursive
           git submodule update --init --recursive --force --checkout -- CommonwealthOnlineUI/ThirdParty/CommonLibF4 || {
             test -n "${COMMONLIB_MIRROR:-}" || exit 1
             echo "::warning::primary commonlib remote unreachable; using CI commonlib mirror"
@@ -172,6 +206,7 @@ jobs:
           test -s CommonwealthOnlineUI/ThirdParty/CommonLibF4/xmake.lua
 
       - name: Initialize pinned GameNetworkingSockets
+        if: matrix.project == 'CO-BETA/plugin'
         run: |
           set -euo pipefail
           git submodule update --init --depth 1 -- CO-BETA/ThirdParty/GameNetworkingSockets-src
@@ -185,27 +220,106 @@ jobs:
           xmake-version: v3.1.0
 
       - name: Restore vcpkg binary cache
+        if: matrix.target == 'bridge'
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/AppData/Local/vcpkg/archives
           key: vcpkg-bridge-${{ hashFiles('CO-BETA/build-gns-bridge.bat', 'CO-BETA/plugin/gns-bridge/vcpkg.json') }}
 
-      - name: Build the Windows DLLs
-        run: python scripts/windows-compile-ci.py release windows-dlls
+      - name: Build ${{ matrix.file }}
+        env:
+          DLL_FILE: ${{ matrix.file }}
+          DLL_PROJECT: ${{ matrix.project }}
+          DLL_TARGET: ${{ matrix.target }}
+        run: |
+          python - <<'EOF'
+          import importlib.util, os, shutil
+          spec = importlib.util.spec_from_file_location("compile_ci", "scripts/windows-compile-ci.py")
+          ci = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(ci)
+          target = os.environ["DLL_TARGET"]
+          if target == "bridge":
+              dll = ci.bridge()
+          else:
+              project = ci.ROOT / os.environ["DLL_PROJECT"]
+              ci.run(ci.tool("xmake"), "f", "-y", "-p", "windows", "-a", "x64", "-m", "releasedbg", "-o", "build-ci", cwd=project)
+              dll = ci.build_dll(project, target, os.environ["DLL_FILE"])
+          shutil.copy2(dll, os.environ["DLL_FILE"])
+          EOF
 
-      - name: Send the DLLs to the publish job
+      - name: Send the DLL to the package job
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$DLL_TAG" -R "$GITHUB_REPOSITORY" "${{ matrix.file }}" --clobber
+
+  host:
+    name: Build the ${{ matrix.platform }} server
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [linux-x64, win-x64]
+    env:
+      XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
+      PRISMA_WIN_PACKAGES: ${{ vars.PRISMA_WIN_PACKAGES || '/opt/prisma-toolchain/win-packages' }}
+      RELEASE_TAG: ${{ inputs.version }}
+      PLATFORM: ${{ matrix.platform }}
+      CCACHE_DISABLE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: G-A-R-D-E-N/Commonwealth-Online-Private
+          ref: ${{ needs.source.outputs.sha }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          submodules: false
+          persist-credentials: false
+
+      - name: Prepare the CO toolchain directories
+        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Restore the CO cross toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            /opt/xwin
+            /opt/prisma-toolchain
+          key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+
+      - name: Provision the CO cross toolchain
+        run: |
+          set -euo pipefail
+          sudo --preserve-env=XWIN_ROOT,PRISMA_WIN_PACKAGES python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+          sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain
+
+      - name: Set up xmake
+        uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+        with:
+          xmake-version: v3.1.0
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.tool_cache }}/dotnet
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Build and send the server package
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          gh release create "$DLL_TAG" -R "$GITHUB_REPOSITORY" --draft --title "$DLL_TAG" \
-            --notes "Build transfer between release jobs; deleted when this run ends." windows-dlls/*.dll
+          out="$RUNNER_TEMP/host-$PLATFORM"
+          archive="CommonwealthOnline.Host-$PLATFORM-$RELEASE_TAG.tar.gz"
+          bash CO-SERVER/server-cpp/scripts/build-native-package-ci.sh "$PLATFORM" "$out"
+          tar -czf "$archive" -C "$out" .
+          gh release upload "$DLL_TAG" -R "$GITHUB_REPOSITORY" "$archive" --clobber
 
   package:
-    name: Build the mods and server
-    needs: windows-dlls
+    name: Build the mod packages
+    needs: [source, windows-dlls]
     runs-on: ubuntu-24.04
-    timeout-minutes: 180
+    timeout-minutes: 60
     env:
       XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
       PRISMA_WIN_PACKAGES: ${{ vars.PRISMA_WIN_PACKAGES || '/opt/prisma-toolchain/win-packages' }}
@@ -215,7 +329,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: G-A-R-D-E-N/Commonwealth-Online-Private
-          ref: ${{ needs.windows-dlls.outputs.sha }}
+          ref: ${{ needs.source.outputs.sha }}
           token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
           submodules: false
           persist-credentials: false
@@ -275,25 +389,25 @@ jobs:
           CO_VERSION: ${{ env.RELEASE_TAG }}
           CO_OUT: ${{ github.workspace }}/release-out
           CO_BUILD_UI: ${{ inputs.build_ui && '1' || '0' }}
-          CO_BUILD_HOST_PACKAGES: '1'
+          CO_BUILD_HOST_PACKAGES: '0'
           CO_WINDOWS_DLLS: ${{ runner.temp }}/windows-dlls
         run: bash CO-BETA/ci/package-release.sh
 
       - name: Send the packages to the next jobs
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "$DLL_TAG" -R "$GITHUB_REPOSITORY" release-out/*
+        run: gh release upload "$DLL_TAG" -R "$GITHUB_REPOSITORY" release-out/* --clobber
 
   launcher:
     name: Build the launcher
-    needs: [windows-dlls, package]
+    needs: [source, host]
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: G-A-R-D-E-N/Commonwealth-Online-Private
-          ref: ${{ needs.windows-dlls.outputs.sha }}
+          ref: ${{ needs.source.outputs.sha }}
           token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
           submodules: false
           persist-credentials: false
@@ -318,11 +432,11 @@ jobs:
           $names = @(Get-ChildItem -LiteralPath $server -Name)
           & $tar -a -cf $serverZip -C $server @names
           ./CO-Launcher/scripts/package-launcher.ps1 -Version $env:RELEASE_TAG -OutDir $out -ServerZip $serverZip
-          gh release upload $env:DLL_TAG -R $env:GITHUB_REPOSITORY (Join-Path $out "CommonwealthOnline-Launcher-$env:RELEASE_TAG.zip")
+          gh release upload $env:DLL_TAG -R $env:GITHUB_REPOSITORY (Join-Path $out "CommonwealthOnline-Launcher-$env:RELEASE_TAG.zip") --clobber
 
   publish:
     name: Publish ${{ inputs.version }}
-    needs: [windows-dlls, launcher]
+    needs: [source, package, launcher]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     environment: release
@@ -336,7 +450,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: G-A-R-D-E-N/Commonwealth-Online-Private
-          ref: ${{ needs.windows-dlls.outputs.sha }}
+          ref: ${{ needs.source.outputs.sha }}
           token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
           submodules: false
           persist-credentials: false
@@ -417,9 +531,8 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   delete-dll-transfer:
-    name: Delete the Windows DLL transfer release
-    needs: [windows-dlls, package, launcher, publish]
-    if: always() && needs.windows-dlls.result != 'skipped'
+    name: Delete the transfer release
+    needs: publish
     runs-on: ubuntu-24.04
     steps:
       - name: Delete the draft release
