@@ -30,6 +30,11 @@ on:
         required: false
         default: true
         type: boolean
+      skip_green_check:
+        description: "Owner only: publish even though public CI has not passed on this commit"
+        required: false
+        default: false
+        type: boolean
       min_launcher:
         description: "Optional minimum launcher version (dotted digits) allowed to install this release. Empty: the default in CO-BETA/ci/make-latest-json.py."
         required: false
@@ -104,6 +109,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
           SHA: ${{ steps.source.outputs.sha }}
+          SKIP_GREEN_CHECK: ${{ inputs.skip_green_check }}
         run: |
           set -euo pipefail
           on_branch=false
@@ -113,6 +119,10 @@ jobs:
             esac
           done
           "$on_branch" || { echo "::error::the release commit is not on the private main or nomad-dev branch"; exit 1; }
+          if [ "$SKIP_GREEN_CHECK" = "true" ]; then
+            echo "::warning::publishing without requiring green public CI on $SHA"
+            exit 0
+          fi
           statuses="$(gh api "repos/$PRIVATE_REPO/commits/$SHA/status?per_page=100" --jq '.statuses[] | select(.context | startswith("public-ci/")) | "\(.state) \(.context)"')"
           test -n "$statuses" || { echo "::error::the release commit has no public CI results"; exit 1; }
           printf '%s\n' "$statuses" | grep -qx 'success public-ci/co-contracts' || { echo "::error::the release commit has no green contracts result"; exit 1; }
