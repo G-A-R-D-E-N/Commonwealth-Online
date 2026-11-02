@@ -25,7 +25,7 @@ jobs:
   sync:
     name: Export open PRs and mainline heads
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: Initialise the workspace repository
         run: git init -q "$GITHUB_WORKSPACE"
@@ -118,3 +118,11 @@ jobs:
             fi
           done < "$work/public-prs.txt"
           exit "$failed"
+
+      - name: Start the next sync
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+        run: |
+          sleep 240
+          gh workflow run public-ci-sync.yml --repo "$PUBLIC_REPO" --ref main
