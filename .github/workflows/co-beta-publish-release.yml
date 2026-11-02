@@ -56,8 +56,27 @@ defaults:
     shell: bash
 
 jobs:
+  check-signing-key:
+    name: Check the signing key
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment: release
+    steps:
+      - name: Compare the signing key with the launcher's public key
+        env:
+          CO_UPDATE_SIGNING_KEY: ${{ secrets.CO_UPDATE_SIGNING_KEY }}
+          EXPECTED_UPDATE_PUBLIC_KEY: ${{ vars.CO_UPDATE_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+          actual="$(printf '%s\n' "$CO_UPDATE_SIGNING_KEY" | openssl pkey -pubout -outform DER | tail -c 32 | od -An -tx1 | tr -d ' \n')" \
+            || { echo "::error::CO_UPDATE_SIGNING_KEY is not a PEM private key"; exit 1; }
+          [ "$actual" = "$EXPECTED_UPDATE_PUBLIC_KEY" ] \
+            || { echo "::error::CO_UPDATE_SIGNING_KEY does not match CO_UPDATE_PUBLIC_KEY"; exit 1; }
+
   windows-dlls:
     name: Build the Windows DLLs (MSVC)
+    needs: check-signing-key
     if: github.ref_name == github.event.repository.default_branch
     runs-on: windows-latest
     timeout-minutes: 150
