@@ -235,7 +235,7 @@
     const html = servers.length
       ? `<div class="servers-list">${servers.map(renderServer).join("")}</div>`
       : renderEmpty();
-    if (html !== lastFeedHtml) {
+    if (html !== lastFeedHtml && !els.feed.contains(document.activeElement)) {
       lastFeedHtml = html;
       els.feed.innerHTML = html;
       bindCopyButtons();
@@ -277,7 +277,8 @@
     ]);
     loading = false;
 
-    if (silent && (live.status === "rejected" || curated.status === "rejected")) {
+    if (silent && (live.status === "rejected" || curated.status === "rejected") && lastFeedHtml !== "") {
+      setStatus("Server list may be out of date; retrying", true);
       return;
     }
 
