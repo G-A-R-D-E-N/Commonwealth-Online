@@ -50,23 +50,24 @@ jobs:
           mkdir -p "$work"
           gh api --paginate "repos/${REPOSITORY}/pulls?state=open&per_page=100" --jq ".[] | select(.head.repo.full_name == \"${REPOSITORY}\") | \"\(.number) \(.head.sha)\"" > "$work/prs.txt"
           cut -d' ' -f1 "$work/prs.txt" > "$work/open.txt"
+          mkdir -p "$GITHUB_WORKSPACE/.trusted-export"
+          git fetch -q --no-tags --depth 1 "$private_url" "+refs/heads/nomad-dev:refs/trusted/nomad-dev" || { sleep 3; git fetch -q --no-tags --depth 1 "$private_url" "+refs/heads/nomad-dev:refs/trusted/nomad-dev"; }
+          git show refs/trusted/nomad-dev:scripts/export-public-ci.py > "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py"
+          exporter=$(git rev-parse refs/trusted/nomad-dev:scripts/export-public-ci.py)
 
           export_one() {
             local branch=$1 head=$2 pr=$3 current source states scan message commit workflow name state description
             current=$(git ls-remote "$public_url" "refs/heads/$branch" | cut -f1) || return 1
             if [ -n "$current" ]; then
               source=$(gh api "repos/${PUBLIC_REPO}/commits/${current}" --jq .commit.message) || return 1
-              if grep -qx "Source-Commit: ${head}" <<<"$source"; then return 0; fi
+              if [ "$FORCE" != true ] && grep -qx "Source-Commit: ${head}" <<<"$source" && grep -qx "Exporter-Blob: ${exporter}" <<<"$source"; then return 0; fi
             fi
             # Finished commits lose their branch to the cleanup sweep, so their statuses stop a re-export.
             states=$(gh api "repos/${REPOSITORY}/commits/${head}/status?per_page=100" --jq '[.statuses[] | select(.context | startswith("public-ci/")) | .state] | unique | join(" ")') || return 1
-            if [ "$FORCE" != true ] && [ -n "$states" ] && ! grep -qw pending <<<"$states"; then return 0; fi
+            if [ "$FORCE" != true ] && [ -z "$current" ] && [ -n "$states" ] && ! grep -qw pending <<<"$states"; then return 0; fi
             git fetch -q --no-tags --depth 1 "$private_url" "$head" || { sleep 3; git fetch -q --no-tags --depth 1 "$private_url" "$head"; } || return 1
             git checkout -q --detach FETCH_HEAD || return 1
             [ -n "$(git ls-tree -d HEAD .github/public-ci/workflows)" ] || { echo "::warning::no public CI workflows on ${branch}; skipped"; return 0; }
-            mkdir -p "$GITHUB_WORKSPACE/.trusted-export" || return 1
-            git fetch -q --no-tags --depth 1 "$private_url" "+refs/heads/nomad-dev:refs/trusted/nomad-dev" || { sleep 3; git fetch -q --no-tags --depth 1 "$private_url" "+refs/heads/nomad-dev:refs/trusted/nomad-dev"; } || return 1
-            git show refs/trusted/nomad-dev:scripts/export-public-ci.py > "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
             : > "$work/changed.txt"
             if [ -n "$pr" ]; then
               gh api --paginate "repos/${REPOSITORY}/pulls/${pr}/files" --jq '.[] | .filename, (.previous_filename // empty)' > "$work/changed.txt" || return 1
@@ -81,7 +82,7 @@ jobs:
               echo "::error::secret-like pattern found in ${head}; refusing public export; run git grep on that commit privately"
               return 1
             fi
-            message=$(printf 'Commonwealth Online %s\n\nSource-Commit: %s' "$branch" "$head")
+            message=$(printf 'Commonwealth Online %s\n\nSource-Commit: %s\nExporter-Blob: %s' "$branch" "$head" "$exporter")
             commit=$(PUBLIC_CI_CHANGED_FILE="$work/changed.txt" PUBLIC_CI_SKIPPED_FILE="$work/skipped.txt" PUBLIC_CI_BLOCKED_FILE="$work/blocked.txt" PUBLIC_CI_WINDOWS_ONLY_FILE="$work/windows.txt" python3 "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" HEAD "$message") || return 1
             for workflow in $(grep -l 'context="public-ci/' .github/public-ci/workflows/*.yml); do
               name=$(basename "$workflow" .yml)
