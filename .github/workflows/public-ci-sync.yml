@@ -48,6 +48,7 @@ jobs:
           private_url="https://x-access-token:${TOKEN}@github.com/${REPOSITORY}.git"
           work="$RUNNER_TEMP/public-ci-sync"
           mkdir -p "$work"
+          git ls-remote --heads "$public_url" 'refs/heads/ci/*' > "$work/public-refs.txt"
           gh api --paginate "repos/${REPOSITORY}/pulls?state=open&per_page=100" --jq ".[] | select(.head.repo.full_name == \"${REPOSITORY}\") | \"\(.number) \(.head.sha)\"" > "$work/prs.txt"
           cut -d' ' -f1 "$work/prs.txt" > "$work/open.txt"
           mkdir -p "$GITHUB_WORKSPACE/.trusted-export"
@@ -57,7 +58,7 @@ jobs:
 
           export_one() {
             local branch=$1 head=$2 pr=$3 current source states scan message commit workflow name state description
-            current=$(git ls-remote "$public_url" "refs/heads/$branch" | cut -f1) || return 1
+            current=$(awk -v ref="refs/heads/$branch" '$2 == ref { print $1 }' "$work/public-refs.txt") || return 1
             if [ -n "$current" ]; then
               source=$(gh api "repos/${PUBLIC_REPO}/commits/${current}" --jq .commit.message) || return 1
               if [ "$FORCE" != true ] && grep -qx "Source-Commit: ${head}" <<<"$source" && grep -qx "Exporter-Blob: ${exporter}" <<<"$source"; then return 0; fi
@@ -112,13 +113,13 @@ jobs:
               failed=1
             fi
           done
-          git ls-remote --heads "$public_url" "refs/heads/ci/pr-*" > "$work/public-prs.txt"
           while IFS=$'\t' read -r _ ref; do
+            case "$ref" in refs/heads/ci/pr-*) ;; *) continue ;; esac
             number=${ref##*/ci/pr-}
             if ! grep -qx "$number" "$work/open.txt"; then
               git push -q "$public_url" --delete "${ref#refs/heads/}" || failed=1
             fi
-          done < "$work/public-prs.txt"
+          done < "$work/public-refs.txt"
           exit "$failed"
 
       - name: Start the next sync
