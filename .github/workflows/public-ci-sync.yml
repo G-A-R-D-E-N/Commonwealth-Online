@@ -47,11 +47,11 @@ jobs:
           private_url="https://x-access-token:${TOKEN}@github.com/${REPOSITORY}.git"
           work="$RUNNER_TEMP/public-ci-sync"
           mkdir -p "$work"
-          gh api --paginate "repos/${REPOSITORY}/pulls?state=open&per_page=100" --jq ".[] | select(.head.repo.full_name == \"${REPOSITORY}\") | \"\(.number) \(.head.sha) \(.base.sha)\"" > "$work/prs.txt"
+          gh api --paginate "repos/${REPOSITORY}/pulls?state=open&per_page=100" --jq ".[] | select(.head.repo.full_name == \"${REPOSITORY}\") | \"\(.number) \(.head.sha)\"" > "$work/prs.txt"
           cut -d' ' -f1 "$work/prs.txt" > "$work/open.txt"
 
           export_one() {
-            local branch=$1 head=$2 base=$3 pr=$4 current source states exporter scan message commit workflow name state description
+            local branch=$1 head=$2 pr=$3 current source states scan message commit workflow name state description
             current=$(git ls-remote "$public_url" "refs/heads/$branch" | cut -f1) || return 1
             if [ -n "$current" ]; then
               source=$(gh api "repos/${PUBLIC_REPO}/commits/${current}" --jq .commit.message) || return 1
@@ -62,23 +62,18 @@ jobs:
             if [ "$FORCE" != true ] && [ -n "$states" ] && ! grep -qw pending <<<"$states"; then return 0; fi
             git fetch -q --no-tags --depth 1 "$private_url" "$head" || return 1
             git checkout -q --detach FETCH_HEAD || return 1
+            [ -n "$(git ls-tree -d HEAD .github/public-ci/workflows)" ] || { echo "::warning::no public CI workflows on ${branch}; skipped"; return 0; }
             mkdir -p "$GITHUB_WORKSPACE/.trusted-export" || return 1
-            if [ -n "$base" ]; then
-              git fetch -q --no-tags --depth 1 "$private_url" "$base" || return 1
-              # PR 700 brings the exporter its own tree needs; remove this exception once it merges.
-              exporter=$base; [ "$pr" != 700 ] || exporter=$head
-              git cat-file -e "$exporter:scripts/export-public-ci.py" 2>/dev/null || { echo "::warning::no exporter on the base of #${pr}; skipped"; return 0; }
-              git show "$exporter:scripts/export-public-ci.py" > "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
-            else
-              [ -f scripts/export-public-ci.py ] || { echo "::warning::no exporter in ${branch}; skipped"; return 0; }
-              cp scripts/export-public-ci.py "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
-            fi
+            git fetch -q --no-tags --depth 1 "$private_url" "+refs/heads/nomad-dev:refs/trusted/nomad-dev" || return 1
+            git show refs/trusted/nomad-dev:scripts/export-public-ci.py > "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" || return 1
             : > "$work/changed.txt"
             if [ -n "$pr" ]; then
               gh api --paginate "repos/${REPOSITORY}/pulls/${pr}/files" --jq '.[] | .filename, (.previous_filename // empty)' > "$work/changed.txt" || return 1
               [ "$(wc -l < "$work/changed.txt")" -lt 2900 ] || : > "$work/changed.txt"
             fi
             : > "$work/skipped.txt"
+            : > "$work/blocked.txt"
+            : > "$work/windows.txt"
             scan=0; git grep -q -E -e '-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----' -e 'gh[opsru]_[A-Za-z0-9]{30,}' -e 'github_pat_[A-Za-z0-9_]{20,}' -e 'sk-live-[A-Za-z0-9]{20,}' -e 'xox[baprs]-[A-Za-z0-9-]{10,}' HEAD -- . ':!scripts/export-public-ci.py' ':!.github/public-ci/sync/public-ci-sync.yml' || scan=$?
             [ "$scan" -le 1 ] || return 1
             if [ "$scan" = 0 ]; then
@@ -86,11 +81,13 @@ jobs:
               return 1
             fi
             message=$(printf 'Commonwealth Online %s\n\nSource-Commit: %s' "$branch" "$head")
-            commit=$(PUBLIC_CI_CHANGED_FILE="$work/changed.txt" PUBLIC_CI_SKIPPED_FILE="$work/skipped.txt" python3 "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" HEAD "$message") || return 1
+            commit=$(PUBLIC_CI_CHANGED_FILE="$work/changed.txt" PUBLIC_CI_SKIPPED_FILE="$work/skipped.txt" PUBLIC_CI_BLOCKED_FILE="$work/blocked.txt" PUBLIC_CI_WINDOWS_ONLY_FILE="$work/windows.txt" python3 "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" HEAD "$message") || return 1
             for workflow in $(grep -l 'context="public-ci/' .github/public-ci/workflows/*.yml); do
               name=$(basename "$workflow" .yml)
               state=pending; description="Building on GitHub-hosted runners"
-              if grep -qx "$name" "$work/skipped.txt"; then state=success; description="Not affected by the files this PR changes"; fi
+              if grep -qx "$name" "$work/blocked.txt"; then state=failure; description="Blocked: compiles on Linux without the linux-compile marker"
+              elif grep -qx "$name" "$work/windows.txt"; then state=success; description="Runs on Windows only"
+              elif grep -qx "$name" "$work/skipped.txt"; then state=success; description="Not affected by the files this PR changes"; fi
               gh api "repos/${REPOSITORY}/statuses/${head}" -f state="$state" -f context="public-ci/${name}" \
                 -f target_url="https://github.com/${PUBLIC_REPO}/actions?query=branch%3A${branch}" \
                 -f description="$description" >/dev/null || return 1
@@ -100,15 +97,15 @@ jobs:
           }
 
           failed=0
-          while IFS=' ' read -r pr head base; do
-            if ! export_one "ci/pr-${pr}" "$head" "$base" "$pr"; then
+          while IFS=' ' read -r pr head; do
+            if ! export_one "ci/pr-${pr}" "$head" "$pr"; then
               echo "::error::export failed for PR #${pr}"
               failed=1
             fi
           done < "$work/prs.txt"
           for branch in main nomad-dev; do
             head=$(gh api "repos/${REPOSITORY}/git/ref/heads/${branch}" --jq .object.sha) || { echo "::error::cannot read ${branch}"; failed=1; continue; }
-            if ! export_one "ci/${branch}" "$head" "" ""; then
+            if ! export_one "ci/${branch}" "$head" ""; then
               echo "::error::export failed for ${branch}"
               failed=1
             fi
