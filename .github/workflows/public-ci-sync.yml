@@ -57,15 +57,17 @@ jobs:
           exporter=$(git rev-parse refs/trusted/nomad-dev:scripts/export-public-ci.py)
 
           export_one() {
-            local branch=$1 head=$2 pr=$3 current source states scan message commit workflow name state description
+            local branch=$1 head=$2 pr=$3 current source states revision scan message commit workflow name state description
             current=$(awk -v ref="refs/heads/$branch" '$2 == ref { print $1 }' "$work/public-refs.txt") || return 1
             if [ -n "$current" ]; then
               source=$(gh api "repos/${PUBLIC_REPO}/commits/${current}" --jq .commit.message) || return 1
               if [ "$FORCE" != true ] && grep -qx "Source-Commit: ${head}" <<<"$source" && grep -qx "Exporter-Blob: ${exporter}" <<<"$source"; then return 0; fi
             fi
-            # Finished commits lose their branch to the cleanup sweep, so their statuses stop a re-export.
-            states=$(gh api "repos/${REPOSITORY}/commits/${head}/status?per_page=100" --jq '[.statuses[] | select(.context | startswith("public-ci/")) | .state] | unique | join(" ")') || return 1
-            if [ "$FORCE" != true ] && [ -z "$current" ] && [ -n "$states" ] && ! grep -qw pending <<<"$states"; then return 0; fi
+            states=$(gh api "repos/${REPOSITORY}/commits/${head}/status?per_page=100" --jq '[.statuses[] | select((.context | startswith("public-ci/")) and .context != "public-ci/export-revision") | .state] | unique | join(" ")') || return 1
+            if [ "$FORCE" != true ] && [ -n "$pr" ] && [ -z "$current" ] && [ -n "$states" ] && ! grep -qw pending <<<"$states"; then
+              revision=$(gh api "repos/${REPOSITORY}/commits/${head}/status?per_page=100" --jq '[.statuses[] | select(.context == "public-ci/export-revision") | .description][0] // ""') || return 1
+              if [ "$revision" = "Exporter ${exporter}" ]; then return 0; fi
+            fi
             git fetch -q --no-tags --depth 1 "$private_url" "$head" || { sleep 3; git fetch -q --no-tags --depth 1 "$private_url" "$head"; } || return 1
             git checkout -q --detach FETCH_HEAD || return 1
             [ -n "$(git ls-tree -d HEAD .github/public-ci/workflows)" ] || { echo "::warning::no public CI workflows on ${branch}; skipped"; return 0; }
@@ -96,6 +98,9 @@ jobs:
                 -f description="$description" >/dev/null || return 1
             done
             git push -q --force "https://x-access-token:${TOKEN}@github.com/${PUBLIC_REPO}.git" "${commit}:refs/heads/${branch}" || return 1
+            gh api "repos/${REPOSITORY}/statuses/${head}" -f state=success -f context="public-ci/export-revision" \
+              -f target_url="https://github.com/${PUBLIC_REPO}/actions?query=branch%3A${branch}" \
+              -f description="Exporter ${exporter}" >/dev/null || return 1
             echo "exported ${head:0:8} as ${commit:0:8} to ${PUBLIC_REPO} ${branch}"
           }
 
