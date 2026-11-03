@@ -25,7 +25,12 @@
       "machineURL": "CommonwealthOnlineMultiplayer",
       "discordURL": "https://discord.com/invite/GyfxYG2gzH",
       "websiteURL": "",
-      "nexusCollection": null
+      "nexusCollection": {
+        "collectionId": "538685",
+        "slug": "uhnhzj",
+        "domainName": "fallout4",
+        "lastRevisionNumber": 1
+      }
     },
     "download_metadata": {
       "Hash": "pAxwz1WR0C0=",
