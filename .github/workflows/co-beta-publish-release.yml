@@ -120,7 +120,7 @@ jobs:
         run: |
           set -euo pipefail
           actual="$(git hash-object CO-BETA/ci/package-release.sh)"
-          test "$actual" = fc952f5314cea0ad84e88ef23bbba42cee2c5bca || {
+          test "$actual" = ad77a162264360c27b77a010417e5aae2922ed28 || {
             echo "::error::The selected ref does not have the reviewed packaging script. Update the release workflow after reviewing its packaging script; older scripts can build game DLLs on Linux."
             exit 1
           }
@@ -375,9 +375,9 @@ jobs:
           GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
         run: |
           set -euo pipefail
-          name=PrismaUI_F4-runtime-a036340eb2d8f44266690ce86c8f7a1ddc517ef3e01b1adbd8848bce8753d1bb.zip
-          gh release download prisma-runtime-input -R G-A-R-D-E-N/Commonwealth-Online-Private --pattern "$name" --dir "$RUNNER_TEMP"
-          printf '%s  %s\n' a036340eb2d8f44266690ce86c8f7a1ddc517ef3e01b1adbd8848bce8753d1bb "$RUNNER_TEMP/$name" | sha256sum -c -
+          name=PrismaUI_F4-2.2.0-Fallout4-OG-AE.zip
+          gh release download framework-v2.2.0.6 -R PRISMA-USER-INTERFACE-FRAMEWORK/Prisma-Matrix --pattern "$name" --dir "$RUNNER_TEMP"
+          printf '%s  %s\n' ee03646c8e3bc534ded384fa3c20e66993e0fd5e63e596dbad17d5bc50295ee0 "$RUNNER_TEMP/$name" | sha256sum -c -
 
       - name: Build and package the release assets
         env:
@@ -385,7 +385,7 @@ jobs:
           CO_OUT: ${{ github.workspace }}/release-out
           CO_BUILD_HOST_PACKAGES: '0'
           CO_WINDOWS_DLLS: ${{ runner.temp }}/windows-dlls
-          CO_PRISMA_RUNTIME: ${{ runner.temp }}/PrismaUI_F4-runtime-a036340eb2d8f44266690ce86c8f7a1ddc517ef3e01b1adbd8848bce8753d1bb.zip
+          CO_PRISMA_RUNTIME: ${{ runner.temp }}/PrismaUI_F4-2.2.0-Fallout4-OG-AE.zip
         run: bash CO-BETA/ci/package-release.sh
 
       - name: Send the packages to the next jobs
