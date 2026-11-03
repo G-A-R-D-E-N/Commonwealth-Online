@@ -25,11 +25,6 @@ on:
         required: false
         default: false
         type: boolean
-      build_ui:
-        description: "Required, must stay true: latest.json (schema 2) needs the CommonwealthOnlineUI archive. The run fails early when false."
-        required: false
-        default: true
-        type: boolean
       skip_green_check:
         description: "Owner only: publish even though public CI has not passed on this commit"
         required: false
@@ -88,7 +83,6 @@ jobs:
     steps:
       - name: Check the dispatch inputs
         env:
-          BUILD_UI: ${{ inputs.build_ui }}
           MIN_LAUNCHER: ${{ inputs.min_launcher }}
           INPUT_VERSION: ${{ inputs.version }}
           INPUT_TARGET: ${{ inputs.target }}
@@ -100,10 +94,6 @@ jobs:
           fi
           if ! printf '%s' "$INPUT_TARGET" | grep -Eq '^[A-Za-z0-9._/-]+$'; then
             echo "::error::target must be a plain branch, tag or sha"
-            exit 1
-          fi
-          if [ "$BUILD_UI" != "true" ]; then
-            echo "::error::build_ui must be true: latest.json (schema 2) needs the CommonwealthOnlineUI archive"
             exit 1
           fi
           if [ -n "$MIN_LAUNCHER" ] && ! printf '%s' "$MIN_LAUNCHER" | grep -Eq '^[0-9]+(\.[0-9]+)*$'; then
@@ -130,7 +120,7 @@ jobs:
         run: |
           set -euo pipefail
           actual="$(git hash-object CO-BETA/ci/package-release.sh)"
-          test "$actual" = a7179d6051a755de80cd11c5f651bb2cc287e75e || {
+          test "$actual" = ad77a162264360c27b77a010417e5aae2922ed28 || {
             echo "::error::The selected ref does not have the reviewed packaging script. Update the release workflow after reviewing its packaging script; older scripts can build game DLLs on Linux."
             exit 1
           }
@@ -385,18 +375,17 @@ jobs:
           GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
         run: |
           set -euo pipefail
-          name=PrismaUI_F4-runtime-a036340eb2d8f44266690ce86c8f7a1ddc517ef3e01b1adbd8848bce8753d1bb.zip
-          gh release download prisma-runtime-input -R G-A-R-D-E-N/Commonwealth-Online-Private --pattern "$name" --dir "$RUNNER_TEMP"
-          printf '%s  %s\n' a036340eb2d8f44266690ce86c8f7a1ddc517ef3e01b1adbd8848bce8753d1bb "$RUNNER_TEMP/$name" | sha256sum -c -
+          name=PrismaUI_F4-2.2.0-Fallout4-OG-AE.zip
+          gh release download framework-v2.2.0.6 -R PRISMA-USER-INTERFACE-FRAMEWORK/Prisma-Matrix --pattern "$name" --dir "$RUNNER_TEMP"
+          printf '%s  %s\n' ee03646c8e3bc534ded384fa3c20e66993e0fd5e63e596dbad17d5bc50295ee0 "$RUNNER_TEMP/$name" | sha256sum -c -
 
       - name: Build and package the release assets
         env:
           CO_VERSION: ${{ env.RELEASE_TAG }}
           CO_OUT: ${{ github.workspace }}/release-out
-          CO_BUILD_UI: ${{ inputs.build_ui && '1' || '0' }}
           CO_BUILD_HOST_PACKAGES: '0'
           CO_WINDOWS_DLLS: ${{ runner.temp }}/windows-dlls
-          CO_PRISMA_RUNTIME: ${{ runner.temp }}/PrismaUI_F4-runtime-a036340eb2d8f44266690ce86c8f7a1ddc517ef3e01b1adbd8848bce8753d1bb.zip
+          CO_PRISMA_RUNTIME: ${{ runner.temp }}/PrismaUI_F4-2.2.0-Fallout4-OG-AE.zip
         run: bash CO-BETA/ci/package-release.sh
 
       - name: Send the packages to the next jobs
@@ -556,6 +545,14 @@ jobs:
           fi
           mapfile -t assets < public-assets.txt
           gh release upload "$RELEASE_TAG" -R "$PUBLIC_RELEASE_REPO" "${assets[@]}" --clobber
+          if [ -f "release-out/CommonwealthOnline-$RELEASE_TAG.zip" ]; then
+            gh release view "$RELEASE_TAG" -R "$PUBLIC_RELEASE_REPO" --json assets --jq '.assets[].name' > existing-assets.txt
+            for old in "CommonwealthOnline-OG-$RELEASE_TAG.zip" "CommonwealthOnline-NG-$RELEASE_TAG.zip" "CommonwealthOnline-AE-$RELEASE_TAG.zip" "CommonwealthOnlineUI-$RELEASE_TAG.zip"; do
+              if grep -Fxq "$old" existing-assets.txt; then
+                gh release delete-asset "$RELEASE_TAG" "$old" -R "$PUBLIC_RELEASE_REPO" --yes
+              fi
+            done
+          fi
           echo "Public release: https://github.com/$PUBLIC_RELEASE_REPO/releases/tag/$RELEASE_TAG" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Summarize
