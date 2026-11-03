@@ -376,7 +376,7 @@ jobs:
         run: |
           set -euo pipefail
           name=PrismaUI_F4-2.2.0-Fallout4-OG-AE.zip
-          gh release download framework-v2.2.0.6 -R PRISMA-USER-INTERFACE-FRAMEWORK/Prisma-Matrix --pattern "$name" --dir "$RUNNER_TEMP"
+          gh release download prisma-runtime-input -R G-A-R-D-E-N/Commonwealth-Online-Private --pattern "$name" --dir "$RUNNER_TEMP"
           printf '%s  %s\n' ee03646c8e3bc534ded384fa3c20e66993e0fd5e63e596dbad17d5bc50295ee0 "$RUNNER_TEMP/$name" | sha256sum -c -
 
       - name: Build and package the release assets
