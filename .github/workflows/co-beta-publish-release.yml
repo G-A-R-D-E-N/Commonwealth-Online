@@ -35,6 +35,11 @@ on:
         required: false
         default: ""
         type: string
+      resume_transfer_tag:
+        description: "Resume an earlier run: its transfer release tag, e.g. ci-dlls-41767194690-1. Only the outputs that are missing from it are built again."
+        required: false
+        default: ""
+        type: string
 
 permissions:
   actions: read
@@ -75,19 +80,27 @@ jobs:
     timeout-minutes: 10
     env:
       PRIVATE_REPO: G-A-R-D-E-N/Commonwealth-Online-Private
-      DLL_TAG: ci-dlls-${{ github.run_id }}-${{ github.run_attempt }}
+      DLL_TAG: ${{ inputs.resume_transfer_tag || format('ci-dlls-{0}-{1}', github.run_id, github.run_attempt) }}
     outputs:
       sha: ${{ steps.source.outputs.sha }}
       transfer_tag: ${{ steps.source.outputs.transfer_tag }}
-      transfer_attempt: ${{ steps.source.outputs.transfer_attempt }}
+      dll_matrix: ${{ steps.plan.outputs.dll_matrix }}
+      host_platforms: ${{ steps.plan.outputs.host_platforms }}
+      need_package: ${{ steps.plan.outputs.need_package }}
+      need_launcher: ${{ steps.plan.outputs.need_launcher }}
     steps:
       - name: Check the dispatch inputs
         env:
           MIN_LAUNCHER: ${{ inputs.min_launcher }}
           INPUT_VERSION: ${{ inputs.version }}
           INPUT_TARGET: ${{ inputs.target }}
+          INPUT_RESUME: ${{ inputs.resume_transfer_tag }}
         run: |
           set -euo pipefail
+          if [ -n "$INPUT_RESUME" ] && ! printf '%s' "$INPUT_RESUME" | grep -Eq '^ci-dlls-[0-9]+-[0-9]+$'; then
+            echo "::error::resume_transfer_tag must look like ci-dlls-<run id>-<attempt>, got $INPUT_RESUME"
+            exit 1
+          fi
           if ! printf '%s' "$INPUT_VERSION" | grep -Eq '^[0-9]+(\.[0-9]+){2,3}$'; then
             echo "::error::version must be 3 or 4 dotted digits, got $INPUT_VERSION"
             exit 1
@@ -114,7 +127,6 @@ jobs:
         run: |
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "transfer_tag=$DLL_TAG" >> "$GITHUB_OUTPUT"
-          echo "transfer_attempt=$GITHUB_RUN_ATTEMPT" >> "$GITHUB_OUTPUT"
 
       - name: Verify the packaging script uses prebuilt Windows DLLs
         run: |
@@ -151,25 +163,63 @@ jobs:
             exit 1
           fi
 
-      - name: Create the transfer release
+      - name: Create or reuse the transfer release
         env:
           GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.source.outputs.sha }}
+          RESUME: ${{ inputs.resume_transfer_tag }}
         run: |
-          gh release view "$DLL_TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
-            || gh release create "$DLL_TAG" -R "$GITHUB_REPOSITORY" --draft --title "$DLL_TAG" \
-              --notes "Build transfer between release jobs; deleted when this release publishes."
+          set -euo pipefail
+          if notes="$(gh release view "$DLL_TAG" -R "$GITHUB_REPOSITORY" --json body --jq .body 2>/dev/null)"; then
+            if grep -q '^source-sha: ' <<<"$notes"; then
+              grep -qx "source-sha: $SHA" <<<"$notes" \
+                || { echo "::error::$DLL_TAG was built from a different commit than $SHA"; exit 1; }
+            elif [ -n "$RESUME" ]; then
+              echo "::warning::$DLL_TAG does not record its source commit; trusting that target $SHA is the commit it was built from"
+            fi
+          else
+            [ -z "$RESUME" ] || { echo "::error::transfer release $RESUME does not exist"; exit 1; }
+            gh release create "$DLL_TAG" -R "$GITHUB_REPOSITORY" --draft --title "$DLL_TAG" \
+              --notes "$(printf 'Build transfer between release jobs; deleted when this release publishes.\nsource-sha: %s' "$SHA")"
+          fi
+
+      - name: Plan which outputs still need building
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          have="$(gh release view "$DLL_TAG" -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[] | select(.state == "uploaded") | .name')"
+          has() { grep -Fxq "$1" <<<"$have"; }
+          dlls="$(jq -nc --arg have "$have" '[{file:"CommonwealthOnline.dll",project:"CO-BETA/plugin",target:"CommonwealthOnline"},{file:"commonwealth_online_gns_bridge.dll",project:"CO-BETA/plugin",target:"bridge"}] | map(select(.file as $f | ($have | split("\n") | index($f)) | not))')"
+          hosts="$(jq -nc --arg have "$have" --arg v "$VERSION" '["linux-x64","win-x64"] | map(select(. as $p | ($have | split("\n") | index("CommonwealthOnline.Host-\($p)-\($v).tar.gz")) | not))')"
+          need_package=true; if has "CommonwealthOnline-$VERSION.zip"; then need_package=false; fi
+          need_launcher=true; if has "CommonwealthOnline-Launcher-$VERSION.zip"; then need_launcher=false; fi
+          {
+            echo "dll_matrix=$dlls"
+            echo "host_platforms=$hosts"
+            echo "need_package=$need_package"
+            echo "need_launcher=$need_launcher"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "## Build plan for $DLL_TAG"
+            echo "- DLLs to build: $dlls"
+            echo "- Servers to build: $hosts"
+            echo "- Build the mod package: $need_package"
+            echo "- Build the launcher: $need_launcher"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   windows-dlls:
     name: Build ${{ matrix.file }} (MSVC)
     needs: source
+    if: needs.source.outputs.dll_matrix != '[]'
     runs-on: windows-latest
     timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - { file: CommonwealthOnline.dll, project: CO-BETA/plugin, target: CommonwealthOnline }
-          - { file: commonwealth_online_gns_bridge.dll, project: CO-BETA/plugin, target: bridge }
+        include: ${{ fromJSON(needs.source.outputs.dll_matrix) }}
     env:
       DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
       COMMONLIB_MIRROR: ${{ vars.COMMONLIB_MIRROR }}
@@ -243,12 +293,13 @@ jobs:
   host:
     name: Build the ${{ matrix.platform }} server
     needs: source
+    if: needs.source.outputs.host_platforms != '[]'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
-        platform: [linux-x64, win-x64]
+        platform: ${{ fromJSON(needs.source.outputs.host_platforms) }}
     env:
       DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
       XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
@@ -305,6 +356,7 @@ jobs:
   package:
     name: Build the mod packages
     needs: [source, windows-dlls]
+    if: ${{ !cancelled() && needs.source.result == 'success' && needs.windows-dlls.result != 'failure' && needs.source.outputs.need_package == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
@@ -395,14 +447,23 @@ jobs:
 
   launcher:
     name: Build the launcher
-    needs: source
+    needs: [source, host]
+    if: ${{ !cancelled() && needs.source.result == 'success' && needs.source.outputs.need_launcher == 'true' }}
     runs-on: windows-latest
     timeout-minutes: 60
     env:
       DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
-      TRANSFER_ATTEMPT: ${{ needs.source.outputs.transfer_attempt }}
       RELEASE_TAG: ${{ inputs.version }}
     steps:
+      - name: Require the Windows server package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          name="CommonwealthOnline.Host-win-x64-$RELEASE_TAG.tar.gz"
+          state="$(gh release view "$DLL_TAG" -R "$GITHUB_REPOSITORY" --json assets --jq ".assets[] | select(.name == \"$name\") | .state")"
+          [ "$state" = uploaded ] || { echo "::error::$name is not in $DLL_TAG; build the Windows server first"; exit 1; }
+
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: G-A-R-D-E-N/Commonwealth-Online-Private
@@ -411,32 +472,10 @@ jobs:
           submodules: false
           persist-credentials: false
 
-      - name: Compile the launcher while the server builds
+      - name: Compile the launcher
         env:
           CO_LAUNCHER_VERSION: ${{ inputs.version }}
         run: cargo build --release -p launcher-gui --manifest-path CO-Launcher/Cargo.toml --target-dir "$RUNNER_TEMP/launcher-target"
-
-      - name: Wait for the Windows server package
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          name="CommonwealthOnline.Host-win-x64-$RELEASE_TAG.tar.gz"
-          for _ in $(seq 90); do
-            job="$(gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?filter=all&per_page=100" --jq '[.[].jobs[] | select(.name == "Build the win-x64 server")] | max_by(.run_attempt) | select(. != null) | [.run_attempt, .status, .conclusion] | @tsv' || true)"
-            read -r attempt status conclusion <<< "$job"
-            if [ "$status" = completed ] && [ "$conclusion" = success ] &&
-               { [ "$attempt" = "$GITHUB_RUN_ATTEMPT" ] || [ "$TRANSFER_ATTEMPT" != "$GITHUB_RUN_ATTEMPT" ]; }; then
-              state="$(gh release view "$DLL_TAG" -R "$GITHUB_REPOSITORY" --json assets --jq ".assets[] | select(.name == \"$name\") | .state" || true)"
-              if [ "$state" = uploaded ]; then exit 0; fi
-            elif [ "$status" = completed ] && [ "${attempt:-0}" = "$GITHUB_RUN_ATTEMPT" ]; then
-              echo "::error::Windows server job finished with $conclusion"
-              exit 1
-            fi
-            sleep 30
-          done
-          echo "::error::Windows server job or $name did not complete within 45 minutes"
-          exit 1
 
       - name: Build the launcher with the server inside
         shell: pwsh
@@ -462,6 +501,7 @@ jobs:
   publish:
     name: Publish ${{ inputs.version }}
     needs: [source, host, package, launcher]
+    if: ${{ !cancelled() && needs.source.result == 'success' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     environment: release
@@ -484,7 +524,12 @@ jobs:
       - name: Download the packages and launcher
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release download "$DLL_TAG" -R "$GITHUB_REPOSITORY" --pattern '*.zip' --pattern '*.tar.gz' --dir release-out
+        run: |
+          set -euo pipefail
+          gh release download "$DLL_TAG" -R "$GITHUB_REPOSITORY" --pattern '*.zip' --pattern '*.tar.gz' --dir release-out
+          for asset in "CommonwealthOnline-$RELEASE_TAG.zip" "CommonwealthOnline-Launcher-$RELEASE_TAG.zip" "CommonwealthOnline.Host-linux-x64-$RELEASE_TAG.tar.gz" "CommonwealthOnline.Host-win-x64-$RELEASE_TAG.tar.gz"; do
+            test -s "release-out/$asset" || { echo "::error::$asset is missing from $DLL_TAG"; exit 1; }
+          done
 
       - name: Write latest.json
         env:
