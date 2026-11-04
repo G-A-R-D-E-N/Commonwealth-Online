@@ -49,7 +49,7 @@ jobs:
           work="$RUNNER_TEMP/public-ci-sync"
           mkdir -p "$work"
           git ls-remote --heads "$public_url" 'refs/heads/ci/*' > "$work/public-refs.txt"
-          gh api --paginate "repos/${REPOSITORY}/pulls?state=open&per_page=100" --jq ".[] | select(.head.repo.full_name == \"${REPOSITORY}\" and .head.ref != \"nomad-dev\" and .head.ref != \"main\") | \"\(.number) \(.head.sha)\"" > "$work/prs.txt"
+          gh api --paginate "repos/${REPOSITORY}/pulls?state=open&per_page=100" --jq ".[] | select(.head.repo.full_name == \"${REPOSITORY}\" and .head.ref != \"nomad-dev\" and .head.ref != \"main\" and .draft == false) | \"\(.number) \(.head.sha)\"" > "$work/prs.txt"
           cut -d' ' -f1 "$work/prs.txt" > "$work/open.txt"
           mkdir -p "$GITHUB_WORKSPACE/.trusted-export"
           git fetch -q --no-tags --depth 1 "$private_url" "+refs/heads/nomad-dev:refs/trusted/nomad-dev" || { sleep 3; git fetch -q --no-tags --depth 1 "$private_url" "+refs/heads/nomad-dev:refs/trusted/nomad-dev"; }
