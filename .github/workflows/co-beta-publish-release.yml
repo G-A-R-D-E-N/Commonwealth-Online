@@ -375,9 +375,9 @@ jobs:
           GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
         run: |
           set -euo pipefail
-          name=PrismaUI_F4-2.2.0-Fallout4-OG-AE.zip
+          name=PrismaUI_F4-2.2.0.7-Fallout4-OG-AE.zip
           gh release download prisma-runtime-input -R G-A-R-D-E-N/Commonwealth-Online-Private --pattern "$name" --dir "$RUNNER_TEMP"
-          printf '%s  %s\n' ee03646c8e3bc534ded384fa3c20e66993e0fd5e63e596dbad17d5bc50295ee0 "$RUNNER_TEMP/$name" | sha256sum -c -
+          printf '%s  %s\n' 4ca83f40384a76c02dcc94e16cde68cb615c121be19a390e15a096ee13ca7189 "$RUNNER_TEMP/$name" | sha256sum -c -
 
       - name: Build and package the release assets
         env:
@@ -385,7 +385,7 @@ jobs:
           CO_OUT: ${{ github.workspace }}/release-out
           CO_BUILD_HOST_PACKAGES: '0'
           CO_WINDOWS_DLLS: ${{ runner.temp }}/windows-dlls
-          CO_PRISMA_RUNTIME: ${{ runner.temp }}/PrismaUI_F4-2.2.0-Fallout4-OG-AE.zip
+          CO_PRISMA_RUNTIME: ${{ runner.temp }}/PrismaUI_F4-2.2.0.7-Fallout4-OG-AE.zip
         run: bash CO-BETA/ci/package-release.sh
 
       - name: Send the packages to the next jobs
@@ -423,7 +423,7 @@ jobs:
           set -euo pipefail
           name="CommonwealthOnline.Host-win-x64-$RELEASE_TAG.tar.gz"
           for _ in $(seq 90); do
-            job="$(gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?filter=all&per_page=100" --jq '.jobs[] | select(.name == "Build the win-x64 server") | [.run_attempt, .status, .conclusion] | @tsv' | sort -nr | head -n 1 || true)"
+            job="$(gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?filter=all&per_page=100" --jq '[.[].jobs[] | select(.name == "Build the win-x64 server")] | max_by(.run_attempt) | select(. != null) | [.run_attempt, .status, .conclusion] | @tsv' || true)"
             read -r attempt status conclusion <<< "$job"
             if [ "$status" = completed ] && [ "$conclusion" = success ] &&
                { [ "$attempt" = "$GITHUB_RUN_ATTEMPT" ] || [ "$TRANSFER_ATTEMPT" != "$GITHUB_RUN_ATTEMPT" ]; }; then
