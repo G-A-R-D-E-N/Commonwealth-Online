@@ -612,6 +612,7 @@ jobs:
   delete-dll-transfer:
     name: Delete the transfer release
     needs: [source, publish]
+    if: ${{ !cancelled() && needs.source.result == 'success' && needs.publish.result == 'success' }}
     runs-on: ubuntu-24.04
     env:
       DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
