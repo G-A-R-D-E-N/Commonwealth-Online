@@ -111,7 +111,7 @@ jobs:
               failed=1
             fi
           done < "$work/prs.txt"
-          for branch in main; do
+          for branch in main nomad-dev; do
             head=$(gh api "repos/${REPOSITORY}/git/ref/heads/${branch}" --jq .object.sha) || { echo "::error::cannot read ${branch}"; failed=1; continue; }
             if ! export_one "ci/${branch}" "$head" ""; then
               echo "::error::export failed for ${branch}"
