@@ -120,7 +120,7 @@ jobs:
         run: |
           set -euo pipefail
           actual="$(git hash-object CO-BETA/ci/package-release.sh)"
-          test "$actual" = b80fc7a7e88c046ba7abb6ccd4cf60437fa31c97 || {
+          test "$actual" = 974d77ace16915ed411cdba8efe2c7afa136499c || {
             echo "::error::The selected ref does not have the reviewed packaging script. Update the release workflow after reviewing its packaging script; older scripts can build game DLLs on Linux."
             exit 1
           }
@@ -240,6 +240,50 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload "$DLL_TAG" -R "$GITHUB_REPOSITORY" "${{ matrix.file }}" --clobber
 
+  addictol-dlls:
+    name: Build the Addictol plugins (MSVC)
+    needs: source
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: G-A-R-D-E-N/Commonwealth-Online-Private
+          ref: ${{ needs.source.outputs.sha }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          submodules: false
+          persist-credentials: false
+
+      - name: Initialize Addictol and AddictolCrashLogger
+        run: |
+          set -euo pipefail
+          git submodule update --init --recursive -- CO-BETA/ThirdParty/Addictol CO-BETA/ThirdParty/AddictolCrashLogger
+          test -s CO-BETA/ThirdParty/Addictol/xmake.lua
+          test -s CO-BETA/ThirdParty/Addictol/Depends/commonlibf4/xmake.lua
+          test -s CO-BETA/ThirdParty/AddictolCrashLogger/xmake.lua
+          test -s CO-BETA/ThirdParty/AddictolCrashLogger/lib/commonlibf4/xmake.lua
+
+      - name: Add the MSVC environment to PATH
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1
+
+      - name: Set up NASM
+        uses: ilammy/setup-nasm@72793074d3c8cdda771dba85f6deafe00623038b # v1
+        with:
+          version: '3.02'
+
+      - name: Set up xmake
+        uses: G-A-R-D-E-N/Commonwealth-Online/.github/actions/co-xmake@fb68442309ddaab8d1bbeae0aae93c69daac19c2
+
+      - name: Build and audit the Addictol DLLs
+        run: python scripts/windows-addictol-ci.py addictol-out
+
+      - name: Send the DLLs to the package job
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$DLL_TAG" -R "$GITHUB_REPOSITORY" addictol-out/*.dll --clobber
+
   host:
     name: Build the ${{ matrix.platform }} server
     needs: source
@@ -304,7 +348,7 @@ jobs:
 
   package:
     name: Build the mod packages
-    needs: [source, windows-dlls]
+    needs: [source, windows-dlls, addictol-dlls]
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
@@ -366,9 +410,18 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/windows-dlls"
           gh release download "$DLL_TAG" -R "$GITHUB_REPOSITORY" --pattern '*.dll' --dir "$RUNNER_TEMP/windows-dlls"
-          for dll in CommonwealthOnline.dll commonwealth_online_gns_bridge.dll; do
+          for dll in CommonwealthOnline.dll commonwealth_online_gns_bridge.dll Addictol.dll AddictolCrashLogger.dll; do
             test -s "$RUNNER_TEMP/windows-dlls/$dll" || { echo "::error::Windows DLL $dll is missing from $DLL_TAG"; exit 1; }
           done
+
+      - name: Initialize the Addictol license sources
+        run: |
+          set -euo pipefail
+          git submodule update --init -- CO-BETA/ThirdParty/Addictol CO-BETA/ThirdParty/AddictolCrashLogger
+          test -s CO-BETA/ThirdParty/Addictol/LICENSE
+          test -s CO-BETA/ThirdParty/Addictol/EXCEPTIONS
+          test -s CO-BETA/ThirdParty/AddictolCrashLogger/LICENSE
+          test -s CO-BETA/ThirdParty/AddictolCrashLogger/EXCEPTIONS
 
       - name: Download and verify the PrismaUI runtime
         env:
@@ -423,7 +476,7 @@ jobs:
           set -euo pipefail
           name="CommonwealthOnline.Host-win-x64-$RELEASE_TAG.tar.gz"
           for _ in $(seq 90); do
-            job="$(gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?filter=all&per_page=100" --jq '.jobs[] | select(.name == "Build the win-x64 server") | [.run_attempt, .status, .conclusion] | @tsv' | sort -nr | head -n 1 || true)"
+            job="$(gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?filter=all&per_page=100" --jq '[.[].jobs[] | select(.name == "Build the win-x64 server")] | max_by(.run_attempt) | select(. != null) | [.run_attempt, .status, .conclusion] | @tsv' || true)"
             read -r attempt status conclusion <<< "$job"
             if [ "$status" = completed ] && [ "$conclusion" = success ] &&
                { [ "$attempt" = "$GITHUB_RUN_ATTEMPT" ] || [ "$TRANSFER_ATTEMPT" != "$GITHUB_RUN_ATTEMPT" ]; }; then
