@@ -21,7 +21,7 @@
     "links": {
       "image": "https://raw.githubusercontent.com/G-A-R-D-E-N/Commonwealth-Online/main/images/commonwealth-online-multiplayer.png",
       "readme": "https://commonwealth-online.com/",
-      "download": "https://authored-files.wabbajack.org/Default.wabbajack_76f8e982-58b5-4f02-a8fe-f78d16a30a62",
+      "download": "https://authored-files.wabbajack.org/Default.wabbajack_75a24a79-307d-4220-b4ee-93591857b7be",
       "machineURL": "CommonwealthOnlineMultiplayer",
       "discordURL": "https://discord.com/invite/GyfxYG2gzH",
       "websiteURL": "",
@@ -33,17 +33,17 @@
       }
     },
     "download_metadata": {
-      "Hash": "PkKpmPBW9Vs=",
-      "Size": 192037907,
+      "Hash": "TJavqg6gcdU=",
+      "Size": 192185221,
       "NumberOfArchives": 14,
       "SizeOfArchives": 719194915,
-      "NumberOfInstalledFiles": 4095,
-      "SizeOfInstalledFiles": 1023047601,
-      "TotalSize": 1742242516
+      "NumberOfInstalledFiles": 4102,
+      "SizeOfInstalledFiles": 1023289371,
+      "TotalSize": 1742484286
     },
     "version": "2.2.0",
     "dateCreated": "1970-01-01T00:00:00Z",
-    "dateUpdated": "2026-11-05T02:54:11.8707437Z",
+    "dateUpdated": "2026-11-06T03:26:16.5676317Z",
     "repositoryName": ""
   }
 ]
