@@ -1,0 +1,309 @@
+name: Recover Release 0.0.0.12
+
+# Public repo: never add upload-artifact, because public artifacts and logs are world-readable.
+# Build outputs pass between jobs as a draft release, which only people with write access can see.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, e.g. 0.0.0.4 (used in asset names and as the tag)"
+        required: true
+        type: string
+      target:
+        description: "Commit SHA or tag of G-A-R-D-E-N/Commonwealth-Online-Private to build and release (default: nomad-dev)"
+        required: false
+        default: nomad-dev
+        type: string
+      prerelease:
+        description: "Publish as a pre-release"
+        required: false
+        default: true
+        type: boolean
+      draft:
+        description: "Create as a draft"
+        required: false
+        default: false
+        type: boolean
+      skip_green_check:
+        description: "Owner only: publish even though public CI has not passed on this commit"
+        required: false
+        default: false
+        type: boolean
+      min_launcher:
+        description: "Optional minimum launcher version (dotted digits) allowed to install this release. Empty: the default in CO-BETA/ci/make-latest-json.py."
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: co-publish-release-${{ inputs.version }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check-signing-key:
+    name: Check the signing key
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment: release
+    steps:
+      - name: Compare the signing key with the launcher's public key
+        env:
+          CO_UPDATE_SIGNING_KEY: ${{ secrets.CO_UPDATE_SIGNING_KEY }}
+          EXPECTED_UPDATE_PUBLIC_KEY: ${{ vars.CO_UPDATE_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+          actual="$(printf '%s\n' "$CO_UPDATE_SIGNING_KEY" | openssl pkey -pubout -outform DER | tail -c 32 | od -An -tx1 | tr -d ' \n')" \
+            || { echo "::error::CO_UPDATE_SIGNING_KEY is not a PEM private key"; exit 1; }
+          [ "$actual" = "$EXPECTED_UPDATE_PUBLIC_KEY" ] \
+            || { echo "::error::CO_UPDATE_SIGNING_KEY does not match CO_UPDATE_PUBLIC_KEY"; exit 1; }
+
+  source:
+    name: Check the release inputs
+    needs: check-signing-key
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PRIVATE_REPO: G-A-R-D-E-N/Commonwealth-Online-Private
+      DLL_TAG: ci-dlls-42147151687-1
+    outputs:
+      sha: ${{ steps.source.outputs.sha }}
+      transfer_tag: ${{ steps.source.outputs.transfer_tag }}
+      transfer_attempt: ${{ steps.source.outputs.transfer_attempt }}
+    steps:
+      - name: Check the dispatch inputs
+        env:
+          MIN_LAUNCHER: ${{ inputs.min_launcher }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_TARGET: ${{ inputs.target }}
+          INPUT_PRERELEASE: ${{ inputs.prerelease }}
+          INPUT_DRAFT: ${{ inputs.draft }}
+          INPUT_SKIP_GREEN_CHECK: ${{ inputs.skip_green_check }}
+        run: |
+          set -euo pipefail
+          test "$INPUT_VERSION" = 0.0.0.12 && test "$INPUT_TARGET" = c04071468b1bdf00a4fde147e840ae46b3ac5b0a && test "$INPUT_PRERELEASE" = true && test "$INPUT_DRAFT" = false && test "$INPUT_SKIP_GREEN_CHECK" = false && test -z "$MIN_LAUNCHER" || { echo "::error::Recovery inputs must match the original release"; exit 1; }
+          if ! printf '%s' "$INPUT_VERSION" | grep -Eq '^[0-9]+(\.[0-9]+){2,3}$'; then
+            echo "::error::version must be 3 or 4 dotted digits, got $INPUT_VERSION"
+            exit 1
+          fi
+          if ! printf '%s' "$INPUT_TARGET" | grep -Eq '^[A-Za-z0-9._/-]+$'; then
+            echo "::error::target must be a plain branch, tag or sha"
+            exit 1
+          fi
+          if [ -n "$MIN_LAUNCHER" ] && ! printf '%s' "$MIN_LAUNCHER" | grep -Eq '^[0-9]+(\.[0-9]+)*$'; then
+            echo "::error::min_launcher must be dotted digits, got $MIN_LAUNCHER"
+            exit 1
+          fi
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: G-A-R-D-E-N/Commonwealth-Online-Private
+          ref: ${{ inputs.target }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          submodules: false
+          persist-credentials: false
+
+      - name: Record the built commit
+        id: source
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "transfer_tag=$DLL_TAG" >> "$GITHUB_OUTPUT"
+          echo "transfer_attempt=1" >> "$GITHUB_OUTPUT"
+
+      - name: Verify the packaging script uses prebuilt Windows DLLs
+        run: |
+          set -euo pipefail
+          actual="$(git hash-object CO-BETA/ci/package-release.sh)"
+          test "$actual" = 974d77ace16915ed411cdba8efe2c7afa136499c || {
+            echo "::error::The selected ref does not have the reviewed packaging script. Update the release workflow after reviewing its packaging script; older scripts can build game DLLs on Linux."
+            exit 1
+          }
+
+      - name: Verify the original transfer release
+        run: |
+          set -euo pipefail
+          release="$(gh api "repos/$GITHUB_REPOSITORY/releases/436002037")"
+          printf '%s' "$release" | jq -e --arg tag "$DLL_TAG" '.draft == true and .tag_name == $tag' >/dev/null
+          while read -r file digest; do
+            printf '%s' "$release" | jq -e --arg file "$file" --arg digest "sha256:$digest" '.assets | any(.name == $file and .state == "uploaded" and .digest == $digest)' >/dev/null
+          done <<'ASSETS'
+          CommonwealthOnline-0.0.0.12.zip 6a219d4dfe4b30051ab8d6b0d35f87d9482ae4e983e4bc3550df676f0c76a2b9
+          CommonwealthOnline.Host-win-x64-0.0.0.12.tar.gz 6a96f08cb2d4dfb1ffac17e7e45601d80d35027d497aa70a2e7642e2118a93cb
+          CommonwealthOnline.Host-linux-x64-0.0.0.12.tar.gz b866a9622978989baa8794804f0d68f8ddfbc7b5b1c840c7c139294934e3b4e2
+          ASSETS
+          run="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/42147151687")"
+          printf '%s' "$run" | jq -e '.head_sha == "80ef0613b622832a0189bee4e48d68efca5cf315" and .event == "workflow_dispatch" and .path == ".github/workflows/co-beta-publish-release.yml"' >/dev/null
+          jobs="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/42147151687/jobs?per_page=100")"
+          for id in 127661285615 127661322905 127661423043 127661423048 127661423072 127661423097 127661423110 127668287873; do
+            printf '%s' "$jobs" | jq -e --argjson id "$id" '.jobs | any(.id == $id and .conclusion == "success")' >/dev/null
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_VERSION: ${{ inputs.version }}
+
+  launcher:
+    name: Build the launcher
+    needs: source
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
+      TRANSFER_ATTEMPT: ${{ needs.source.outputs.transfer_attempt }}
+      RELEASE_TAG: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: G-A-R-D-E-N/Commonwealth-Online-Private
+          ref: ${{ needs.source.outputs.sha }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          submodules: false
+          persist-credentials: false
+
+      - name: Compile the launcher while the server builds
+        env:
+          CO_LAUNCHER_VERSION: ${{ inputs.version }}
+        run: cargo build --release -p launcher-gui --manifest-path CO-Launcher/Cargo.toml --target-dir "$RUNNER_TEMP/launcher-target"
+
+      - name: Build the launcher with the server inside
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          $tar = Join-Path $env:SystemRoot "System32\tar.exe"
+          $temp = $env:RUNNER_TEMP
+          $server = Join-Path $temp "server"
+          $out = Join-Path $temp "launcher"
+          New-Item -ItemType Directory -Path $server, $out -Force | Out-Null
+          gh release download $env:DLL_TAG -R $env:GITHUB_REPOSITORY --pattern "CommonwealthOnline.Host-win-x64-*.tar.gz" --dir $temp
+          $archive = Join-Path $temp "CommonwealthOnline.Host-win-x64-$env:RELEASE_TAG.tar.gz"
+          & $tar -xzf $archive -C $server
+          $serverZip = Join-Path $temp "CommonwealthOnline-server.zip"
+          $names = @(Get-ChildItem -LiteralPath $server -Name)
+          & $tar -a -cf $serverZip -C $server @names
+          ./CO-Launcher/scripts/package-launcher.ps1 -Version $env:RELEASE_TAG -OutDir $out -ServerZip $serverZip -TargetDir (Join-Path $temp "launcher-target")
+          gh release upload $env:DLL_TAG -R $env:GITHUB_REPOSITORY (Join-Path $out "CommonwealthOnline-Launcher-$env:RELEASE_TAG.zip") --clobber
+
+  publish:
+    name: Publish ${{ inputs.version }}
+    needs: [source, launcher]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: release
+    env:
+      DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
+      RELEASE_TAG: ${{ inputs.version }}
+      PUBLIC_RELEASE_REPO: G-A-R-D-E-N/Commonwealth-Online
+      PUBLIC_RELEASE_BASE: https://github.com/G-A-R-D-E-N/Commonwealth-Online/releases/download/${{ inputs.version }}
+      CO_INPUT_PRERELEASE: ${{ inputs.prerelease && '1' || '0' }}
+      CO_INPUT_DRAFT: ${{ inputs.draft && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: G-A-R-D-E-N/Commonwealth-Online-Private
+          ref: ${{ needs.source.outputs.sha }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          submodules: false
+          persist-credentials: false
+
+      - name: Download the packages and launcher
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release download "$DLL_TAG" -R "$GITHUB_REPOSITORY" --pattern '*.zip' --pattern '*.tar.gz' --dir release-out
+          cd release-out
+          sha256sum -c <<'ASSETS'
+          6a219d4dfe4b30051ab8d6b0d35f87d9482ae4e983e4bc3550df676f0c76a2b9  CommonwealthOnline-0.0.0.12.zip
+          6a96f08cb2d4dfb1ffac17e7e45601d80d35027d497aa70a2e7642e2118a93cb  CommonwealthOnline.Host-win-x64-0.0.0.12.tar.gz
+          b866a9622978989baa8794804f0d68f8ddfbc7b5b1c840c7c139294934e3b4e2  CommonwealthOnline.Host-linux-x64-0.0.0.12.tar.gz
+          ASSETS
+
+      - name: Write latest.json
+        env:
+          MIN_LAUNCHER: ${{ inputs.min_launcher }}
+        run: |
+          set -euo pipefail
+          launcher="release-out/CommonwealthOnline-Launcher-$RELEASE_TAG.zip"
+          args=(--dir release-out --version "$RELEASE_TAG" --base-url "$PUBLIC_RELEASE_BASE")
+          if [ -n "$MIN_LAUNCHER" ]; then args+=(--min-launcher "$MIN_LAUNCHER"); fi
+          if [ -f "$launcher" ]; then args+=(--launcher-zip "$launcher"); fi
+          python3 CO-BETA/ci/make-latest-json.py "${args[@]}"
+          cat release-out/latest.json
+
+      - name: Sign latest.json
+        env:
+          CO_UPDATE_SIGNING_KEY: ${{ secrets.CO_UPDATE_SIGNING_KEY }}
+          EXPECTED_UPDATE_PUBLIC_KEY: ${{ vars.CO_UPDATE_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "$EXPECTED_UPDATE_PUBLIC_KEY" ]; then
+            echo "::error::the CO_UPDATE_PUBLIC_KEY repository variable is not set: it must hold the hex of UPDATE_PUBLIC_KEY in CO-Launcher/launcher-core/src/update/mod.rs so a mismatched signing key cannot publish."
+            exit 1
+          fi
+          if [ -z "$CO_UPDATE_SIGNING_KEY" ]; then
+            echo "::error::CO_UPDATE_SIGNING_KEY is not set: an unsigned release can never be installed by a launcher. Set the secret (CO-BETA/ci/gen-update-key.py) and rerun."
+            exit 1
+          fi
+          args=(release-out/latest.json)
+          args+=(--expect-public-key-hex "$EXPECTED_UPDATE_PUBLIC_KEY")
+          python3 CO-BETA/ci/sign-latest-json.py "${args[@]}"
+          ls -l release-out/latest.json.sig
+
+      - name: Select the public release assets
+        run: |
+          set -euo pipefail
+          python3 CO-BETA/ci/public-release-assets.py release-out > public-assets.txt
+          ls release-out/CommonwealthOnline.Host-*.tar.gz >> public-assets.txt
+          test -s public-assets.txt
+
+      - name: Create or update the public release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          printf 'Commonwealth Online %s. Install through the Commonwealth Online launcher.\n' "$RELEASE_TAG" > public-release-notes.md
+          flags=(--title "$RELEASE_TAG dev build" --notes-file public-release-notes.md)
+          if [ "$CO_INPUT_PRERELEASE" = "1" ]; then
+            flags+=(--prerelease)
+          fi
+          if [ "$CO_INPUT_DRAFT" = "1" ]; then
+            flags+=(--draft)
+          fi
+          if gh release view "$RELEASE_TAG" -R "$PUBLIC_RELEASE_REPO" >/dev/null 2>&1; then
+            echo "public release $RELEASE_TAG already exists; uploading assets"
+            gh release edit "$RELEASE_TAG" -R "$PUBLIC_RELEASE_REPO" "${flags[@]}"
+          else
+            gh release create "$RELEASE_TAG" -R "$PUBLIC_RELEASE_REPO" "${flags[@]}"
+          fi
+          mapfile -t assets < public-assets.txt
+          gh release upload "$RELEASE_TAG" -R "$PUBLIC_RELEASE_REPO" "${assets[@]}" --clobber
+          if [ -f "release-out/CommonwealthOnline-$RELEASE_TAG.zip" ]; then
+            gh release view "$RELEASE_TAG" -R "$PUBLIC_RELEASE_REPO" --json assets --jq '.assets[].name' > existing-assets.txt
+            for old in "CommonwealthOnline-OG-$RELEASE_TAG.zip" "CommonwealthOnline-NG-$RELEASE_TAG.zip" "CommonwealthOnline-AE-$RELEASE_TAG.zip" "CommonwealthOnlineUI-$RELEASE_TAG.zip"; do
+              if grep -Fxq "$old" existing-assets.txt; then
+                gh release delete-asset "$RELEASE_TAG" "$old" -R "$PUBLIC_RELEASE_REPO" --yes
+              fi
+            done
+          fi
+          echo "Public release: https://github.com/$PUBLIC_RELEASE_REPO/releases/tag/$RELEASE_TAG" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Summarize
+        run: |
+          {
+            echo "## Published $RELEASE_TAG"
+            echo
+            echo "Assets:"
+            while read -r asset; do echo "- \`$(basename "$asset")\`"; done < public-assets.txt
+          } >> "$GITHUB_STEP_SUMMARY"
