@@ -476,7 +476,7 @@ jobs:
           set -euo pipefail
           name="CommonwealthOnline.Host-win-x64-$RELEASE_TAG.tar.gz"
           for _ in $(seq 90); do
-            job="$(gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?filter=all&per_page=100" --jq '[.[].jobs[] | select(.name == "Build the win-x64 server")] | max_by(.run_attempt) | select(. != null) | [.run_attempt, .status, .conclusion] | @tsv' || true)"
+            job="$(gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?filter=all&per_page=100" | jq -r '[.[].jobs[] | select(.name == "Build the win-x64 server")] | max_by(.run_attempt) | select(. != null) | [.run_attempt, .status, .conclusion] | @tsv' || true)"
             read -r attempt status conclusion <<< "$job"
             if [ "$status" = completed ] && [ "$conclusion" = success ] &&
                { [ "$attempt" = "$GITHUB_RUN_ATTEMPT" ] || [ "$TRANSFER_ATTEMPT" != "$GITHUB_RUN_ATTEMPT" ]; }; then
