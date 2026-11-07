@@ -141,8 +141,8 @@ const run = async () => {
 
     const changelogs = JSON.parse(fs.readFileSync(path.join(dist, "data/changelogs.json"), "utf8"));
     assert.equal(changelogs.length > 0, true, "changelog data is populated");
-    assert.equal(changelogs[0].version, "2.2.0.1");
-    assert.equal(changelogs[0].date, "2026-11-05");
+    assert.equal(changelogs[0].version, "2.2.3");
+    assert.equal(changelogs[0].date, "2026-11-07");
     assert.match(changelogs[0].markdown, /revive/i);
     assert.match(changelogs[0].markdown, /camp kit/i);
     assert.equal(changelogs.some((entry) => entry.version === "2.2.0" && /Sleep/i.test(entry.markdown) && /Trade/i.test(entry.markdown)), true);
