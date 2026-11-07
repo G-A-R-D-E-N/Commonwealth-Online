@@ -1,0 +1,7184 @@
+[
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2400054,
+  "editorId": "LegendaryEncExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2398449,
+  "editorId": "MinArtilleryActorForce",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2393141,
+  "editorId": "CarNukeSmallVehicles",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2386201,
+  "editorId": "FireExtinguisherExplosionActorForce",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2385729,
+  "editorId": "FatManExplosionMIRVchild",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2383649,
+  "editorId": "BaseballGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2362431,
+  "editorId": "GullExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2354320,
+  "editorId": "DNPrime_FakeForce500Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353428,
+  "editorId": "SentryBotRLegExplosion_lite",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353427,
+  "editorId": "SentryBotLLegExplosion_lite",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353426,
+  "editorId": "SentryBotBLegExplosion_lite",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353425,
+  "editorId": "MrhandyArmExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353424,
+  "editorId": "MrhandyArmExplosionLite",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353423,
+  "editorId": "ProtectronHeadExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2352514,
+  "editorId": "POIRocketExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2349310,
+  "editorId": "ExplosionCorn02DebrisSpawner",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2349309,
+  "editorId": "ExplosionCorn01DebrisSpawner",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2348341,
+  "editorId": "BottleCapMineExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2345677,
+  "editorId": "RR301SynthTeleportGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2331362,
+  "editorId": "MinArtilleryMuzzleExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2326424,
+  "editorId": "BarrelTankExplosion02Vert",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2297737,
+  "editorId": "ExplosionCryoProjectile",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2294567,
+  "editorId": "thistleTrapExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2294214,
+  "editorId": "RobotLargeModExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2285661,
+  "editorId": "GaussImpactExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2284462,
+  "editorId": "BarrelTankExplosion02",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2280293,
+  "editorId": "GravelWallExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2275054,
+  "editorId": "RobotSelfDestructShockExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2232879,
+  "editorId": "RRRailwayTestingExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2198220,
+  "editorId": "MoleRatOutDigExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2198219,
+  "editorId": "MoleratDigExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2188130,
+  "editorId": "SentryShoulderClusterExplosionChild",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2188121,
+  "editorId": "ExplosionMissileShellSmallSentry",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2187796,
+  "editorId": "DN102_FrenzyGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2186760,
+  "editorId": "ExplosionRailwayRifleStaggerSmall",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2174388,
+  "editorId": "FusionCoreActorForce",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2164402,
+  "editorId": "DNPrimeBeamExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2157571,
+  "editorId": "FurnitureMirelurkSiltExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2134915,
+  "editorId": "PerkExplosionMoneyShotFortuneFinder",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2112057,
+  "editorId": "NukaGrenadeActorForce",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2093645,
+  "editorId": "ExplosionGasCanister",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2070545,
+  "editorId": "POISC16_Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2070544,
+  "editorId": "POISC16_ActorForce",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2059017,
+  "editorId": "PainTrainPush",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2048396,
+  "editorId": "BloodyMessNearbyExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2043182,
+  "editorId": "KidsLunchboxExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1999271,
+  "editorId": "mod_Legendary_StaggerLarge_Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1999270,
+  "editorId": "mod_Legendary_StaggerMedium_Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1999269,
+  "editorId": "mod_Legendary_StaggerSmall_Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1995707,
+  "editorId": "mod_Legendary_ExplosiveProjectileExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1988058,
+  "editorId": "TeleportIn1stFXExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1988056,
+  "editorId": "TeleportInPlayerFXExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1988055,
+  "editorId": "TeleportOutPlayerFXExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1959906,
+  "editorId": "POIDL018Nuke",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1940502,
+  "editorId": "LibertyPrimeNuke",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1940501,
+  "editorId": "LibertyPrimeNukeActorForce",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1917230,
+  "editorId": "ExplosionMolotovCocktail",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1910927,
+  "editorId": "VertibirdModExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1899279,
+  "editorId": "KidsLunchboxExplosionRare",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1865078,
+  "editorId": "GoreHeadExplosionGlow",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1862655,
+  "editorId": "FatManExplosionMIRVpack",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1848728,
+  "editorId": "VertibirdGlassExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1845141,
+  "editorId": "HoldupExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1844900,
+  "editorId": "GammaGunExplosionShotGun",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1844776,
+  "editorId": "GammaGunExplosionSmall",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1844775,
+  "editorId": "GammaGunExplosionLArge",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1835900,
+  "editorId": "TrapfragGrenadeExplosion2",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1835899,
+  "editorId": "TrapfragGrenadeExplosion3",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1828174,
+  "editorId": "InstituteBeaconExplosionDUPLICATE000",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1817629,
+  "editorId": "MS11EngineExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1804506,
+  "editorId": "HeavyProjectileExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1793756,
+  "editorId": "ExplosiveProjectileExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1790142,
+  "editorId": "SynthGen2ModExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1790141,
+  "editorId": "SynthGen1LimbExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1765493,
+  "editorId": "robotSelfDestructExplosionSmall",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1765492,
+  "editorId": "robotSelfDestructExplosionLarge",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1741970,
+  "editorId": "RobotShockExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1551904,
+  "editorId": "MS11CannonExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1535516,
+  "editorId": "FurnitureMirelurkQueenWaterExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1404168,
+  "editorId": "SwanSupermutantAmbushExplosion01",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 712819,
+  "editorId": "DN102_LabDemo1Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 550382,
+  "editorId": "ExplosionFusionCoreKnightMetldown",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 541316,
+  "editorId": "PA_ExplosiveVentExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 417262,
+  "editorId": "MS02HomingBeaconExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 410845,
+  "editorId": "BloatflyLarvaPoisonExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 404455,
+  "editorId": "WorkshopArtilleryForce",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 403549,
+  "editorId": "ArtilleryStrike01",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 362996,
+  "editorId": "SynthTeleportGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 354585,
+  "editorId": "BoSVertibirdGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 135364,
+  "editorId": "ExplosionVertibirdHullChunk",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 135362,
+  "editorId": "ExplosionVertibirdPropellerImpact",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 131108,
+  "editorId": "vertibirdPropellerExplosionCHILD",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 131107,
+  "editorId": "VertibirdDeathExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 105091,
+  "editorId": "MirelurkEggExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1741472,
+  "editorId": "SpotlightExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1736690,
+  "editorId": "FatManExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1730362,
+  "editorId": "robotSelfDestructExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1726048,
+  "editorId": "MS09LorenzoStaggerExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1721327,
+  "editorId": "fragGrenadeChildExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1703967,
+  "editorId": "RadScorpionOutDigExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1687767,
+  "editorId": "MS02SubNuke",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1675335,
+  "editorId": "MS09JackRadiationGunExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1617842,
+  "editorId": "MirelurkSpawnHatchQueenExpl",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1600994,
+  "editorId": "LibertyPrimeLaserExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1590460,
+  "editorId": "InstNuke",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1575493,
+  "editorId": "ExplosionFusionCoreMetldown",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1565132,
+  "editorId": "LibertyPrimeFootstepExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1553331,
+  "editorId": "cryoMineExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1553330,
+  "editorId": "plasmaGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1549695,
+  "editorId": "cryoGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1545791,
+  "editorId": "JammerExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1527696,
+  "editorId": "InstituteBeaconInitialExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1506339,
+  "editorId": "TeleportOut1stFXExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1496390,
+  "editorId": "DN084_ElevatorStaggerExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1480240,
+  "editorId": "MirelurkSpawnHatchExpl",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1463703,
+  "editorId": "TeleportOutFXExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1441630,
+  "editorId": "TeleportFXExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1421438,
+  "editorId": "pulseGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1408182,
+  "editorId": "FlareGunExplosionNEW",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1364348,
+  "editorId": "BehemothStompExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1358812,
+  "editorId": "BehemothRockExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1329843,
+  "editorId": "BehemothSlamExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1225742,
+  "editorId": "VertibirdRwingExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1225739,
+  "editorId": "VertibirdTailExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1225738,
+  "editorId": "VertibirdLwingExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1222966,
+  "editorId": "TurretMountedExplosionSabotaged",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1209187,
+  "editorId": "BreakableMetalPlate01explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1203641,
+  "editorId": "BreakableRockWallGate01explosionForceBreak",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1195802,
+  "editorId": "MS16fragMineExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1195430,
+  "editorId": "BreakableRockWallGate01explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1189411,
+  "editorId": "StoneBreakingPulse01explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1186498,
+  "editorId": "DeathclawRockExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1186408,
+  "editorId": "CGPrewarNuke",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1173109,
+  "editorId": "TrapFakeForceExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1148437,
+  "editorId": "ExplosionBroadsiderBase",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1081718,
+  "editorId": "MirelurkQueenSpitExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1078220,
+  "editorId": "YaoGuaiRoarFearImodExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1048473,
+  "editorId": "DN102_LabDemo2Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 960761,
+  "editorId": "MirelurkKingSonicExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1037226,
+  "editorId": "ExplosionMissileShell",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1009133,
+  "editorId": "MoleratBombExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 989164,
+  "editorId": "GammaGunExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 978153,
+  "editorId": "fragMineExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 966032,
+  "editorId": "ExplosionTrapOil_Initial",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 963354,
+  "editorId": "ExplosionTrapOil",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 963352,
+  "editorId": "ExplosionTrapGas",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 960571,
+  "editorId": "AssaultronTorsoExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946970,
+  "editorId": "AssaultronTorsoExplosionLite",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946969,
+  "editorId": "AssaultronHeadExplosionLite",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946968,
+  "editorId": "AssaultronHeadExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946967,
+  "editorId": "AssaultronLegExplosionLite",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946966,
+  "editorId": "AssaultronLegExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946965,
+  "editorId": "AssaultronArmExplosionLite",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946964,
+  "editorId": "AssaultronArmExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 944531,
+  "editorId": "DN102_LabDemo5Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 939910,
+  "editorId": "MS09PushExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 939858,
+  "editorId": "nukaGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 939855,
+  "editorId": "fragGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 938120,
+  "editorId": "RobotArmExplosionLite",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 938119,
+  "editorId": "RobotArmExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 924143,
+  "editorId": "RobotModExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 899163,
+  "editorId": "CarNukeTEST",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 885740,
+  "editorId": "AAADebugExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 882408,
+  "editorId": "VaultOxygenTankExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 830359,
+  "editorId": "TurretStandingExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 830358,
+  "editorId": "TurretMountedExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 827571,
+  "editorId": "DN029CannonLauncherExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 799451,
+  "editorId": "EyebotExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 799450,
+  "editorId": "ElectricalExplosionSmall",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 793621,
+  "editorId": "FakeForce200Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 759203,
+  "editorId": "SentryBotBLegExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 758377,
+  "editorId": "FakeForce100Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 748972,
+  "editorId": "WoodColumnExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 734893,
+  "editorId": "SentryBotRLegExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 734892,
+  "editorId": "SentryBotLLegExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 724764,
+  "editorId": "GlowingOneResurrectExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 714770,
+  "editorId": "MinArtilleryExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 690941,
+  "editorId": "MirelurkHunterSpitExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 674967,
+  "editorId": "BarrelTankExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 665899,
+  "editorId": "FlareExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 660282,
+  "editorId": "ArtillerySmokeFlareExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 636215,
+  "editorId": "whaleExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 632479,
+  "editorId": "ConcordMuseumBulbSparks",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 573016,
+  "editorId": "WhaleSplodeSploshun",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 539683,
+  "editorId": "RadScorpionDigExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 352450,
+  "editorId": "RoachDropExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 213691,
+  "editorId": "rl_SparksExplosion_UnlitBulb",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 196134,
+  "editorId": "rl_SparksExplosion_LitBulb",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 616965,
+  "editorId": "CrowExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562950,
+  "editorId": "ExplosionAutomotiveCar05Stage3",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562949,
+  "editorId": "ExplosionAutomotiveCar05Stage2",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562948,
+  "editorId": "ExplosionAutomotiveCar05Stage1",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562947,
+  "editorId": "ExplosionAutomotiveCar04Stage3",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562946,
+  "editorId": "ExplosionAutomotiveCar04Stage2",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562945,
+  "editorId": "ExplosionAutomotiveCar04Stage1",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562944,
+  "editorId": "ExplosionAutomotiveCar03Stage3",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562943,
+  "editorId": "ExplosionAutomotiveCar03Stage2",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562942,
+  "editorId": "ExplosionAutomotiveCar03Stage1",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 555941,
+  "editorId": "BloatflyDeathExplosion01",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 539916,
+  "editorId": "CarNukeActorForce",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533743,
+  "editorId": "GoreInsectSmallExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533212,
+  "editorId": "ExplosionAutomotiveCar02Stage2",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533211,
+  "editorId": "ExplosionAutomotiveCar02Stage3",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533208,
+  "editorId": "ExplosionAutomotiveCar02Stage1",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 524626,
+  "editorId": "ExplosionAutomotiveWheel02HubcapSpawn",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 518461,
+  "editorId": "ExplosionAutomotiveTireBurst02",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 467857,
+  "editorId": "DN128Shieldsplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396258,
+  "editorId": "PowerArmorLlegExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396257,
+  "editorId": "PowerArmorRlegExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396256,
+  "editorId": "PowerArmorChestExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396255,
+  "editorId": "PowerArmorHeadExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396254,
+  "editorId": "PowerArmorRArmExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396253,
+  "editorId": "PowerArmorLArmExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 375404,
+  "editorId": "SandbagWallSmallExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 375364,
+  "editorId": "BollardDestExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 370292,
+  "editorId": "OxygenTankExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 195655,
+  "editorId": "FakeForce500Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 195654,
+  "editorId": "FakeForce300Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 195653,
+  "editorId": "SandbagSmallExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 346739,
+  "editorId": "GoreHeadExplosionRed",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 303510,
+  "editorId": "MS09IntroExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 299411,
+  "editorId": "PowerArmorPowerImpactExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 288024,
+  "editorId": "DN085GeyserKnockdownExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 284521,
+  "editorId": "SandbagWallExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 275301,
+  "editorId": "DeathclawAOEAttackExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 501,
+  "editorId": "DefaultWaterExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 235235,
+  "editorId": "FurnitureMirelurkWaterExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 166447,
+  "editorId": "BloodbugDeathGreenExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 166446,
+  "editorId": "BloodbugDeathRedExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 146747,
+  "editorId": "CarNukeLargeVehicles",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 141210,
+  "editorId": "trashcanExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 140438,
+  "editorId": "CarExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 129221,
+  "editorId": "ExplosionGrenadeShell",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 204492,
+  "editorId": "DeathclawIntimidateExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 198273,
+  "editorId": "REDeathExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 193599,
+  "editorId": "FireExtinguisherExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 204729,
+  "editorId": "BloodBugSpitRedExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 226250,
+  "editorId": "FurnitureMirelurkExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 11424,
+  "editorId": "DLC01SmokeBombExplosionNoVatsBlock",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 10912,
+  "editorId": "DLC01LightningHazardExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 70019,
+  "editorId": "DLC01SmokeBombExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 67729,
+  "editorId": "DLC01FakeForce100Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 63079,
+  "editorId": "DLC01FXShaderAreaRoboBrain",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 31562,
+  "editorId": "DLC01_Unstable_SentryFrenzyGasExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 31530,
+  "editorId": "DLC01_Unstable_SentryExplosiveMinigunExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 31038,
+  "editorId": "DLC01TrackSystem_TrapMine_Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 8478,
+  "editorId": "DLC01_pulseGrenadeExplosionMechanist",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 4070,
+  "editorId": "DLC01ChainLightningExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop01.esm",
+  "localId": 2709,
+  "editorId": "DLC02ExplosionTrapSawblades01",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3540,
+  "editorId": "DLC05FireworkExplosionCrackleDestruction",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3539,
+  "editorId": "DLC05FireworkExplosionPeonyYellowDestruction",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3538,
+  "editorId": "DLC05FireworkExplosionPeonyRedDestruction",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3537,
+  "editorId": "DLC05FireworkExplosionPeonyPinkDestruction",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3536,
+  "editorId": "DLC05FireworkExplosionPeonyBlueDestruction",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3535,
+  "editorId": "DLC05FireworkExplosionPalmGoldDestruction",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3534,
+  "editorId": "DLC05FireworkExplosionPalmSilverDestruction",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3533,
+  "editorId": "DLC05FireworkExplosionPeonyGreenDestruction",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3455,
+  "editorId": "DLC05FireworkExplosionPalmGold",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3453,
+  "editorId": "DLC05FireworkExplosionPalmSilver",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3377,
+  "editorId": "DLC05FireworkExplosionPeonyBlue",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3376,
+  "editorId": "DLC05FireworkExplosionPeonyPink",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3375,
+  "editorId": "DLC05FireworkExplosionPeonyYellow",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3364,
+  "editorId": "DLC05FireworkExplosionCrackle",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3339,
+  "editorId": "DLC05JunkMortarExplosionPrimary",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3338,
+  "editorId": "DLC05JunkMortarExplosionSecondary",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2633,
+  "editorId": "DLC05FireworkExplosionPeonyRed",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2312,
+  "editorId": "DLC05FireworkExplosionWeatherRadstorm",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2301,
+  "editorId": "DLC05FireworkExplosionWeatherRain",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2299,
+  "editorId": "DLC05FireworkExplosionWeatherClear",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2194,
+  "editorId": "DLC05FireworkExplosionPeonyGreen",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop03.esm",
+  "localId": 9466,
+  "editorId": "DLC06SuperReactorExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop03.esm",
+  "localId": 4223,
+  "editorId": "DLC06StaggerExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcworkshop03.esm",
+  "localId": 24182,
+  "editorId": "DLC06E01Explosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 345164,
+  "editorId": "DLC03_HermitAmbushDebrisFX",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344573,
+  "editorId": "DLC03_VimCaptainsBlendExpl",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344313,
+  "editorId": "DLC03_ThrowingBearTrapExplosionBleeding",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344303,
+  "editorId": "DLC03_ThrowingCaltropExplosionPoisoned",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344180,
+  "editorId": "DLC03_ThrowingBearTrapExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344176,
+  "editorId": "DLC03_ThrowingCaltropExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 343550,
+  "editorId": "DLC03FogCrawlerDeathExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 324575,
+  "editorId": "DLC03FogCrawlerAOESilent",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 324574,
+  "editorId": "DLC03HermitCrabAOESilent",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 324204,
+  "editorId": "DLC03HermitCrabAOEExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 322485,
+  "editorId": "DLC03FogCrawlerAOEExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311376,
+  "editorId": "DLC03ExplosionPaintballProjectileWhite",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311375,
+  "editorId": "DLC03ExplosionPaintballProjectileRed",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311374,
+  "editorId": "DLC03ExplosionPaintballProjectileOrange",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311367,
+  "editorId": "DLC03ExplosionPaintballProjectileYellow",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311366,
+  "editorId": "DLC03ExplosionPaintballProjectileGreen",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311365,
+  "editorId": "DLC03ExplosionPaintballProjectileBlue",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 308048,
+  "editorId": "DLC03HermitCrabSpawnExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 249408,
+  "editorId": "DLC03SubBaseTinyExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 229440,
+  "editorId": "DLC03SubBaseExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 229439,
+  "editorId": "DLC03SubBaseSmExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 170863,
+  "editorId": "DLC03VRBeamEnd",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 152111,
+  "editorId": "DLC03VRDataRetrieverExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 356621,
+  "editorId": "DLC04_ThirstZapperQuantumExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 343946,
+  "editorId": "DLC04MisterStreamEnchExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 333755,
+  "editorId": "DLC04TrapFakeForceExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 329194,
+  "editorId": "DLC04SentryShoulderCherryExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 322109,
+  "editorId": "DLC04PaddleballQuantumExplosion_Radiation",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 322108,
+  "editorId": "DLC04PaddleballColaExplosion_Radiation",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 322107,
+  "editorId": "DLC04PaddleballCherryExplosion_Radiation",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 304667,
+  "editorId": "DLC04RaiderOverboss_FragGrenadeSingleExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 297423,
+  "editorId": "BloatedBrahminExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 282260,
+  "editorId": "DLC04PaddleballQuantumExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 282259,
+  "editorId": "DLC04PaddleballCherryExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 282258,
+  "editorId": "DLC04PaddleballColaExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 276984,
+  "editorId": "DLC04NukatronColaExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 271259,
+  "editorId": "DLC04_KK_OswaldTeleportExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 265441,
+  "editorId": "DLC04NukaQuantumGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 265439,
+  "editorId": "DLC04NukaCherryGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 234816,
+  "editorId": "DLC04_ThirstZapperExplosionThatPlacesHazard",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 220791,
+  "editorId": "DLC04_LuckyRabbitsFootExplosion2",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 220787,
+  "editorId": "DLC04_LuckyRabbitsFootExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 214576,
+  "editorId": "DLC04_NukalurkSpawnHatchQueenExpl",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 214266,
+  "editorId": "DLC04NukalurkSpawnHatchExpl",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 211204,
+  "editorId": "DLC04_FragGrenadeMIRVExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 211202,
+  "editorId": "DLC04_FragGrenadeMIRVExplosionPack",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 208731,
+  "editorId": "DLC04NukatronQuantumExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 208730,
+  "editorId": "DLC04NukatronCherryExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 182299,
+  "editorId": "DLC04AcidSoakerExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 179653,
+  "editorId": "DLC04_ThirstZapperSquirtGunExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 179652,
+  "editorId": "DLC04_ThirstZapperColaSprayExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 179648,
+  "editorId": "DLC04NukaColaMisterExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 156045,
+  "editorId": "DLC04DisciplesFrenzyGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 154380,
+  "editorId": "DLC04PackScentGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148397,
+  "editorId": "DLC04FireworkExplosionYellow",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148396,
+  "editorId": "DLC04FireworkExplosionSilver",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148395,
+  "editorId": "DLC04FireworkExplosionRed",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148394,
+  "editorId": "DLC04FireworkExplosionPink",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148393,
+  "editorId": "DLC04FireworkExplosionGreen",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148392,
+  "editorId": "DLC04FireworkExplosionGold",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148391,
+  "editorId": "DLC04FireworkExplosionCrackle",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148390,
+  "editorId": "DLC04FireworkExplosionBlue",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 147044,
+  "editorId": "DLC04IntimidateGrenadeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 136105,
+  "editorId": "DLC04SentryShoulderClusterExplosionChild",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 136100,
+  "editorId": "DLC04MisterStreamExplosionFX",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 103448,
+  "editorId": "DLC04NukaNukeExplosion",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 42324,
+  "editorId": "DLC04RaiderOverboss_ExplosionDischargeSmall",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 42323,
+  "editorId": "DLC04RaiderOverboss_ExplosionDischargeLarge",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 42322,
+  "editorId": "DLC04RaiderOverboss_ExplosionDischargeMAX",
+  "deleted": false,
+  "install": "OG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2400054,
+  "editorId": "LegendaryEncExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2398449,
+  "editorId": "MinArtilleryActorForce",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2393141,
+  "editorId": "CarNukeSmallVehicles",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2386201,
+  "editorId": "FireExtinguisherExplosionActorForce",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2385729,
+  "editorId": "FatManExplosionMIRVchild",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2383649,
+  "editorId": "BaseballGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2362431,
+  "editorId": "GullExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2354320,
+  "editorId": "DNPrime_FakeForce500Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353428,
+  "editorId": "SentryBotRLegExplosion_lite",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353427,
+  "editorId": "SentryBotLLegExplosion_lite",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353426,
+  "editorId": "SentryBotBLegExplosion_lite",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353425,
+  "editorId": "MrhandyArmExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353424,
+  "editorId": "MrhandyArmExplosionLite",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353423,
+  "editorId": "ProtectronHeadExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2352514,
+  "editorId": "POIRocketExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2349310,
+  "editorId": "ExplosionCorn02DebrisSpawner",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2349309,
+  "editorId": "ExplosionCorn01DebrisSpawner",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2348341,
+  "editorId": "BottleCapMineExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2345677,
+  "editorId": "RR301SynthTeleportGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2331362,
+  "editorId": "MinArtilleryMuzzleExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2326424,
+  "editorId": "BarrelTankExplosion02Vert",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2297737,
+  "editorId": "ExplosionCryoProjectile",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2294567,
+  "editorId": "thistleTrapExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2294214,
+  "editorId": "RobotLargeModExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2285661,
+  "editorId": "GaussImpactExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2284462,
+  "editorId": "BarrelTankExplosion02",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2280293,
+  "editorId": "GravelWallExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2275054,
+  "editorId": "RobotSelfDestructShockExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2232879,
+  "editorId": "RRRailwayTestingExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2198220,
+  "editorId": "MoleRatOutDigExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2198219,
+  "editorId": "MoleratDigExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2188130,
+  "editorId": "SentryShoulderClusterExplosionChild",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2188121,
+  "editorId": "ExplosionMissileShellSmallSentry",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2187796,
+  "editorId": "DN102_FrenzyGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2186760,
+  "editorId": "ExplosionRailwayRifleStaggerSmall",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2174388,
+  "editorId": "FusionCoreActorForce",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2164402,
+  "editorId": "DNPrimeBeamExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2157571,
+  "editorId": "FurnitureMirelurkSiltExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2134915,
+  "editorId": "PerkExplosionMoneyShotFortuneFinder",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2112057,
+  "editorId": "NukaGrenadeActorForce",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2093645,
+  "editorId": "ExplosionGasCanister",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2070545,
+  "editorId": "POISC16_Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2070544,
+  "editorId": "POISC16_ActorForce",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2059017,
+  "editorId": "PainTrainPush",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2048396,
+  "editorId": "BloodyMessNearbyExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2043182,
+  "editorId": "KidsLunchboxExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1999271,
+  "editorId": "mod_Legendary_StaggerLarge_Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1999270,
+  "editorId": "mod_Legendary_StaggerMedium_Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1999269,
+  "editorId": "mod_Legendary_StaggerSmall_Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1995707,
+  "editorId": "mod_Legendary_ExplosiveProjectileExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1988058,
+  "editorId": "TeleportIn1stFXExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1988056,
+  "editorId": "TeleportInPlayerFXExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1988055,
+  "editorId": "TeleportOutPlayerFXExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1959906,
+  "editorId": "POIDL018Nuke",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1940502,
+  "editorId": "LibertyPrimeNuke",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1940501,
+  "editorId": "LibertyPrimeNukeActorForce",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1917230,
+  "editorId": "ExplosionMolotovCocktail",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1910927,
+  "editorId": "VertibirdModExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1899279,
+  "editorId": "KidsLunchboxExplosionRare",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1865078,
+  "editorId": "GoreHeadExplosionGlow",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1862655,
+  "editorId": "FatManExplosionMIRVpack",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1848728,
+  "editorId": "VertibirdGlassExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1845141,
+  "editorId": "HoldupExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1844900,
+  "editorId": "GammaGunExplosionShotGun",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1844776,
+  "editorId": "GammaGunExplosionSmall",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1844775,
+  "editorId": "GammaGunExplosionLArge",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1835900,
+  "editorId": "TrapfragGrenadeExplosion2",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1835899,
+  "editorId": "TrapfragGrenadeExplosion3",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1828174,
+  "editorId": "InstituteBeaconExplosionDUPLICATE000",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1817629,
+  "editorId": "MS11EngineExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1804506,
+  "editorId": "HeavyProjectileExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1793756,
+  "editorId": "ExplosiveProjectileExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1790142,
+  "editorId": "SynthGen2ModExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1790141,
+  "editorId": "SynthGen1LimbExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1765493,
+  "editorId": "robotSelfDestructExplosionSmall",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1765492,
+  "editorId": "robotSelfDestructExplosionLarge",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1741970,
+  "editorId": "RobotShockExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1551904,
+  "editorId": "MS11CannonExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1535516,
+  "editorId": "FurnitureMirelurkQueenWaterExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1404168,
+  "editorId": "SwanSupermutantAmbushExplosion01",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 712819,
+  "editorId": "DN102_LabDemo1Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 550382,
+  "editorId": "ExplosionFusionCoreKnightMetldown",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 541316,
+  "editorId": "PA_ExplosiveVentExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 417262,
+  "editorId": "MS02HomingBeaconExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 410845,
+  "editorId": "BloatflyLarvaPoisonExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 404455,
+  "editorId": "WorkshopArtilleryForce",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 403549,
+  "editorId": "ArtilleryStrike01",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 362996,
+  "editorId": "SynthTeleportGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 354585,
+  "editorId": "BoSVertibirdGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 135364,
+  "editorId": "ExplosionVertibirdHullChunk",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 135362,
+  "editorId": "ExplosionVertibirdPropellerImpact",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 131108,
+  "editorId": "vertibirdPropellerExplosionCHILD",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 131107,
+  "editorId": "VertibirdDeathExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 105091,
+  "editorId": "MirelurkEggExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1741472,
+  "editorId": "SpotlightExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1736690,
+  "editorId": "FatManExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1730362,
+  "editorId": "robotSelfDestructExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1726048,
+  "editorId": "MS09LorenzoStaggerExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1721327,
+  "editorId": "fragGrenadeChildExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1703967,
+  "editorId": "RadScorpionOutDigExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1687767,
+  "editorId": "MS02SubNuke",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1675335,
+  "editorId": "MS09JackRadiationGunExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1617842,
+  "editorId": "MirelurkSpawnHatchQueenExpl",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1600994,
+  "editorId": "LibertyPrimeLaserExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1590460,
+  "editorId": "InstNuke",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1575493,
+  "editorId": "ExplosionFusionCoreMetldown",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1565132,
+  "editorId": "LibertyPrimeFootstepExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1553331,
+  "editorId": "cryoMineExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1553330,
+  "editorId": "plasmaGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1549695,
+  "editorId": "cryoGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1545791,
+  "editorId": "JammerExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1527696,
+  "editorId": "InstituteBeaconInitialExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1506339,
+  "editorId": "TeleportOut1stFXExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1496390,
+  "editorId": "DN084_ElevatorStaggerExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1480240,
+  "editorId": "MirelurkSpawnHatchExpl",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1463703,
+  "editorId": "TeleportOutFXExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1441630,
+  "editorId": "TeleportFXExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1421438,
+  "editorId": "pulseGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1408182,
+  "editorId": "FlareGunExplosionNEW",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1364348,
+  "editorId": "BehemothStompExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1358812,
+  "editorId": "BehemothRockExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1329843,
+  "editorId": "BehemothSlamExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1225742,
+  "editorId": "VertibirdRwingExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1225739,
+  "editorId": "VertibirdTailExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1225738,
+  "editorId": "VertibirdLwingExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1222966,
+  "editorId": "TurretMountedExplosionSabotaged",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1209187,
+  "editorId": "BreakableMetalPlate01explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1203641,
+  "editorId": "BreakableRockWallGate01explosionForceBreak",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1195802,
+  "editorId": "MS16fragMineExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1195430,
+  "editorId": "BreakableRockWallGate01explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1189411,
+  "editorId": "StoneBreakingPulse01explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1186498,
+  "editorId": "DeathclawRockExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1186408,
+  "editorId": "CGPrewarNuke",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1173109,
+  "editorId": "TrapFakeForceExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1148437,
+  "editorId": "ExplosionBroadsiderBase",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1081718,
+  "editorId": "MirelurkQueenSpitExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1078220,
+  "editorId": "YaoGuaiRoarFearImodExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1048473,
+  "editorId": "DN102_LabDemo2Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 960761,
+  "editorId": "MirelurkKingSonicExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1037226,
+  "editorId": "ExplosionMissileShell",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1009133,
+  "editorId": "MoleratBombExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 989164,
+  "editorId": "GammaGunExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 978153,
+  "editorId": "fragMineExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 966032,
+  "editorId": "ExplosionTrapOil_Initial",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 963354,
+  "editorId": "ExplosionTrapOil",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 963352,
+  "editorId": "ExplosionTrapGas",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 960571,
+  "editorId": "AssaultronTorsoExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946970,
+  "editorId": "AssaultronTorsoExplosionLite",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946969,
+  "editorId": "AssaultronHeadExplosionLite",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946968,
+  "editorId": "AssaultronHeadExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946967,
+  "editorId": "AssaultronLegExplosionLite",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946966,
+  "editorId": "AssaultronLegExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946965,
+  "editorId": "AssaultronArmExplosionLite",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946964,
+  "editorId": "AssaultronArmExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 944531,
+  "editorId": "DN102_LabDemo5Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 939910,
+  "editorId": "MS09PushExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 939858,
+  "editorId": "nukaGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 939855,
+  "editorId": "fragGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 938120,
+  "editorId": "RobotArmExplosionLite",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 938119,
+  "editorId": "RobotArmExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 924143,
+  "editorId": "RobotModExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 899163,
+  "editorId": "CarNukeTEST",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 885740,
+  "editorId": "AAADebugExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 882408,
+  "editorId": "VaultOxygenTankExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 830359,
+  "editorId": "TurretStandingExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 830358,
+  "editorId": "TurretMountedExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 827571,
+  "editorId": "DN029CannonLauncherExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 799451,
+  "editorId": "EyebotExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 799450,
+  "editorId": "ElectricalExplosionSmall",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 793621,
+  "editorId": "FakeForce200Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 759203,
+  "editorId": "SentryBotBLegExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 758377,
+  "editorId": "FakeForce100Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 748972,
+  "editorId": "WoodColumnExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 734893,
+  "editorId": "SentryBotRLegExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 734892,
+  "editorId": "SentryBotLLegExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 724764,
+  "editorId": "GlowingOneResurrectExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 714770,
+  "editorId": "MinArtilleryExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 690941,
+  "editorId": "MirelurkHunterSpitExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 674967,
+  "editorId": "BarrelTankExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 665899,
+  "editorId": "FlareExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 660282,
+  "editorId": "ArtillerySmokeFlareExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 636215,
+  "editorId": "whaleExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 632479,
+  "editorId": "ConcordMuseumBulbSparks",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 573016,
+  "editorId": "WhaleSplodeSploshun",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 539683,
+  "editorId": "RadScorpionDigExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 352450,
+  "editorId": "RoachDropExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 213691,
+  "editorId": "rl_SparksExplosion_UnlitBulb",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 196134,
+  "editorId": "rl_SparksExplosion_LitBulb",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 616965,
+  "editorId": "CrowExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562950,
+  "editorId": "ExplosionAutomotiveCar05Stage3",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562949,
+  "editorId": "ExplosionAutomotiveCar05Stage2",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562948,
+  "editorId": "ExplosionAutomotiveCar05Stage1",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562947,
+  "editorId": "ExplosionAutomotiveCar04Stage3",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562946,
+  "editorId": "ExplosionAutomotiveCar04Stage2",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562945,
+  "editorId": "ExplosionAutomotiveCar04Stage1",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562944,
+  "editorId": "ExplosionAutomotiveCar03Stage3",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562943,
+  "editorId": "ExplosionAutomotiveCar03Stage2",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562942,
+  "editorId": "ExplosionAutomotiveCar03Stage1",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 555941,
+  "editorId": "BloatflyDeathExplosion01",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 539916,
+  "editorId": "CarNukeActorForce",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533743,
+  "editorId": "GoreInsectSmallExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533212,
+  "editorId": "ExplosionAutomotiveCar02Stage2",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533211,
+  "editorId": "ExplosionAutomotiveCar02Stage3",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533208,
+  "editorId": "ExplosionAutomotiveCar02Stage1",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 524626,
+  "editorId": "ExplosionAutomotiveWheel02HubcapSpawn",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 518461,
+  "editorId": "ExplosionAutomotiveTireBurst02",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 467857,
+  "editorId": "DN128Shieldsplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396258,
+  "editorId": "PowerArmorLlegExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396257,
+  "editorId": "PowerArmorRlegExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396256,
+  "editorId": "PowerArmorChestExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396255,
+  "editorId": "PowerArmorHeadExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396254,
+  "editorId": "PowerArmorRArmExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396253,
+  "editorId": "PowerArmorLArmExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 375404,
+  "editorId": "SandbagWallSmallExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 375364,
+  "editorId": "BollardDestExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 370292,
+  "editorId": "OxygenTankExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 195655,
+  "editorId": "FakeForce500Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 195654,
+  "editorId": "FakeForce300Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 195653,
+  "editorId": "SandbagSmallExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 346739,
+  "editorId": "GoreHeadExplosionRed",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 303510,
+  "editorId": "MS09IntroExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 299411,
+  "editorId": "PowerArmorPowerImpactExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 288024,
+  "editorId": "DN085GeyserKnockdownExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 284521,
+  "editorId": "SandbagWallExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 275301,
+  "editorId": "DeathclawAOEAttackExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 501,
+  "editorId": "DefaultWaterExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 235235,
+  "editorId": "FurnitureMirelurkWaterExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 166447,
+  "editorId": "BloodbugDeathGreenExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 166446,
+  "editorId": "BloodbugDeathRedExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 146747,
+  "editorId": "CarNukeLargeVehicles",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 141210,
+  "editorId": "trashcanExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 140438,
+  "editorId": "CarExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 129221,
+  "editorId": "ExplosionGrenadeShell",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 204492,
+  "editorId": "DeathclawIntimidateExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 198273,
+  "editorId": "REDeathExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 193599,
+  "editorId": "FireExtinguisherExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 204729,
+  "editorId": "BloodBugSpitRedExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 226250,
+  "editorId": "FurnitureMirelurkExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 11424,
+  "editorId": "DLC01SmokeBombExplosionNoVatsBlock",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 10912,
+  "editorId": "DLC01LightningHazardExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 70019,
+  "editorId": "DLC01SmokeBombExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 67729,
+  "editorId": "DLC01FakeForce100Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 63079,
+  "editorId": "DLC01FXShaderAreaRoboBrain",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 31562,
+  "editorId": "DLC01_Unstable_SentryFrenzyGasExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 31530,
+  "editorId": "DLC01_Unstable_SentryExplosiveMinigunExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 31038,
+  "editorId": "DLC01TrackSystem_TrapMine_Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 8478,
+  "editorId": "DLC01_pulseGrenadeExplosionMechanist",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 4070,
+  "editorId": "DLC01ChainLightningExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop01.esm",
+  "localId": 2709,
+  "editorId": "DLC02ExplosionTrapSawblades01",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3540,
+  "editorId": "DLC05FireworkExplosionCrackleDestruction",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3539,
+  "editorId": "DLC05FireworkExplosionPeonyYellowDestruction",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3538,
+  "editorId": "DLC05FireworkExplosionPeonyRedDestruction",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3537,
+  "editorId": "DLC05FireworkExplosionPeonyPinkDestruction",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3536,
+  "editorId": "DLC05FireworkExplosionPeonyBlueDestruction",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3535,
+  "editorId": "DLC05FireworkExplosionPalmGoldDestruction",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3534,
+  "editorId": "DLC05FireworkExplosionPalmSilverDestruction",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3533,
+  "editorId": "DLC05FireworkExplosionPeonyGreenDestruction",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3455,
+  "editorId": "DLC05FireworkExplosionPalmGold",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3453,
+  "editorId": "DLC05FireworkExplosionPalmSilver",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3377,
+  "editorId": "DLC05FireworkExplosionPeonyBlue",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3376,
+  "editorId": "DLC05FireworkExplosionPeonyPink",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3375,
+  "editorId": "DLC05FireworkExplosionPeonyYellow",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3364,
+  "editorId": "DLC05FireworkExplosionCrackle",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3339,
+  "editorId": "DLC05JunkMortarExplosionPrimary",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3338,
+  "editorId": "DLC05JunkMortarExplosionSecondary",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2633,
+  "editorId": "DLC05FireworkExplosionPeonyRed",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2312,
+  "editorId": "DLC05FireworkExplosionWeatherRadstorm",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2301,
+  "editorId": "DLC05FireworkExplosionWeatherRain",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2299,
+  "editorId": "DLC05FireworkExplosionWeatherClear",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2194,
+  "editorId": "DLC05FireworkExplosionPeonyGreen",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop03.esm",
+  "localId": 9466,
+  "editorId": "DLC06SuperReactorExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop03.esm",
+  "localId": 4223,
+  "editorId": "DLC06StaggerExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcworkshop03.esm",
+  "localId": 24182,
+  "editorId": "DLC06E01Explosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 345164,
+  "editorId": "DLC03_HermitAmbushDebrisFX",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344573,
+  "editorId": "DLC03_VimCaptainsBlendExpl",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344313,
+  "editorId": "DLC03_ThrowingBearTrapExplosionBleeding",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344303,
+  "editorId": "DLC03_ThrowingCaltropExplosionPoisoned",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344180,
+  "editorId": "DLC03_ThrowingBearTrapExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344176,
+  "editorId": "DLC03_ThrowingCaltropExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 343550,
+  "editorId": "DLC03FogCrawlerDeathExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 324575,
+  "editorId": "DLC03FogCrawlerAOESilent",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 324574,
+  "editorId": "DLC03HermitCrabAOESilent",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 324204,
+  "editorId": "DLC03HermitCrabAOEExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 322485,
+  "editorId": "DLC03FogCrawlerAOEExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311376,
+  "editorId": "DLC03ExplosionPaintballProjectileWhite",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311375,
+  "editorId": "DLC03ExplosionPaintballProjectileRed",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311374,
+  "editorId": "DLC03ExplosionPaintballProjectileOrange",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311367,
+  "editorId": "DLC03ExplosionPaintballProjectileYellow",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311366,
+  "editorId": "DLC03ExplosionPaintballProjectileGreen",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311365,
+  "editorId": "DLC03ExplosionPaintballProjectileBlue",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 308048,
+  "editorId": "DLC03HermitCrabSpawnExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 249408,
+  "editorId": "DLC03SubBaseTinyExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 229440,
+  "editorId": "DLC03SubBaseExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 229439,
+  "editorId": "DLC03SubBaseSmExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 170863,
+  "editorId": "DLC03VRBeamEnd",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 152111,
+  "editorId": "DLC03VRDataRetrieverExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 356621,
+  "editorId": "DLC04_ThirstZapperQuantumExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 343946,
+  "editorId": "DLC04MisterStreamEnchExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 333755,
+  "editorId": "DLC04TrapFakeForceExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 329194,
+  "editorId": "DLC04SentryShoulderCherryExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 322109,
+  "editorId": "DLC04PaddleballQuantumExplosion_Radiation",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 322108,
+  "editorId": "DLC04PaddleballColaExplosion_Radiation",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 322107,
+  "editorId": "DLC04PaddleballCherryExplosion_Radiation",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 304667,
+  "editorId": "DLC04RaiderOverboss_FragGrenadeSingleExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 297423,
+  "editorId": "BloatedBrahminExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 282260,
+  "editorId": "DLC04PaddleballQuantumExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 282259,
+  "editorId": "DLC04PaddleballCherryExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 282258,
+  "editorId": "DLC04PaddleballColaExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 276984,
+  "editorId": "DLC04NukatronColaExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 271259,
+  "editorId": "DLC04_KK_OswaldTeleportExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 265441,
+  "editorId": "DLC04NukaQuantumGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 265439,
+  "editorId": "DLC04NukaCherryGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 234816,
+  "editorId": "DLC04_ThirstZapperExplosionThatPlacesHazard",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 220791,
+  "editorId": "DLC04_LuckyRabbitsFootExplosion2",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 220787,
+  "editorId": "DLC04_LuckyRabbitsFootExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 214576,
+  "editorId": "DLC04_NukalurkSpawnHatchQueenExpl",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 214266,
+  "editorId": "DLC04NukalurkSpawnHatchExpl",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 211204,
+  "editorId": "DLC04_FragGrenadeMIRVExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 211202,
+  "editorId": "DLC04_FragGrenadeMIRVExplosionPack",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 208731,
+  "editorId": "DLC04NukatronQuantumExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 208730,
+  "editorId": "DLC04NukatronCherryExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 182299,
+  "editorId": "DLC04AcidSoakerExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 179653,
+  "editorId": "DLC04_ThirstZapperSquirtGunExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 179652,
+  "editorId": "DLC04_ThirstZapperColaSprayExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 179648,
+  "editorId": "DLC04NukaColaMisterExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 156045,
+  "editorId": "DLC04DisciplesFrenzyGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 154380,
+  "editorId": "DLC04PackScentGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148397,
+  "editorId": "DLC04FireworkExplosionYellow",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148396,
+  "editorId": "DLC04FireworkExplosionSilver",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148395,
+  "editorId": "DLC04FireworkExplosionRed",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148394,
+  "editorId": "DLC04FireworkExplosionPink",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148393,
+  "editorId": "DLC04FireworkExplosionGreen",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148392,
+  "editorId": "DLC04FireworkExplosionGold",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148391,
+  "editorId": "DLC04FireworkExplosionCrackle",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148390,
+  "editorId": "DLC04FireworkExplosionBlue",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 147044,
+  "editorId": "DLC04IntimidateGrenadeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 136105,
+  "editorId": "DLC04SentryShoulderClusterExplosionChild",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 136100,
+  "editorId": "DLC04MisterStreamExplosionFX",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 103448,
+  "editorId": "DLC04NukaNukeExplosion",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 42324,
+  "editorId": "DLC04RaiderOverboss_ExplosionDischargeSmall",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 42323,
+  "editorId": "DLC04RaiderOverboss_ExplosionDischargeLarge",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 42322,
+  "editorId": "DLC04RaiderOverboss_ExplosionDischargeMAX",
+  "deleted": false,
+  "install": "NG"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2400054,
+  "editorId": "LegendaryEncExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2398449,
+  "editorId": "MinArtilleryActorForce",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2393141,
+  "editorId": "CarNukeSmallVehicles",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2386201,
+  "editorId": "FireExtinguisherExplosionActorForce",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2385729,
+  "editorId": "FatManExplosionMIRVchild",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2383649,
+  "editorId": "BaseballGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2362431,
+  "editorId": "GullExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2354320,
+  "editorId": "DNPrime_FakeForce500Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353428,
+  "editorId": "SentryBotRLegExplosion_lite",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353427,
+  "editorId": "SentryBotLLegExplosion_lite",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353426,
+  "editorId": "SentryBotBLegExplosion_lite",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353425,
+  "editorId": "MrhandyArmExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353424,
+  "editorId": "MrhandyArmExplosionLite",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2353423,
+  "editorId": "ProtectronHeadExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2352514,
+  "editorId": "POIRocketExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2349310,
+  "editorId": "ExplosionCorn02DebrisSpawner",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2349309,
+  "editorId": "ExplosionCorn01DebrisSpawner",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2348341,
+  "editorId": "BottleCapMineExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2345677,
+  "editorId": "RR301SynthTeleportGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2331362,
+  "editorId": "MinArtilleryMuzzleExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2326424,
+  "editorId": "BarrelTankExplosion02Vert",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2297737,
+  "editorId": "ExplosionCryoProjectile",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2294567,
+  "editorId": "thistleTrapExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2294214,
+  "editorId": "RobotLargeModExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2285661,
+  "editorId": "GaussImpactExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2284462,
+  "editorId": "BarrelTankExplosion02",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2280293,
+  "editorId": "GravelWallExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2275054,
+  "editorId": "RobotSelfDestructShockExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2232879,
+  "editorId": "RRRailwayTestingExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2198220,
+  "editorId": "MoleRatOutDigExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2198219,
+  "editorId": "MoleratDigExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2188130,
+  "editorId": "SentryShoulderClusterExplosionChild",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2188121,
+  "editorId": "ExplosionMissileShellSmallSentry",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2187796,
+  "editorId": "DN102_FrenzyGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2186760,
+  "editorId": "ExplosionRailwayRifleStaggerSmall",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2174388,
+  "editorId": "FusionCoreActorForce",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2164402,
+  "editorId": "DNPrimeBeamExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2157571,
+  "editorId": "FurnitureMirelurkSiltExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2134915,
+  "editorId": "PerkExplosionMoneyShotFortuneFinder",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2112057,
+  "editorId": "NukaGrenadeActorForce",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2093645,
+  "editorId": "ExplosionGasCanister",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2070545,
+  "editorId": "POISC16_Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2070544,
+  "editorId": "POISC16_ActorForce",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2059017,
+  "editorId": "PainTrainPush",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2048396,
+  "editorId": "BloodyMessNearbyExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 2043182,
+  "editorId": "KidsLunchboxExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1999271,
+  "editorId": "mod_Legendary_StaggerLarge_Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1999270,
+  "editorId": "mod_Legendary_StaggerMedium_Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1999269,
+  "editorId": "mod_Legendary_StaggerSmall_Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1995707,
+  "editorId": "mod_Legendary_ExplosiveProjectileExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1988058,
+  "editorId": "TeleportIn1stFXExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1988056,
+  "editorId": "TeleportInPlayerFXExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1988055,
+  "editorId": "TeleportOutPlayerFXExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1959906,
+  "editorId": "POIDL018Nuke",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1940502,
+  "editorId": "LibertyPrimeNuke",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1940501,
+  "editorId": "LibertyPrimeNukeActorForce",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1917230,
+  "editorId": "ExplosionMolotovCocktail",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1910927,
+  "editorId": "VertibirdModExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1899279,
+  "editorId": "KidsLunchboxExplosionRare",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1865078,
+  "editorId": "GoreHeadExplosionGlow",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1862655,
+  "editorId": "FatManExplosionMIRVpack",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1848728,
+  "editorId": "VertibirdGlassExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1845141,
+  "editorId": "HoldupExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1844900,
+  "editorId": "GammaGunExplosionShotGun",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1844776,
+  "editorId": "GammaGunExplosionSmall",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1844775,
+  "editorId": "GammaGunExplosionLArge",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1835900,
+  "editorId": "TrapfragGrenadeExplosion2",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1835899,
+  "editorId": "TrapfragGrenadeExplosion3",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1828174,
+  "editorId": "InstituteBeaconExplosionDUPLICATE000",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1817629,
+  "editorId": "MS11EngineExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1804506,
+  "editorId": "HeavyProjectileExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1793756,
+  "editorId": "ExplosiveProjectileExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1790142,
+  "editorId": "SynthGen2ModExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1790141,
+  "editorId": "SynthGen1LimbExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1765493,
+  "editorId": "robotSelfDestructExplosionSmall",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1765492,
+  "editorId": "robotSelfDestructExplosionLarge",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1741970,
+  "editorId": "RobotShockExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1551904,
+  "editorId": "MS11CannonExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1535516,
+  "editorId": "FurnitureMirelurkQueenWaterExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1404168,
+  "editorId": "SwanSupermutantAmbushExplosion01",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 712819,
+  "editorId": "DN102_LabDemo1Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 550382,
+  "editorId": "ExplosionFusionCoreKnightMetldown",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 541316,
+  "editorId": "PA_ExplosiveVentExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 417262,
+  "editorId": "MS02HomingBeaconExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 410845,
+  "editorId": "BloatflyLarvaPoisonExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 404455,
+  "editorId": "WorkshopArtilleryForce",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 403549,
+  "editorId": "ArtilleryStrike01",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 362996,
+  "editorId": "SynthTeleportGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 354585,
+  "editorId": "BoSVertibirdGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 135364,
+  "editorId": "ExplosionVertibirdHullChunk",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 135362,
+  "editorId": "ExplosionVertibirdPropellerImpact",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 131108,
+  "editorId": "vertibirdPropellerExplosionCHILD",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 131107,
+  "editorId": "VertibirdDeathExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 105091,
+  "editorId": "MirelurkEggExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1741472,
+  "editorId": "SpotlightExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1736690,
+  "editorId": "FatManExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1730362,
+  "editorId": "robotSelfDestructExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1726048,
+  "editorId": "MS09LorenzoStaggerExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1721327,
+  "editorId": "fragGrenadeChildExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1703967,
+  "editorId": "RadScorpionOutDigExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1687767,
+  "editorId": "MS02SubNuke",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1675335,
+  "editorId": "MS09JackRadiationGunExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1617842,
+  "editorId": "MirelurkSpawnHatchQueenExpl",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1600994,
+  "editorId": "LibertyPrimeLaserExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1590460,
+  "editorId": "InstNuke",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1575493,
+  "editorId": "ExplosionFusionCoreMetldown",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1565132,
+  "editorId": "LibertyPrimeFootstepExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1553331,
+  "editorId": "cryoMineExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1553330,
+  "editorId": "plasmaGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1549695,
+  "editorId": "cryoGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1545791,
+  "editorId": "JammerExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1527696,
+  "editorId": "InstituteBeaconInitialExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1506339,
+  "editorId": "TeleportOut1stFXExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1496390,
+  "editorId": "DN084_ElevatorStaggerExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1480240,
+  "editorId": "MirelurkSpawnHatchExpl",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1463703,
+  "editorId": "TeleportOutFXExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1441630,
+  "editorId": "TeleportFXExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1421438,
+  "editorId": "pulseGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1408182,
+  "editorId": "FlareGunExplosionNEW",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1364348,
+  "editorId": "BehemothStompExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1358812,
+  "editorId": "BehemothRockExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1329843,
+  "editorId": "BehemothSlamExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1225742,
+  "editorId": "VertibirdRwingExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1225739,
+  "editorId": "VertibirdTailExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1225738,
+  "editorId": "VertibirdLwingExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1222966,
+  "editorId": "TurretMountedExplosionSabotaged",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1209187,
+  "editorId": "BreakableMetalPlate01explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1203641,
+  "editorId": "BreakableRockWallGate01explosionForceBreak",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1195802,
+  "editorId": "MS16fragMineExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1195430,
+  "editorId": "BreakableRockWallGate01explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1189411,
+  "editorId": "StoneBreakingPulse01explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1186498,
+  "editorId": "DeathclawRockExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1186408,
+  "editorId": "CGPrewarNuke",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1173109,
+  "editorId": "TrapFakeForceExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1148437,
+  "editorId": "ExplosionBroadsiderBase",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1081718,
+  "editorId": "MirelurkQueenSpitExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1078220,
+  "editorId": "YaoGuaiRoarFearImodExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1048473,
+  "editorId": "DN102_LabDemo2Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 960761,
+  "editorId": "MirelurkKingSonicExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1037226,
+  "editorId": "ExplosionMissileShell",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 1009133,
+  "editorId": "MoleratBombExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 989164,
+  "editorId": "GammaGunExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 978153,
+  "editorId": "fragMineExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 966032,
+  "editorId": "ExplosionTrapOil_Initial",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 963354,
+  "editorId": "ExplosionTrapOil",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 963352,
+  "editorId": "ExplosionTrapGas",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 960571,
+  "editorId": "AssaultronTorsoExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946970,
+  "editorId": "AssaultronTorsoExplosionLite",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946969,
+  "editorId": "AssaultronHeadExplosionLite",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946968,
+  "editorId": "AssaultronHeadExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946967,
+  "editorId": "AssaultronLegExplosionLite",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946966,
+  "editorId": "AssaultronLegExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946965,
+  "editorId": "AssaultronArmExplosionLite",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 946964,
+  "editorId": "AssaultronArmExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 944531,
+  "editorId": "DN102_LabDemo5Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 939910,
+  "editorId": "MS09PushExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 939858,
+  "editorId": "nukaGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 939855,
+  "editorId": "fragGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 938120,
+  "editorId": "RobotArmExplosionLite",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 938119,
+  "editorId": "RobotArmExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 924143,
+  "editorId": "RobotModExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 899163,
+  "editorId": "CarNukeTEST",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 885740,
+  "editorId": "AAADebugExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 882408,
+  "editorId": "VaultOxygenTankExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 830359,
+  "editorId": "TurretStandingExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 830358,
+  "editorId": "TurretMountedExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 827571,
+  "editorId": "DN029CannonLauncherExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 799451,
+  "editorId": "EyebotExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 799450,
+  "editorId": "ElectricalExplosionSmall",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 793621,
+  "editorId": "FakeForce200Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 759203,
+  "editorId": "SentryBotBLegExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 758377,
+  "editorId": "FakeForce100Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 748972,
+  "editorId": "WoodColumnExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 734893,
+  "editorId": "SentryBotRLegExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 734892,
+  "editorId": "SentryBotLLegExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 724764,
+  "editorId": "GlowingOneResurrectExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 714770,
+  "editorId": "MinArtilleryExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 690941,
+  "editorId": "MirelurkHunterSpitExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 674967,
+  "editorId": "BarrelTankExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 665899,
+  "editorId": "FlareExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 660282,
+  "editorId": "ArtillerySmokeFlareExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 636215,
+  "editorId": "whaleExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 632479,
+  "editorId": "ConcordMuseumBulbSparks",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 573016,
+  "editorId": "WhaleSplodeSploshun",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 539683,
+  "editorId": "RadScorpionDigExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 352450,
+  "editorId": "RoachDropExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 213691,
+  "editorId": "rl_SparksExplosion_UnlitBulb",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 196134,
+  "editorId": "rl_SparksExplosion_LitBulb",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 616965,
+  "editorId": "CrowExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562950,
+  "editorId": "ExplosionAutomotiveCar05Stage3",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562949,
+  "editorId": "ExplosionAutomotiveCar05Stage2",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562948,
+  "editorId": "ExplosionAutomotiveCar05Stage1",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562947,
+  "editorId": "ExplosionAutomotiveCar04Stage3",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562946,
+  "editorId": "ExplosionAutomotiveCar04Stage2",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562945,
+  "editorId": "ExplosionAutomotiveCar04Stage1",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562944,
+  "editorId": "ExplosionAutomotiveCar03Stage3",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562943,
+  "editorId": "ExplosionAutomotiveCar03Stage2",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 562942,
+  "editorId": "ExplosionAutomotiveCar03Stage1",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 555941,
+  "editorId": "BloatflyDeathExplosion01",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 539916,
+  "editorId": "CarNukeActorForce",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533743,
+  "editorId": "GoreInsectSmallExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533212,
+  "editorId": "ExplosionAutomotiveCar02Stage2",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533211,
+  "editorId": "ExplosionAutomotiveCar02Stage3",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 533208,
+  "editorId": "ExplosionAutomotiveCar02Stage1",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 524626,
+  "editorId": "ExplosionAutomotiveWheel02HubcapSpawn",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 518461,
+  "editorId": "ExplosionAutomotiveTireBurst02",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 467857,
+  "editorId": "DN128Shieldsplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396258,
+  "editorId": "PowerArmorLlegExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396257,
+  "editorId": "PowerArmorRlegExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396256,
+  "editorId": "PowerArmorChestExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396255,
+  "editorId": "PowerArmorHeadExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396254,
+  "editorId": "PowerArmorRArmExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 396253,
+  "editorId": "PowerArmorLArmExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 375404,
+  "editorId": "SandbagWallSmallExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 375364,
+  "editorId": "BollardDestExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 370292,
+  "editorId": "OxygenTankExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 195655,
+  "editorId": "FakeForce500Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 195654,
+  "editorId": "FakeForce300Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 195653,
+  "editorId": "SandbagSmallExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 346739,
+  "editorId": "GoreHeadExplosionRed",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 303510,
+  "editorId": "MS09IntroExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 299411,
+  "editorId": "PowerArmorPowerImpactExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 288024,
+  "editorId": "DN085GeyserKnockdownExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 284521,
+  "editorId": "SandbagWallExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 275301,
+  "editorId": "DeathclawAOEAttackExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 501,
+  "editorId": "DefaultWaterExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 235235,
+  "editorId": "FurnitureMirelurkWaterExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 166447,
+  "editorId": "BloodbugDeathGreenExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 166446,
+  "editorId": "BloodbugDeathRedExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 146747,
+  "editorId": "CarNukeLargeVehicles",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 141210,
+  "editorId": "trashcanExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 140438,
+  "editorId": "CarExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 129221,
+  "editorId": "ExplosionGrenadeShell",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 204492,
+  "editorId": "DeathclawIntimidateExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 198273,
+  "editorId": "REDeathExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 193599,
+  "editorId": "FireExtinguisherExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 204729,
+  "editorId": "BloodBugSpitRedExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "fallout4.esm",
+  "localId": 226250,
+  "editorId": "FurnitureMirelurkExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 11424,
+  "editorId": "DLC01SmokeBombExplosionNoVatsBlock",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 10912,
+  "editorId": "DLC01LightningHazardExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 70019,
+  "editorId": "DLC01SmokeBombExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 67729,
+  "editorId": "DLC01FakeForce100Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 63079,
+  "editorId": "DLC01FXShaderAreaRoboBrain",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 31562,
+  "editorId": "DLC01_Unstable_SentryFrenzyGasExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 31530,
+  "editorId": "DLC01_Unstable_SentryExplosiveMinigunExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 31038,
+  "editorId": "DLC01TrackSystem_TrapMine_Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 8478,
+  "editorId": "DLC01_pulseGrenadeExplosionMechanist",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcrobot.esm",
+  "localId": 4070,
+  "editorId": "DLC01ChainLightningExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop01.esm",
+  "localId": 2709,
+  "editorId": "DLC02ExplosionTrapSawblades01",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3540,
+  "editorId": "DLC05FireworkExplosionCrackleDestruction",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3539,
+  "editorId": "DLC05FireworkExplosionPeonyYellowDestruction",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3538,
+  "editorId": "DLC05FireworkExplosionPeonyRedDestruction",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3537,
+  "editorId": "DLC05FireworkExplosionPeonyPinkDestruction",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3536,
+  "editorId": "DLC05FireworkExplosionPeonyBlueDestruction",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3535,
+  "editorId": "DLC05FireworkExplosionPalmGoldDestruction",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3534,
+  "editorId": "DLC05FireworkExplosionPalmSilverDestruction",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3533,
+  "editorId": "DLC05FireworkExplosionPeonyGreenDestruction",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3455,
+  "editorId": "DLC05FireworkExplosionPalmGold",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3453,
+  "editorId": "DLC05FireworkExplosionPalmSilver",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3377,
+  "editorId": "DLC05FireworkExplosionPeonyBlue",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3376,
+  "editorId": "DLC05FireworkExplosionPeonyPink",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3375,
+  "editorId": "DLC05FireworkExplosionPeonyYellow",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3364,
+  "editorId": "DLC05FireworkExplosionCrackle",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3339,
+  "editorId": "DLC05JunkMortarExplosionPrimary",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 3338,
+  "editorId": "DLC05JunkMortarExplosionSecondary",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2633,
+  "editorId": "DLC05FireworkExplosionPeonyRed",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2312,
+  "editorId": "DLC05FireworkExplosionWeatherRadstorm",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2301,
+  "editorId": "DLC05FireworkExplosionWeatherRain",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2299,
+  "editorId": "DLC05FireworkExplosionWeatherClear",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop02.esm",
+  "localId": 2194,
+  "editorId": "DLC05FireworkExplosionPeonyGreen",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop03.esm",
+  "localId": 9466,
+  "editorId": "DLC06SuperReactorExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop03.esm",
+  "localId": 4223,
+  "editorId": "DLC06StaggerExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcworkshop03.esm",
+  "localId": 24182,
+  "editorId": "DLC06E01Explosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 345164,
+  "editorId": "DLC03_HermitAmbushDebrisFX",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344573,
+  "editorId": "DLC03_VimCaptainsBlendExpl",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344313,
+  "editorId": "DLC03_ThrowingBearTrapExplosionBleeding",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344303,
+  "editorId": "DLC03_ThrowingCaltropExplosionPoisoned",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344180,
+  "editorId": "DLC03_ThrowingBearTrapExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 344176,
+  "editorId": "DLC03_ThrowingCaltropExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 343550,
+  "editorId": "DLC03FogCrawlerDeathExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 324575,
+  "editorId": "DLC03FogCrawlerAOESilent",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 324574,
+  "editorId": "DLC03HermitCrabAOESilent",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 324204,
+  "editorId": "DLC03HermitCrabAOEExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 322485,
+  "editorId": "DLC03FogCrawlerAOEExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311376,
+  "editorId": "DLC03ExplosionPaintballProjectileWhite",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311375,
+  "editorId": "DLC03ExplosionPaintballProjectileRed",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311374,
+  "editorId": "DLC03ExplosionPaintballProjectileOrange",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311367,
+  "editorId": "DLC03ExplosionPaintballProjectileYellow",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311366,
+  "editorId": "DLC03ExplosionPaintballProjectileGreen",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 311365,
+  "editorId": "DLC03ExplosionPaintballProjectileBlue",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 308048,
+  "editorId": "DLC03HermitCrabSpawnExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 249408,
+  "editorId": "DLC03SubBaseTinyExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 229440,
+  "editorId": "DLC03SubBaseExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 229439,
+  "editorId": "DLC03SubBaseSmExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 170863,
+  "editorId": "DLC03VRBeamEnd",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlccoast.esm",
+  "localId": 152111,
+  "editorId": "DLC03VRDataRetrieverExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 356621,
+  "editorId": "DLC04_ThirstZapperQuantumExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 343946,
+  "editorId": "DLC04MisterStreamEnchExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 333755,
+  "editorId": "DLC04TrapFakeForceExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 329194,
+  "editorId": "DLC04SentryShoulderCherryExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 322109,
+  "editorId": "DLC04PaddleballQuantumExplosion_Radiation",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 322108,
+  "editorId": "DLC04PaddleballColaExplosion_Radiation",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 322107,
+  "editorId": "DLC04PaddleballCherryExplosion_Radiation",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 304667,
+  "editorId": "DLC04RaiderOverboss_FragGrenadeSingleExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 297423,
+  "editorId": "BloatedBrahminExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 282260,
+  "editorId": "DLC04PaddleballQuantumExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 282259,
+  "editorId": "DLC04PaddleballCherryExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 282258,
+  "editorId": "DLC04PaddleballColaExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 276984,
+  "editorId": "DLC04NukatronColaExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 271259,
+  "editorId": "DLC04_KK_OswaldTeleportExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 265441,
+  "editorId": "DLC04NukaQuantumGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 265439,
+  "editorId": "DLC04NukaCherryGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 234816,
+  "editorId": "DLC04_ThirstZapperExplosionThatPlacesHazard",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 220791,
+  "editorId": "DLC04_LuckyRabbitsFootExplosion2",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 220787,
+  "editorId": "DLC04_LuckyRabbitsFootExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 214576,
+  "editorId": "DLC04_NukalurkSpawnHatchQueenExpl",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 214266,
+  "editorId": "DLC04NukalurkSpawnHatchExpl",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 211204,
+  "editorId": "DLC04_FragGrenadeMIRVExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 211202,
+  "editorId": "DLC04_FragGrenadeMIRVExplosionPack",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 208731,
+  "editorId": "DLC04NukatronQuantumExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 208730,
+  "editorId": "DLC04NukatronCherryExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 182299,
+  "editorId": "DLC04AcidSoakerExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 179653,
+  "editorId": "DLC04_ThirstZapperSquirtGunExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 179652,
+  "editorId": "DLC04_ThirstZapperColaSprayExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 179648,
+  "editorId": "DLC04NukaColaMisterExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 156045,
+  "editorId": "DLC04DisciplesFrenzyGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 154380,
+  "editorId": "DLC04PackScentGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148397,
+  "editorId": "DLC04FireworkExplosionYellow",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148396,
+  "editorId": "DLC04FireworkExplosionSilver",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148395,
+  "editorId": "DLC04FireworkExplosionRed",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148394,
+  "editorId": "DLC04FireworkExplosionPink",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148393,
+  "editorId": "DLC04FireworkExplosionGreen",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148392,
+  "editorId": "DLC04FireworkExplosionGold",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148391,
+  "editorId": "DLC04FireworkExplosionCrackle",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 148390,
+  "editorId": "DLC04FireworkExplosionBlue",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 147044,
+  "editorId": "DLC04IntimidateGrenadeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 136105,
+  "editorId": "DLC04SentryShoulderClusterExplosionChild",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 136100,
+  "editorId": "DLC04MisterStreamExplosionFX",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 103448,
+  "editorId": "DLC04NukaNukeExplosion",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 42324,
+  "editorId": "DLC04RaiderOverboss_ExplosionDischargeSmall",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 42323,
+  "editorId": "DLC04RaiderOverboss_ExplosionDischargeLarge",
+  "deleted": false,
+  "install": "AE"
+ },
+ {
+  "plugin": "dlcnukaworld.esm",
+  "localId": 42322,
+  "editorId": "DLC04RaiderOverboss_ExplosionDischargeMAX",
+  "deleted": false,
+  "install": "AE"
+ }
+]

@@ -1,0 +1,109 @@
+name: Acceptance (native GNS)
+
+on:
+  push:
+    branches: ["ci/**"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  acceptance:
+    name: Native GNS acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Restore and provision the CO cross toolchain
+        uses: ./.github/actions/co-toolchain
+
+      - name: Verify native build dependencies
+        run: |
+          set -euo pipefail
+          for tool in git cmake protoc ss; do
+            command -v "$tool" >/dev/null || { echo "::error::missing build dependency: $tool"; exit 1; }
+          done
+          test -f /usr/include/openssl/ssl.h || { echo "::error::missing libssl-dev headers"; exit 1; }
+          test -f /usr/include/openssl/rand.h || { echo "::error::missing OpenSSL random headers"; exit 1; }
+
+      - name: Set up xmake
+        uses: ./.github/actions/co-xmake
+
+      - name: Restore the compile cache
+        uses: ./.github/actions/co-ccache
+
+      - name: Configure native acceptance scratch
+        run: |
+          echo "CO_GNS_DEPS_DIR=$RUNNER_TEMP/co-acceptance-gns-deps-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+          echo "CO_GNS_BUILD_DIR=$RUNNER_TEMP/co-acceptance-gns-build-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+
+      - name: Build and test pinned native GNS bridge
+        env:
+          CO_REQUIRE_LIVE_GNS: "1"
+        run: bash CO-SERVER/server/scripts/build-gns-bridge.sh
+
+      - name: Run native protocol regression suite
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+          xmake test -y || { xmake test -v -y; exit 1; }
+
+      - name: Build native server and live GNS acceptance clients
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: |
+          set -euo pipefail
+          xmake build -y CommonwealthOnlineServerCpp
+          xmake build -y CommonwealthOnlineServerLiveNamedGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveNetworkFaultGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveProtocolFaultGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveAuthorityChurnGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveAdmissionGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveReconnectChurnGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveProfileBanGnsSmoke
+          xmake build -y CommonwealthOnlineServerLiveVoiceFloodGnsSmoke
+
+      - name: Run live native GNS acceptance
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ env.CO_GNS_BUILD_DIR }}
+          LD_LIBRARY_PATH: ${{ env.CO_GNS_BUILD_DIR }}
+        run: bash "$GITHUB_WORKSPACE/CO-SERVER/server-cpp/scripts/run-live-smokes.sh"
+
+      - name: Clean native acceptance scratch
+        if: always()
+        run: rm -rf "$CO_GNS_DEPS_DIR" "$CO_GNS_BUILD_DIR"
+
+  report:
+    name: Report to the private PR
+    needs: [acceptance]
+    if: always()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-server-acceptance
+          needs: ${{ toJSON(needs) }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}

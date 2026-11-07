@@ -1,0 +1,87 @@
+name: Production Transport Contract
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    name: GNS-only production path
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Verify production transport
+        run: python3 scripts/verify-production-transport.py
+
+      - name: Verify native acceptance coverage
+        run: bash CO-SERVER/server-cpp/scripts/verify-native-acceptance-matrix.sh
+
+      - name: Enforce repository runtime policy
+        run: bash CO-SERVER/server/scripts/verify-no-legacy-runtime.sh
+
+      - name: Check native and bridge script syntax
+        run: |
+          set -euo pipefail
+          for script in \
+            CO-SERVER/server/scripts/build-gns-bridge.sh \
+            CO-SERVER/server/scripts/build-gns-bridge-windows-cross.sh \
+            CO-SERVER/server/scripts/verify-no-legacy-runtime.sh \
+            CO-SERVER/server-cpp/scripts/build-native-package-ci.sh \
+            CO-SERVER/server-cpp/scripts/free-port.sh \
+            CO-SERVER/server-cpp/scripts/package-native-release.sh \
+            CO-SERVER/server-cpp/scripts/run-live-smokes.sh \
+            CO-SERVER/server-cpp/scripts/smoke-native-linux-package.sh \
+            CO-SERVER/server-cpp/scripts/smoke-native-linux-release.sh \
+            CO-SERVER/server-cpp/scripts/verify-native-acceptance-matrix.sh \
+            CO-SERVER/server-cpp/scripts/verify-native-release-path.sh; do
+            bash -n "$script"
+          done
+
+  report:
+    name: Report to the private PR
+    needs: [contract]
+    if: always()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-production-transport
+          needs: ${{ toJSON(needs) }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}

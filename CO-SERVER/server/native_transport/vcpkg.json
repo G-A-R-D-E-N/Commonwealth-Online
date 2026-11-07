@@ -1,0 +1,8 @@
+{
+  "name": "commonwealth-online-gns-server-bridge",
+  "version-string": "0.1.0",
+  "builtin-baseline": "e4ed9022bd97e54d848104f7e1ab153d9532a57e",
+  "dependencies": [
+    "protobuf"
+  ]
+}

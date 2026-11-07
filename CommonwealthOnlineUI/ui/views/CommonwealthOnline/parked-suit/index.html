@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Power Armor</title>
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="parked-suit" id="coParkedSuit" role="dialog" aria-modal="true" aria-labelledby="coParkedSuitTitle" hidden>
+      <header class="parked-suit-head">
+        <p class="parked-suit-eyebrow" id="coParkedSuitEyebrow">PLAYER INTERACTION</p>
+        <h1 class="parked-suit-title" id="coParkedSuitTitle">Parked Power Armor</h1>
+      </header>
+
+      <ul class="parked-suit-list" id="coParkedSuitList" role="listbox" aria-label="Parked suits" tabindex="-1"></ul>
+
+      <section class="parked-suit-transfer" id="coParkedSuitTransfer" aria-live="assertive" hidden>
+        <div class="parked-suit-transfer__lock" id="coParkedSuitTransferLock"></div>
+        <p class="parked-suit-transfer__state" id="coParkedSuitTransferState"></p>
+        <p class="parked-suit-transfer__owner" id="coParkedSuitTransferOwner"></p>
+        <p class="parked-suit-transfer__line" id="coParkedSuitTransferLine"></p>
+      </section>
+
+      <section class="parked-suit-breach" id="coParkedSuitBreachView" aria-label="Breach protocol" hidden>
+        <div class="parked-suit-side">
+          <p class="parked-suit-label">Required sequence</p>
+          <ol class="parked-suit-target" id="coParkedSuitTarget"></ol>
+          <p class="parked-suit-label">Buffer</p>
+          <div class="parked-suit-buffer" id="coParkedSuitBuffer"></div>
+        </div>
+        <div class="parked-suit-grid" id="coParkedSuitGrid" role="grid" aria-label="Code matrix"></div>
+      </section>
+
+      <p class="parked-suit-status" id="coParkedSuitStatus" role="status" aria-live="polite"></p>
+      <div class="parked-suit-actions">
+        <button type="button" class="parked-suit-btn is-primary" id="coParkedSuitHack">Breach</button>
+        <button type="button" class="parked-suit-btn" id="coParkedSuitRemove" hidden>Remove suit</button>
+        <button type="button" class="parked-suit-btn" id="coParkedSuitClose">Close</button>
+      </div>
+      <footer class="prompt-bar" id="coParkedSuitHint"><div class="prompt"><span class="prompt__glyph prompt__glyph--text" aria-hidden="true">↑↓</span><span class="prompt__label">CHOOSE</span></div><div class="prompt"><span class="prompt__glyph prompt__glyph--icon" aria-hidden="true"><img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_A_White_Alt.png" src="../shared/icons/Xbox/T_X_A_White_Alt.png" alt="" draggable="false"></span><span class="prompt__label">BREACH</span></div><div class="prompt"><span class="prompt__glyph prompt__glyph--icon" aria-hidden="true"><img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_B_White_Alt.png" src="../shared/icons/Xbox/T_X_B_White_Alt.png" alt="" draggable="false"></span><span class="prompt__label">CLOSE</span></div></footer>
+      <footer class="prompt-bar" id="coParkedSuitHintBreach" hidden><div class="prompt"><span class="prompt__glyph prompt__glyph--text" aria-hidden="true">D-PAD</span><span class="prompt__label">MOVE</span></div><div class="prompt"><span class="prompt__glyph prompt__glyph--icon" aria-hidden="true"><img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_A_White_Alt.png" src="../shared/icons/Xbox/T_X_A_White_Alt.png" alt="" draggable="false"></span><span class="prompt__label">SELECT</span></div><div class="prompt"><span class="prompt__glyph prompt__glyph--icon" aria-hidden="true"><img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_B_White_Alt.png" src="../shared/icons/Xbox/T_X_B_White_Alt.png" alt="" draggable="false"></span><span class="prompt__label">BACK</span></div></footer>
+      <footer class="prompt-bar" id="coParkedSuitHintTransfer" hidden><div class="prompt"><span class="prompt__glyph prompt__glyph--icon" aria-hidden="true"><img class="prompt__glyph-img" data-glyph-src="../shared/icons/Xbox/T_X_B_White_Alt.png" src="../shared/icons/Xbox/T_X_B_White_Alt.png" alt="" draggable="false"></span><span class="prompt__label">BACK</span></div></footer>
+    </main>
+    <script src="../shared/prompt-glyphs.js"></script>
+    <script src="parked-suit.js"></script>
+    <script>if (window.CO_PromptGlyphs) { window.CO_PromptGlyphs.hydrate(); }</script>
+  </body>
+</html>

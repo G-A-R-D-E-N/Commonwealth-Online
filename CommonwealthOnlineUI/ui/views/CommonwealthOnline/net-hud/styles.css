@@ -1,0 +1,59 @@
+@font-face {
+  font-family: "Futura PT Demibold";
+  src: url("../../fonts/futura-pt-demibold.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  --co-ui-scale: 1;
+  --co-text-pale: #eef3e8;
+  --co-font: "Futura PT Demibold", "Roboto Condensed", "Bahnschrift", "Arial Narrow", Arial, sans-serif;
+  --co-net-top: 40px;
+  --co-net-right: 40px;
+  --co-net-row-gap: 2px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;
+  font-family: var(--co-font);
+  font-weight: 600;
+  color: var(--co-text-pale);
+  pointer-events: none;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.co-net-hud {
+  position: fixed;
+  top: calc(var(--co-net-top) * var(--co-ui-scale));
+  right: calc(var(--co-net-right) * var(--co-ui-scale));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: calc(var(--co-net-row-gap) * var(--co-ui-scale));
+  font-size: calc(15px * var(--co-ui-scale));
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+}
+
+.co-net-row {
+  white-space: nowrap;
+}

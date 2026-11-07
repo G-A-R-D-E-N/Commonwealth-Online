@@ -1,0 +1,98 @@
+name: CO-Launcher CI
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    name: Format, clippy and tests (Linux)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+        working-directory: CO-Launcher
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Rust toolchain
+        run: |
+          rustup component add rustfmt clippy
+          cargo --version
+
+      - name: Restore the Rust build cache
+        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+        with:
+          workspaces: CO-Launcher -> target
+
+      - name: Format
+        run: cargo fmt --all --check
+
+      - name: Clippy
+        run: cargo clippy --workspace --exclude launcher-gui --all-targets -- -D warnings
+
+      - name: Tests
+        run: cargo test --workspace --exclude launcher-gui
+
+  windows:
+    name: Format, clippy and tests (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+        working-directory: CO-Launcher
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Rust toolchain
+        run: |
+          rustup component add rustfmt clippy
+          cargo --version
+
+      - name: Restore the Rust build cache
+        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+        with:
+          workspaces: CO-Launcher -> target
+
+      - name: Format
+        run: cargo fmt --all --check
+
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Tests
+        run: cargo test --package launcher-gui
+
+  report:
+    name: Report to the private PR
+    needs: [linux, windows]
+    if: always()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-launcher-ci
+          needs: ${{ toJSON(needs) }}
+          token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}

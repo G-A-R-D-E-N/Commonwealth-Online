@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Join Overlay Preview</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      html,
+      body {
+        background: linear-gradient(165deg, #09120b 0%, #101a12 45%, #060c07 100%) !important;
+      }
+      .preview-backdrop {
+        position: fixed;
+        inset: 0;
+        background:
+          linear-gradient(180deg, rgba(62, 207, 74, 0.03) 0%, transparent 60%),
+          repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15) 0px, rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 4px);
+        pointer-events: none;
+      }
+      /* Note: strictly inside preview-backdrop for visual scene preview only */
+    </style>
+  </head>
+  <body>
+    <div id="coJoinOverlay"></div>
+    <script src="overlay.js"></script>
+    <script>
+      var states = [
+        { state: "Connecting", progress: 0.25 },
+        { state: "Authenticating", progress: 0.45 },
+        { state: "LoadingWorld", progress: 0.70, status: "Streaming terrain and settlement network" },
+        { state: "Spawning", progress: 0.95 }
+      ];
+      var index = 2; // Preview "LoadingWorld"
+      window.coJoinOverlaySetState(states[index]);
+    </script>
+  </body>
+</html>

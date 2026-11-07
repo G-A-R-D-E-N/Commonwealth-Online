@@ -1,0 +1,192 @@
+name: Public CI contracts
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: co-ci
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Verify the native release path
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          mkdir -p .github/public-ci/release
+          gh api -H "Accept: application/vnd.github.raw" "repos/G-A-R-D-E-N/Commonwealth-Online-Private/contents/.github/public-ci/release/co-server-publish-host.yml?ref=$source" > .github/public-ci/release/co-server-publish-host.yml
+          CO_REQUIRE_PUBLISHER=1 bash CO-SERVER/server-cpp/scripts/verify-native-release-path.sh
+
+      - name: Run audit contracts
+        run: |
+          set -euo pipefail
+          for test in \
+            tests/audit/test_admin_security_contracts.py \
+            tests/audit/test_camp_move_grant_contract.py \
+            tests/audit/test_character_slots_contracts.py \
+            tests/audit/test_misc_contracts.py \
+            tests/audit/test_misc_contracts_part2.py \
+            tests/audit/test_misc_contracts_part3.py \
+            tests/audit/test_misc_contracts_part4.py \
+            tests/audit/test_networking_protocol_contracts.py \
+            tests/audit/test_networking_protocol_contracts_part2.py \
+            tests/audit/test_public_listing_defaults_contract.py \
+            tests/audit/test_server_auth_settings_contracts.py \
+            tests/audit/test_server_auth_settings_contracts_part2.py \
+            tests/audit/test_server_auth_settings_contracts_part3.py \
+            tests/audit/test_steam_join_contracts.py \
+            tests/audit/test_steam_join_contracts_part2.py \
+            tests/audit/test_steam_join_contracts_part3.py \
+            tests/audit/test_steam_join_contracts_part4.py \
+            tests/audit/test_ui_browser_contracts.py \
+            tests/audit/test_ui_browser_contracts_part2.py \
+            tests/audit/test_ui_browser_contracts_part3.py \
+            tests/audit/test_workshop_settlement_contracts.py \
+            tests/audit/test_workshop_settlement_contracts_part2.py \
+            tests/audit/test_workshop_settlement_contracts_part3.py \
+            tests/audit/test_durable_profile_scope_contract.py \
+            tests/audit/test_inbound_budget_contract.py \
+            tests/audit/test_vendor_trade_contract.py; do
+            test -f "$test" || { echo "::error::missing contract test: $test"; exit 1; }
+            echo "::group::$test"; python3 "$test"; echo "::endgroup::"
+          done
+
+      - name: Test private CI webhook
+        run: node --test scripts/ci/sync-webhook/worker.test.mjs
+
+      - name: Run plugin contracts
+        working-directory: CO-BETA
+        run: |
+          set -euo pipefail
+          for test in \
+            plugin/tests/F4TNetworkServerContracts.py \
+            plugin/tests/F4TNetworkServerContracts_part2.py \
+            plugin/tests/F4TNpcCombatContracts.py \
+            plugin/tests/F4TNpcCombatContracts_part2.py \
+            plugin/tests/F4TNpcCombatContracts_part3.py \
+            plugin/tests/F4TNpcCombatContracts_part4.py \
+            plugin/tests/F4TNpcCombatContracts_part5.py \
+            plugin/tests/F4TParkedSuitContract.py \
+            plugin/tests/F4TPipboyLightContract.py \
+            plugin/tests/F4TPowerArmorPieceGateContract.py \
+            plugin/tests/F4TProxyConsoleContracts.py \
+            plugin/tests/F4TProxyConsoleContracts_part2.py \
+            plugin/tests/F4TQuestStoryContracts.py \
+            plugin/tests/F4TQuestStoryContracts_part2.py \
+            plugin/tests/F4TQuestStoryContracts_part3.py \
+            plugin/tests/F4TQuestStoryContracts_part4.py \
+            plugin/tests/F4TQuestStoryContracts_part5.py \
+            plugin/tests/F4TQuestStoryContracts_part6.py \
+            plugin/tests/F4TQuestStoryContracts_part7.py \
+            plugin/tests/F4TSaveModpackContracts.py \
+            plugin/tests/F4TSaveModpackContracts_part2.py \
+            plugin/tests/F4TSettlementCaptureContracts.py \
+            plugin/tests/F4TUiToolingContracts.py; do
+            test -f "$test" || { echo "::error::missing contract test: CO-BETA/$test"; exit 1; }
+            echo "::group::$test"; python3 "$test"; echo "::endgroup::"
+          done
+
+      - name: Fetch the 1.10.163 address bin from CommonLibF4
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/bins" "$RUNNER_TEMP/commonlibf4"
+          gh release download 1.0.0 --repo Ryan-rsm-McKenzie/CommonLibF4 --pattern AddressBins.zip --dir "$RUNNER_TEMP/commonlibf4"
+          unzip -o -j "$RUNNER_TEMP/commonlibf4/AddressBins.zip" F4SE/Plugins/version-1-10-163-0.bin -d "$RUNNER_TEMP/bins"
+          expected=$(jq -r '.header.bins.OG.sha256' CO-BETA/tools/engine-ids.lock.json)
+          echo "$expected  $RUNNER_TEMP/bins/version-1-10-163-0.bin" | sha256sum -c -
+
+      - name: Fetch the 1.10.984 and 1.11.240 address bins from the private prerelease
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh release download ci-address-bins --repo G-A-R-D-E-N/Commonwealth-Online-Private --dir "$RUNNER_TEMP/bins" --pattern version-1-10-984-0.bin --pattern version-1-11-240-0.bin
+
+      - name: Check that all three address bins were fetched
+        run: |
+          set -euo pipefail
+          for bin in version-1-10-163-0.bin version-1-10-984-0.bin version-1-11-240-0.bin; do
+            test -s "$RUNNER_TEMP/bins/$bin" || { echo "::error::missing address bin $bin"; exit 1; }
+          done
+
+      - name: Check engine ids against the address bins
+        working-directory: CO-BETA
+        env:
+          CO_ADDRESS_BINS: ${{ runner.temp }}/bins
+        run: python3 tools/tests/test_engine_ids.py
+
+      - name: Run the release manifest and update signing tests
+        run: |
+          set -euo pipefail
+          openssl version
+          for test in CO-BETA/ci/test-make-latest-json.py CO-BETA/ci/test-update-signing.py; do
+            test -f "$test" || { echo "::error::missing contract test: $test"; exit 1; }
+            echo "::group::$test"; python3 "$test"; echo "::endgroup::"
+          done
+
+  report:
+    name: Report to the private PR
+    needs: [contracts]
+    if: always()
+    runs-on: ubuntu-24.04
+    environment: co-ci
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Post the result as a commit status on the private commit
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+          [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          if jq -e 'any(.[]; .result == "cancelled")' <<<"$NEEDS" >/dev/null; then echo "run superseded; no status posted"; exit 0; fi
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+          elif [ "$ran" -eq 0 ]; then state=failure; description="no jobs ran (gated off or misconfigured)"
+          else state=success; description="passed"; fi
+          gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+            -f context="public-ci/co-contracts" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+          echo "$state posted for co-contracts ($description)"

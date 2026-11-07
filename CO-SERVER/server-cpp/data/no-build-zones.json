@@ -1,0 +1,11 @@
+{
+  "regions": [
+    {
+      "space": { "plugin": "Fallout4.esm", "localFormId": 60 },
+      "minX": -28000,
+      "minY": -18000,
+      "maxX": -22000,
+      "maxY": -12000
+    }
+  ]
+}

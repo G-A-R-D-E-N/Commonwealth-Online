@@ -1,0 +1,35 @@
+name: CO CI report
+description: Map this run's needs to a commit status on the private source commit
+inputs:
+  context:
+    description: Status context to post, for example public-ci/co-native-ci
+    required: true
+  needs:
+    description: toJSON(needs) of the calling job
+    required: true
+  token:
+    description: Token allowed to write commit statuses on the private repository
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Post the result as a commit status on the private commit
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        NEEDS: ${{ inputs.needs }}
+        CONTEXT: ${{ inputs.context }}
+        RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      run: |
+        set -euo pipefail
+        source=$(git log -1 --format=%B | sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p')
+        [ -n "$source" ] || { echo "::error::no Source-Commit trailer"; exit 1; }
+        failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+        if jq -e 'any(.[]; .result == "cancelled")' <<<"$NEEDS" >/dev/null; then echo "run superseded; no status posted"; exit 0; fi
+        ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+        if [ -n "$failed" ]; then state=failure; description="failed: $failed"
+        elif [ "$ran" -eq 0 ]; then state=failure; description="no jobs ran (gated off or misconfigured)"
+        else state=success; description="passed"; fi
+        gh api "repos/G-A-R-D-E-N/Commonwealth-Online-Private/statuses/$source" -f state="$state" \
+          -f context="$CONTEXT" -f target_url="$RUN_URL" -f description="${description:0:140}" >/dev/null
+        echo "$state posted for ${CONTEXT#public-ci/} ($description)"
