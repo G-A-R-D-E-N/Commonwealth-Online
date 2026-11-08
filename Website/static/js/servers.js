@@ -261,6 +261,14 @@
     return response.json();
   };
 
+  const fetchCurated = async () => {
+    const payload = await fetchJson(CURATED_URL);
+    if (!Array.isArray(payload?.servers)) {
+      throw new Error("Curated server list is malformed");
+    }
+    return payload;
+  };
+
   const load = async ({ silent = false } = {}) => {
     if (loading) {
       return;
@@ -273,7 +281,7 @@
 
     const [live, curated] = await Promise.allSettled([
       fetchJson(DIRECTORY_URL),
-      fetchJson(CURATED_URL),
+      fetchCurated(),
     ]);
     loading = false;
 
@@ -282,16 +290,19 @@
       return;
     }
 
-    if (live.status === "rejected" && curated.status === "rejected") {
+    const liveCount = live.status === "fulfilled" && Array.isArray(live.value?.servers)
+      ? live.value.servers.length
+      : 0;
+    if (curated.status === "rejected" && liveCount === 0) {
       lastFeedHtml = "";
       els.feed.removeAttribute("aria-busy");
       els.feed.innerHTML = `
         <div class="servers-empty">
-          <p>Could not reach the server list.</p>
+          <p>Server list unavailable. Please try again later.</p>
         </div>
       `;
       const reason = live.reason?.message || curated.reason?.message;
-      setStatus(`Failed to load server list${reason ? `: ${reason}` : ""}`, true);
+      setStatus(`Server list unavailable${reason ? `: ${reason}` : ""}`, true);
       return;
     }
 

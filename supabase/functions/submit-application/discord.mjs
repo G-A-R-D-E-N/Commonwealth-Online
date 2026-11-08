@@ -8,6 +8,42 @@ const truncate = (value, max) => {
   return text.length > max ? `${text.slice(0, max - 1)}…` : text;
 };
 
+const EMBED_VALUE_LIMIT = 1024;
+const ANSWER_CHUNK = 900;
+
+const embedValue = (value) => {
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
+  }
+  const textValue = String(value ?? "");
+  return textValue.length > EMBED_VALUE_LIMIT
+    ? "Long answer: the full text follows in the thread messages below."
+    : textValue;
+};
+
+const splitText = (value, size) => {
+  const points = Array.from(value);
+  const parts = [];
+  for (let index = 0; index < points.length; index += size) {
+    parts.push(points.slice(index, index + size).join(""));
+  }
+  return parts;
+};
+
+export const answerMessages = (application) =>
+  [
+    ["Experience", application.experience],
+    ["Motivation", application.motivation],
+    ["Availability", application.availability],
+    ...Object.entries(application.answers || {}),
+  ].flatMap(([label, value]) => {
+    if (typeof value !== "string" || value.length <= EMBED_VALUE_LIMIT) {
+      return [];
+    }
+    const parts = splitText(value, ANSWER_CHUNK);
+    return parts.map((part, index) => `**${label}** (${index + 1}/${parts.length})\n${part}`);
+  });
+
 const buildThreadName = (application) => {
   const status = cleanThreadPart(application.status, "pending");
   const displayName = cleanThreadPart(application.display_name, "Application");
@@ -32,12 +68,12 @@ export const buildDiscordPayload = (application) => ({
       { name: "Email", value: truncate(application.email, 1024), inline: true },
       { name: "Discord username", value: truncate(application.discord_handle, 1024), inline: true },
       { name: "Timezone", value: truncate(application.timezone || "Not provided", 1024), inline: true },
-      { name: "Availability", value: truncate(application.availability || "Not provided", 1024), inline: false },
-      { name: "Experience", value: truncate(application.experience, 1024), inline: false },
-      { name: "Motivation", value: truncate(application.motivation, 1024), inline: false },
+      { name: "Availability", value: embedValue(application.availability || "Not provided"), inline: false },
+      { name: "Experience", value: embedValue(application.experience), inline: false },
+      { name: "Motivation", value: embedValue(application.motivation), inline: false },
       ...Object.entries(application.answers || {}).map(([key, value]) => ({
         name: key,
-        value: truncate(typeof value === "boolean" ? (value ? "Yes" : "No") : value, 1024),
+        value: embedValue(value),
         inline: true,
       })),
     ].slice(0, 25),
@@ -71,6 +107,7 @@ export const postDiscordMessage = async (webhookUrl, payload, threadId = "", fet
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(15000),
   });
   if (!response.ok) {
     throw new Error(`Discord notification returned ${response.status}`);

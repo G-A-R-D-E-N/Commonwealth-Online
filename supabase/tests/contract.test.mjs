@@ -5,10 +5,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
+  answerMessages,
   buildDiscordPayload,
   buildReviewUpdatePayload,
   scheduleDiscordNotification,
 } from "../functions/submit-application/discord.mjs";
+import { deliverDue } from "../functions/submit-application/discord-delivery.mjs";
 import { createCors } from "../functions/submit-application/cors.mjs";
 import { validateApplication } from "../functions/submit-application/validation.mjs";
 
@@ -161,6 +163,10 @@ const profileBannersMigration = fs.readFileSync(
   path.join(root, "migrations", "20260929000000_profile_banners.sql"),
   "utf8"
 );
+const discordRetryMigration = fs.readFileSync(
+  path.join(root, "migrations", "20261107000000_application_discord_retry_and_limits.sql"),
+  "utf8"
+);
 const registerAccount = fs.readFileSync(
   path.join(root, "functions", "register-account", "index.ts"),
   "utf8"
@@ -231,7 +237,8 @@ assert.match(corsImplementation, /request.method === "OPTIONS"/);
 assert.match(submitApplication, /cors: "disabled"/);
 assert.match(submitApplication, /fetch: withCors\(handler\)/);
 assert.match(submitApplication, /DISCORD_APPLICATION_WEBHOOK_URL/);
-assert.match(submitApplication, /scheduleDiscordNotification/);
+assert.match(submitApplication, /deliverDue/);
+assert.match(submitApplication, /discord_post_next_attempt_at/);
 assert.match(submitApplication, /consume_application_rate_limit/);
 assert.match(submitApplication, /select\("public_id,type,discord_handle/);
 assert.doesNotMatch(submitApplication, /\.select\("\*"/);
@@ -778,6 +785,156 @@ shortBeta.availability = "short";
 assert.equal(validateApplication(shortBeta).ok, false);
 assert.ok(validateApplication(shortBeta).errors.some((error) => error.field === "availability"));
 
+for (const type of TYPE_IDS) {
+  const application = applicationFor(type);
+  for (const field of TYPES[type].fields.filter((field) => field.max && ["text", "textarea"].includes(field.type))) {
+    assert.equal(
+      validateApplication({ ...application, [field.key]: "x".repeat(field.max) }).ok,
+      true,
+      `${type}.${field.key} accepts exactly ${field.max} characters`,
+    );
+    const over = validateApplication({ ...application, [field.key]: "x".repeat(field.max + 1) });
+    assert.equal(over.ok, false, `${type}.${field.key} refuses ${field.max + 1} characters instead of cutting them`);
+    assert.ok(
+      over.errors.some((error) => error.field === field.key && /or fewer/.test(error.message)),
+      `${type}.${field.key} reports the length limit`,
+    );
+  }
+}
+
+const teamApplication = applicationFor("team");
+assert.equal(validateApplication({ ...teamApplication, email: `${"a".repeat(249)}@b.co` }).ok, true);
+assert.ok(
+  validateApplication({ ...teamApplication, email: `${"a".repeat(250)}@b.co` })
+    .errors.some((error) => error.field === "email" && /or fewer/.test(error.message)),
+);
+assert.ok(
+  validateApplication({ ...teamApplication, portfolioUrl: `https://example.com/${"a".repeat(500)}` })
+    .errors.some((error) => error.field === "portfolioUrl" && /or fewer/.test(error.message)),
+);
+assert.equal(validateApplication({ ...teamApplication, displayName: "😀".repeat(80) }).ok, true, "limits count code points");
+assert.equal(validateApplication({ ...teamApplication, displayName: "😀".repeat(81) }).ok, false);
+assert.equal(validateApplication({ ...teamApplication, displayName: "😀" }).ok, false, "minimums count code points");
+assert.equal(validateApplication({ ...teamApplication, displayName: "😀😀" }).ok, true);
+
+const longApplication = {
+  type: "beta",
+  status: "pending",
+  public_id: "application-reference",
+  display_name: "Applicant",
+  experience: "é".repeat(1500),
+  motivation: "😀".repeat(3000),
+  availability: "short",
+  answers: { hardware: "h".repeat(1100), gameEdition: "both" },
+};
+const longMessages = answerMessages(longApplication);
+assert.equal(longMessages.length, 8);
+assert.ok(longMessages.every((message) => message.length <= 2000), "every thread message fits the Discord limit");
+assert.equal(
+  longMessages
+    .filter((message) => message.startsWith("**Motivation**"))
+    .map((message) => message.slice(message.indexOf("\n") + 1))
+    .join(""),
+  longApplication.motivation,
+  "the full answer is kept across the messages",
+);
+assert.equal(
+  longMessages
+    .filter((message) => message.startsWith("**Experience**"))
+    .map((message) => message.slice(message.indexOf("\n") + 1))
+    .join(""),
+  longApplication.experience,
+);
+assert.deepEqual(answerMessages({ experience: "x".repeat(1024), motivation: "short", answers: {} }), []);
+const longEmbed = buildDiscordPayload(longApplication).embeds[0].fields;
+assert.ok(longEmbed.every((field) => field.value.length <= 1024));
+assert.match(longEmbed.find((field) => field.name === "Motivation").value, /thread messages/);
+
+const recordedCalls = [];
+const fakeAdmin = (claimed) => ({
+  rpc: async (name, args) => {
+    recordedCalls.push([name, args]);
+    return { data: name === "claim_discord_posts" ? claimed : null, error: null };
+  },
+  from: (table) => ({
+    update: (values) => ({
+      eq: async (column, value) => {
+        recordedCalls.push(["update", table, values, column, value]);
+        return { error: null };
+      },
+    }),
+  }),
+});
+const discordFetch = (responses) => {
+  const urls = [];
+  const fetchImpl = async (url) => {
+    urls.push(String(url));
+    const response = responses[Math.min(urls.length - 1, responses.length - 1)];
+    return { ok: response.ok, status: response.ok ? 200 : 500, json: async () => response.body };
+  };
+  return { urls, fetchImpl };
+};
+const errorsSeen = [];
+const onDeliveryError = (error) => errorsSeen.push(error);
+
+assert.equal(await deliverDue(fakeAdmin([]), "", onDeliveryError), 0);
+assert.equal(recordedCalls.length, 0, "no webhook means no claim");
+
+const delivered = discordFetch([{ ok: true, body: { channel_id: "123" } }]);
+assert.equal(
+  await deliverDue(fakeAdmin([longApplication]), "https://discord.example/webhook", onDeliveryError, { publicId: "abc" }, delivered.fetchImpl),
+  1,
+);
+assert.deepEqual(recordedCalls[0][1], { p_public_id: "abc", p_limit: 5, p_lease_seconds: 300 });
+assert.deepEqual(recordedCalls[1].slice(0, 3), [
+  "update",
+  "applications",
+  { discord_thread_id: "123", discord_post_next_attempt_at: null },
+]);
+assert.equal(delivered.urls.length, 1 + longMessages.length);
+assert.ok(!delivered.urls[0].includes("thread_id"));
+assert.ok(delivered.urls.slice(1).every((url) => url.includes("thread_id=123")));
+
+recordedCalls.length = 0;
+const failing = discordFetch([{ ok: false }]);
+assert.equal(
+  await deliverDue(fakeAdmin([{ ...longApplication, public_id: "p1" }]), "https://discord.example/webhook", onDeliveryError, {}, failing.fetchImpl),
+  0,
+);
+assert.deepEqual(recordedCalls.map((call) => call[0]), ["claim_discord_posts", "record_discord_post_failure"]);
+assert.deepEqual(recordedCalls[1][1], { p_public_id: "p1" });
+assert.equal(failing.urls.length, 1, "a failed post stops before the follow-up messages");
+
+recordedCalls.length = 0;
+const noThread = discordFetch([{ ok: true, body: {} }]);
+assert.equal(
+  await deliverDue(fakeAdmin([{ ...longApplication, public_id: "p2" }]), "https://discord.example/webhook", onDeliveryError, {}, noThread.fetchImpl),
+  0,
+);
+assert.deepEqual(recordedCalls.map((call) => call[0]), ["claim_discord_posts", "record_discord_post_failure"]);
+
+recordedCalls.length = 0;
+const followUpFails = discordFetch([{ ok: true, body: { channel_id: "9" } }, { ok: false }]);
+assert.equal(
+  await deliverDue(fakeAdmin([{ ...longApplication, public_id: "p3" }]), "https://discord.example/webhook", onDeliveryError, {}, followUpFails.fetchImpl),
+  1,
+);
+assert.ok(!recordedCalls.some((call) => call[0] === "record_discord_post_failure"), "a failed follow-up keeps the thread posted");
+assert.ok(errorsSeen.length >= 3);
+
+assert.match(reviewApplication, /\.in\("status", OPEN_STATUSES\)/);
+assert.match(reviewApplication, /\.eq\("status", expectedStatus\)/);
+assert.match(reviewApplication, /\.maybeSingle\(\)/);
+assert.match(reviewApplication, /status_conflict/);
+assert.match(reviewApplication, /deliverDue/);
+assert.match(discordRetryMigration, /add column if not exists discord_post_attempts integer not null default 0/i);
+assert.match(discordRetryMigration, /add column if not exists discord_post_next_attempt_at timestamptz;/i);
+assert.match(discordRetryMigration, /for update skip locked/i);
+assert.match(discordRetryMigration, /grant execute on function public\.claim_discord_posts\(uuid, integer, integer\) to service_role;/i);
+assert.match(discordRetryMigration, /grant execute on function public\.record_discord_post_failure\(uuid\) to service_role;/i);
+assert.match(discordRetryMigration, /before insert on public\.applications/i);
+assert.doesNotMatch(discordRetryMigration, /drop table|drop column|delete from|truncate|alter column/i);
+
 let releaseFetch;
 const delayedFetch = new Promise((resolve) => {
   releaseFetch = resolve;
@@ -824,6 +981,7 @@ for (const [name, content] of [
   ["public faction slug links migration", publicFactionSlugLinksMigration],
   ["member username notification links migration", memberUsernameNotificationLinksMigration],
   ["profile bootstrap migration", profileBootstrapMigration],
+  ["discord retry migration", discordRetryMigration],
   ["register account function", registerAccount],
   ["config", config],
   ["confirmation template", confirmationTemplate],

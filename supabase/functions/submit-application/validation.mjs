@@ -4,6 +4,10 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const text = (value, max = 4000) =>
   String(value ?? "").replace(/\r\n/g, "\n").trim().slice(0, max);
 
+const clean = (value) => String(value ?? "").replace(/\r\n/g, "\n").trim();
+
+const codePoints = (value) => Array.from(value).length;
+
 const checked = (value) =>
   value === true || ["true", "on", "1", "yes"].includes(text(value, 8).toLowerCase());
 
@@ -15,25 +19,27 @@ export const validateApplication = (input) => {
     return { ok: false, errors: [{ field: "type", message: "Unknown application type." }] };
   }
 
-  const requiredText = (field, min, max) => {
-    const value = text(input[field], max);
-    if (value.length < min) {
+  const bounded = (field, min, max) => {
+    const value = clean(input[field]);
+    const size = codePoints(value);
+    if (size > max) {
+      errors.push({ field, message: `Please keep this to ${max} characters or fewer.` });
+    } else if (size < min) {
       errors.push({ field, message: `Please write at least ${min} characters.` });
     }
     return value;
   };
+  const failed = (field) => errors.some((error) => error.field === field);
 
-  const displayName = requiredText("displayName", 2, 80);
-  const email = text(input.email, 254);
-  const discordHandle = requiredText("discordHandle", 2, 64);
-  const timezone = text(input.timezone, 64) || null;
-  const experience = requiredText("experience", type === "beta" ? 80 : 20, 2000);
-  const availability = type === "beta"
-    ? requiredText("availability", 10, 500)
-    : text(input.availability, 500) || null;
-  const motivation = requiredText("motivation", 20, 4000);
+  const displayName = bounded("displayName", 2, 80);
+  const email = bounded("email", 0, 254);
+  const discordHandle = bounded("discordHandle", 2, 64);
+  const timezone = bounded("timezone", 0, 64) || null;
+  const experience = bounded("experience", type === "beta" ? 80 : 20, 2000);
+  const availability = bounded("availability", type === "beta" ? 10 : 0, 500) || null;
+  const motivation = bounded("motivation", 20, 4000);
 
-  if (!EMAIL.test(email)) {
+  if (!failed("email") && !EMAIL.test(email)) {
     errors.push({ field: "email", message: "That email address does not look valid." });
   }
   if (!checked(input.ageConfirmed)) {
@@ -50,14 +56,14 @@ export const validateApplication = (input) => {
     }
     answers.role = role;
 
-    const roleOther = text(input.roleOther, 200);
+    const roleOther = bounded("roleOther", 0, 200);
     if (role === "other" && !roleOther) {
       errors.push({ field: "roleOther", message: "Please say what you would like to help with." });
     }
     if (roleOther) answers.roleOther = roleOther;
 
-    const portfolioUrl = text(input.portfolioUrl, 500);
-    if (portfolioUrl) {
+    const portfolioUrl = bounded("portfolioUrl", 0, 500);
+    if (portfolioUrl && !failed("portfolioUrl")) {
       try {
         const parsed = new URL(portfolioUrl.includes("://") ? portfolioUrl : `https://${portfolioUrl}`);
         if (!["http:", "https:"].includes(parsed.protocol)) throw new Error();
@@ -87,7 +93,7 @@ export const validateApplication = (input) => {
       }
     }
 
-    const hardware = text(input.hardware, 1000);
+    const hardware = bounded("hardware", 0, 1000);
     if (hardware) answers.hardware = hardware;
   }
 

@@ -1,9 +1,11 @@
 import { withSupabase } from "npm:@supabase/server@^1";
 import { createCors } from "../submit-application/cors.mjs";
+import { deliverDue } from "../submit-application/discord-delivery.mjs";
 import { buildReviewUpdatePayload, postDiscordMessage } from "../submit-application/discord.mjs";
 import { text } from "../submit-application/validation.mjs";
 
 const STATUSES = new Set(["pending", "reviewing", "more_info_requested", "accepted", "rejected"]);
+const OPEN_STATUSES = ["pending", "reviewing", "more_info_requested"];
 const REVIEW_COLUMNS = "public_id,type,discord_handle,display_name,email,timezone,availability,experience,motivation,answers,status,source,created_at,updated_at,reviewed_by,reviewed_at,review_note,discord_thread_id";
 const { headers: corsHeaders, wrap: withCors } = createCors(
   "http://localhost:3000",
@@ -39,8 +41,16 @@ const handler = withSupabase({ auth: "publishable", cors: "disabled" }, async (r
   if (!isReviewer(req)) {
     return json(req, { error: { code: "unauthorized", message: "Reviewer authorization required." } }, 401);
   }
-  if (!["GET", "PATCH"].includes(req.method)) {
-    return json(req, { error: { code: "method_not_allowed", message: "GET or PATCH required." } }, 405);
+  if (!["GET", "PATCH", "POST"].includes(req.method)) {
+    return json(req, { error: { code: "method_not_allowed", message: "GET, PATCH or POST required." } }, 405);
+  }
+  if (req.method === "POST") {
+    const delivered = await deliverDue(
+      ctx.supabaseAdmin,
+      Deno.env.get("DISCORD_APPLICATION_WEBHOOK_URL"),
+      (error: unknown) => console.error("[applications] Discord notification failed", error),
+    );
+    return json(req, { delivered });
   }
 
     const publicId = publicIdFromRequest(req);
@@ -77,7 +87,8 @@ const handler = withSupabase({ auth: "publishable", cors: "disabled" }, async (r
     const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
     const status = text(body?.status, 32);
     const reviewNote = text(body?.reviewNote, 4000) || null;
-    if (!publicId || !STATUSES.has(status)) {
+    const expectedStatus = text(body?.expectedStatus, 32);
+    if (!publicId || !STATUSES.has(status) || (expectedStatus && !STATUSES.has(expectedStatus))) {
       return json(req, { error: { code: "validation_failed", message: "A valid application reference and status are required." } }, 422);
     }
     if (status === "more_info_requested" && !reviewNote) {
@@ -96,7 +107,7 @@ const handler = withSupabase({ auth: "publishable", cors: "disabled" }, async (r
       return json(req, { error: { code: "not_found", message: "No application with that reference." } }, 404);
     }
 
-    const { data, error } = await ctx.supabaseAdmin
+    const update = ctx.supabaseAdmin
       .from("applications")
       .update({
         status,
@@ -105,11 +116,15 @@ const handler = withSupabase({ auth: "publishable", cors: "disabled" }, async (r
         review_note: reviewNote,
         updated_at: new Date().toISOString(),
       })
-      .eq("public_id", publicId)
+      .eq("public_id", publicId);
+    const { data, error } = await (expectedStatus ? update.eq("status", expectedStatus) : update.in("status", OPEN_STATUSES))
       .select(REVIEW_COLUMNS)
-      .single();
-    if (error || !data) {
+      .maybeSingle();
+    if (error) {
       return json(req, { error: { code: "storage_failed", message: "Could not update the application." } }, 503);
+    }
+    if (!data) {
+      return json(req, { error: { code: "status_conflict", message: "Another reviewer already decided this application." } }, 409);
     }
 
     try {
