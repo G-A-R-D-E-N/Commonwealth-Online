@@ -9,7 +9,7 @@ on:
       - Client Protocol Acceptance
       - Public CI contracts
       - CO-Launcher CI
-      - Native C++ CI
+      - Native C\+\+ CI
       - Production Transport Contract
       - Acceptance (native GNS)
       - Host GUI (Avalonia)
