@@ -145,7 +145,9 @@ jobs:
           fi
           statuses="$(gh api "repos/$PRIVATE_REPO/commits/$SHA/status?per_page=100" --jq '.statuses[] | select(.context | startswith("public-ci/")) | "\(.state) \(.context)"')"
           test -n "$statuses" || { echo "::error::the release commit has no public CI results"; exit 1; }
-          printf '%s\n' "$statuses" | grep -qx 'success public-ci/co-contracts' || { echo "::error::the release commit has no green contracts result"; exit 1; }
+          for context in public-ci/co-audit-regressions public-ci/co-beta-ci public-ci/co-beta-release-stage-contract public-ci/co-client-protocol-acceptance public-ci/co-contracts public-ci/co-launcher-ci public-ci/co-native-ci public-ci/co-production-transport public-ci/co-ui-ci public-ci/co-ui-prisma-contract public-ci/co-windows-compile; do
+            printf '%s\n' "$statuses" | grep -qx "success $context" || { echo "::error::the release commit has no green $context result"; exit 1; }
+          done
           if printf '%s\n' "$statuses" | grep -v '^success '; then
             echo "::error::the release commit has public CI results that are not green"
             exit 1
@@ -516,7 +518,7 @@ jobs:
     name: Publish ${{ inputs.version }}
     needs: [source, host, package, launcher]
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     environment: release
     env:
       DLL_TAG: ${{ needs.source.outputs.transfer_tag }}
@@ -533,6 +535,37 @@ jobs:
           token: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
           submodules: false
           persist-credentials: false
+
+      - name: Fetch the 1.10.163 address bin from CommonLibF4
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/bins" "$RUNNER_TEMP/commonlibf4"
+          gh release download 1.0.0 --repo Ryan-rsm-McKenzie/CommonLibF4 --pattern AddressBins.zip --dir "$RUNNER_TEMP/commonlibf4"
+          unzip -o -j "$RUNNER_TEMP/commonlibf4/AddressBins.zip" F4SE/Plugins/version-1-10-163-0.bin -d "$RUNNER_TEMP/bins"
+          expected=$(jq -r '.header.bins.OG.sha256' CO-BETA/tools/engine-ids.lock.json)
+          echo "$expected  $RUNNER_TEMP/bins/version-1-10-163-0.bin" | sha256sum -c -
+
+      - name: Fetch the 1.10.984 and 1.11.240 address bins from the private prerelease
+        env:
+          GH_TOKEN: ${{ secrets.CO_PUBLIC_CI_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh release download ci-address-bins --repo G-A-R-D-E-N/Commonwealth-Online-Private --dir "$RUNNER_TEMP/bins" --pattern version-1-10-984-0.bin --pattern version-1-11-240-0.bin
+
+      - name: Check that all three address bins were fetched
+        run: |
+          set -euo pipefail
+          for bin in version-1-10-163-0.bin version-1-10-984-0.bin version-1-11-240-0.bin; do
+            test -s "$RUNNER_TEMP/bins/$bin" || { echo "::error::missing address bin $bin"; exit 1; }
+          done
+
+      - name: Check engine ids against the address bins
+        working-directory: CO-BETA
+        env:
+          CO_ADDRESS_BINS: ${{ runner.temp }}/bins
+        run: python3 tools/tests/test_engine_ids.py
 
       - name: Download the packages and launcher
         env:
