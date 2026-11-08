@@ -117,22 +117,3 @@ export const postDiscordMessage = async (webhookUrl, payload, threadId = "", fet
   }
   return response.json().catch(() => null);
 };
-
-export const notifyDiscord = async (application, webhookUrl, fetchImpl = fetch) =>
-  postDiscordMessage(webhookUrl, buildDiscordPayload(application), "", fetchImpl);
-
-export const scheduleDiscordNotification = (
-  application,
-  webhookUrl,
-  waitUntil,
-  fetchImpl = fetch,
-  onError = console.error,
-  onSuccess = () => {},
-) => {
-  const task = notifyDiscord(application, webhookUrl, fetchImpl).then(onSuccess).catch(onError);
-  if (waitUntil) {
-    waitUntil(task);
-  } else {
-    void task;
-  }
-};

@@ -8,7 +8,6 @@ import {
   answerMessages,
   buildDiscordPayload,
   buildReviewUpdatePayload,
-  scheduleDiscordNotification,
 } from "../functions/submit-application/discord.mjs";
 import { deliverDue } from "../functions/submit-application/discord-delivery.mjs";
 import { createCors } from "../functions/submit-application/cors.mjs";
@@ -735,7 +734,7 @@ assert.equal(blockedPost.headers.has("Access-Control-Allow-Origin"), false);
 
 const reviewCors = createCors(
   "http://localhost:3000",
-  "GET, PATCH, OPTIONS",
+  "GET, POST, PATCH, OPTIONS",
   "apikey, authorization, content-type, x-application-review-token",
 );
 const reviewHandler = reviewCors.wrap(async (request) => Response.json({ method: request.method }));
@@ -934,29 +933,6 @@ assert.match(discordRetryMigration, /grant execute on function public\.claim_dis
 assert.match(discordRetryMigration, /grant execute on function public\.record_discord_post_failure\(uuid\) to service_role;/i);
 assert.match(discordRetryMigration, /before insert on public\.applications/i);
 assert.doesNotMatch(discordRetryMigration, /drop table|drop column|delete from|truncate|alter column/i);
-
-let releaseFetch;
-const delayedFetch = new Promise((resolve) => {
-  releaseFetch = resolve;
-});
-let trackedNotification;
-let notificationStarted = false;
-scheduleDiscordNotification(
-  { type: "team", display_name: "Applicant", public_id: "application-reference" },
-  "https://discord.example/webhook",
-  (promise) => {
-    trackedNotification = promise;
-  },
-  () => {
-    notificationStarted = true;
-    return delayedFetch;
-  },
-  () => {},
-);
-assert.equal(notificationStarted, true);
-assert.equal(trackedNotification instanceof Promise, true);
-releaseFetch({ ok: true });
-await trackedNotification;
 
 for (const [name, content] of [
   ["forum migration", migration],

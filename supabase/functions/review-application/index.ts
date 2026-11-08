@@ -9,7 +9,7 @@ const OPEN_STATUSES = ["pending", "reviewing", "more_info_requested"];
 const REVIEW_COLUMNS = "public_id,type,discord_handle,display_name,email,timezone,availability,experience,motivation,answers,status,source,created_at,updated_at,reviewed_by,reviewed_at,review_note,discord_thread_id";
 const { headers: corsHeaders, wrap: withCors } = createCors(
   "http://localhost:3000",
-  "GET, PATCH, OPTIONS",
+  "GET, POST, PATCH, OPTIONS",
   "apikey, authorization, content-type, x-application-review-token",
 );
 
