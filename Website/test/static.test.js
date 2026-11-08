@@ -390,6 +390,10 @@ const run = async () => {
     assert.match(serversJs, /Promise\.allSettled/);
     assert.match(serversJs, /AbortSignal\.timeout\(/);
     assert.match(serversJs, /Live directory unavailable; showing curated servers only/);
+    assert.match(serversJs, /Array\.isArray\(payload\?\.servers\)/, "a curated file without a servers array is a failure");
+    assert.match(serversJs, /fetchCurated\(\),/, "the curated request is validated");
+    assert.match(serversJs, /curated\.status === "rejected" && liveCount === 0/);
+    assert.match(serversJs, /Server list unavailable/);
     assert.match(profileSocialJs, /Decline/);
     assert.match(profileSocialJs, /status: "declined"/);
     assert.match(profileSocialJs, /Cancel request/);

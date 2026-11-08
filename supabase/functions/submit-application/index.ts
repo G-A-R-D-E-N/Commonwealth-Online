@@ -1,10 +1,11 @@
 import { withSupabase } from "npm:@supabase/server@^1";
 import { createCors } from "./cors.mjs";
-import { scheduleDiscordNotification } from "./discord.mjs";
+import { deliverDue } from "./discord-delivery.mjs";
 import { text, validateApplication } from "./validation.mjs";
 
 const APPLICATION_RATE_LIMIT = 5;
 const APPLICATION_RATE_WINDOW_SECONDS = 600;
+const DISCORD_POST_DUE_NOW = "1970-01-01T00:00:00Z";
 const { headers: corsHeaders, wrap: withCors } = createCors(
   "https://commonwealth-online.com,https://www.commonwealth-online.com,https://g-a-r-d-e-n.github.io,http://localhost:3000",
   "POST, OPTIONS",
@@ -113,9 +114,10 @@ const handler = withSupabase({ auth: "publishable", cors: "disabled" }, async (r
         );
       }
 
+      const webhookUrl = Deno.env.get("DISCORD_APPLICATION_WEBHOOK_URL");
       const { data, error } = await ctx.supabaseAdmin
         .from("applications")
-        .insert(result.value)
+        .insert(webhookUrl ? { ...result.value, discord_post_next_attempt_at: DISCORD_POST_DUE_NOW } : result.value)
         .select("public_id,type,discord_handle,display_name,email,timezone,availability,experience,motivation,answers,status,source,created_at,updated_at,discord_thread_id")
         .single();
 
@@ -127,26 +129,16 @@ const handler = withSupabase({ auth: "publishable", cors: "disabled" }, async (r
       const edgeRuntime = (globalThis as typeof globalThis & {
         EdgeRuntime?: { waitUntil: (promise: Promise<unknown>) => void };
       }).EdgeRuntime;
-      scheduleDiscordNotification(
-        data,
-        Deno.env.get("DISCORD_APPLICATION_WEBHOOK_URL"),
-        edgeRuntime?.waitUntil?.bind(edgeRuntime),
-        fetch,
-        (error) => console.error("[applications] Discord notification failed", error),
-        async (message) => {
-          const threadId = String(message?.channel_id || "").trim();
-          if (!threadId) {
-            return;
-          }
-          const { error: updateError } = await ctx.supabaseAdmin
-            .from("applications")
-            .update({ discord_thread_id: threadId })
-            .eq("public_id", data.public_id);
-          if (updateError) {
-            console.error("[applications] Discord thread reference update failed", updateError);
-          }
-        },
-      );
+      const onDiscordError = (error: unknown) => console.error("[applications] Discord notification failed", error);
+      const delivery = deliverDue(ctx.supabaseAdmin, webhookUrl, onDiscordError, { publicId: data.public_id })
+        .then(() => deliverDue(ctx.supabaseAdmin, webhookUrl, onDiscordError))
+        .catch(onDiscordError);
+      const waitUntil = edgeRuntime?.waitUntil?.bind(edgeRuntime);
+      if (waitUntil) {
+        waitUntil(delivery);
+      } else {
+        void delivery;
+      }
 
       return json(
         req,
