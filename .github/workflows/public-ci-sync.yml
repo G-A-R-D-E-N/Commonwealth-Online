@@ -27,6 +27,7 @@ jobs:
     name: Export open PRs and mainline heads
     runs-on: ubuntu-24.04
     timeout-minutes: 25
+    environment: public-ci-sync
     steps:
       - name: Initialise the workspace repository
         run: git init -q "$GITHUB_WORKSPACE"
@@ -87,7 +88,7 @@ jobs:
             fi
             message=$(printf 'Commonwealth Online %s\n\nSource-Commit: %s\nExporter-Blob: %s' "$branch" "$head" "$exporter")
             commit=$(PUBLIC_CI_CHANGED_FILE="$work/changed.txt" PUBLIC_CI_SKIPPED_FILE="$work/skipped.txt" PUBLIC_CI_BLOCKED_FILE="$work/blocked.txt" PUBLIC_CI_WINDOWS_ONLY_FILE="$work/windows.txt" python3 "$GITHUB_WORKSPACE/.trusted-export/export-public-ci.py" HEAD "$message") || return 1
-            for workflow in $(grep -l 'context="public-ci/' .github/public-ci/workflows/*.yml); do
+            for workflow in $(grep -l 'context: public-ci/' .github/public-ci/workflows/*.yml); do
               name=$(basename "$workflow" .yml)
               state=pending; description="Building on GitHub-hosted runners"
               if grep -qx "$name" "$work/blocked.txt"; then state=failure; description="Blocked: compiles on Linux without the linux-compile marker"

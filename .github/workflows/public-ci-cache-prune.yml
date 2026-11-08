@@ -21,6 +21,7 @@ jobs:
     name: Delete stale compile caches
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    environment: public-ci-sync
     steps:
       - name: Delete stale caches from the public repository
         env:
@@ -51,3 +52,23 @@ jobs:
             gh api -X DELETE "repos/${PUBLIC_REPO}/actions/caches/${id}" >/dev/null || echo "::warning::could not delete cache ${id}"
           done < "$work/stale.txt"
           echo "found $(wc -l < "$work/stale.txt") stale caches"
+      - name: Delete completed ci/* runs that are superseded or over three days old
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ env.PUBLIC_REPO }}
+        run: |
+          set -euo pipefail
+          cutoff=$(date -u -d '3 days ago' +%FT%TZ)
+          work="$RUNNER_TEMP/public-ci-run-prune"
+          mkdir -p "$work"
+          gh api "repos/$REPO/git/matching-refs/heads/ci/" --jq '.[] | "\(.ref | sub("^refs/heads/"; "")) \(.object.sha)"' > "$work/heads.txt"
+          gh api "repos/$REPO/actions/runs?status=completed&per_page=100" --paginate \
+            --jq '.workflow_runs[] | select(.head_branch | startswith("ci/")) | "\(.id) \(.head_branch) \(.head_sha) \(.created_at)"' > "$work/runs.txt"
+          declare -A latest=()
+          while read -r branch sha; do latest[$branch]=$sha; done < "$work/heads.txt"
+          while read -r id branch sha created; do
+            latest[$branch]=${latest[$branch]:-$sha}
+            [ "$sha" = "${latest[$branch]}" ] && [[ "$created" > "$cutoff" ]] && continue
+            gh api -X DELETE "repos/$REPO/actions/runs/$id" >/dev/null || echo "::warning::could not delete run $id"
+            echo "deleted run $id ($branch ${sha:0:8})"
+          done < "$work/runs.txt"
