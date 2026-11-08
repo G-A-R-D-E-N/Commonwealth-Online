@@ -1,0 +1,87 @@
+name: Public CI report
+
+on:
+  workflow_run:
+    workflows:
+      - Repository Audit Regressions
+      - Beta CI
+      - Beta Release Stage Contract
+      - Client Protocol Acceptance
+      - Public CI contracts
+      - CO-Launcher CI
+      - Native C++ CI
+      - Production Transport Contract
+      - Acceptance (native GNS)
+      - Host GUI (Avalonia)
+      - Server Package Validation
+      - Release Acceptance
+      - CommonwealthOnlineUI CI
+      - CO UI Prisma contract
+      - Website CI
+      - Windows MSVC compile
+    types: [completed]
+
+# Trusted: runs only the default-branch copy and never checks out PR code.
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  report:
+    name: Post the result on the private commit
+    if: >-
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.conclusion != 'cancelled' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: public-ci-status
+    steps:
+      - name: Read the result artifact
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: public-ci-result
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/public-ci-result
+
+      - name: Post the status with the status-only token
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS_TOKEN: ${{ secrets.CO_PUBLIC_CI_STATUS_TOKEN }}
+          PUBLIC_REPO: G-A-R-D-E-N/Commonwealth-Online
+          PRIVATE_REPO: G-A-R-D-E-N/Commonwealth-Online-Private
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          WORKFLOW_PATH: ${{ github.event.workflow_run.path }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          RESULT: ${{ runner.temp }}/public-ci-result/result.json
+        run: |
+          set -euo pipefail
+          [ -n "$STATUS_TOKEN" ] || { echo "::error::the status token secret is not set"; exit 1; }
+          [[ "$HEAD_BRANCH" =~ ^ci/(pr-[0-9]+|nomad-dev|main)$ ]] || { echo "::error::not a public CI branch: $HEAD_BRANCH"; exit 1; }
+          workflow=${WORKFLOW_PATH%%@*}
+          name=${workflow##*/}
+          name=${name%.yml}
+          [ "$workflow" = ".github/workflows/$name.yml" ] || { echo "::error::unexpected workflow path: $WORKFLOW_PATH"; exit 1; }
+          case "$name" in
+            co-audit-regressions|co-beta-ci|co-beta-release-stage-contract|co-client-protocol-acceptance|co-contracts|co-launcher-ci|co-native-ci|co-production-transport|co-server-acceptance|co-server-host|co-server-package|co-server-release-acceptance|co-ui-ci|co-ui-prisma-contract|co-website-ci|co-windows-compile) ;;
+            *) echo "::error::not a reported workflow: $name"; exit 1 ;;
+          esac
+          message=$(gh api "repos/$PUBLIC_REPO/commits/$HEAD_SHA" --jq .commit.message)
+          source=$(sed -n 's/^Source-Commit: \([0-9a-f]\{40\}\)$/\1/p' <<<"$message")
+          [ "$(grep -c . <<<"$source")" = 1 ] || { echo "::error::$HEAD_SHA has no single Source-Commit trailer"; exit 1; }
+          artifact=invalid
+          if [ -s "$RESULT" ] && jq -e --arg context "public-ci/$name" --arg sha "$HEAD_SHA" '(keys | sort) == ["context", "export", "state"] and .context == $context and .export == $sha and ((.state == "success") or (.state == "failure") or (.state == "cancelled"))' "$RESULT" >/dev/null; then
+            artifact=$(jq -r .state "$RESULT")
+          fi
+          case "$artifact" in
+            success|failure) ;;
+            *) echo "no valid result for $name on ${HEAD_SHA:0:8}; no status posted"; exit 0 ;;
+          esac
+          if [ "$CONCLUSION" = success ] && [ "$artifact" = success ]; then state=success; description=passed; else state=failure; description="failed; see the run"; fi
+          GH_TOKEN="$STATUS_TOKEN" gh api "repos/$PRIVATE_REPO/statuses/$source" -f state="$state" -f context="public-ci/$name" \
+            -f target_url="https://github.com/$PUBLIC_REPO/actions/runs/$RUN_ID" -f description="$description" >/dev/null
+          echo "$state posted for $name on ${source:0:8}"
