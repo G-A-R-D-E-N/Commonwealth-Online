@@ -1,0 +1,181 @@
+name: Windows MSVC compile
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+env:
+  COMMONLIB_MIRROR: ${{ vars.COMMONLIB_MIRROR }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ui-msvc:
+    name: CommonwealthOnlineUI MSVC compile (Windows)
+    runs-on: windows-latest
+    env:
+      _MSPDBSRV_ENDPOINT_: co-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Initialize CommonLibF4 headers
+        run: |
+          set -euo pipefail
+          git ls-files --stage CommonwealthOnlineUI/ThirdParty/CommonLibF4
+          git config -f .gitmodules --get-regexp '^submodule\..*\.url$'
+          git submodule sync --recursive
+          git submodule update --init --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::primary commonlib remote unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://github.com/G-A-R-D-E-N/commonlibf4-nomad.git" submodule update --init --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4
+          }
+          git submodule status --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4
+          test -s CommonwealthOnlineUI/ThirdParty/CommonLibF4/xmake.lua
+          test -s CommonwealthOnlineUI/ThirdParty/CommonLibF4/lib/commonlib-shared/xmake.lua
+
+      - name: Set up xmake
+        uses: ./.github/actions/co-xmake
+
+      - name: Restore the xmake package cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            ~/.xmake/packages
+            ~/.xmake/cache/packages
+          key: co-xmake-packages-v3.1.0-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-${{ hashFiles('**/xmake.lua') }}
+          restore-keys: |
+            co-xmake-packages-v3.1.0-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-
+            co-xmake-packages-v3.1.0-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Compile and audit CommonwealthOnlineUI
+        run: python scripts/windows-compile-ci.py ui
+
+  beta-msvc:
+    name: CO-BETA MSVC ${{ matrix.component }} (Windows)
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        component: [CommonwealthOnline, beta-tests, bridge]
+    env:
+      _MSPDBSRV_ENDPOINT_: co-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Initialize canonical CommonLib
+        uses: ./.github/actions/co-commonlib
+        with:
+          path: CO-BETA/plugin/lib/commonlibf4
+
+      - name: Initialize pinned GameNetworkingSockets
+        run: |
+          set -euo pipefail
+          git submodule update --init --depth 1 -- CO-BETA/ThirdParty/GameNetworkingSockets-src
+          actual="$(git -C CO-BETA/ThirdParty/GameNetworkingSockets-src rev-parse HEAD)"
+          test "$actual" = "f4525e39ee10f6b45181fd92d01fee75f7d71756" \
+            || { echo "::error::GNS pin mismatch: $actual"; exit 1; }
+
+      - name: Set up xmake
+        uses: ./.github/actions/co-xmake
+
+      - name: Restore the xmake package cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            ~/.xmake/packages
+            ~/.xmake/cache/packages
+          key: co-xmake-packages-v3.1.0-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-${{ matrix.component }}-${{ hashFiles('**/xmake.lua') }}
+          restore-keys: |
+            co-xmake-packages-v3.1.0-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-${{ matrix.component }}-
+            co-xmake-packages-v3.1.0-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Restore vcpkg binary cache
+        if: matrix.component == 'bridge'
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ~/AppData/Local/vcpkg/archives
+          key: vcpkg-bridge-${{ hashFiles('CO-BETA/build-gns-bridge.bat', 'CO-BETA/plugin/gns-bridge/vcpkg.json') }}
+
+      - name: Run ${{ matrix.component }}
+        run: python scripts/windows-compile-ci.py ${{ matrix.component }}
+
+  client-core-tests:
+    name: Client protocol tests (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/co-xmake
+      - name: Test client adapter
+        working-directory: co-core
+        run: |
+          xmake f -y -p windows -a x64 -m debug
+          xmake test -y CoreProtocolTests/default CoreNpcEmptySnapshotTests/default CoreProtocolAttestationTests/default CoreProtocolInventoryTests/default CoreValidatorFuzzTests/default CoreModpackMismatchReportTests/default CoreSteamTunnelGuestTests/default CoreModpackProbeBudgetTests/default CoreModpackProbeTests/default CoreModpackProbeCacheTests/default CoreModpackNeedTests/default CoreModpackInstallTests/default CoreModpackAutoFixTests/default
+          xmake test -y CoreDebugSwitchTests/default CoreVtableGuardTests/default CoreCapabilityTests/default CoreInlineHookGuardTests/default CoreMutationRingTests/default CoreProbeRecordTests/default CoreValidatorFuzzMiscTests/default
+          xmake test -y CoreReceivePolicyTests/default CoreNpcLootSyncTests/default CoreNpcSyncPolicyTests/default CoreInventoryOperationsTests/default CoreDropMirrorTableTests/default
+          xmake test -y CoreVoiceMixerTests/default CoreVoiceJitterTests/default CoreVoiceJitterAuditTests/default CoreVoiceJitterDrainTests/default CoreVoiceGateTests/default CoreVoiceStatusTests/default
+      - name: Test server and client wire compatibility
+        working-directory: CO-SERVER/server-cpp
+        run: |
+          xmake f -y -p windows -a x64 -m debug
+          xmake test -y CommonwealthOnlineServerAdapterWireTests/default
+
+  python-compile-tests:
+    name: Python compile tests (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Run Python tests that compile C++
+        run: python scripts/run-python-tests.py --group audit --group ui --compile-only
+
+  report:
+    name: Report to the private PR
+    needs: [ui-msvc, beta-msvc, client-core-tests, python-compile-tests]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-windows-compile
+          needs: ${{ toJSON(needs) }}

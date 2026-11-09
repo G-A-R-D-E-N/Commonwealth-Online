@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Character Dossier Preview</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+  </head>
+  <body class="co-select-body">
+    <div id="coCharacterSelect" role="status" aria-live="polite"></div>
+    <script src="character-select.js"></script>
+    <script>
+      (function () {
+        var now = Date.now();
+        var sampleState = {
+          characterSlots: {
+            supported: true,
+            needsSelection: true,
+            slots: [
+              {
+                slot: 0,
+                name: "Nate // The Wanderer",
+                createdAt: now - 86400000 * 30,
+                lastPlayedAt: now - 3600000 * 2
+              },
+              {
+                slot: 1,
+                name: "Valkyrie // Minuteman",
+                createdAt: now - 86400000 * 14,
+                lastPlayedAt: now - 86400000
+              },
+              {
+                slot: 2,
+                empty: true
+              }
+            ]
+          }
+        };
+
+        window.coCharacterSelectAction = function (payload) {
+          console.log("[Character Select action]", payload);
+        };
+
+        if (window.coCharacterSelectSetState) {
+          window.coCharacterSelectSetState(sampleState);
+        }
+      })();
+    </script>
+  </body>
+</html>

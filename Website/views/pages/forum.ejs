@@ -1,0 +1,55 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section class="section-panel forum-hero" aria-labelledby="forum-title">
+          <div class="servers-hero__head">
+            <div>
+              <p class="section-kicker">Community</p>
+              <h1 id="forum-title">Forum</h1>
+              <p class="servers-hero__desc">
+                Community discussion for Commonwealth Online. Boards for development updates, bug reports, server
+                listings, mod compatibility and playtest feedback.
+              </p>
+            </div>
+            <div class="servers-hero__actions">
+              <a class="co-btn co-btn--ghost" href="#" data-co-link="discord">Join Discord</a>
+            </div>
+          </div>
+
+          <p class="site-notice" role="status">
+            <strong>The forum is still being built.</strong>
+            The database schema, categories and routes are in place; threads and posting are next. Until then, Discord
+            is the place for discussion.
+          </p>
+        </section>
+
+        <section class="section-panel" aria-labelledby="forum-plan-title">
+          <div class="section-head">
+            <p class="section-kicker">Planned</p>
+            <h2 id="forum-plan-title">What will live here</h2>
+          </div>
+          <ul class="feature-list">
+            <li>
+              <span class="feature-list__name">Threads &amp; Replies</span>
+              <span class="feature-list__desc">Browsable boards with categories, pinned posts, locking and edit history.</span>
+            </li>
+            <li>
+              <span class="feature-list__name">Discord Accounts</span>
+              <span class="feature-list__desc">Sign in with Discord so forum identity matches the community server.</span>
+            </li>
+            <li>
+              <span class="feature-list__name">Moderation Tools</span>
+              <span class="feature-list__desc">Roles, reports, soft deletes and an audit trail shared with the bot.</span>
+            </li>
+            <li>
+              <span class="feature-list__name">Bot Bridge</span>
+              <span class="feature-list__desc">Discord threads and forum posts kept in sync through the public API.</span>
+            </li>
+          </ul>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+
+<%- include("../partials/scripts") %>

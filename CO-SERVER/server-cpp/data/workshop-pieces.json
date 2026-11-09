@@ -1,0 +1,30 @@
+{
+  "pieces": [
+    {"plugin": "fallout4.esm", "localFormId": 1048668, "editorId": "workshop_ShackMidFloor01Foundation", "tier": "wood", "foundation": true},
+    {"plugin": "fallout4.esm", "localFormId": 2279011, "editorId": "workshop_ShackMidFloor01Foundation02", "tier": "wood", "foundation": true},
+    {"plugin": "dlcworkshop01.esm", "localFormId": 3719, "editorId": "WorkshopConcreteMidFloor01Foundation", "tier": "concrete", "foundation": true},
+    {"plugin": "fallout4.esm", "localFormId": 920470, "editorId": "workshop_ShackWallFlat03", "tier": "wood"},
+    {"plugin": "fallout4.esm", "localFormId": 1044978, "editorId": "workshop_ShackMetalWallFlat01", "tier": "scrap"},
+    {"plugin": "fallout4.esm", "localFormId": 1044989, "editorId": "workshop_ShackMetalWallOuterCrnOut01A", "tier": "scrap"},
+    {"plugin": "fallout4.esm", "localFormId": 1044980, "editorId": "workshop_ShackMetalWallOuter01A", "tier": "scrap"},
+    {"plugin": "fallout4.esm", "localFormId": 1044985, "editorId": "workshop_ShackMetalWallOuterCap01Door01", "tier": "scrap"},
+    {"plugin": "dlcworkshop01.esm", "localFormId": 2359, "editorId": "WorkshopConcreteWall01", "tier": "concrete"},
+    {"plugin": "fallout4.esm", "localFormId": 2399897, "editorId": "workshop_BldWoodPDoor01", "tier": "wood", "door": true},
+    {"plugin": "fallout4.esm", "localFormId": 2399898, "editorId": "workshop_BldWoodPDoor02", "tier": "wood", "door": true},
+    {"plugin": "fallout4.esm", "localFormId": 2399905, "editorId": "workshop_BldWoodPDoorBroke01", "tier": "wood", "door": true},
+    {"plugin": "fallout4.esm", "localFormId": 2399903, "editorId": "workshop_BldWoodPDoorBroke02", "tier": "wood", "door": true},
+    {"plugin": "fallout4.esm", "localFormId": 920496, "editorId": "workshop_ShackDoor01", "tier": "wood", "door": true},
+    {"plugin": "fallout4.esm", "localFormId": 2399909, "editorId": "workshop_UtilMetalDoor01", "tier": "scrap", "door": true},
+    {"plugin": "fallout4.esm", "localFormId": 2399907, "editorId": "workshop_SteamTMetalDoor01", "tier": "scrap", "door": true},
+    {"plugin": "fallout4.esm", "localFormId": 2399901, "editorId": "workshop_IndMetalDoor01", "tier": "scrap", "door": true},
+    {"plugin": "fallout4.esm", "localFormId": 2399896, "editorId": "workshop_MetalMeshDoorSm01", "tier": "scrap", "door": true},
+    {"plugin": "fallout4.esm", "localFormId": 197510, "editorId": "WorkshopGenerator", "tier": "scrap", "power": {"outputWatts": 10, "drawWatts": 0, "needsPower": false, "deviceClass": "other"}},
+    {"plugin": "fallout4.esm", "localFormId": 362551, "editorId": "WorkshopGeneratorMedium", "tier": "scrap", "power": {"outputWatts": 25, "drawWatts": 0, "needsPower": false, "deviceClass": "other"}},
+    {"plugin": "fallout4.esm", "localFormId": 1172165, "editorId": "WorkshopGeneratorLarge", "tier": "scrap", "power": {"outputWatts": 50, "drawWatts": 0, "needsPower": false, "deviceClass": "other"}},
+    {"plugin": "fallout4.esm", "localFormId": 2331952, "editorId": "WorkshopGeneratorWindmill", "tier": "scrap", "power": {"outputWatts": 10, "drawWatts": 0, "needsPower": false, "deviceClass": "other"}},
+    {"plugin": "fallout4.esm", "localFormId": 786883, "editorId": "WorkshopIndCatLight", "tier": "scrap", "power": {"outputWatts": 0, "drawWatts": 5, "needsPower": true, "deviceClass": "light"}},
+    {"plugin": "fallout4.esm", "localFormId": 1281012, "editorId": "WorkshopPowerSwitchbox01", "tier": "scrap", "power": {"outputWatts": 0, "drawWatts": 0, "needsPower": false, "deviceClass": "other"}},
+    {"plugin": "fallout4.esm", "localFormId": 2361968, "editorId": "WorkshopPowerConnectorFloor01", "tier": "scrap", "power": {"outputWatts": 0, "drawWatts": 0, "needsPower": false, "deviceClass": "other"}},
+    {"plugin": "dlcworkshop02.esm", "localFormId": 2838, "editorId": "DLC05ConduitFloor01A", "tier": "scrap", "power": {"outputWatts": 0, "drawWatts": 0, "needsPower": false, "deviceClass": "other"}}
+  ]
+}

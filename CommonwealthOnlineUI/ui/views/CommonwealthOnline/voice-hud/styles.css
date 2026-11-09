@@ -1,0 +1,165 @@
+@font-face {
+  font-family: "Futura PT Demibold";
+  src: url("../../fonts/futura-pt-demibold.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  --co-ui-scale: 1;
+  --co-green: #3ecf4a;
+  --co-green-glow: rgba(62, 207, 74, 0.35);
+  --co-amber: #f6c344;
+  --co-amber-glow: rgba(246, 195, 68, 0.35);
+  --co-text-pale: #eef3e8;
+  --co-text-muted: #9eb09a;
+  --co-font: "Futura PT Demibold", "Roboto Condensed", "Bahnschrift", "Arial Narrow", Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;
+  font-family: var(--co-font);
+  font-weight: 600;
+  color: var(--co-text-pale);
+  pointer-events: none;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.co-voice-hud {
+  position: fixed;
+  top: calc(28px * var(--co-ui-scale));
+  left: calc(28px * var(--co-ui-scale));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(8px * var(--co-ui-scale));
+  font-size: calc(14px * var(--co-ui-scale));
+  pointer-events: none;
+}
+
+/* ── Active Microphone Broadcast Banner ───────────────────────── */
+
+.co-voice-mic {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(8px * var(--co-ui-scale));
+  padding:
+    calc(5px * var(--co-ui-scale))
+    calc(12px * var(--co-ui-scale))
+    calc(5px * var(--co-ui-scale))
+    calc(10px * var(--co-ui-scale));
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.22) 0px,
+      rgba(0, 0, 0, 0.22) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    linear-gradient(90deg, rgba(14, 32, 20, 0.94) 0%, rgba(7, 16, 11, 0.88) 100%);
+  border: 1px solid rgba(62, 207, 74, 0.55);
+  border-left: calc(3px * var(--co-ui-scale)) solid var(--co-green);
+  box-shadow: 0 0 14px var(--co-green-glow);
+  color: var(--co-green);
+  font-size: calc(12px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.co-voice-mic svg {
+  width: calc(16px * var(--co-ui-scale));
+  height: calc(16px * var(--co-ui-scale));
+  fill: currentColor;
+  filter: drop-shadow(0 0 6px var(--co-green-glow));
+}
+
+.co-voice-mic span {
+  display: inline-block;
+  text-shadow: 0 0 8px var(--co-green-glow);
+}
+
+/* ── Active Squad Speakers List ──────────────────────────────── */
+
+.co-voice-speakers {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(6px * var(--co-ui-scale));
+}
+
+.co-voice-speakers li {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(10px * var(--co-ui-scale));
+  padding:
+    calc(5px * var(--co-ui-scale))
+    calc(14px * var(--co-ui-scale))
+    calc(5px * var(--co-ui-scale))
+    calc(10px * var(--co-ui-scale));
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.22) 0px,
+      rgba(0, 0, 0, 0.22) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    linear-gradient(90deg, rgba(28, 24, 12, 0.94) 0%, rgba(14, 12, 8, 0.88) 100%);
+  border: 1px solid rgba(246, 195, 68, 0.45);
+  border-left: calc(3px * var(--co-ui-scale)) solid var(--co-amber);
+  box-shadow: 0 0 12px var(--co-amber-glow);
+  color: var(--co-amber);
+  font-size: calc(13px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.co-voice-speakers li::before {
+  content: "VOICE";
+  display: inline-block;
+  padding: calc(1px * var(--co-ui-scale)) calc(5px * var(--co-ui-scale));
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(246, 195, 68, 0.4);
+  font-size: calc(9px * var(--co-ui-scale));
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  line-height: 1.1;
+  color: rgba(246, 195, 68, 0.9);
+}
+
+/* ── Pending Settings Sync Status ────────────────────────────── */
+
+.co-voice-pending {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(8px * var(--co-ui-scale));
+  padding:
+    calc(4px * var(--co-ui-scale))
+    calc(10px * var(--co-ui-scale));
+  background: rgba(8, 14, 10, 0.85);
+  border: 1px dashed rgba(246, 195, 68, 0.4);
+  font-size: calc(11px * var(--co-ui-scale));
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--co-amber);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}

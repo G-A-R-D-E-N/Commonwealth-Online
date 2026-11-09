@@ -1,0 +1,44 @@
+name: CO CommonLib checkout
+description: Initialise the canonical CommonLibF4 submodule with the CI mirror fallback and its assertions
+inputs:
+  path:
+    description: Submodule path to initialise
+    required: true
+  diagnostics:
+    description: Print the recorded submodule SHA and the configured submodule URLs first
+    required: false
+    default: "true"
+  sync-all:
+    description: Sync every submodule URL instead of only the one being initialised
+    required: false
+    default: "true"
+runs:
+  using: composite
+  steps:
+    - name: Initialize the CommonLib submodule
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      env:
+        SUBMODULE: ${{ inputs.path }}
+        DIAGNOSTICS: ${{ inputs.diagnostics }}
+        SYNC_ALL: ${{ inputs.sync-all }}
+      run: |
+        set -euo pipefail
+        if [ "$DIAGNOSTICS" = "true" ]; then
+          git ls-files --stage "$SUBMODULE"
+          git config -f .gitmodules --get-regexp '^submodule\..*\.url$'
+        fi
+        if [ "$SYNC_ALL" = "true" ]; then
+          git submodule sync --recursive
+        else
+          git submodule sync --recursive -- "$SUBMODULE"
+        fi
+        git submodule update --init --recursive --force --checkout -- "$SUBMODULE" || {
+          test -n "${COMMONLIB_MIRROR:-}" || exit 1
+          echo "::warning::primary commonlib remote unreachable; using CI commonlib mirror"
+          git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://github.com/G-A-R-D-E-N/commonlibf4-nomad.git" submodule update --init --recursive --force --checkout -- "$SUBMODULE"
+        }
+        git submodule status --recursive -- "$SUBMODULE"
+        git -C "$SUBMODULE" ls-files --error-unmatch xmake.lua
+        test -s "$SUBMODULE/xmake.lua"
+        test -s "$SUBMODULE/lib/commonlib-shared/xmake.lua"

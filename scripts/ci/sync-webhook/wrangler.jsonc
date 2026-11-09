@@ -1,0 +1,6 @@
+{
+  "name": "co-private-ci-sync",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-11-02",
+  "observability": { "enabled": true }
+}

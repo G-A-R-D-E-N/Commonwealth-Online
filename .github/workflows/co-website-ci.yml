@@ -1,0 +1,77 @@
+name: Website CI
+
+on:
+  push:
+    branches: ["ci-skipped/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  website-tests:
+    name: Website and directory handler tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+        working-directory: Website
+
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Verify hosted test tools
+        run: |
+          set -euo pipefail
+          for tool in node npm; do
+            command -v "$tool" >/dev/null || { echo "::error::$tool is missing"; exit 1; }
+          done
+          node --version
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run Website tests
+        run: npm test
+
+  report:
+    name: Report to the private PR
+    needs: [website-tests]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-website-ci
+          needs: ${{ toJSON(needs) }}

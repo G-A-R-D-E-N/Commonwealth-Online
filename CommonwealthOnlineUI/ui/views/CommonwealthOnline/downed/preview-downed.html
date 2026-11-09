@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Downed Preview</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        background: linear-gradient(180deg, rgba(20, 10, 8, 0.75) 0%, rgba(5, 2, 2, 0.95) 100%),
+                    url('../pause-menu/map.svg') no-repeat center center / cover;
+      }
+    </style>
+  </head>
+  <body class="co-downed-body">
+    <div class="co-downed" id="coDowned" aria-live="assertive"></div>
+    <script src="downed.js"></script>
+    <script>
+      window.coDownedSetState({
+        phase: "downed",
+        remainingMs: 42000,
+        rescuer: { name: "Paladin Danse", progress: 0.45 }
+      });
+    </script>
+  </body>
+</html>
