@@ -1,0 +1,21 @@
+name: CO cross toolchain
+description: Prepare, restore and provision the Linux cross-build toolchain these Windows lanes compile against
+runs:
+  using: composite
+  steps:
+    - name: Prepare the CO toolchain directories
+      shell: bash
+      run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/xwin /opt/prisma-toolchain
+    - name: Restore the CO cross toolchain
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      with:
+        path: |
+          /opt/xwin
+          /opt/prisma-toolchain
+        key: co-toolchain-${{ runner.os }}-${{ hashFiles('scripts/provision-matrix-ci-toolchain.py', 'CO-BETA/ci/toolchains/xwin-clang-cl.cmake') }}
+    - name: Provision the CO cross toolchain
+      shell: bash
+      run: |
+        set -euo pipefail
+        sudo -E python3 "$GITHUB_WORKSPACE/scripts/provision-matrix-ci-toolchain.py" --provision --accept-microsoft-license
+        sudo chown -R "$(id -u):$(id -g)" /opt/xwin /opt/prisma-toolchain

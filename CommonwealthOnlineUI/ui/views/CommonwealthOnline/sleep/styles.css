@@ -1,0 +1,58 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  background: transparent;
+  color: var(--co-text-pale);
+  font-family: var(--co-font);
+  overflow: hidden;
+  user-select: none;
+}
+
+[hidden] { display: none !important; }
+
+.sleep {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  width: min(25rem, 90vw);
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid var(--co-border);
+  background: var(--co-panel-bg);
+  box-shadow: var(--co-glow);
+}
+
+.eyebrow { margin: 0; color: var(--co-text-muted); font-size: .75rem; letter-spacing: .16em; }
+h1 { margin: .5rem 0; color: var(--co-green); font-size: 1.5rem; letter-spacing: .12em; text-transform: uppercase; }
+.description { color: var(--co-text-muted); }
+.duration { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 1.5rem 0; }
+.duration-value { display: flex; flex-direction: column; min-width: 5rem; }
+.duration-value strong { color: var(--co-green-bright); font-size: 2.5rem; line-height: 1; }
+.duration-value span { margin-top: .3rem; text-transform: uppercase; letter-spacing: .1em; }
+.actions { display: flex; justify-content: center; gap: .75rem; }
+button { min-width: 5rem; padding: .5rem .8rem; border: 1px solid var(--co-border-bright); background: var(--co-green-faint); color: var(--co-text-pale); font: inherit; cursor: pointer; }
+.duration button { min-width: 2.75rem; font-size: 1.4rem; }
+button:focus-visible, button:hover { outline: 2px solid var(--co-amber); color: var(--co-green-bright); }
+button:disabled { opacity: .4; cursor: default; }
+
+.sleep-clock {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .65rem .9rem;
+  color: var(--co-green-bright);
+  border: 1px solid var(--co-border);
+  background: var(--co-panel-bg);
+  box-shadow: var(--co-glow);
+}
+.sleep-clock p { margin: 0; }
+.clock-title { font-size: .75rem; letter-spacing: .14em; }
+#coSleepRemaining { margin-top: .2rem; color: var(--co-text-pale); font-size: .9rem; }
+#coSleepWake { min-width: 4.5rem; margin-left: .4rem; }
+.clock-face { position: relative; width: 2rem; height: 2rem; border: 2px solid var(--co-green); border-radius: 50%; }
+.clock-hand { position: absolute; left: calc(50% - 1px); top: 15%; width: 2px; height: 35%; background: var(--co-green-bright); transform-origin: 50% 100%; transition: transform .25s linear; }

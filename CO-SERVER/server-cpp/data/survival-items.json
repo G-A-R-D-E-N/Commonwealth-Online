@@ -1,0 +1,1021 @@
+{
+  "format": 1,
+  "items": [
+    {
+      "itemKey": "ccfsvfo4007-halloween.esl:000007C8",
+      "kind": "food"
+    },
+    {
+      "itemKey": "ccfsvfo4007-halloween.esl:000007C9",
+      "kind": "food"
+    },
+    {
+      "itemKey": "ccfsvfo4007-halloween.esl:000007CA",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:00008833",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlccoast.esm:000088A6",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlccoast.esm:000088A8",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlccoast.esm:000088AA",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlccoast.esm:0000F11D",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:00013384",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:000140F9",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:0001B189",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:0001C710",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:0001C714",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:0001C717",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:00032C2E",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:00044042",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:00044043",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:00048400",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:00048401",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:0004B5FA",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlccoast.esm:0004BA11",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:0004BA12",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:0004D2E7",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:0004D2E8",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:000540FF",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:00054281",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlccoast.esm:00054282",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlccoast.esm:00054284",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlccoast.esm:00054286",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlccoast.esm:00056A49",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:00056A4A",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:00057158",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlccoast.esm:0005715B",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000138C3",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000138C4",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000138C5",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000138EE",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000138F7",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0001CD24",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00024534",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00024536",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00024538",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0002453A",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0002453D",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00024544",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00026189",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0002689A",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0002689B",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0002EDA9",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0002EDAB",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0002EDAD",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0002EDAF",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0002EDB0",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0002EDB1",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030EF6",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030EF7",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030EF8",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030EF9",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030EFA",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030EFB",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030EFC",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030EFD",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030EFE",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030EFF",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030F00",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030F01",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00030F02",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0003B8B2",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0003B8B3",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0003B8B4",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00042C39",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00042C3D",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00042C41",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00042C43",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00042CA1",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:00042CA6",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004AA17",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004AA1C",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004AA1D",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004AA1E",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004AA23",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004AA24",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004B419",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004C0E3",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004CBB9",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004CBBC",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004CBBD",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:0004CBBF",
+      "kind": "food"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502A9",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502AC",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502AF",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502B2",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502B4",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502B7",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502BA",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502BD",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502C0",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502C3",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502C6",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502C9",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502CC",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502CF",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502D2",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502D5",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502D8",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502DB",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502DE",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000502E1",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "dlcnukaworld.esm:000518D3",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000008C2",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00017C73",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00022792",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00024075",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0002FBE4",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0002FBF7",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330B4",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330EE",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330F0",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330F1",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330F2",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330F4",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330F6",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330F7",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330F8",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330FA",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330FB",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330FC",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330FD",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330FE",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000330FF",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00033100",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00033101",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00033102",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00033106",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000366B9",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000366BA",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000366BB",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000366BC",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000366BD",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000366BE",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000366BF",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:000366C0",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:000366C1",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:000366C2",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:000366C3",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:000366C4",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00036927",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00046939",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004693B",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004693C",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004693D",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004693E",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004693F",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00046940",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00046941",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00046942",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00046943",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00046945",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00046950",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00046952",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00046955",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004695A",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004696A",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004696D",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00047648",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00047660",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004835D",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:0004835F",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00048360",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:0004A13F",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004A14F",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004A151",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004A152",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004A3B8",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0004A3B9",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00050C28",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:0006352F",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:0006654F",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00074D0D",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00074D0E",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00074D0F",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00074D10",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000939B8",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0009DCC4",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0009F24B",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000A4944",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:000BEA58",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000D981D",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000E0043",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000E34E9",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000E3768",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000E3778",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000E377A",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000E3780",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000E3782",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000EF24D",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000F742E",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:000F9329",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:000F932A",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:000F932B",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:000F932C",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:000F932D",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:000FAFEB",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00101293",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00101295",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00102157",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0011EA93",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00134C68",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00145857",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00146156",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0016CA4F",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0016D8C8",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00173B13",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:00178B17",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00178B18",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00178B19",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00178B1A",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00178B1B",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00178B1C",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00178B1D",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00178B23",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00178B24",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:00178B25",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:001847B6",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0019797D",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001994A9",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001994AA",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001994AB",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001A0042",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001A71E7",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001AD736",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:001B5CC4",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001BE2AB",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001C0FC2",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001C0FC3",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001C25EE",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001C3FDC",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001C400D",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001C400E",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001C400F",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001C4010",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001C4011",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001C4012",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001C4013",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001EE1FF",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001F24B6",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:001F816A",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:0020D3DE",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0021188E",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0021681D",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:0021681E",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0021C00C",
+      "kind": "food"
+    },
+    {
+      "itemKey": "fallout4.esm:0024A317",
+      "kind": "drink"
+    },
+    {
+      "itemKey": "fallout4.esm:0024A318",
+      "kind": "food"
+    }
+  ]
+}

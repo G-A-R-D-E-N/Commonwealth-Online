@@ -1,0 +1,240 @@
+name: CommonwealthOnlineUI CI
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+env:
+  COMMONLIB_MIRROR: ${{ vars.COMMONLIB_MIRROR }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  retry-compile:
+    name: Browser JavaScript + UI contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Verify hosted test tools
+        run: |
+          set -euo pipefail
+          command -v node >/dev/null || { echo "::error::node is missing"; exit 1; }
+
+      - name: Validate browser JavaScript syntax
+        run: |
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/select-menus.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/modpack-copy.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/modpack-detail.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/browser.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/direct-connect.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/browser-markup.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/server-records.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/recent-servers.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/filter-state.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/server-counts.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/join-flow.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/controller-navigation.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/password-prompt.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/steam-friends.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/server-settings.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/directory-refresh.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/alerts/alerts.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.members.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.ownership.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.browse.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.focus.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/shared/faction-tag.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/chat/chat.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/quests/quests.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/server/server.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/help/help.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/report/report.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/admin/admin.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/pause-menu/script.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/chat-feed/feed.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/main-menu/script.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/launcher/script.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/downed/downed.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/downed/respawn.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-data.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-voice.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-model.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-native.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-render.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-input.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/pause-menu/session-mode-badge.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/pause-menu/map-labels.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/voice-hud/voice-hud.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/capture-hud/capture-hud.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/interact-prompt/interact-prompt.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/structure-hud/structure-hud.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/nameplates/nameplates.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/voice-players.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/steam-lan.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.harness.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.friends.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/interact-wheel/wheel.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/trade/trade.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/sleep/sleep.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/shared/prompt-glyphs.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/shared/gamepad-sticks.js
+          node --check CommonwealthOnlineUI/ui/views/CommonwealthOnline/join-overlay/overlay.js
+
+      - name: Run UI JavaScript regression tests
+        run: |
+          set -euo pipefail
+          for file in $(find CommonwealthOnlineUI/ui/views -name '*.test.js'); do
+            grep -qF -e "/$(basename "$file")" -e " $(basename "$file")" .github/workflows/co-ui-ci.yml || { echo "::error::$file is not run by co-ui-ci.yml"; exit 1; }
+          done
+          node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/main-menu/main-menu.test.js CommonwealthOnlineUI/ui/views/CommonwealthOnline/shared/startup-timing.test.js
+          ( cd CommonwealthOnlineUI/ui/views/CommonwealthOnline/launcher && node launcher.test.js )
+          node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings.test.js
+          node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-multiplayer.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/alerts/alerts.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/character-select/character-select.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.rank.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.profile.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.build.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.ownership.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.browse.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.friends.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/faction.tabs.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/interact-wheel/wheel.test.js
+          node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/sleep/sleep.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/chat/chat.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/quests/quests.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/server/server.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/help/help.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/report/report.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/chat-feed/feed.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/downed/downed.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/settings/settings-voice.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/voice-hud/voice-hud.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/needs-hud/needs-hud.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/net-hud/net-hud.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/nameplates/nameplates.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/capture-hud/capture-hud.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/interact-prompt/interact-prompt.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/structure-hud/structure-hud.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/faction/voice-players.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/admin/admin.test.js
+          node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/shared/prompt-glyphs.test.js
+          node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/shared/gamepad-sticks.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/join-overlay/overlay.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/stabilization-contract.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/pause-menu/map-players.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/pause-menu/map-drag.test.js
+          node CommonwealthOnlineUI/ui/views/CommonwealthOnline/pause-menu/map-labels.test.js
+          node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/scroll-containers.test.js
+          node --test CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/components/modpack-detail.test.js
+          ( cd CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/tests && node --test controller.test.js controller-port.test.js directory-refresh.test.js server-settings.test.js server-settings-controller.test.js server-settings-vats.test.js server-list.test.js bridge-gate.test.js standalone-mount.test.js steam-components.test.js modpack-copy.test.js region-sort.test.js ping-filter.test.js saved-only.test.js )
+
+      - name: Initialize CommonLibF4 headers
+        run: |
+          set -euo pipefail
+          git ls-files --stage CommonwealthOnlineUI/ThirdParty/CommonLibF4
+          git config -f .gitmodules --get-regexp '^submodule\..*\.url$'
+          git submodule sync --recursive
+          git submodule update --init --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4 || {
+            test -n "${COMMONLIB_MIRROR:-}" || exit 1
+            echo "::warning::primary commonlib remote unreachable; using CI commonlib mirror"
+            git -c "url.${COMMONLIB_MIRROR}.insteadOf=https://github.com/G-A-R-D-E-N/commonlibf4-nomad.git" submodule update --init --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4
+          }
+          git submodule status --recursive -- CommonwealthOnlineUI/ThirdParty/CommonLibF4
+
+      - name: Run UI Python contract tests
+        run: python3 scripts/run-python-tests.py --group ui
+
+      - name: Whitespace check
+        run: git diff --check
+
+  iat-patch-windows:
+    name: IAT patch hook tests (Windows)
+    # Runs on a hosted Windows runner only when the public repository variable
+    # WINDOWS_RUNTIME_SMOKE is 'true'; otherwise the job is skipped.
+    if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+    runs-on: windows-latest
+    env:
+      _MSPDBSRV_ENDPOINT_: co-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: powershell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Invoke-Expression ([IO.File]::ReadAllText('{0}')); if ($LASTEXITCODE) {{ exit $LASTEXITCODE }}"
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Set up xmake
+        uses: ./.github/actions/co-xmake
+
+      - name: Run IAT patch tests
+        working-directory: CommonwealthOnlineUI
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Remove-Item -Recurse -Force -ErrorAction SilentlyContinue build-parser-ci, .xmake-parser-ci
+          xmake config --file=xmake-parser-ci.lua --mode=debug --builddir=build-parser-ci --yes
+          if ($LASTEXITCODE -ne 0) { throw 'xmake config failed' }
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD IatPatchTests
+          if ($LASTEXITCODE -ne 0) { throw 'IatPatchTests build failed' }
+          xmake run --file=xmake-parser-ci.lua IatPatchTests
+          if ($LASTEXITCODE -ne 0) { throw 'IatPatchTests failed' }
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD SleepActionTests
+          if ($LASTEXITCODE -ne 0) { throw 'SleepActionTests build failed' }
+          xmake run --file=xmake-parser-ci.lua SleepActionTests
+          if ($LASTEXITCODE -ne 0) { throw 'SleepActionTests failed' }
+          xmake build --file=xmake-parser-ci.lua --jobs=2 -vD SettingsWritableTests
+          if ($LASTEXITCODE -ne 0) { throw 'SettingsWritableTests build failed' }
+          xmake run --file=xmake-parser-ci.lua SettingsWritableTests
+          if ($LASTEXITCODE -ne 0) { throw 'SettingsWritableTests failed' }
+
+  report:
+    name: Report to the private PR
+    needs: [retry-compile, iat-patch-windows]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-ui-ci
+          needs: ${{ toJSON(needs) }}

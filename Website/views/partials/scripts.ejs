@@ -1,0 +1,6 @@
+<script type="application/json" id="co-site-config"><%- JSON.stringify({ gitea: site.gitea, links: site.links }).replace(/</g, "\\u003c") %></script>
+<% (page.scripts || []).forEach((src) => { %>
+    <script src="<%= src %>" defer></script>
+<% }); %>
+  </body>
+</html>

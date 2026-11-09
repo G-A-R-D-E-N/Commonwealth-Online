@@ -1,0 +1,50 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section class="section-panel apply-hero" aria-labelledby="apply-title">
+          <div class="servers-hero__head">
+            <div>
+              <p class="section-kicker">Applications</p>
+              <h1 id="apply-title">Apply to help build the Commonwealth</h1>
+              <p class="servers-hero__desc">
+                Two ways in: join the team that ships the framework, or apply as a beta tester and help us break
+                builds before players do. Submissions are stored here and reviewed by the team on Discord.
+              </p>
+            </div>
+            <div class="servers-hero__actions">
+              <a class="co-btn co-btn--ghost" href="#" data-co-link="discord">Join Discord</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-panel" aria-labelledby="apply-choose-title">
+          <div class="section-head">
+            <p class="section-kicker">Choose a form</p>
+            <h2 id="apply-choose-title">What are you applying for?</h2>
+          </div>
+
+          <div class="apply-choice">
+            <a class="apply-choice__card" href="/apply/team">
+              <p class="apply-choice__kicker">Team</p>
+              <h3>Join the team</h3>
+              <p>
+                Development, art, writing, community or QA. Tell us what you can contribute and how to reach you.
+              </p>
+              <span class="apply-choice__cta">Open team form</span>
+            </a>
+            <a class="apply-choice__card" href="/apply/beta">
+              <p class="apply-choice__kicker">Playtest</p>
+              <h3>Become a beta tester</h3>
+              <p>
+                Run sessions, file bug reports and keep unreleased builds private. You will need Fallout 4 and Discord.
+              </p>
+              <span class="apply-choice__cta">Open tester form</span>
+            </a>
+          </div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+
+<%- include("../partials/scripts") %>

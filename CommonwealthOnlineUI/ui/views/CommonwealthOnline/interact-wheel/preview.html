@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Player interaction preview</title>
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>body { background: #252c29; }</style>
+  </head>
+  <body>
+    <main class="wheel" id="coWheel" aria-live="polite">
+      <header class="wheel-header"><span class="wheel-eyebrow">PLAYER INTERACTION</span><p class="wheel-title" id="coWheelTitle"></p></header>
+      <div class="wheel-ring" id="coWheelRing" role="menu" aria-label="Player interaction"></div>
+      <p class="wheel-hint"><span>MOVE</span> Choose <i></i> <span>ACTIVATE / A</span> Confirm <i></i> <span>ESC / B</span> Close</p>
+    </main>
+    <script src="wheel.js"></script>
+    <script>
+      window.coInteractWheelSetState({ title: "Commonwealth Survivor", slices: [
+        { id: "addFriend", label: "Add Friend" }, { id: "invite", label: "Invite to Team" },
+        { id: "trade", label: "Trade" }, { id: "mute", label: "Mute Voice" },
+        { id: "requestSent", label: "Request Sent", disabled: true }, { id: "close", label: "Close" }
+      ] });
+    </script>
+  </body>
+</html>

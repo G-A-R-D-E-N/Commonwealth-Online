@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "kind": "view",
+      "name": "state-board/board.css",
+      "sha256": "49e5dc3e34fb44ddc42af1b9d76810eeee5848ff1e0280dda75e06a9bf6736a8",
+      "size": 892
+    },
+    {
+      "kind": "view",
+      "name": "state-board/board.html",
+      "sha256": "1f3a25c3cde6f8ecf60547b222c4816891514dfc3ed14aaddec4eda10ef158d5",
+      "size": 857
+    },
+    {
+      "kind": "view",
+      "name": "state-board/board.js",
+      "sha256": "695b96cb44fd6e73045e3aebb1544b34afc5d666203ae8b752424a7515043d32",
+      "size": 2551
+    }
+  ]
+}

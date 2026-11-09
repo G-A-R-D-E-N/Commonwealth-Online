@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>State board</title>
+  <link rel="stylesheet" href="board.css">
+</head>
+<body>
+  <main class="board">
+    <h1>State board</h1>
+    <p class="board-hint">Every pin lands in the <code>global</code> state bag, so it is still here next time.</p>
+    <ul class="board-pins" data-pins></ul>
+    <div class="board-actions">
+      <input data-text type="text" maxlength="80" placeholder="Pin a note">
+      <button data-pin type="button">Pin</button>
+      <button data-close type="button">Close</button>
+    </div>
+    <p class="board-status" data-status></p>
+  </main>
+  <script src="board.js"></script>
+</body>
+</html>
