@@ -1,0 +1,70 @@
+name: Beta Release Stage Contract
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release-stage-contract:
+    name: Windows strict release staging contract
+    if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+    runs-on: windows-latest
+    env:
+      _MSPDBSRV_ENDPOINT_: co-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+          sparse-checkout: |
+            CO-BETA/ci/test-stage-mod-release.ps1
+            CO-BETA/stage-mod.bat
+            CO-BETA/tools/
+            CO-BETA/creation-kit/esp/
+            CO-BETA/creation-kit/scripts/compiled/
+            CO-BETA/creation-kit/scripts/source/
+            CO-BETA/creation-kit/assets/DataFolder/
+            CO-BETA/Licenses/
+            .gitignore
+          sparse-checkout-cone-mode: false
+
+      - name: Exercise strict and developer staging modes
+        shell: cmd
+        run: powershell.exe -NoLogo -NoProfile -NonInteractive -Command "$p='${{ github.workspace }}\CO-BETA\ci\test-stage-mod-release.ps1'; $s=[IO.File]::ReadAllText($p).Replace('$PSScriptRoot',([char]39+(Split-Path -Parent $p)+[char]39)); Invoke-Expression $s"
+
+      - name: Whitespace check
+        shell: cmd
+        run: git diff --check
+
+  report:
+    name: Report to the private PR
+    needs: [release-stage-contract]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-beta-release-stage-contract
+          needs: ${{ toJSON(needs) }}

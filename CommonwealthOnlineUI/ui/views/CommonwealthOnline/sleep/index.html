@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Sleep</title>
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="sleep" id="coSleep" role="dialog" aria-modal="true" aria-labelledby="coSleepTitle" hidden>
+      <p class="eyebrow">COMMONWEALTH ONLINE</p>
+      <h1 id="coSleepTitle">Sleep</h1>
+      <p class="description">Rest here while the world continues around you.</p>
+      <div class="duration" id="coSleepPicker">
+        <button type="button" id="coSleepLess" aria-label="Sleep one hour less">−</button>
+        <div class="duration-value" aria-live="polite"><strong id="coSleepHours">8</strong><span id="coSleepUnit">hours</span></div>
+        <button type="button" id="coSleepMore" aria-label="Sleep one hour more">+</button>
+      </div>
+      <div class="actions">
+        <button type="button" id="coSleepStart">Sleep</button>
+        <button type="button" id="coSleepCancel">Cancel</button>
+      </div>
+    </main>
+    <aside class="sleep-clock" id="coSleepClock" aria-label="Sleep progress" hidden>
+      <div class="clock-face" aria-hidden="true"><span class="clock-hand" id="coSleepClockHand"></span></div>
+      <div><p class="clock-title">RESTING</p><p id="coSleepRemaining"></p></div>
+      <button type="button" id="coSleepWake">Wake up</button>
+    </aside>
+    <script src="sleep.js"></script>
+  </body>
+</html>

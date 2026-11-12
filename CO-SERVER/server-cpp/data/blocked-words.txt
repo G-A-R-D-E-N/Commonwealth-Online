@@ -1,0 +1,427 @@
+# Blocked words for chat, nicknames, character names and faction names.
+# License: profanity entries derived from LDNOOBW, CC BY 4.0, github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words
+# Format: one entry per line. # starts a comment. An entry with spaces is a phrase.
+#   *word  matches inside any word.  +word  also matches word+ed/er/ers/ing/in.  plain word matches a whole word (plus s/es).
+# [slurs] are always blocked. [profanity] is blocked only when the server option profanityFilter is on.
+
+[slurs]
+beaner
+beaners
+bulldyke
+chink
+coolie
+coon
+coons
+darkie
+dyke
+fag
+*faggot
+gook
+honkey
+jigaboo
+jiggaboo
+jiggerboo
+kike
+kyke
+mong
+negro
+*nigga
+*nigger
+niglet
+paki
+pikey
+raghead
+redskin
++retard
+retarded
+sambo
+shemale
+slanteye
+spastic
+spic
+towelhead
+tranny
+*wetback
+wop
+zipperhead
+nig nog
+white power
+porch monkey
+
+[profanity]
+*motherfuck
+acrotomophilia
+anal
+anilingus
+anus
+apeshit
+arsehole
++ass
+asshole
+assmunch
+autoerotic
+babeland
+bangbros
+bangbus
+bareback
+barenaked
+bastard
+bastardo
+bastinado
+bbw
+bdsm
+beastiality
+bestiality
+bimbos
+birdlock
+bitch
+bitches
+blowjob
+blumpkin
+bollocks
+bondage
+boner
+boob
+boobs
+bukkake
+bullshit
+bunghole
+busty
+butt
+buttcheeks
+butthole
+camgirl
+camslut
+camwhore
+carpetmuncher
+cialis
+circlejerk
+clit
+clitoris
+clusterfuck
+cock
+cocks
+coprolagnia
+coprophilia
+cornhole
+creampie
+cum
+cumming
+cumshot
+cumshots
+cunnilingus
++cunt
+daterape
+deepthroat
+dendrophilia
+dick
+dickhead
+dildo
+dingleberries
+dingleberry
+dipshit
+doggiestyle
+doggystyle
+dolcett
+domination
+dominatrix
+dommes
+dumbass
+dvda
+ecchi
+ejaculation
+erotic
+erotism
+escort
+eunuch
+fecal
+felch
+fellatio
+feltch
+femdom
+figging
+fingerbang
+fingering
+fisting
+footjob
+frotting
++fuck
+fuckin
+fucking
+fucktards
+fudgepacker
+futanari
+gangbang
+genitals
+goatcx
+goatse
+gokkun
+goodpoop
+goregasm
+grope
+guro
+handjob
+hardcore
+hentai
+homoerotic
+hooker
+horny
+humping
+incest
+intercourse
+jackass
+jailbait
+jizz
+juggs
+kinbaku
+kinkster
+kinky
+knobbing
+livesex
+lolita
+lovemaking
+masturbate
+masturbating
+masturbation
+milf
+muffdiving
+nambla
+nawashi
+neonazi
+nimphomania
+nipple
+nipples
+nsfw
+nude
+nudity
+nutten
+nympho
+nymphomania
+octopussy
+omorashi
+orgasm
+orgy
+paedophile
+panties
+panty
+pedobear
+pedophile
+pegging
+penis
+pissing
+pisspig
+playboy
+ponyplay
+poof
+poon
+poontang
+poopchute
+porn
+porno
+pornography
+prick
+pthc
+pubes
+punany
+pussy
+queaf
+queef
+quim
+rape
+raping
+rapist
+rectum
+rimjob
+rimming
+sadism
+santorum
+scat
+schlong
+scissoring
+semen
+sex
+sexcam
+sexo
+sexual
+sexuality
+sexually
+sexy
+shibari
++shit
+shitblimp
+shithead
+shitty
+shota
+shrimping
+skeet
++slut
+smut
+snatch
+snowballing
+sodomize
+sodomy
+splooge
+spooge
+spunk
+strapon
+strappado
+suck
+sucks
+swastika
+swinger
+threesome
+throating
+thumbzilla
+tit
+tits
+titties
+titty
+topless
+tosser
+tribadism
+tubgirl
+tushy
++twat
+twink
+twinkie
+undressing
+upskirt
+urophilia
+vagina
+viagra
+vibrator
+vorarephilia
+voyeur
+voyeurweb
+voyuer
+vulva
+wank
+wanker
+whore
+worldsex
+xx
+xxx
+yaoi
+yiffy
+zoophilia
+alabama hot pocket
+alaskan pipeline
+auto erotic
+baby batter
+baby juice
+ball gag
+ball gravy
+ball kicking
+ball licking
+ball sack
+ball sucking
+barely legal
+beaver cleaver
+beaver lips
+big black
+big breasts
+big knockers
+big tits
+black cock
+blonde action
+blonde on blonde action
+blow job
+blow your load
+blue waffle
+booty call
+brown showers
+brunette action
+bullet vibe
+bung hole
+camel toe
+carpet muncher
+chocolate rosebuds
+cleveland steamer
+clover clamps
+date rape
+deep throat
+dirty pillows
+dirty sanchez
+dog style
+doggie style
+doggy style
+donkey punch
+double dong
+double penetration
+dp action
+dry hump
+eat my ass
+female squirting
+foot fetish
+fuck buttons
+fudge packer
+g spot
+gang bang
+gay sex
+giant cock
+girl on
+girl on top
+girls gone wild
+god damn
+golden shower
+goo girl
+group sex
+hand job
+hard core
+hot carl
+hot chick
+how to kill
+how to murder
+huge fat
+jack off
+jail bait
+jelly donut
+jerk off
+leather restraint
+leather straight jacket
+lemon party
+make me come
+male squirting
+menage a trois
+missionary position
+mound of venus
+mr hands
+muff diver
+nsfw images
+one cup two girls
+one guy one jar
+phone sex
+piece of shit
+piss pig
+pleasure chest
+pole smoker
+poop chute
+prince albert piercing
+raging boner
+reverse cowgirl
+rosy palm
+rusty trombone
+shaved beaver
+shaved pussy
+splooge moose
+spread legs
+strap on
+strip club
+style doggy
+suicide girls
+sultry women
+tainted love
+taste my
+tea bagging
+tied up
+tight white
+tongue in a
+tub girl
+two girls one cup
+urethra play
+venus mound
+violet wand
+wet dream
+wrapping men
+wrinkled starfish
+yellow showers

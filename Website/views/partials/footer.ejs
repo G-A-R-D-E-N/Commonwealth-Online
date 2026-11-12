@@ -1,0 +1,21 @@
+<%
+  const links = page.footerLinks || defaultFooterLinks;
+  const copy =
+    page.footerCopy ||
+    "Independent fan project for Fallout 4 multiplayer framework research. Not affiliated with Bethesda or Microsoft. Supports both Fallout 4 Anniversary Edition and the original release. DLC, mods and Creation Club content are not required unless other players have them. Actively developed, with functional dedicated servers, player replication and shared world state.";
+%>
+      <footer class="site-footer">
+        <div>
+          <p class="site-footer__title">Commonwealth Online</p>
+          <p class="site-footer__copy">
+            <%= copy %>
+          </p>
+        </div>
+        <nav class="site-footer__links" aria-label="Footer links">
+          <% links.forEach((link) => { %>
+          <a href="<%= link.href || '#' %>"<% if (link.key) { %> data-co-link="<%= link.key %>"<% } %>><%= link.label %></a>
+          <% }) %>
+        </nav>
+        <p class="site-footer__meta">In active development - <span id="footer-year"><%= year %></span></p>
+      </footer>
+    </div>

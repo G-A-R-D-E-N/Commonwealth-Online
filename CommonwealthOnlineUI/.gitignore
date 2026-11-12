@@ -1,0 +1,44 @@
+# IDE / editor
+.cache/
+.idea/
+.vs/
+.vscode/.cache/
+.firecrawl/
+
+# xmake
+.xmake/
+build*/
+vs*/
+compile_commands.json
+
+# Visual Studio generated files
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Build output
+*.obj
+*.pdb
+*.ilk
+*.dll
+*.lib
+*.exp
+*.exe
+*.zip
+package/
+
+# Local config
+local.json
+dev-config.json
+.fallout4-path
+.prisma-cef-path
+.cef-binary-path
+
+# Nexus Prisma 2.0 runtime binaries (download separately; keep README only)
+ThirdParty/Prisma2.0Framework/**
+!ThirdParty/Prisma2.0Framework/README.md
+
+# OS junk
+.DS_Store
+Thumbs.db

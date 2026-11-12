@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Commonwealth Online — Main Menu Shell</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Shell-only: left panel is layout chrome with no logo or menu content */
+    .left-panel--shell {
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-screen" id="mainScreen">
+    <!-- Title-screen scenic background -->
+    <div class="scene-layer" aria-hidden="true"></div>
+    <div class="scene-overlay" aria-hidden="true"></div>
+
+    <!-- CRT / HUD texture overlays -->
+    <div class="screen-effects" aria-hidden="true"></div>
+
+    <!-- Left panel chrome (no logo, no menu items) -->
+    <aside class="left-panel left-panel--shell" aria-hidden="true"></aside>
+  </div>
+</body>
+</html>

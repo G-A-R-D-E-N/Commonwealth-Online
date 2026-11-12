@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Admin preview</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+    <link rel="stylesheet" href="../browser/components/keyboard.css" />
+    <style>
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, rgba(14, 28, 20, 0.75) 0%, rgba(3, 7, 4, 0.95) 100%),
+                    url('../pause-menu/map.svg') no-repeat center center / cover;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="admin" id="coAdmin"></main>
+    <script src="../browser/components/keyboard.js"></script>
+    <script src="admin.js"></script>
+    <script>
+      window.coAdminAction = function (json) { console.log("coAdminAction", json); };
+      window.coAdminSetState({
+        connected: true,
+        isAdmin: true,
+        serverTime: 1700000000,
+        actions: ["status", "clients", "players", "bans", "kick", "ban", "revive", "kill", "voice_mute", "voice_unmute",
+          "world_time", "world_weather", "world_mode", "factions", "faction_disband", "faction_promote", "faction_kick",
+          "resources", "ensure", "stop", "refresh", "approve", "unban", "profile_unban", "admin_list", "admin_grant", "admin_revoke", "quest_mode", "map_public"],
+        menus: ["players", "moderation", "world", "factions", "resources"],
+        players: [
+          { playerId: 3, profileId: "p3", name: "Nate" },
+          { playerId: 5, profileId: "p5", name: "Piper" }
+        ],
+        data: {
+          factions: {
+            factions: [{
+              factionId: "f1", name: "Minutemen", tag: "MMR", description: "", motd: "", color: "", createdAt: 1,
+              leaderProfileId: "p3", members: ["p3", "p5"], memberNames: { p3: "Nate", p5: "Piper" }, officers: [], memberCount: 2
+            }],
+            enabled: true
+          },
+          resources: [{ name: "alpha", version: "1.0", state: "running" }, { name: "beta", version: "0.4", state: "stopped" }],
+          bans: { bans: [{ ip: "10.0.0.5", profileId: "p9", reason: "griefing", bannedAt: 1 }], steamBans: [] }
+        },
+        results: [{ requestId: "r1", action: "revive", ok: true, message: "Revived", data: null }]
+      });
+    </script>
+  </body>
+</html>

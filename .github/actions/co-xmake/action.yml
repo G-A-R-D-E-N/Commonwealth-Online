@@ -1,0 +1,35 @@
+name: Set up cached xmake
+description: Restore or install the pinned xmake tool
+runs:
+  using: composite
+  steps:
+    - id: cache
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        path: ${{ runner.temp }}/co-xmake-tool
+        key: co-xmake-tool-v3.1.0-${{ runner.os }}-${{ runner.arch }}
+    - if: steps.cache.outputs.cache-hit != 'true'
+      uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a
+      with:
+        xmake-version: v3.1.0
+    - if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        python - <<'PY'
+        import os, pathlib, shutil
+        executable = pathlib.Path(shutil.which('xmake')).resolve()
+        root = executable.parent if os.name == 'nt' else executable.parent.parent
+        shutil.copytree(root, pathlib.Path(os.environ['RUNNER_TEMP']) / 'co-xmake-tool')
+        PY
+    - if: steps.cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: |
+        python - <<'PY'
+        import os, pathlib
+        root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'co-xmake-tool'
+        binary = root if os.name == 'nt' else root / 'bin'
+        with open(os.environ['GITHUB_PATH'], 'a', encoding='utf-8') as path:
+            print(binary, file=path)
+        PY
+    - shell: bash
+      run: xmake --version

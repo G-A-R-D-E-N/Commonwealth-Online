@@ -1,0 +1,57 @@
+body {
+  margin: 0;
+  padding: 24px;
+  background: #10160f;
+  color: #e6f0dc;
+  font: 16px/1.5 "Roboto Condensed", sans-serif;
+}
+
+.board h1 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.board-hint,
+.board-empty,
+.board-status {
+  color: #9bb08c;
+}
+
+.board-pins {
+  min-height: 3em;
+  margin: 16px 0;
+  padding-left: 20px;
+}
+
+.board-pins li {
+  margin: 4px 0;
+}
+
+.board-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.board-actions input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid #36452f;
+  background: #182114;
+  color: inherit;
+}
+
+.board-actions button {
+  padding: 6px 14px;
+  border: 1px solid #4f7040;
+  background: #2a3a22;
+  color: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.board-actions button:hover {
+  background: #3a502e;
+}

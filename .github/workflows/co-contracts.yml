@@ -1,0 +1,146 @@
+name: Public CI contracts
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Run audit contracts
+        run: |
+          set -euo pipefail
+          for test in \
+            tests/audit/test_admin_security_contracts.py \
+            tests/audit/test_camp_move_grant_contract.py \
+            tests/audit/test_character_slots_contracts.py \
+            tests/audit/test_misc_contracts.py \
+            tests/audit/test_misc_contracts_part2.py \
+            tests/audit/test_misc_contracts_part3.py \
+            tests/audit/test_misc_contracts_part4.py \
+            tests/audit/test_networking_protocol_contracts.py \
+            tests/audit/test_networking_protocol_contracts_part2.py \
+            tests/audit/test_public_listing_defaults_contract.py \
+            tests/audit/test_server_auth_settings_contracts.py \
+            tests/audit/test_server_auth_settings_contracts_part2.py \
+            tests/audit/test_server_auth_settings_contracts_part3.py \
+            tests/audit/test_steam_join_contracts.py \
+            tests/audit/test_steam_join_contracts_part2.py \
+            tests/audit/test_steam_join_contracts_part3.py \
+            tests/audit/test_steam_join_contracts_part4.py \
+            tests/audit/test_survival_items_contract.py \
+            tests/audit/test_ui_browser_contracts.py \
+            tests/audit/test_ui_browser_contracts_part2.py \
+            tests/audit/test_ui_browser_contracts_part3.py \
+            tests/audit/test_workshop_settlement_contracts.py \
+            tests/audit/test_workshop_settlement_contracts_part2.py \
+            tests/audit/test_workshop_settlement_contracts_part3.py \
+            tests/audit/test_durable_profile_scope_contract.py \
+            tests/audit/test_inbound_budget_contract.py \
+            CO-BETA/plugin/tests/F4TInventoryContainerContract.py \
+            tests/audit/test_vendor_trade_contract.py; do
+            test -f "$test" || { echo "::error::missing contract test: $test"; exit 1; }
+            echo "::group::$test"; python3 "$test"; echo "::endgroup::"
+          done
+
+      - name: Test private CI webhook
+        run: node --test scripts/ci/sync-webhook/worker.test.mjs
+
+      - name: Run plugin contracts
+        working-directory: CO-BETA
+        run: |
+          set -euo pipefail
+          for test in \
+            plugin/tests/F4TConflictingDllContract.py \
+            plugin/tests/F4TLoadOrderIntegrationContract.py \
+            plugin/tests/F4TNetworkServerContracts.py \
+            plugin/tests/F4TNetworkServerContracts_part2.py \
+            plugin/tests/F4TNpcCombatContracts.py \
+            plugin/tests/F4TNpcCombatContracts_part2.py \
+            plugin/tests/F4TNpcCombatContracts_part3.py \
+            plugin/tests/F4TNpcCombatContracts_part4.py \
+            plugin/tests/F4TNpcCombatContracts_part5.py \
+            plugin/tests/F4TNpcCombatContracts_part6.py \
+            plugin/tests/F4TParkedSuitContract.py \
+            plugin/tests/F4TPipboyLightContract.py \
+            plugin/tests/F4TPowerArmorPieceGateContract.py \
+            plugin/tests/F4TProxyConsoleContracts.py \
+            plugin/tests/F4TProxyConsoleContracts_part2.py \
+            plugin/tests/F4TPublicCiCredentialContract.py \
+            plugin/tests/F4TQuestStoryContracts.py \
+            plugin/tests/F4TQuestStoryContracts_part2.py \
+            plugin/tests/F4TQuestStoryContracts_part3.py \
+            plugin/tests/F4TQuestStoryContracts_part4.py \
+            plugin/tests/F4TQuestStoryContracts_part5.py \
+            plugin/tests/F4TQuestStoryContracts_part6.py \
+            plugin/tests/F4TQuestStoryContracts_part7.py \
+            plugin/tests/F4TSaveModpackContracts.py \
+            plugin/tests/F4TSaveModpackContracts_part2.py \
+            plugin/tests/F4TServerRelayContracts.py \
+            plugin/tests/F4TSettlementCaptureContracts.py \
+            plugin/tests/F4TUiToolingContracts.py; do
+            test -f "$test" || { echo "::error::missing contract test: CO-BETA/$test"; exit 1; }
+            echo "::group::$test"; python3 "$test"; echo "::endgroup::"
+          done
+
+      - name: Check engine ids
+        working-directory: CO-BETA
+        run: python3 tools/tests/test_engine_ids.py
+
+      - name: Run the release manifest and update signing tests
+        run: |
+          set -euo pipefail
+          openssl version
+          for test in CO-BETA/ci/test-make-latest-json.py CO-BETA/ci/test-make-release-info.py CO-BETA/ci/test-update-signing.py; do
+            test -f "$test" || { echo "::error::missing contract test: $test"; exit 1; }
+            echo "::group::$test"; python3 "$test"; echo "::endgroup::"
+          done
+
+  report:
+    name: Report to the private PR
+    needs: [contracts]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Record the result for the trusted reporter
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-contracts
+          needs: ${{ toJSON(needs) }}
