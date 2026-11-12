@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Structure</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="co-structure-hud" id="coStructureHud" aria-live="off" hidden>
+      <div class="co-structure-row">
+        <span class="co-structure-label">Structure</span>
+        <span class="co-structure-value" id="coStructureValue"></span>
+      </div>
+      <div class="co-structure-bar" id="coStructureBar" role="progressbar" aria-label="Structure" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="co-structure-fill" id="coStructureFill"></div>
+      </div>
+    </div>
+    <script src="structure-hud.js"></script>
+  </body>
+</html>

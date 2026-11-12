@@ -1,0 +1,288 @@
+name: Native C++ CI
+
+on:
+  push:
+    branches: ["ci-skipped/**"]
+
+permissions:
+  contents: read
+
+env:
+  COMMONLIB_MIRROR: ${{ vars.COMMONLIB_MIRROR }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  linux-tests:
+    name: Native Linux tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Free runner disk space
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Restore and provision the CO cross toolchain
+        uses: ./.github/actions/co-toolchain
+
+      - name: Set up xmake
+        uses: ./.github/actions/co-xmake
+
+      - name: Initialize canonical CommonLib
+        uses: ./.github/actions/co-commonlib
+        with:
+          path: CO-BETA/plugin/lib/commonlibf4
+          diagnostics: "false"
+          sync-all: "false"
+
+      - name: Verify game client host guards
+        run: bash scripts/test-client-host-guards.sh
+
+      - name: Restore the compile cache
+        uses: ./.github/actions/co-ccache
+
+      - name: Test shared core
+        working-directory: co-core
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+          core_info="$(xmake show -t CoreLib)"
+          if grep -Eq '(F4TGnsProtocolAdapter[^/[:space:]]*|F4TSteamTunnelGuest|F4TVoice(Mixer|Jitter|Gate)|F4TModpack(Probe[^/[:space:]]*|Need|Install[^/[:space:]]*|AutoFix|MismatchReport)|F4T(DebugSwitch|VtableGuard|InlineHookGuard|F4SECapabilityPolicy|MutationRing|ProbeRecord|ReceivePolicy|InventoryOperations|DropMirrorTable|NpcLootSync|NpcSyncPolicy))\.cpp' <<<"$core_info"; then
+            echo "::error::client-only source is present in the Linux core target"
+            exit 1
+          fi
+          xmake test -y || { xmake test -v -y; exit 1; }
+
+      - name: Test C++ server protocol and persistence
+        working-directory: CO-SERVER/server-cpp
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+          xmake build -y CommonwealthOnlineServerCompileCheck
+          xmake test -y || { xmake test -v -y; exit 1; }
+
+  sanitizers:
+    name: Native sanitizer lanes (${{ matrix.lane }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        lane: [asan-ubsan, tsan]
+    env:
+      # The sanitizer runtimes ship with gcc on the runner image; the default
+      # clang toolchain has no compiler-rt installed.
+      CO_TOOLCHAIN: gcc
+      ASAN_OPTIONS: detect_leaks=1:abort_on_error=1
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+      TSAN_OPTIONS: halt_on_error=1
+    steps:
+      - name: Free runner disk space
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Restore and provision the CO cross toolchain
+        uses: ./.github/actions/co-toolchain
+
+      - name: Set up xmake
+        uses: ./.github/actions/co-xmake
+
+      - name: Restore the compile cache
+        uses: ./.github/actions/co-ccache
+        with:
+          lane: ${{ matrix.lane }}
+
+      - name: Address and undefined-behaviour sanitizers
+        if: matrix.lane == 'asan-ubsan'
+        working-directory: CO-SERVER/server-cpp
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-} -o build-asan --policies=build.sanitizer.address,build.sanitizer.undefined
+          xmake test -y || { xmake test -v -y; exit 1; }
+          python3 ../../scripts/verify-native-sanitizers.py --build-dir build-asan --sanitizers asan ubsan
+
+      - name: Thread sanitizer
+        if: matrix.lane == 'tsan'
+        working-directory: CO-SERVER/server-cpp
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-} -o build-tsan --policies=build.sanitizer.thread
+          setarch "$(uname -m)" -R xmake test -y || { setarch "$(uname -m)" -R xmake test -v -y; exit 1; }
+          python3 ../../scripts/verify-native-sanitizers.py --build-dir build-tsan --sanitizers tsan
+
+  windows-native:
+    name: Windows native cross-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      XWIN_ROOT: ${{ vars.XWIN_ROOT || '/opt/xwin' }}
+    steps:
+      - name: Free runner disk space
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Restore and provision the CO cross toolchain
+        uses: ./.github/actions/co-toolchain
+
+      - name: Set up xmake
+        uses: ./.github/actions/co-xmake
+
+      - name: Restore the compile cache
+        uses: ./.github/actions/co-ccache
+
+      - name: Verify xwin toolchain
+        run: |
+          set -euo pipefail
+          for tool in clang-cl lld-link llvm-ar llvm-rc llvm-dlltool xmake cmake ninja protoc; do
+            command -v "$tool" >/dev/null || { echo "::error::$tool is missing"; exit 1; }
+          done
+          test -d "$XWIN_ROOT/crt/include" || { echo "::error::missing xwin CRT"; exit 1; }
+          test -d "$XWIN_ROOT/sdk/include/ucrt" || { echo "::error::missing xwin SDK"; exit 1; }
+
+      - name: Cross-build shared core
+        working-directory: co-core
+        run: |
+          set -euo pipefail
+          rm -rf build-xwin .xmake
+          xmake config --file=xmake-xwin.lua \
+            --plat=windows \
+            --arch=x64 \
+            --mode=debug \
+            --builddir=build-xwin \
+            ${CO_XMAKE_CCACHE:-} \
+            --yes
+          xmake build --file=xmake-xwin.lua --jobs=4 -vD
+
+      - name: Cross-build C++ server tests
+        working-directory: CO-SERVER/server-cpp
+        run: |
+          set -euo pipefail
+          rm -rf build-xwin .xmake
+          xmake config --file=xmake-xwin.lua \
+            --plat=windows \
+            --arch=x64 \
+            --mode=debug \
+            --builddir=build-xwin \
+            ${CO_XMAKE_CCACHE:-} \
+            --yes
+          targets="$(grep -hoE '^\s*(server_test\(|target\()"CommonwealthOnlineServer[A-Za-z0-9]*Tests"' xmake.lua xmake-quest-tests.lua | cut -d'"' -f2 | grep -vx 'CommonwealthOnlineServerAdapterWireTests')"
+          test -n "$targets"
+          xmake build --file=xmake-xwin.lua --jobs=4 -vD $targets
+
+  content-manifest:
+    name: Content manifest fingerprint (for server pinning)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Restore and provision the CO cross toolchain
+        uses: ./.github/actions/co-toolchain
+
+      - name: Set up xmake
+        uses: ./.github/actions/co-xmake
+
+      - name: Restore the compile cache
+        uses: ./.github/actions/co-ccache
+
+      - name: Build the content-manifest tool
+        working-directory: co-core
+        run: |
+          set -euo pipefail
+          xmake f -y -m debug ${CO_XMAKE_CCACHE:-}
+          xmake build -y CommonwealthOnlineCoreContentManifestTool
+
+      - name: Stage content, compute and record the fingerprint
+        run: |
+          set -euo pipefail
+          STAGE_DIR="$(bash CO-BETA/ci/stage-content.sh)"
+          trap 'rm -rf "$STAGE_DIR"' EXIT
+
+          # Snapshot the fingerprinted tree before the emit below writes into
+          # F4SE\Plugins\ (the client manifest lives outside the fingerprinted
+          # content set), so the recorded fingerprint and the reported set always
+          # agree.
+          CONTENT_COUNT="$(find "$STAGE_DIR" -type f | wc -l)"
+          CONTENT_LIST="$(find "$STAGE_DIR" -type f | sort | sed "s|^$STAGE_DIR/||")"
+
+          FINGERPRINT="$(
+            cd co-core \
+            && xmake run CommonwealthOnlineCoreContentManifestTool \
+              --root "$STAGE_DIR" \
+              --exclude-name CommonwealthOnline.dll \
+              --exclude-name commonwealth_online_gns_bridge.dll \
+              --emit-client-json "$STAGE_DIR/F4SE/Plugins/CommonwealthOnlineClient.json"
+          )"
+          if ! [[ "$FINGERPRINT" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "::error::content-manifest tool returned an invalid fingerprint: $FINGERPRINT"
+            exit 1
+          fi
+
+          printf '%s\n' "$FINGERPRINT" > content-manifest-ci.txt
+
+          # The emitted packaged client manifest (clientVersion + fingerprint)
+          # ships next to the DLLs in Data\F4SE\Plugins\; copy it out of the
+          # ephemeral stage for the artifact and sanity-check the value matches
+          # exactly what was recorded above.
+          cp "$STAGE_DIR/F4SE/Plugins/CommonwealthOnlineClient.json" ./CommonwealthOnlineClient.json
+          grep -q "$FINGERPRINT" ./CommonwealthOnlineClient.json \
+            || { echo "::error::emitted client manifest does not carry the recorded fingerprint"; exit 1; }
+
+          {
+            echo "## Content manifest fingerprint (for server pinning)"
+            echo
+            echo "\`$FINGERPRINT\`"
+            echo
+            echo "SHA-256 over $CONTENT_COUNT CO-BETA content files, excluding the client binaries and the private CommonwealthOnlineUI submodule package:"
+            echo '```'
+            echo "$CONTENT_LIST"
+            echo '```'
+            echo "This CI value covers repo content only. For a release server pin, use \`contentFingerprint\` from that release's \`latest.json\`, which also covers the bundled Prisma runtime and UI views."
+            echo
+            echo "The CI artifact \`CommonwealthOnlineClient.json\` contains this CO-only fingerprint; release archives generate their own fingerprint after staging all bundled files."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  report:
+    name: Report to the private PR
+    needs: [linux-tests, sanitizers, windows-native, content-manifest]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-native-ci
+          needs: ${{ toJSON(needs) }}

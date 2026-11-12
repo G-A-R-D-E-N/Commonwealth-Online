@@ -1,0 +1,36 @@
+name: CO CI report
+description: Record the needs of the calling job as the public-ci-result artifact for the trusted reporter
+inputs:
+  context:
+    description: Status context the reporter posts, for example public-ci/co-native-ci
+    required: true
+  needs:
+    description: toJSON(needs) of the calling job
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Write the result
+      shell: bash
+      env:
+        CONTEXT: ${{ inputs.context }}
+        NEEDS: ${{ inputs.needs }}
+        EXPORT_SHA: ${{ github.sha }}
+      run: |
+        set -euo pipefail
+        if jq -e 'any(.[]; .result == "cancelled")' <<<"$NEEDS" >/dev/null; then state=cancelled
+        else
+          failed=$(jq -r 'to_entries | map(select(.value.result != "success" and .value.result != "skipped") | .key) | join(", ")' <<<"$NEEDS")
+          ran=$(jq '[.[] | select(.result != "skipped")] | length' <<<"$NEEDS")
+          if [ -n "$failed" ] || [ "$ran" -eq 0 ]; then state=failure; else state=success; fi
+        fi
+        mkdir -p "$RUNNER_TEMP/public-ci-result"
+        printf '{"context":"%s","state":"%s","export":"%s"}\n' "$CONTEXT" "$state" "$EXPORT_SHA" > "$RUNNER_TEMP/public-ci-result/result.json"
+        echo "$state recorded for ${CONTEXT#public-ci/}"
+    - name: Upload the result
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      with:
+        name: public-ci-result
+        path: ${{ runner.temp }}/public-ci-result/result.json
+        overwrite: true
+        retention-days: 1

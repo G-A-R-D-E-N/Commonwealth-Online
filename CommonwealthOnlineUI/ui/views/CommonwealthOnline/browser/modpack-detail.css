@@ -1,0 +1,62 @@
+.co-join-overlay .co-modpack-detail {
+  list-style: none;
+  margin: calc(10px * var(--co-ui-scale)) 0 0;
+  padding: 0;
+  max-width: calc(680px * var(--co-ui-scale));
+  max-height: calc(240px * var(--co-ui-scale));
+  overflow-y: auto;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: calc(13px * var(--co-ui-scale));
+  color: var(--co-text-pale);
+}
+
+.co-join-overlay .co-modpack-detail.hidden {
+  display: none;
+}
+
+.co-join-overlay .co-modpack-detail li {
+  margin: calc(2px * var(--co-ui-scale)) 0;
+}
+
+.co-join-overlay .co-copy-modpack {
+  margin-top: calc(12px * var(--co-ui-scale));
+}
+
+.co-copy-modpack-notice {
+  margin-top: calc(6px * var(--co-ui-scale));
+  font-size: calc(12px * var(--co-ui-scale));
+  letter-spacing: 0.04em;
+  color: var(--co-text-pale);
+}
+
+.co-join-overlay .co-modpack-detail-entry--missing {
+  color: var(--co-danger);
+}
+
+.co-join-overlay .co-modpack-detail-entry--unexpected,
+.co-join-overlay .co-modpack-detail-entry--order {
+  color: #f6c344;
+}
+
+.co-join-overlay .co-modpack-detail-entry--content {
+  color: var(--co-text-pale);
+}
+
+.co-join-overlay .co-modpack-warnings-title {
+  margin: calc(12px * var(--co-ui-scale)) 0 0;
+  font-size: calc(12px * var(--co-ui-scale));
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: #f6c344;
+}
+
+.co-join-overlay .co-modpack-warnings-title.hidden {
+  display: none;
+}
+
+.co-join-overlay .co-modpack-warnings {
+  color: #f6c344;
+}
+

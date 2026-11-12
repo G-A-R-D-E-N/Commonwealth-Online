@@ -1,0 +1,1097 @@
+{
+  "header": {
+    "origin": "Address Library bins, unverified cross-check data, source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins",
+    "bins": {
+      "OG": {
+        "runtime": "1.10.163",
+        "file": "version-1-10-163-0.bin",
+        "sha256": "d849ae8989c54a2ceebbc587c2a77f62a44f74d0c42a42e0bed30d65118d3395"
+      },
+      "NG": {
+        "runtime": "1.10.984",
+        "file": "version-1-10-984-0.bin",
+        "sha256": "c13545f2dab806b7d19c5aa83a0d7524337b5afc89af79460f9915020e049d75"
+      },
+      "AE": {
+        "runtime": "1.11.240",
+        "file": "version-1-11-240-0.bin",
+        "sha256": "65985cc2259384a13cffb538d74776e422e62b0cd3766485a000620242b72b06"
+      }
+    }
+  },
+  "rows": [
+    {
+      "symbol": "kLaunchDispatch",
+      "file": "plugin/src/F4TProjectileLaunchHook.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1452334,
+      "rva": {
+        "OG": "0xfca260"
+      }
+    },
+    {
+      "symbol": "kLaunchDispatch",
+      "file": "plugin/src/F4TProjectileLaunchHook.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2236958,
+      "rva": {
+        "NG": "0xdbc0b0",
+        "AE": "0xe421e0"
+      }
+    },
+    {
+      "symbol": "kSleepBedMenu",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 846428,
+      "rva": { "OG": "0x12b1510" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kSleepBedMenu",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2249519,
+      "rva": { "NG": "0xff57d0", "AE": "0x107cc60" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kCanPassTime",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 763175,
+      "rva": { "OG": "0xe9c1e0" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kCanPassTime",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2232915,
+      "rva": { "NG": "0xcd1a80", "AE": "0xd57aa0" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kEnterBed",
+      "file": "plugin/src/F4TSleepController.cpp",
+      "runtimes": ["OG"],
+      "id": 1340894,
+      "rva": { "OG": "0xea1400" }, "note": "E:/RE-work/co-sleep/sleep-entry-functions.md"
+    },
+    {
+      "symbol": "kEnterBed",
+      "file": "plugin/src/F4TSleepController.cpp",
+      "runtimes": ["NG", "AE"],
+      "id": 2232956,
+      "rva": { "NG": "0xcd7680", "AE": "0xd5d6b0" }, "note": "E:/RE-work/co-sleep/sleep-entry-functions.md"
+    },
+    {
+      "symbol": "kNativeSleep",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 781390,
+      "rva": { "OG": "0xe99540" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kNativeSleep",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2232887,
+      "rva": { "NG": "0xcceb90", "AE": "0xd54bb0" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kNativeWait",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 328629,
+      "rva": { "OG": "0x00E99650" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kNativeWait",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2232888,
+      "rva": { "NG": "0x00CCECA0", "AE": "0x00D54CC0" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kNativePassTime",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1005712,
+      "rva": { "OG": "0x00E99870" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kNativePassTime",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2232891,
+      "rva": { "NG": "0x00CCEEC0", "AE": "0x00D54EE0" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kServePrisonTime",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1117393,
+      "rva": { "OG": "0x00EB5440" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kServePrisonTime",
+      "file": "plugin/src/F4TSleepBedHook.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2233140,
+      "rva": { "NG": "0x00CEC6B0", "AE": "0x00D726F0" }, "note": "E:/RE-work/co-sleep/886-verified-addresses.md"
+    },
+    {
+      "symbol": "kStopSleep",
+      "file": "plugin/src/F4TSleepController.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1551767,
+      "rva": { "OG": "0xe996f0" }, "note": "E:/RE-work/co-sleep/sleep-native-functions.md"
+    },
+    {
+      "symbol": "kStopSleep",
+      "file": "plugin/src/F4TSleepController.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2232890,
+      "rva": { "NG": "0xcced40", "AE": "0xd54d60" }, "note": "E:/RE-work/co-sleep/sleep-native-functions.md"
+    },
+    {
+      "symbol": "kInterruptSleep",
+      "file": "plugin/src/F4TSleepController.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 674480,
+      "rva": { "OG": "0xe996d0" }, "note": "E:/RE-work/co-sleep/sleep-native-functions.md"
+    },
+    {
+      "symbol": "kInterruptSleep",
+      "file": "plugin/src/F4TSleepController.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2232889,
+      "rva": { "NG": "0xcced20", "AE": "0xd54d40" }, "note": "E:/RE-work/co-sleep/sleep-native-functions.md"
+    },
+    {
+      "symbol": "kIsPathValid",
+      "file": "plugin/src/F4TProxyPathPredicates.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1522194,
+      "rva": {
+        "OG": "0xdaf7a0"
+      }
+    },
+    {
+      "symbol": "kIsPathing",
+      "file": "plugin/src/F4TProxyPathPredicates.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 989661,
+      "rva": {
+        "OG": "0xdaf800"
+      }
+    },
+    {
+      "symbol": "kIsPathingComplete",
+      "file": "plugin/src/F4TProxyPathPredicates.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 817283,
+      "rva": {
+        "OG": "0xdaf7c0"
+      }
+    },
+    {
+      "symbol": "kIsPathValid",
+      "file": "plugin/src/F4TProxyPathPredicates.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2230273,
+      "rva": {
+        "NG": "0xc16800",
+        "AE": "0xc9c7d0"
+      }
+    },
+    {
+      "symbol": "kIsPathing",
+      "file": "plugin/src/F4TProxyPathPredicates.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2230276,
+      "rva": {
+        "NG": "0xc16860",
+        "AE": "0xc9c830"
+      }
+    },
+    {
+      "symbol": "kIsPathingComplete",
+      "file": "plugin/src/F4TProxyPathPredicates.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2230274,
+      "rva": {
+        "NG": "0xc16820",
+        "AE": "0xc9c7f0"
+      }
+    },
+    {
+      "symbol": "ActorAngleFlag",
+      "file": "plugin/src/F4TWorkshopCommitHooks.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1200091,
+      "rva": {
+        "OG": "0x1e6cd0"
+      }
+    },
+    {
+      "symbol": "InstallPlacement",
+      "file": "plugin/src/F4TWorkshopCommitHooks.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1058211,
+      "rva": {
+        "OG": "0x20cda0"
+      }
+    },
+    {
+      "symbol": "InstallPlacement",
+      "file": "plugin/src/F4TWorkshopCommitHooks.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2195155,
+      "rva": {
+        "NG": "0x344570",
+        "AE": "0x398cb0"
+      }
+    },
+    {
+      "symbol": "InstallUpdateActiveEdit",
+      "file": "plugin/src/F4TWorkshopCommitHooks.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 69261,
+      "rva": {
+        "OG": "0x20b9e0"
+      }
+    },
+    {
+      "symbol": "InstallUpdateActiveEdit",
+      "file": "plugin/src/F4TWorkshopCommitHooks.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2195152,
+      "rva": {
+        "NG": "0x343040",
+        "AE": "0x397780"
+      }
+    },
+    {
+      "symbol": "InstallScrapAccept",
+      "file": "plugin/src/F4TWorkshopCommitHooks.cpp",
+      "runtimes": [
+        "OG",
+        "NG",
+        "AE"
+      ],
+      "id": 1124584,
+      "rva": {
+        "OG": "0x2c65de0",
+        "NG": "0x228fd98",
+        "AE": "0x2483828"
+      }
+    },
+    {
+      "symbol": "InstallConfirmCall",
+      "file": "plugin/src/F4TWorkshopCommitHooks.cpp",
+      "runtimes": [
+        "OG",
+        "NG",
+        "AE"
+      ],
+      "id": 289899,
+      "rva": {
+        "OG": "0x2d1bd98",
+        "NG": "0x2342458",
+        "AE": "0x2535da8"
+      }
+    },
+    {
+      "symbol": "GetDefaultFrame",
+      "file": "plugin/src/F4TPowerArmorSync.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 933667,
+      "rva": {
+        "OG": "0x1e2c50"
+      },
+      "note": "verified by id bins and decompile (shape only; the record it returns is UNVERIFIED). bin: E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins/version-1-10-163-0.bin (933667 -> 0x1e2c50); decompile via f4re learn_from_target 1.10.163 (0x1401e2c50 returns a global form only when its formtype byte is 0x1D = kARMO, E:/RE-work/commonlib_NonVR/include/RE/E/ENUM_FORM_ID.h:43, else null). Name is the CO code-note label (docs/code-notes/power-armor-sync.md), not a source-confirmed symbol."
+    },
+    {
+      "symbol": "GetDefaultFrame",
+      "file": "plugin/src/F4TPowerArmorSync.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2194757,
+      "rva": {
+        "NG": "0x320380",
+        "AE": "0x374ab0"
+      },
+      "note": "verified by id bins and decompile (shape only; the record it returns is UNVERIFIED). bins: E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins/version-1-10-984-0.bin (2194757 -> 0x320380) and version-1-11-240-0.bin (2194757 -> 0x374ab0); decompile via f4re learn_from_target: 0x140320380 and 0x140374ab0 return a global form only when its formtype byte is 0x1D = kARMO (E:/RE-work/commonlib_NonVR/include/RE/E/ENUM_FORM_ID.h:43), else null, the same shape as OG 0x1e2c50 (id 933667). Name is the CO code-note label, not a source-confirmed symbol. Companion getter 2194758 (NG 0x3203a0, AE 0x374ad0) tests formtype 0x2A = kFURN and is the furniture-side callee in the exit routine (F4RR audit pa363_audit_r4 lists PowerArmor::GetDefaultFrameFurniture); not used by CO code."
+    },
+    {
+      "symbol": "SwitchFromPowerArmorStart",
+      "file": "plugin/src/F4TPowerArmorExitHook.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 550299,
+      "rva": { "OG": "0x9cee60" }, "note": "verified by id bins and decompile, citing E:/RE-work/F4RR-main-20261023/RE-Work/subsystems/commonwealth-online-re/co-pr363-answers/findings.jsonl (d-exit-routine-og, verdict pending-review), bin E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins/version-1-10-163-0.bin (550299 maps to 0x9cee60, re-checked 2026-11-06), decompile void(longlong *) via f4re learn_from_target 1.10.163, signature void(Actor&) per C:/Users/Ricky/Documents/RE Docs/local/GardenEngine-re-answers/2026-10-20-power-armor-enter-exit-ids.md, size 1418 bytes per C:/Users/Ricky/Documents/RE Docs/local/GardenEngine-re-answers/evidence-2026-10-23/audit-s2-co-pr363/pa363_audit_r4.out.txt, runtime result UNVERIFIED"
+    },
+    {
+      "symbol": "SwitchFromPowerArmorStart",
+      "file": "plugin/src/F4TPowerArmorExitHook.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2219450,
+      "rva": { "NG": "0x9383a0", "AE": "0x98be40" }, "note": "verified by id bins and decompile, citing E:/RE-work/F4RR-main-20261023/RE-Work/subsystems/commonwealth-online-re/co-pr363-answers/findings.jsonl (d-exit-routine-ng and d-exit-routine-ae, verdict pending-review), bins E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins/version-1-10-984-0.bin (2219450 maps to 0x9383a0) and version-1-11-240-0.bin (2219450 maps to 0x98be40), decompiles void(longlong *) via f4re learn_from_target 1.10.984 and 1.11.240, identity with OG by decompile equivalence of control flow and callees, sizes 1478 bytes per C:/Users/Ricky/Documents/RE Docs/local/GardenEngine-re-answers/evidence-2026-10-23/audit-s2-co-pr363/pa363_audit_r4.out.txt, runtime result UNVERIFIED"
+    },
+    {
+      "symbol": "kSetGhost",
+      "file": "plugin/src/F4TFlyOver.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1377793,
+      "rva": {
+        "OG": "0xd74000"
+      },
+      "note": "Address Library bin cross-check; identity verified with f4re_validate_reference on 2026-10-26 (OG RVA 0xd74000, NG RVA 0xbd7390, AE RVA 0xc5d360); source:ReverseEng/Fallout4_Runtime_Research branch re/co370-flyover-2026-10-26, folder co370-flyover-camera"
+    },
+    {
+      "symbol": "kSetGhost",
+      "file": "plugin/src/F4TFlyOver.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2229669,
+      "rva": {
+        "NG": "0xbd7390",
+        "AE": "0xc5d360"
+      },
+      "note": "Address Library bin cross-check; identity verified with f4re_validate_reference on 2026-10-26 (OG RVA 0xd74000, NG RVA 0xbd7390, AE RVA 0xc5d360); source:ReverseEng/Fallout4_Runtime_Research branch re/co370-flyover-2026-10-26, folder co370-flyover-camera"
+    },
+    {
+      "symbol": "kEssentialDown",
+      "file": "plugin/src/F4TDownedEngineRecovery.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 513258,
+      "rva": { "OG": "0xd98c60" }, "note": "E:/RE-work/F4RR-main-20261023/RE-Work/subsystems/commonwealth-online-re/downed-persist-co309/README.md"
+    },
+    {
+      "symbol": "kEssentialDown",
+      "file": "plugin/src/F4TDownedEngineRecovery.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2230033,
+      "rva": { "NG": "0xbfdfb0", "AE": "0xc83f80" }, "note": "E:/RE-work/F4RR-main-20261023/RE-Work/subsystems/commonwealth-online-re/downed-persist-co309/README.md"
+    },
+    {
+      "symbol": "kOnIdle",
+      "file": "plugin/src/F4TFrameLimiter.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 633524,
+      "rva": {
+        "OG": "0xd38e60"
+      },
+      "note": "source:docs/code-notes/CO-BETA-plugin.md"
+    },
+    {
+      "symbol": "kOnIdle",
+      "file": "plugin/src/F4TFrameLimiter.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2228917,
+      "rva": {
+        "NG": "0xbade20",
+        "AE": "0xc339d0"
+      },
+      "note": "source:docs/code-notes/CO-BETA-plugin.md"
+    },
+    {
+      "symbol": "kSetExtraFlags",
+      "file": "plugin/src/F4TProxyProtection.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 723287,
+      "rva": {
+        "OG": "0x983b0"
+      },
+      "note": "source:docs/code-notes/CO-BETA-plugin.md"
+    },
+    {
+      "symbol": "kSetExtraFlags",
+      "file": "plugin/src/F4TProxyProtection.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2190560,
+      "rva": {
+        "NG": "0x23a670",
+        "AE": "0x28eca0"
+      },
+      "note": "source:docs/code-notes/CO-BETA-plugin.md"
+    },
+    {
+      "symbol": "kIsPipboyLightOn",
+      "file": "plugin/src/F4TLocalPlayerTransformSend.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 426550,
+      "rva": {
+        "OG": "0xeb93f0"
+      },
+      "note": "source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "kIsPipboyLightOn",
+      "file": "plugin/src/F4TLocalPlayerTransformSend.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2233202,
+      "rva": {
+        "NG": "0xcf0960",
+        "AE": "0xd769a0"
+      },
+      "note": "source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "kSetQuestRunning",
+      "file": "plugin/src/F4TWorldPolicyEnforcer.cpp",
+      "note": "Address Library bin cross-check, quest start/stop core per ReverseEng/Fallout4_Runtime_Research mp-saves-worldpolicy-co309 README lines 311, 350, 711; source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1276838,
+      "rva": {
+        "OG": "0x5d65c0"
+      }
+    },
+    {
+      "symbol": "kSetQuestRunning",
+      "file": "plugin/src/F4TWorldPolicyEnforcer.cpp",
+      "note": "Address Library bin cross-check, quest start/stop core per ReverseEng/Fallout4_Runtime_Research mp-saves-worldpolicy-co309 README lines 311, 350, 711; source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2207727,
+      "rva": {
+        "NG": "0x616c40",
+        "AE": "0x66a910"
+      }
+    },
+    {
+      "symbol": "kSleepProcedure",
+      "file": "plugin/src/F4TSleepMarker.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1439829,
+      "rva": {
+        "OG": "0x6ff710"
+      }
+    },
+    {
+      "symbol": "kSleepProcedure",
+      "file": "plugin/src/F4TSleepMarker.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2211303,
+      "rva": {
+        "NG": "0x6f1210",
+        "AE": "0x744cf0"
+      }
+    },
+    {
+      "symbol": "kSleepCollector",
+      "file": "plugin/src/F4TSleepMarker.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 523193,
+      "rva": {
+        "OG": "0x19b2d0"
+      }
+    },
+    {
+      "symbol": "kSleepCollector",
+      "file": "plugin/src/F4TSleepMarker.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2193929,
+      "rva": {
+        "NG": "0x2ee820",
+        "AE": "0x342f10"
+      }
+    },
+    {
+      "symbol": "kSleepMarkerCallback",
+      "file": "plugin/src/F4TSleepMarker.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1056662,
+      "rva": {
+        "OG": "0x19cf10"
+      }
+    },
+    {
+      "symbol": "kSleepMarkerCallback",
+      "file": "plugin/src/F4TSleepMarker.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2193971,
+      "rva": {
+        "NG": "0x2f02f0",
+        "AE": "0x3449e0"
+      }
+    },
+    {
+      "symbol": "kWorkshopEntry",
+      "file": "plugin/src/F4TWorkshopEntryHook.cpp",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 171771,
+      "rva": { "OG": "0x20A3A0" }, "note": "verified by id bins and decompile, E:/RE-work/co-workbench/workshop-entry-hook.md"
+    },
+    {
+      "symbol": "kWorkshopEntry",
+      "file": "plugin/src/F4TWorkshopEntryHook.cpp",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2195134,
+      "rva": { "NG": "0x341960", "AE": "0x3960A0" }, "note": "verified by id bins and decompile, E:/RE-work/co-workbench/workshop-entry-hook.md"
+    },
+    { "symbol": "kStartNearbyWorkshop", "file": "plugin/src/F4TWorkshopEntryHook.cpp", "runtimes": [ "OG" ], "id": 937340, "rva": { "OG": "1EE6F0" }, "note": "E:/RE-work/co-workbench/startnearbyworkshop-verification.md" },
+    { "symbol": "kStartNearbyWorkshop", "file": "plugin/src/F4TWorkshopEntryHook.cpp", "runtimes": [ "NG", "AE" ], "id": 2194880, "rva": { "NG": "328F10", "AE": "37D640" }, "note": "E:/RE-work/co-workbench/startnearbyworkshop-verification.md" },
+    { "symbol": "SurvivalDifficultyTransition", "file": "plugin/src/F4TSurvivalEnforcer.cpp", "runtimes": [ "OG" ], "id": 657344, "rva": { "OG": "eb06e0" }, "note": "E:/RE-work/F4RR-co/RE-Work/subsystems/commonwealth-online-re/co245-settings/README.md line 89" },
+    { "symbol": "SurvivalDifficultyTransition", "file": "plugin/src/F4TSurvivalEnforcer.cpp", "runtimes": [ "NG", "AE" ], "id": 2233057, "rva": { "NG": "ce75f0", "AE": "d6d630" }, "note": "E:/RE-work/F4RR-co/RE-Work/subsystems/commonwealth-online-re/co245-settings/README.md line 89" },
+    { "symbol": "SurvivalDifficultyObject", "file": "plugin/src/F4TSurvivalEnforcer.cpp", "runtimes": [ "OG" ], "id": 303410, "rva": { "OG": "5aa4388" }, "note": "E:/RE-work/F4RR-co/RE-Work/subsystems/commonwealth-online-re/co245-settings/README.md lines 89 and 274" },
+    { "symbol": "SurvivalDifficultyObject", "file": "plugin/src/F4TSurvivalEnforcer.cpp", "runtimes": [ "NG", "AE" ], "id": 2698073, "rva": { "NG": "303aca0", "AE": "32dd370" }, "note": "E:/RE-work/F4RR-co/RE-Work/subsystems/commonwealth-online-re/co245-settings/README.md lines 89 and 274" },
+    { "symbol": "kUpdateSpline", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "OG" ], "id": 1150803, "rva": { "OG": "0x200b50" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kUpdateSpline", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "NG", "AE" ], "id": 2195071, "rva": { "NG": "0x339410", "AE": "0x38db50" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kUpdateMovingWirelessItem", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "OG" ], "id": 958345, "rva": { "OG": "0x201b10" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kUpdateMovingWirelessItem", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "NG", "AE" ], "id": 2195088, "rva": { "NG": "0x33a570", "AE": "0x38ecb0" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kEstablishTerminalLinks", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "OG" ], "id": 608512, "rva": { "OG": "0x204610" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kEstablishTerminalLinks", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "NG", "AE" ], "id": 2195102, "rva": { "NG": "0x33b400", "AE": "0x38fb40" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kAddItem", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "OG" ], "id": 1030944, "rva": { "OG": "0x1f6890" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kAddItem", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "NG", "AE" ], "id": 2194996, "rva": { "NG": "0x332950", "AE": "0x387090" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kAddConnection", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "OG" ], "id": 523652, "rva": { "OG": "0x1f6e20" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kAddConnection", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "NG", "AE" ], "id": 2194998, "rva": { "NG": "0x332f90", "AE": "0x3876d0" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kCurrentWorkshop", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "OG" ], "id": 737927, "rva": { "OG": "0x58dfdbc" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kCurrentWorkshop", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "NG" ], "id": 2689952, "rva": { "NG": "0x2e75154" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kCurrentWorkshop", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "AE" ], "id": 4797241, "rva": { "AE": "0x30f7698" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kRemoveConnection", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "OG" ], "id": 800489, "rva": { "OG": "0x1f7440" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" },
+    { "symbol": "kRemoveConnection", "file": "plugin/src/F4TWorkshopPowerApply.cpp", "runtimes": [ "NG", "AE" ], "id": 2194999, "rva": { "NG": "0x333490", "AE": "0x387bd0" }, "note": "id bins checked 2026-11-07 against E:/RE-work/co-workshop-wire-r3/findings-G-answers.txt" }
+  ],
+  "ui_rows": [
+    {
+      "symbol": "HUDColourSourceAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1226590,
+      "rva": {
+        "OG": "0x5a64308"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "HUDColourSourceAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG"
+      ],
+      "id": 2695540,
+      "rva": {
+        "NG": "0x2ff5458"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "HUDColourSourceAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "AE"
+      ],
+      "id": 4802831,
+      "rva": {
+        "AE": "0x32779d8"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "HUDOpacityPostAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 2022,
+      "rva": {
+        "OG": "0xae2730"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "HUDOpacityPostAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2717507,
+      "rva": {
+        "NG": "0x9e3e90",
+        "AE": "0xa37ac0"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "RumbleSetterAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 314453,
+      "rva": {
+        "OG": "0x1b26490"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "RumbleSetterAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2268322,
+      "rva": {
+        "NG": "0x1553b80",
+        "AE": "0x166e100"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "RumbleGateAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1544449,
+      "rva": {
+        "OG": "0x3846340"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "RumbleGateAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2666331,
+      "rva": {
+        "NG": "0x2cda5a8",
+        "AE": "0x2f4be20"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "DifficultyTransitionAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 657344,
+      "rva": {
+        "OG": "0xeb06e0"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "DifficultyTransitionAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2233057,
+      "rva": {
+        "NG": "0xce75f0",
+        "AE": "0xd6d630"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "DifficultyObjectAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 303410,
+      "rva": {
+        "OG": "0x5aa4388"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "DifficultyObjectAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2698073,
+      "rva": {
+        "NG": "0x303aca0",
+        "AE": "0x32dd370"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "AudioManagerSingletonAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1321158,
+      "rva": {
+        "OG": "0x5b0d208"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "AudioManagerSingletonAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2703058,
+      "rva": {
+        "NG": "0x30a0c90",
+        "AE": "0x3351010"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "AudioMasterVolumeSetterAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2267162,
+      "rva": {
+        "NG": "0x1518040",
+        "AE": "0x1632680"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "AudioMasterVolumeSetterAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1255857,
+      "rva": {
+        "OG": "0x1accff0"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "AudioVolumeCurveAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 774791,
+      "rva": {
+        "OG": "0x1aee030"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "SoundCategorySetVolumeAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 826593,
+      "rva": {
+        "OG": "0x1aee320"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "SoundCategorySetVolumeAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2267420,
+      "rva": {
+        "NG": "0x15298c0",
+        "AE": "0x1643f00"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "AudioVolumeCurveAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG",
+        "AE"
+      ],
+      "id": 2267410,
+      "rva": {
+        "NG": "0x15295f0",
+        "AE": "0x1643c30"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "InputDeviceManagerAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1284221,
+      "rva": {
+        "OG": "0x5a5f668"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "InputDeviceManagerAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG"
+      ],
+      "id": 2694300,
+      "rva": {
+        "NG": "0x2ff1298"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "InputDeviceManagerAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "AE"
+      ],
+      "id": 4807767,
+      "rva": {
+        "AE": "0x3e75cb8"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/FO4_AddressLibrary/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "PipBoyRedCellAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 1201665,
+      "rva": {
+        "OG": "0x38ca440"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "PipBoyRedCellAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG"
+      ],
+      "id": 2678185,
+      "rva": {
+        "NG": "0x2d27038"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "PipBoyRedCellAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "AE"
+      ],
+      "id": 4784853,
+      "rva": {
+        "AE": "0x2f98bd8"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "PipBoyGreenCellAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 277404,
+      "rva": {
+        "OG": "0x38ca458"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "PipBoyGreenCellAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG"
+      ],
+      "id": 2678187,
+      "rva": {
+        "NG": "0x2d27050"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "PipBoyGreenCellAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "AE"
+      ],
+      "id": 4784855,
+      "rva": {
+        "AE": "0x2f98bf0"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "PipBoyBlueCellAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "OG"
+      ],
+      "id": 935488,
+      "rva": {
+        "OG": "0x38ca470"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "PipBoyBlueCellAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "NG"
+      ],
+      "id": 2678189,
+      "rva": {
+        "NG": "0x2d27068"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins"
+    },
+    {
+      "symbol": "PipBoyBlueCellAddressLibraryId",
+      "file": "CommonwealthOnlineUI/include/F4TSettingsRefreshRoute.h",
+      "runtimes": [
+        "AE"
+      ],
+      "id": 4784857,
+      "rva": {
+        "AE": "0x2f98c08"
+      },
+      "note": "Address Library bin cross-check, identity per the cited finding in the header; source:E:/RE-work/commonlib_NonVR/AddressBins/F4SE/Plugins"
+    }
+  ]
+}

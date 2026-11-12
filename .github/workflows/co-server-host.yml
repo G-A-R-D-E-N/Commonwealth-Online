@@ -1,0 +1,55 @@
+name: Host GUI (Avalonia)
+
+on:
+  push:
+    branches: ["ci-skipped/**"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and test Avalonia host
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.tool_cache }}/dotnet
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore the NuGet package cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-${{ github.job }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-${{ github.job }}-nuget-
+
+      - name: Build host
+        run: dotnet build CO-SERVER/host/CommonwealthOnline.Host.csproj -c Release --nologo
+
+      - name: Test server launch contracts
+        run: dotnet run --project CO-SERVER/host-tests/CommonwealthOnline.Host.Tests.csproj -c Release
+
+  report:
+    name: Report to the private PR
+    needs: [build]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-server-host
+          needs: ${{ toJSON(needs) }}

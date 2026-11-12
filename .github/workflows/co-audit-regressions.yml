@@ -1,0 +1,72 @@
+name: Repository Audit Regressions
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit-regressions:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+      - name: Run repository audit regressions
+        run: python3 scripts/run-python-tests.py --group audit
+      - name: Run script checks
+        run: python3 scripts/run-python-tests.py --group scripts
+      - name: Git hook regressions
+        run: |
+          node .githooks/commit-msg.test.js
+          node .githooks/pre-push.test.js
+          node .githooks/pre-commit-secrets.test.js
+      - name: Browser UI regressions
+        working-directory: CommonwealthOnlineUI/ui/views/CommonwealthOnline/browser/tests
+        run: node --test *.test.js
+      - name: Whitespace check
+        if: always()
+        run: git diff --check
+
+  report:
+    name: Report to the private PR
+    needs: [audit-regressions]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-audit-regressions
+          needs: ${{ toJSON(needs) }}

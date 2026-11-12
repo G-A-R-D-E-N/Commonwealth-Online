@@ -1,0 +1,7 @@
+{
+	"name": "state-board",
+	"version": "1.0.0",
+	"server": ["index.js"],
+	"views": ["board.html", "board.js", "board.css"],
+	"permissions": ["commands.register", "chat.send", "state.read", "state.write", "views.open", "views.message"]
+}

@@ -1,0 +1,233 @@
+<%- include("../partials/head") %>
+<%- include("../partials/navbar") %>
+
+      <main class="site-main">
+        <section class="section-panel media-hero" aria-labelledby="media-title">
+          <div class="media-hero__head">
+            <div>
+              <h1 id="media-title">Media gallery</h1>
+              <p class="media-hero__desc">
+                In-game screenshots from Commonwealth Online development on Fallout 4. Anniversary Edition and the
+                original release are both supported. Remote player sync, equipment replication, community characters
+                and custom interface work. No DLC, mods or Creation Club content required unless other players have
+                them.
+              </p>
+            </div>
+            <div class="media-hero__actions">
+              <a class="co-btn co-btn--ghost" href="/">Back to home</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-panel media-gallery-panel" id="remote-players" aria-labelledby="remote-players-title">
+          <div class="section-head">
+            <h2 id="remote-players-title">Remote Players</h2>
+          </div>
+          <div class="media-grid">
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Remote Player Proxies">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/TwoPlayers.webp"
+                    alt="Two players standing together in the Commonwealth wasteland"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Remote Player Proxies</span>
+                <span class="preview-window__description">Two connected players share the wasteland, each rendered as a remote proxy actor.</span>
+              </figcaption>
+            </figure>
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Weapon Replication">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/PlayerHoldingMusket.webp"
+                    alt="Remote player proxy holding a musket in the wasteland"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Weapon Replication</span>
+                <span class="preview-window__description">A remote player proxy mirrors equipped weapons and held gear across clients.</span>
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="section-panel media-gallery-panel" id="equipment-sync" aria-labelledby="equipment-sync-title">
+          <div class="section-head">
+            <h2 id="equipment-sync-title">Equipment Sync</h2>
+          </div>
+          <div class="media-grid">
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Laser Musket">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/EquippedRifle.webp"
+                    alt="Remote player aiming a Laser Musket in the Commonwealth wasteland"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Laser Musket</span>
+                <span class="preview-window__description">Ranged weapon sync with a Laser Musket equipped and visible on a remote player.</span>
+              </figcaption>
+            </figure>
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: 10mm Pistol">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/EquippedPistol.webp"
+                    alt="Remote player holding a 10mm pistol in front of a cave entrance"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">10mm Pistol</span>
+                <span class="preview-window__description">Sidearm equipment mirrored on a remote player with a 10mm pistol drawn.</span>
+              </figcaption>
+            </figure>
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Shishkebab">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/EquippedMeeleOneHanded.webp"
+                    alt="Remote player wielding a Shishkebab melee weapon"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Shishkebab</span>
+                <span class="preview-window__description">One-handed melee sync with a Shishkebab shown drawn on a remote player.</span>
+              </figcaption>
+            </figure>
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Gatling Laser">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/EquippedHeavy.webp"
+                    alt="Remote player holding a Gatling Laser in the wasteland"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Gatling Laser</span>
+                <span class="preview-window__description">Heavy weapon replication with a Gatling Laser equipped on a remote player.</span>
+              </figcaption>
+            </figure>
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Shishkebab Attack">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/MOHAttack.webp"
+                    alt="Remote player performing an overhead melee attack with a Shishkebab"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Shishkebab Attack</span>
+                <span class="preview-window__description">Overhead Shishkebab melee attack animation captured during multiplayer combat testing.</span>
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="section-panel media-gallery-panel" id="community-players" aria-labelledby="community-players-title">
+          <div class="section-head">
+            <h2 id="community-players-title">Community Players</h2>
+          </div>
+          <div class="media-grid">
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Community Player 1">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/playerimages/UserOptcron-1.webp"
+                    alt="Community player character captured in-game"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span class="media-credit preview-window__credit">Supplied by Optcron on Discord</span>
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Community Player 1</span>
+                <span class="preview-window__description">A player character from the Commonwealth Online community, captured in-game.</span>
+              </figcaption>
+            </figure>
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Community Player 2">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/playerimages/UserOptcron-2.webp"
+                    alt="Community player character captured in-game"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span class="media-credit preview-window__credit">Supplied by Optcron on Discord</span>
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Community Player 2</span>
+                <span class="preview-window__description">Another community player character, captured during a multiplayer session.</span>
+              </figcaption>
+            </figure>
+            <figure class="preview-window">
+              <button class="preview-window__trigger" type="button" aria-label="Enlarge: Community Player 3">
+                <span class="preview-window__screen">
+                  <img
+                    src="/assets/images/playerimages/UserOptcron-3.webp"
+                    alt="Community player character captured in-game"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span class="media-credit preview-window__credit">Supplied by Optcron on Discord</span>
+                </span>
+              </button>
+              <figcaption>
+                <span class="preview-window__name">Community Player 3</span>
+                <span class="preview-window__description">A further community player character, captured in-game.</span>
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+      </main>
+
+<%- include("../partials/footer") %>
+
+    <dialog class="media-lightbox" id="media-lightbox" aria-labelledby="media-lightbox-name">
+      <div class="media-lightbox__panel">
+        <div class="media-lightbox__chrome">
+          <p class="media-lightbox__label">Enlarged view</p>
+          <button class="media-lightbox__close" type="button" aria-label="Close enlarged image">
+            <span class="media-lightbox__close-glyph" aria-hidden="true">&times;</span>
+            <span class="media-lightbox__close-text">Close</span>
+          </button>
+        </div>
+        <figure class="media-lightbox__figure">
+          <div class="media-lightbox__image-wrap">
+            <img class="media-lightbox__image" id="media-lightbox-image" alt="" />
+          </div>
+          <figcaption class="media-lightbox__caption">
+            <span class="media-lightbox__name" id="media-lightbox-name"></span>
+            <span class="media-lightbox__description" id="media-lightbox-description"></span>
+          </figcaption>
+        </figure>
+      </div>
+    </dialog>
+
+<%- include("../partials/scripts") %>
