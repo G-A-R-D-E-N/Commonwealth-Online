@@ -1,0 +1,231 @@
+	std::string saveAttestationKey;
+	std::string playerKeySecret;
+	try {
+		const auto saveAttestationKeyPath = baseDirectory / ".save-attestation-key";
+		const bool createdKey = !std::filesystem::exists(saveAttestationKeyPath);
+		saveAttestationKey = AdminTokenStore::LoadOrCreateHexKey(
+			saveAttestationKeyPath,
+			[&identityTokens] { return identityTokens.CreateRandomHex(32); });
+		playerKeySecret = AdminTokenStore::LoadOrCreateHexKey(
+			baseDirectory / ".player-key-secret",
+			[&identityTokens] { return identityTokens.CreateRandomHex(32); });
+		if (createdKey) {
+			std::cout << "created new save attestation key: " << std::filesystem::absolute(saveAttestationKeyPath).string() << '\n';
+		}
+	} catch (const std::exception& exception) {
+		std::cerr << "Failed to load or create server key material: " << exception.what() << '\n';
+		co_gns_server_destroy(server);
+		return 2;
+	}
+	const auto profileSecretDeriver = [&identityTokens, &saveAttestationKey](std::string_view a_profileId) {
+		return identityTokens.HmacSha256Hex(saveAttestationKey, "profile-secret:" + std::string{ a_profileId })
+			.substr(0, F4T::DurableState::ProfileSecretLength);
+	};
+	std::unique_ptr<CommonwealthOnline::Server::SaveAttestationAuthority> saveAuthority;
+	if (durableStore) {
+		saveAuthority = std::make_unique<CommonwealthOnline::Server::DurableSaveAttestationAuthority>(*durableStore, profileSecretDeriver);
+	} else {
+		saveAuthority = std::make_unique<CommonwealthOnline::Server::MemorySaveAttestationAuthority>(profileSecretDeriver);
+	}
+	CommonwealthOnline::Server::AdminRoster adminRoster{ options.adminProfiles, baseDirectory / "admins.json", [&saveAuthority](std::string_view a_profileId) {
+		try {
+			return saveAuthority->IsKnownProfile(a_profileId);
+		} catch (const std::exception&) {
+			return false;
+		}
+	} };
+	if (const auto warning = adminRoster.TakeLoadWarning()) std::cerr << *warning << '\n';
+	const auto adminListing = adminRoster.List();
+	for (const auto& admin : adminListing["admins"]) {
+		if (admin.value("unbound", false)) std::cerr << "Admin " << admin.value("profileId", std::string{}) << " has not joined this server, so it is not active. Run admin_grant with its steamId (the binding is saved in admins.json), or grant it by playerId while that player is connected." << (durableStore ? "" : " Persistence is off, so this applies again after every restart until a steamId is bound.") << '\n';
+	}
+
+	CommonwealthOnline::Server::SteamIdentityLink steamIdentityLink;
+	CommonwealthOnline::Server::ApplySteamHostPolicy(steamIdentityLink, options.steamFriendsOnly, options.serverPassword.has_value());
+	std::optional<AdminControlServer> steamHostLink;
+	CommonwealthOnline::Server::SteamHostLinkPublication steamHostLinkPublication;
+	if (const auto linkDirectory = F4T::SteamHostLink::Directory()) {
+		std::string linkError;
+		try {
+			F4T::SteamHostLink::RemoveLinkFiles(*linkDirectory, options.port);
+			steamHostLink.emplace(
+				std::uint16_t{ 0 },
+				AdminTokenStore::LoadOrCreate(F4T::SteamHostLink::TokenPath(*linkDirectory, options.port), [&identityTokens] { return identityTokens.CreateToken(); }),
+				AdminControlServer::TimeoutInstaller{},
+				[&steamIdentityLink](const nlohmann::json& a_request) { return steamIdentityLink.HandleRequest(a_request); });
+			if (!steamHostLink->Start(linkError) ||
+				!steamHostLinkPublication.Publish(
+					F4T::SteamHostLink::PortPath(*linkDirectory, options.port),
+					F4T::SteamHostLink::TokenPath(*linkDirectory, options.port),
+					steamHostLink->LocalPort(),
+					linkError)) {
+				steamHostLink.reset();
+			}
+		} catch (const std::exception& exception) {
+			linkError = exception.what();
+			steamHostLink.reset();
+		}
+		if (!steamHostLink) {
+			std::cerr << "Steam host identity link unavailable; Steam guests join unverified: " << linkError << '\n';
+		}
+	}
+
+	std::unique_ptr<CommonwealthOnline::Server::SteamWebApiVerifier> steamWebApi;
+	if (options.requireV2Identity) {
+		std::string keyError;
+		const auto steamKey = CommonwealthOnline::Server::LoadSteamWebApiKey(baseDirectory, keyError);
+		if (!steamKey) {
+			if (keyError.empty()) {
+				std::cout << "Steam ID verification: OFF for direct connections (no Steam Web API key). "
+				          << "To turn it on, open a command prompt in this folder (type cmd in the Explorer address bar), then run: CommonwealthOnline.Server.exe --setup-steam-key" << std::endl;
+			} else {
+				std::cerr << "Steam ID verification: OFF, " << keyError << ". Re-run --setup-steam-key.\n";
+			}
+		} else {
+			auto steamSender = CommonwealthOnline::Server::CreatePlatformDirectorySender();
+			const auto check = CommonwealthOnline::Server::CheckSteamWebApiKey(steamKey->value, steamSender);
+			if (check.outcome == CommonwealthOnline::Server::SteamKeyCheck::Rejected) {
+				std::cerr << "Steam ID verification: OFF, Steam rejected the key from " << steamKey->source << " (" << check.detail
+				          << "). Re-run --setup-steam-key.\n";
+			} else {
+				steamWebApi = std::make_unique<CommonwealthOnline::Server::SteamWebApiVerifier>(steamKey->value, std::move(steamSender));
+				std::cout << "Steam ID verification: ON (key from " << steamKey->source
+				          << (check.outcome == CommonwealthOnline::Server::SteamKeyCheck::Accepted ? ", accepted by Steam)" : ", not checked: " + check.detail + ")")
+				          << std::endl;
+			}
+		}
+	}
+
+	if (options.requireSteamIdentity && !steamWebApi) {
+		std::cerr << "Configuration error: require_steam_identity needs a Steam Web API key that Steam accepts. Run CommonwealthOnline.Server.exe --setup-steam-key first." << '\n';
+		co_gns_server_destroy(server);
+		return 2;
+	}
+
+	std::function<std::vector<std::string>(std::string_view)> profileSteamIdLookup;
+	std::function<std::string(std::uint32_t)> ticketNonceOf;
+	std::optional<CommonwealthOnline::Server::IdentityGate> identityGate;
+	if (options.requireV2Identity) {
+		identityGate.emplace(
+			CommonwealthOnline::Server::Configuration::IdentityRequirements(options),
+			identityTokens,
+			durableStore ? static_cast<F4T::Identity::ResumeCredentialStore*>(durableStore.get()) : nullptr,
+			[&](std::string_view a_profileId) -> std::optional<std::string> {
+				if (const auto ban = banStore->GetProfile(a_profileId)) return ban->reason;
+				return std::nullopt;
+			},
+			saveAuthority.get(),
+			[&adminRoster](std::string_view a_profileId) -> bool { return adminRoster.ContainsStored(a_profileId); },
+			CommonwealthOnline::Server::SteamIdentityHooks{
+				.resolve = [&server, &steamIdentityLink](std::uint32_t a_connectionId, std::string_view a_claimedSteamId, std::string_view a_hostProof)
+					-> std::optional<CommonwealthOnline::Server::VerifiedSteamId> {
+					std::uint32_t remoteIpv4 = 0;
+					std::uint16_t remotePort = 0;
+					if (co_gns_server_remote_ipv4(server, a_connectionId, &remoteIpv4, &remotePort) != 1) return std::nullopt;
+					return steamIdentityLink.Resolve(remoteIpv4, remotePort, a_claimedSteamId, a_hostProof);
+				},
+				.remoteIpv4 = MakeRemoteIpv4Lookup(server),
+				.remoteAddress = [&server](std::uint32_t a_connectionId) -> std::optional<std::string> {
+					std::array<char, 64> addressBuffer{};
+					std::uint16_t remotePort = 0;
+					if (co_gns_server_remote_address(server, a_connectionId, addressBuffer.data(), addressBuffer.size(), &remotePort) != 1) return std::nullopt;
+					return std::string{ addressBuffer.data() };
+				},
+				.banLookup = [&](std::string_view a_steamId) -> std::optional<std::string> {
+					if (const auto ban = banStore->GetSteamId(a_steamId)) return ban->reason;
+					return std::nullopt;
+				},
+				.verifyTicket = [&server, &steamWebApi, &ticketNonceOf](std::uint32_t a_connectionId, std::string_view a_ticket, std::string_view a_claimedSteamId, std::string_view a_profileId) {
+					if (!steamWebApi) return false;
+					const auto nonce = ticketNonceOf ? ticketNonceOf(a_connectionId) : std::string{};
+					if (nonce.empty()) return false;
+					std::uint32_t remoteIpv4 = 0;
+					std::uint16_t remotePort = 0;
+					std::uint64_t sourceKey = 0;
+					if (co_gns_server_remote_ipv4(server, a_connectionId, &remoteIpv4, &remotePort) == 1) {
+						sourceKey = remoteIpv4;
+					} else {
+						sourceKey = RemoteIpv6PeerKey(server, a_connectionId);
+					}
+					if (steamWebApi->Submit(a_connectionId, a_ticket, a_claimedSteamId, a_profileId, sourceKey, F4T::SteamId::BoundWebApiIdentity(nonce))) return true;
+					std::cerr << "Steam ID check queue is full for this address; connection " << a_connectionId << " stays unverified.\n";
+					return false;
+				},
+				.passwordLockout = {},
+				.monotonicNow = {},
+				.profileSteamIds = [&](std::string_view a_profileId) { return profileSteamIdLookup ? profileSteamIdLookup(a_profileId) : std::vector<std::string>{}; }
+			}, bootstrap.saveRecoveryApprovals.get());
+	}
+	auto* identity = identityGate ? std::addressof(*identityGate) : nullptr;
+
+	std::unique_ptr<CommonwealthOnline::Server::PersistenceGate> persistenceGate;
+	if (durableStore) {
+		persistenceGate = std::make_unique<CommonwealthOnline::Server::PersistenceGate>(*durableStore, options.startingInventory);
+	}
+	auto* persistence = persistenceGate.get();
+	if (identity) identity->SetAdminSteamCheck([&adminRoster](std::string_view a_profileId, std::string_view a_steamId) { return adminRoster.Honours(a_profileId, a_steamId); });
+	if (identity && persistence) identity->SetRecoveryProfileLookup([persistence](std::uint32_t a_connection) { return persistence->ProfileForConnection(a_connection); });
+	if (identity && persistence) identity->SetSlotCharacterLookup([persistence](std::uint32_t a_connection) -> std::optional<std::string> {
+		const auto bound = persistence->ProfileForConnection(a_connection);
+		const auto grant = bound ? persistence->Store().GetStartingGrant(*bound) : std::nullopt;
+		const auto recovery = grant && grant->contains("recovery") ? &grant->at("recovery") : nullptr;
+		if (!recovery || !recovery->is_object() || !recovery->contains("characterId") || !recovery->at("characterId").is_string()) return std::nullopt;
+		return recovery->at("characterId").get<std::string>();
+	});
+
+	CommonwealthOnline::Server::ProtocolHost protocol{ options.serverName, options.serverDescription, options.adminProfiles, options.friendlyFire, options.factionFriendlyFire, playerKeySecret };
+	protocol.SetTicketNonceSource([&identityTokens] { return identityTokens.CreateRandomHex(16); });
+	ticketNonceOf = [&protocol](std::uint32_t a_connectionId) { return protocol.TicketNonce(a_connectionId); };
+	protocol.SetSurvivalMode(options.survivalMode);
+	protocol.SetSurvivalNeeds(options.survivalNeeds);
+	protocol.SetRequireDifficultyReport(options.requireDifficultyReport);
+	protocol.SetRequiredDifficulty(options.requiredDifficulty);
+	protocol.SetChatEnabled(options.enableChat);
+	protocol.SetAdminLookup([&adminRoster](std::string_view a_profileId) { return adminRoster.Contains(a_profileId); });
+	protocol.SetAdminSteamCheck([&adminRoster](std::string_view a_profileId, std::string_view a_steamId) { return adminRoster.Honours(a_profileId, a_steamId); });
+	protocol.SetAdminAuditPath((baseDirectory / "admin-audit.log").string());
+	protocol.SetAdminAuditClock([] { return CommonwealthOnline::Server::RuntimeSupport::UnixTimeSeconds(); });
+	if (durableStore) {
+		protocol.SetServerInstanceId(durableStore->ServerInstanceId());
+	}
+	protocol.SetDownedConfig(F4T::ServerConfiguration::DownedConfig(options));
+	protocol.SetDeathBagLootByOthers(options.allowDeathBagLootByOthers);
+	protocol.SetFactionLimits(options.factions);
+	protocol.SetWorkshopRaidConfig(options.workshopRaid);
+	protocol.SetAdvertisedMaximumPlayers(options.maximumPlayers);
+	if (persistence != nullptr && !protocol.EnableInventoryTransactions(*persistence)) {
+		std::cerr << "Stable inventory authority unavailable; transactions remain closed.\n";
+	}
+	if (options.enableFactions && persistence == nullptr) {
+		std::cerr << "enable_factions is set without durable state; factions will not persist.\n";
+	}
+	if (options.enableObjectState && !protocol.EnableObjectState()) {
+		std::cerr << "Object state sync requested after session activation; it remains off.\n";
+	}
+	if (options.enableFactions && !protocol.EnableFactions(persistence)) {
+		std::cerr << "Player factions unavailable; factions remain closed.\n";
+	}
+	if (!protocol.EnableSocial(persistence)) {
+		std::cerr << "Known-people store requested after session activation; stranger masking starts empty.\n";
+	}
+	if (!protocol.EnableSettlementAccess(persistence)) {
+		std::cerr << "Settlement build lists could not be restored; every build is denied until the stored "
+		             "settlementAccess entry is repaired or removed.\n";
+	}
+	protocol.EnableParkedSuits(persistence);
+	if (!protocol.EnableCharacterSlots(persistence, options.characterSlots)) {
+		std::cerr << "Character slots unavailable; single-profile mode remains active.\n";
+	}
+	if (options.enableQuestSync && !protocol.EnableQuestSync(persistence, options.questMode, options.questOverrides)) {
+		std::cerr << "Quest sync unavailable; quest reports remain closed.\n";
+	}
+	if (options.questStoryOrder) protocol.SetQuestStoryOrder(*options.questStoryOrder);
+	if (options.enableQuestSync && persistence == nullptr) {
+		std::cerr << "Quest state has no durable state store; quest progress resets on restart.\n";
+	}
+
+	(void)protocol.ConfigureWorkshop(persistence, baseDirectory / "workshop-zones.json");
+	protocol.LoadSurvivalItems(baseDirectory / "survival-items.json");
+	protocol.ConfigureVendorItemValues(persistence, bootstrap.vendorItemValuesPath, options.vendorRestockHours);
+	(void)protocol.SetWorldPolicy(CommonwealthOnline::Server::DeriveServerWorldPolicy(
+		worldPolicyData, worldMode, options.doorsShared, F4T::WorldPolicy::ServerDefaultVats(), options.questOverrides));

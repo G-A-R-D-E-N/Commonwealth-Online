@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Trade</title>
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="trade" id="coTrade" aria-live="polite" hidden>
+      <header class="trade-header">
+        <h1 class="trade-title" id="coTradeTitle">Trade</h1>
+        <p class="trade-status" id="coTradeStatus"></p>
+        <div class="trade-acceptance">
+          <span class="trade-badge" id="coTradeOwnBadge"></span>
+          <span class="trade-badge" id="coTradePartnerBadge"></span>
+        </div>
+        <p class="trade-hint">Any change to an offer clears both acceptances.</p>
+      </header>
+      <div class="trade-board">
+        <section class="trade-panel trade-column" aria-labelledby="coTradeHoldingsTitle">
+          <h2 class="trade-panel-title" id="coTradeHoldingsTitle">Your items</h2>
+          <p class="trade-legend">Click a row or press A to add one (+). Shift adds five.</p>
+          <ul class="trade-lines" id="coTradeHoldings"></ul>
+        </section>
+        <section class="trade-panel trade-column" aria-labelledby="coTradeOwnTitle">
+          <h2 class="trade-panel-title" id="coTradeOwnTitle">Your offer</h2>
+          <p class="trade-legend">Click a row or press A to remove one (-). Shift removes five.</p>
+          <ul class="trade-lines" id="coTradeOwnOffer"></ul>
+        </section>
+        <section class="trade-panel trade-column" aria-labelledby="coTradePartnerTitle">
+          <h2 class="trade-panel-title" id="coTradePartnerTitle">Their offer</h2>
+          <p class="trade-legend">Read only.</p>
+          <ul class="trade-lines" id="coTradePartnerOffer"></ul>
+        </section>
+      </div>
+      <footer class="trade-actions">
+        <button type="button" class="trade-action" id="coTradeAccept">Accept</button>
+        <button type="button" class="trade-action" id="coTradeDecline">Decline</button>
+        <button type="button" class="trade-action" id="coTradeConfirm">Accept Trade</button>
+        <button type="button" class="trade-action trade-danger" id="coTradeCancel">Cancel trade</button>
+        <button type="button" class="trade-action" id="coTradeHide">Hide</button>
+      </footer>
+    </main>
+    <main class="vendor" id="coVendor" aria-live="polite" hidden>
+      <header class="trade-header">
+        <h1 class="trade-title" id="coVendorTitle">Trader</h1>
+        <p class="trade-status" id="coVendorStatus"></p>
+        <p class="vendor-caps"><span id="coVendorCaps"></span> <span id="coVendorPlayerCaps"></span></p>
+      </header>
+      <div class="trade-offers">
+        <section class="trade-panel" aria-labelledby="coVendorStockTitle">
+          <h2 class="trade-panel-title" id="coVendorStockTitle">Trader stock</h2>
+          <ul class="trade-lines vendor-list" id="coVendorStock"></ul>
+        </section>
+        <section class="trade-panel" aria-labelledby="coVendorInventoryTitle">
+          <h2 class="trade-panel-title" id="coVendorInventoryTitle">Your items</h2>
+          <ul class="trade-lines vendor-list" id="coVendorInventory"></ul>
+        </section>
+      </div>
+      <section class="trade-panel vendor-cart" aria-labelledby="coVendorCartTitle">
+        <h2 class="trade-panel-title" id="coVendorCartTitle">Cart</h2>
+        <ul class="trade-lines" id="coVendorCart"></ul>
+        <p class="vendor-total" id="coVendorTotal"></p>
+      </section>
+      <footer class="trade-actions">
+        <button type="button" id="coVendorClear">Clear cart</button>
+        <button type="button" id="coVendorConfirm">Confirm trade</button>
+        <button type="button" id="coVendorClose" class="trade-danger">Leave</button>
+      </footer>
+    </main>
+    <script src="../shared/gamepad-sticks.js"></script>
+    <script>window.CO_GamepadSticks.start(".trade-lines");</script>
+    <script src="trade.js"></script>
+    <script src="F4TVendorWindow.js"></script>
+  </body>
+</html>

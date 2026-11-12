@@ -1,0 +1,8 @@
+{
+  "name": "commonwealth-online-gns-client-bridge",
+  "version-string": "0.1.0",
+  "$comment": "No builtin-baseline on purpose. build-gns-bridge.bat already pins the vcpkg checkout to VCPKG_SHA=e4ed9022bd97e54d848104f7e1ab153d9532a57e, so the ports tree IS the baseline and re-declaring it here is redundant. Declaring it forces vcpkg to git-check-out each port tree into buildtrees/versioning_, a path it builds with forward slashes; under Wine that removal fails with STATUS_BAD_DEVICE_TYPE and the build dies. See GHRUNNER issue #16.",
+  "dependencies": [
+    "protobuf"
+  ]
+}

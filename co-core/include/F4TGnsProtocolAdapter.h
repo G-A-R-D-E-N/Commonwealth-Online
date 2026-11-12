@@ -1,0 +1,144 @@
+#pragma once
+
+#include "F4TClientCompatibility.h"
+#include "F4TModpackManifest.h"
+#include "F4TSaveProfileLogic.h"
+#include "F4TWorldPolicy.h"
+
+#include <nlohmann/json_fwd.hpp>
+
+#include <atomic>
+#include <cstdint>
+#include <functional>
+#include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <vector>
+
+namespace F4T::GnsProtocolAdapter
+{
+	using Json = nlohmann::json;
+
+	inline std::atomic<bool> g_visibilityPauseSupported{ false };
+
+	[[nodiscard]] inline bool VisibilityPauseSupported() noexcept
+	{
+		return g_visibilityPauseSupported.load(std::memory_order_acquire);
+	}
+
+	enum class Delivery : std::uint32_t
+	{
+		UnreliableSequenced = 0,
+		ReliableOrdered = 1
+	};
+
+	struct OutboundMessage
+	{
+		std::string payload;
+		Delivery delivery{ Delivery::ReliableOrdered };
+	};
+
+	struct ReadyIdentity
+	{
+		std::string profileId;
+		std::string resumeToken;
+		double resumeExpiresAt{};
+		bool multiplayerSaveAdmin{ false };
+		std::optional<std::string> profileSecret;
+	};
+
+	struct ModpackChunksInfo
+	{
+		std::uint64_t totalBytes{};
+		std::uint32_t chunkCount{};
+		std::string sha256;
+	};
+
+	struct SessionRejection
+	{
+		std::string code;
+		std::string reason;
+		std::optional<ModpackManifest::Manifest> requiredModpack;
+		std::string requiredModpackFingerprint;
+		std::string requiredModpackName;
+		std::optional<ModpackChunksInfo> requiredModpackChunks;
+	};
+
+	using ReadyIdentityCommitter = std::function<bool(const ReadyIdentity&, std::string&)>;
+	using FormIdTranslator = std::function<std::uint32_t(std::uint32_t, std::uint32_t)>;
+
+	struct InboundResult
+	{
+		std::vector<std::string> legacyMessages;
+		std::vector<OutboundMessage> controlMessages;
+		bool protocolViolation{ false };
+		bool localHandshakeFailure{ false };
+		std::string error;
+		std::optional<ReadyIdentity> readyIdentity;
+		std::optional<SessionRejection> rejection;
+		// Constraint: set only after a successful commit, once any ack the server requires has been queued.
+		bool resumeAcknowledged{ false };
+	};
+
+	struct SteamTicketStatus
+	{
+		bool finished{};
+		std::optional<std::string> hex;
+	};
+
+	using SteamTicketPoll = std::function<SteamTicketStatus()>;
+	// constraint: must return at once; an empty poll means no ticket can be requested
+	using SteamTicketBegin = std::function<SteamTicketPoll(std::string_view a_identity)>;
+
+	struct ClientIdentity
+	{
+		std::string profileId;
+		ClientCompatibility::Metadata metadata;
+		std::optional<std::string> resumeToken;
+		std::optional<std::string> serverPassword;
+		std::optional<std::string> modpackFingerprint;
+		std::optional<F4T::SaveProfileLogic::AttestedSave> saveAttestation;
+		std::optional<std::string> profileSecret;
+		std::optional<std::string> steamId;
+		std::optional<std::string> steamTicket;
+		std::optional<std::string> nickname;
+		std::optional<Json> privacy;
+		std::optional<std::string> hostProof;
+		SteamTicketBegin beginSteamTicket;
+	};
+
+	struct NpcAuthorityAssignment
+	{
+		std::uint32_t playerId{};
+		std::uint64_t epoch{};
+	};
+
+	class Session
+	{
+	public:
+		Session();
+		~Session();
+		Session(Session&&) noexcept;
+		Session& operator=(Session&&) noexcept;
+		Session(const Session&) = delete;
+		Session& operator=(const Session&) = delete;
+
+		void Reset();
+		void SetClientIdentity(ClientIdentity a_identity, ReadyIdentityCommitter a_committer);
+		void SetFormIdTranslator(FormIdTranslator a_translator);
+		bool IsReady() const noexcept;
+		std::vector<OutboundMessage> AdaptOutbound(std::string_view a_legacyPayload);
+		InboundResult AdaptInbound(std::string_view a_jsonPayload);
+		std::vector<OutboundMessage> PollDeferredHello();
+		std::optional<NpcAuthorityAssignment> GetNpcAuthority(
+			std::string_view a_cellId,
+			std::string_view a_worldspaceId) const;
+		std::optional<F4T::WorldPolicy::Policy> GetWorldPolicy() const;
+		std::optional<bool> GetSurvivalMode() const noexcept;
+
+	private:
+		class Impl;
+		std::unique_ptr<Impl> _impl;
+	};
+}

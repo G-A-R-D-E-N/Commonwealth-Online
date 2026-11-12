@@ -1,0 +1,1412 @@
+/* Commonwealth Online — pause menu concept (1920×1080 baseline) */
+
+@font-face {
+  font-family: "Futura PT Demibold";
+  src: url("../../fonts/futura-pt-demibold.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  /*
+   * --co-ui-scale is set by JavaScript (script.js) to a numeric value
+   * because nested calc()/min()/clamp() in custom properties doesn't
+   * resolve to a number in all browsers — it stays as a formula string,
+   * which breaks calc(Npx * var(--co-ui-scale)). The JS computes the
+   * scale on load and on resize, ensuring it's always a real number.
+   */
+  --co-ui-scale: 1;
+
+  --co-black: #060907;
+  --co-panel-bg: rgba(7, 14, 10, 0.85);
+  --co-panel-fade: rgba(7, 14, 10, 0);
+  --co-green: #3ecf4a;
+  --co-green-dim: rgba(62, 207, 74, 0.35);
+  --co-green-glow: rgba(62, 207, 74, 0.18);
+  --co-amber: #f6c344;
+  --co-amber-muted: rgba(246, 195, 68, 0.55);
+  --co-text-pale: #edf2eb;
+  --co-text-muted: #8b9c8d;
+  --co-select-yellow: #f6c344;
+  --co-select-yellow-bright: #ffd978;
+  --co-select-text: #0a110b;
+  --co-border: rgba(62, 207, 74, 0.35);
+  --co-border-amber: rgba(246, 195, 68, 0.38);
+  --co-map-party: #4fa8ff;
+  --co-map-faction: #ff9f43;
+  --co-map-friend: #3ecf4a;
+  --co-map-other: #b8c2b0;
+  --co-map-downed: #e5484d;
+  --co-map-capture: #e22626;
+  --co-map-fog: rgba(10, 12, 14, 0.82);
+  --co-map-hostile: #ff3b3b;
+
+  --co-font: "Futura PT Demibold", "Roboto Condensed", "Bahnschrift", "Arial Narrow", Arial, sans-serif;
+  --co-transition: 130ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  --co-panel-width: 28%;
+  --co-menu-size: calc(24px * var(--co-ui-scale));
+  --co-menu-gap: calc(7px * var(--co-ui-scale));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--co-font);
+  font-weight: 600;
+  color: var(--co-text-pale);
+  background: transparent;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Root layout ─────────────────────────────────────────────── */
+
+.pause-screen {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Map world (map art + markers, one shared blur/pan/zoom) ── */
+
+.map-world {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform-origin: center center;
+  will-change: transform;
+  cursor: grab;
+  pointer-events: none;
+}
+
+.map-world.is-interactive {
+  pointer-events: auto;
+}
+
+.pause-screen.is-panning .map-world {
+  transition: none;
+  cursor: grabbing;
+}
+
+.map-layer {
+  position: absolute;
+  inset: 0;
+  /*
+   * "contain" keeps the whole regional map visible (Fallout 76-style full
+   * overview) instead of "cover" cropping it down to a tight, zoomed-in
+   * strip. background-color fills the letterboxed edges so they blend
+   * into the dark UI instead of showing hard bars.
+   */
+  background: center center / contain no-repeat;
+  background-color: #0b100c;
+}
+
+.map-fog {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+.map-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 10, 8, 0.75) 0%,
+      rgba(6, 10, 8, 0.32) 24%,
+      rgba(6, 10, 8, 0.1) 55%,
+      rgba(6, 10, 8, 0.18) 100%
+    ),
+    rgba(4, 8, 6, 0.18);
+}
+
+.map-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.26);
+}
+
+/* ── Map markers ───────────────────────────────────────────── */
+/* Inside .map-world so they share the same transform as the map. */
+
+.map-markers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Sized/positioned in JS to match the contain-fitted map image rect. */
+}
+
+.marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  /* --map-marker-scale is set in JS: mostly screen-constant, grows a bit at full zoom */
+  transform: translate(-50%, -50%) scale(var(--map-marker-scale, 1));
+  transform-origin: center center;
+}
+
+.marker--location {
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.marker--location:hover,
+.marker--location:focus-visible,
+.marker--location.marker--selected {
+  z-index: 6;
+}
+
+.marker__icon {
+  display: block;
+  width: calc(32px * var(--co-ui-scale));
+  height: calc(32px * var(--co-ui-scale));
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.marker__name {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px * var(--co-ui-scale));
+  /* --marker-rot is set in JS; cancelling it keeps the name upright on a turned marker. */
+  transform: translateX(-50%) rotate(calc(-1 * var(--marker-rot, 0deg)));
+  padding: calc(4px * var(--co-ui-scale)) calc(10px * var(--co-ui-scale));
+  border: 1px solid var(--co-amber-muted);
+  background: rgba(8, 14, 10, 0.92);
+  color: var(--co-amber);
+  font-family: var(--co-font);
+  font-size: calc(15px * var(--co-ui-scale));
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.2;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--co-transition), visibility var(--co-transition);
+}
+
+/* Location names: lighter weight and a dark halo so overlapping names stay legible; overlap is culled in map-labels.js. */
+.marker--location .marker__name {
+  font-weight: 400;
+  font-size: calc(13px * var(--co-ui-scale));
+  letter-spacing: 0.03em;
+  background: rgba(8, 14, 10, 0.7);
+  text-shadow: 0 0 3px #000, 0 0 2px #000, 0 1px 2px #000;
+}
+
+.marker--location.marker--label-on .marker__name,
+.marker--location:hover .marker__name,
+.marker--location:focus-visible .marker__name,
+.marker--location.marker--selected .marker__name,
+.marker--player-other:hover .marker__name,
+.marker--player-other:focus-visible .marker__name,
+.marker--player-other.marker--spotlight .marker__name,
+.marker--named-always .marker__name {
+  opacity: 1;
+  visibility: visible;
+}
+
+.marker--player .marker__icon {
+  width: calc(36px * var(--co-ui-scale));
+  height: calc(36px * var(--co-ui-scale));
+}
+
+/* Pins sit above location names (z 1-6) and keep a minimum on-screen size so they stay visible when zoomed out. */
+.marker--player-other {
+  width: max(calc(16px * var(--co-ui-scale) * var(--co-pip-size-mult, 1)), 14px);
+  height: max(calc(16px * var(--co-ui-scale) * var(--co-pip-size-mult, 1)), 14px);
+  --pip-color: var(--co-map-other);
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 7;
+}
+
+.marker--player-other::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--pip-color);
+  clip-path: polygon(50% 0, 100% 100%, 50% 74%, 0 100%);
+  transform: rotate(var(--pip-rot, 0deg));
+}
+
+.marker--rel-party {
+  --pip-color: var(--co-map-party);
+  z-index: 9;
+}
+
+.marker--rel-faction {
+  --pip-color: var(--co-map-faction);
+  z-index: 8;
+}
+
+.marker--rel-friend {
+  --pip-color: var(--co-map-friend);
+  z-index: 7;
+}
+
+.map-zoomed-out .marker--rel-other:not(:hover):not(:focus-visible):not(.marker--spotlight) .marker__name {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.map-player-names-hidden .marker--player-other:not(.marker--spotlight) .marker__name {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.marker--rel-friend::after {
+  content: "\2605";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--co-black);
+  font-size: calc(10px * var(--co-ui-scale));
+  line-height: 1;
+}
+
+.marker--player-other.marker--spotlight {
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2px var(--co-select-yellow-bright),
+    0 0 10px rgba(201, 168, 74, 0.6);
+}
+
+.marker--player-other:hover,
+.marker--player-other:focus-visible,
+.marker--player-other.marker--spotlight {
+  z-index: 10;
+}
+
+.marker--dim::before,
+.marker--dim::after {
+  opacity: 0.4;
+}
+
+.marker--downed::before {
+  animation: co-map-pip-downed 1.2s ease-in-out infinite;
+}
+
+@keyframes co-map-pip-downed {
+  0%,
+  100% {
+    background-color: var(--co-map-downed);
+  }
+  50% {
+    background-color: #5c1417;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker--downed::before {
+    animation: none;
+    background-color: var(--co-map-downed);
+  }
+}
+
+.marker--hostile {
+  width: calc(12px * var(--co-ui-scale));
+  height: calc(12px * var(--co-ui-scale));
+  border-radius: 50%;
+  background: var(--co-map-hostile);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+}
+
+.marker--capture {
+  width: calc(72px * var(--co-ui-scale));
+  height: calc(72px * var(--co-ui-scale));
+  z-index: 0;
+}
+
+.marker--capture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--co-map-capture);
+  border-radius: 50%;
+  background: rgba(226, 38, 38, 0.35);
+  animation: co-map-capture-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes co-map-capture-pulse {
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker--capture::before {
+    animation: none;
+  }
+}
+
+.marker--highlighted .marker__icon {
+  filter:
+    drop-shadow(0 0 4px rgba(255, 210, 90, 0.85))
+    drop-shadow(0 0 8px rgba(201, 168, 74, 0.45));
+}
+
+.marker--highlighted::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(40px * var(--co-ui-scale));
+  height: calc(40px * var(--co-ui-scale));
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 210, 90, 0.55);
+  box-shadow: 0 0 10px rgba(201, 168, 74, 0.35);
+  pointer-events: none;
+}
+
+.marker--undiscovered .marker__icon {
+  opacity: 0.85;
+}
+
+.marker--undiscovered {
+  cursor: default;
+}
+
+.marker--can-travel {
+  cursor: pointer;
+}
+
+.marker--selected .marker__icon {
+  filter:
+    drop-shadow(0 0 5px rgba(62, 207, 74, 0.75))
+    drop-shadow(0 0 10px rgba(201, 168, 74, 0.4));
+}
+
+.marker--selected.marker--can-travel::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(44px * var(--co-ui-scale));
+  height: calc(44px * var(--co-ui-scale));
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1.5px solid rgba(62, 207, 74, 0.7);
+  box-shadow: 0 0 12px rgba(62, 207, 74, 0.35);
+  pointer-events: none;
+}
+
+/* ── Screen effects: vignette, scanlines, HUD grid ─────────── */
+
+.screen-effects {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.screen-effects::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.12) 2px,
+    rgba(0, 0, 0, 0.12) 3px
+  );
+  opacity: 0.65;
+}
+
+/* ── Left panel ──────────────────────────────────────────────── */
+
+.left-panel {
+  position: absolute;
+  top: calc(44px * var(--co-ui-scale));
+  left: calc(48px * var(--co-ui-scale));
+  z-index: 10;
+  width: calc(340px * var(--co-ui-scale));
+  display: flex;
+  flex-direction: column;
+  padding: calc(24px * var(--co-ui-scale));
+  background: rgba(7, 14, 10, 0.85);
+  border: 1px solid rgba(62, 207, 74, 0.35);
+  border-radius: calc(6px * var(--co-ui-scale));
+  box-shadow: inset 0 0 16px rgba(62, 207, 74, 0.05);
+  transition: opacity 200ms ease-out, visibility 200ms ease-out;
+}
+
+.left-panel.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.brand-logo {
+  width: calc(220px * var(--co-ui-scale));
+  height: auto;
+  margin-bottom: calc(26px * var(--co-ui-scale));
+  opacity: 0.95;
+  filter: drop-shadow(0 0 10px rgba(62, 207, 74, 0.25)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+/* ── Menu list ───────────────────────────────────────────────── */
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--co-menu-gap);
+  flex: 1;
+}
+
+.menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding:
+    calc(11px * var(--co-ui-scale))
+    calc(16px * var(--co-ui-scale));
+  border: 1px solid rgba(62, 207, 74, 0.18);
+  border-left: 3px solid rgba(62, 207, 74, 0.4);
+  border-radius: calc(4px * var(--co-ui-scale));
+  background: rgba(11, 20, 15, 0.5);
+  color: var(--co-text-muted);
+  font-family: inherit;
+  font-size: var(--co-menu-size);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    color var(--co-transition),
+    transform var(--co-transition),
+    border-color var(--co-transition),
+    background var(--co-transition),
+    box-shadow var(--co-transition);
+  outline: none;
+}
+
+.menu-item__label {
+  position: relative;
+  z-index: 2;
+  transition: color var(--co-transition);
+}
+
+/* Yellow selection fits 100% properly inside the box with ZERO gap */
+.menu-item__bar {
+  display: none;
+}
+
+.menu-item[hidden] {
+  display: none;
+}
+
+.menu-item:hover {
+  color: var(--co-text-pale);
+  border-color: rgba(62, 207, 74, 0.5);
+  border-left-color: var(--co-green);
+  background: rgba(15, 28, 20, 0.75);
+  transform: translateX(4px);
+}
+
+.menu-item:focus-visible {
+  color: #070c08;
+  outline: none;
+  background: linear-gradient(90deg, #f6c344 0%, #ffd978 100%);
+  border-color: #ffd978;
+}
+
+.menu-item.is-selected {
+  color: #070c08 !important;
+  background: linear-gradient(90deg, #f6c344 0%, #ffd978 100%) !important;
+  border-color: #ffd978 !important;
+  border-left: 3px solid #ffffff !important;
+  box-shadow: 0 0 20px rgba(246, 195, 68, 0.5) !important;
+  transform: translateX(6px);
+}
+
+.menu-item.is-selected .menu-item__label {
+  color: #070c08 !important;
+  font-weight: 800;
+}
+
+/* ── Server panel ────────────────────────────────────────────── */
+
+.server-panel {
+  position: absolute;
+  top: calc(28px * var(--co-ui-scale));
+  right: calc(32px * var(--co-ui-scale));
+  z-index: 10;
+  min-width: calc(280px * var(--co-ui-scale));
+  padding:
+    calc(16px * var(--co-ui-scale))
+    calc(20px * var(--co-ui-scale));
+  background: rgba(7, 14, 10, 0.88);
+  border: 1px solid rgba(62, 207, 74, 0.35);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 0 20px rgba(62, 207, 74, 0.06),
+    0 4px 24px rgba(0, 0, 0, 0.65);
+  transition: opacity 220ms ease-out, visibility 220ms ease-out;
+}
+
+.server-panel__heading {
+  font-size: calc(11px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--co-amber);
+  margin-bottom: calc(6px * var(--co-ui-scale));
+}
+
+.server-panel__heading + .server-panel__heading {
+  margin-top: calc(14px * var(--co-ui-scale));
+}
+
+.server-panel__row {
+  display: flex;
+  align-items: center;
+  gap: calc(12px * var(--co-ui-scale));
+}
+
+.server-panel.is-offline {
+  display: none;
+}
+
+.server-panel__mode {
+  display: inline-block;
+  margin-top: calc(8px * var(--co-ui-scale));
+  padding: calc(3px * var(--co-ui-scale)) calc(10px * var(--co-ui-scale));
+  border: 1px solid rgba(62, 207, 74, 0.5);
+  background: rgba(62, 207, 74, 0.1);
+  border-radius: calc(3px * var(--co-ui-scale));
+  font-size: calc(10px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--co-green);
+  box-shadow: 0 0 8px rgba(62, 207, 74, 0.2);
+}
+
+.invite-notice {
+  margin-top: calc(12px * var(--co-ui-scale));
+  max-width: calc(360px * var(--co-ui-scale));
+  font-size: calc(13px * var(--co-ui-scale));
+  line-height: 1.35;
+  color: var(--co-amber);
+}
+
+.invite-notice[hidden] {
+  display: none;
+}
+
+.server-panel__mode[hidden] {
+  display: none;
+}
+
+.server-panel__name,
+.server-panel__players {
+  font-size: calc(16px * var(--co-ui-scale));
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--co-text-pale);
+}
+
+.server-panel__ping {
+  font-size: calc(12px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--co-green);
+  min-width: calc(46px * var(--co-ui-scale));
+  flex-shrink: 0;
+}
+
+.signal-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: calc(15px * var(--co-ui-scale));
+  flex-shrink: 0;
+}
+
+.signal-bars span {
+  display: block;
+  width: calc(4px * var(--co-ui-scale));
+  background: var(--co-green);
+  border-radius: 1px;
+  opacity: 0.9;
+  box-shadow: 0 0 4px var(--co-green-dim);
+}
+
+.signal-bars span:nth-child(1) { height: 35%; }
+.signal-bars span:nth-child(2) { height: 55%; }
+.signal-bars span:nth-child(3) { height: 75%; }
+.signal-bars span:nth-child(4) { height: 100%; }
+
+.signal-bars--good span { background: var(--co-green); }
+.signal-bars--mid span { background: var(--co-amber); }
+.signal-bars--bad span { background: #d48a4a; }
+.signal-bars--unknown span {
+  background: var(--co-text-muted, rgba(220, 220, 210, 0.45));
+  opacity: 0.35;
+}
+
+.signal-bars--mid span:nth-child(4) { opacity: 0.25; }
+.signal-bars--bad span:nth-child(3),
+.signal-bars--bad span:nth-child(4) { opacity: 0.25; }
+
+/* ── Bottom prompt bar ───────────────────────────────────────── */
+
+.prompt-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(40px * var(--co-ui-scale));
+  padding:
+    calc(10px * var(--co-ui-scale))
+    calc(24px * var(--co-ui-scale));
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(6, 10, 8, 0.75) 30%,
+    rgba(6, 10, 8, 0.88) 100%
+  );
+  border-top: 1px solid rgba(201, 168, 74, 0.15);
+  transition: opacity 200ms ease-out, visibility 200ms ease-out;
+}
+
+.prompt-bar[hidden] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.prompt-bar--map-mode {
+  justify-content: center;
+}
+
+/* Mouse mode: hide controller prompt bars; gamepad mode: hide PC ESC back */
+.pause-screen:not(.is-gamepad-mode) .prompt-bar {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.pause-screen.is-gamepad-mode .map-pc-back {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.pause-screen.is-gamepad-mode,
+.pause-screen.is-gamepad-mode * {
+  cursor: none !important;
+}
+
+.pause-screen.is-gamepad-mode .menu-item:not(.is-selected):hover {
+  color: var(--co-text-muted);
+}
+
+.pause-screen.is-gamepad-mode .menu-item:not(.is-selected):hover .menu-item__bar {
+  opacity: 0;
+  transform: translateY(-50%) scaleX(0);
+}
+
+.prompt {
+  display: flex;
+  align-items: center;
+  gap: calc(8px * var(--co-ui-scale));
+}
+
+.prompt__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: calc(22px * var(--co-ui-scale));
+  height: calc(22px * var(--co-ui-scale));
+  font-size: calc(11px * var(--co-ui-scale));
+  font-weight: 700;
+  color: var(--co-amber);
+  border: 1px solid var(--co-amber-muted);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  line-height: 1;
+}
+
+/* Xbox PNG glyphs (from shared/icons); white pixels are tinted amber in script.js */
+.prompt__glyph--icon {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  min-width: calc(28px * var(--co-ui-scale));
+  width: calc(28px * var(--co-ui-scale));
+  height: calc(28px * var(--co-ui-scale));
+  padding: 0;
+}
+
+/* Stick glyphs have more detail (arrows/rings) and read better slightly larger */
+.prompt__glyph--icon-stick {
+  min-width: calc(34px * var(--co-ui-scale));
+  width: calc(34px * var(--co-ui-scale));
+  height: calc(34px * var(--co-ui-scale));
+}
+
+.prompt__glyph-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+.prompt__label {
+  font-size: calc(11px * var(--co-ui-scale));
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--co-text-pale);
+  opacity: 0.85;
+}
+
+/* ── Map mode: allies not drawn on this map ─────────────────── */
+
+.map-elsewhere {
+  position: absolute;
+  bottom: calc(96px * var(--co-ui-scale));
+  left: calc(28px * var(--co-ui-scale));
+  z-index: 12;
+  margin: 0;
+  padding:
+    calc(8px * var(--co-ui-scale))
+    calc(14px * var(--co-ui-scale));
+  border: 1px solid var(--co-border);
+  background: rgba(6, 12, 8, 0.82);
+  color: var(--co-text-pale);
+  font-size: calc(13px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  pointer-events: none;
+}
+
+.map-elsewhere[hidden] {
+  display: none;
+}
+
+/* ── Map mode PC back button ─────────────────────────────────── */
+/*
+ * Fades in after the left panel (logo) finishes hiding (200ms), and
+ * fades out immediately on exit so it never sits on top of the logo.
+ */
+
+.map-pc-back {
+  position: absolute;
+  top: calc(28px * var(--co-ui-scale));
+  left: calc(28px * var(--co-ui-scale));
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: calc(12px * var(--co-ui-scale));
+  padding:
+    calc(10px * var(--co-ui-scale))
+    calc(16px * var(--co-ui-scale));
+  border: 1px solid var(--co-border);
+  background: rgba(6, 12, 8, 0.82);
+  box-shadow:
+    inset 0 0 16px rgba(0, 0, 0, 0.35),
+    0 2px 8px rgba(0, 0, 0, 0.35);
+  color: var(--co-text-pale);
+  font-family: inherit;
+  font-size: calc(14px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  outline: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    color var(--co-transition),
+    border-color var(--co-transition),
+    background var(--co-transition),
+    opacity 150ms ease-out,
+    visibility 0ms linear 150ms;
+}
+
+.map-pc-back.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    color var(--co-transition),
+    border-color var(--co-transition),
+    background var(--co-transition),
+    opacity 200ms ease-out 200ms,
+    visibility 0ms linear 200ms;
+}
+
+.map-pc-back__key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: calc(36px * var(--co-ui-scale));
+  padding:
+    calc(3px * var(--co-ui-scale))
+    calc(8px * var(--co-ui-scale));
+  border: 1px solid var(--co-amber-muted);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--co-amber);
+  font-size: calc(11px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+}
+
+.map-pc-back__label {
+  line-height: 1;
+}
+
+.map-pc-back:hover {
+  color: var(--co-green);
+  border-color: var(--co-green-dim);
+  background: rgba(8, 18, 10, 0.9);
+}
+
+.map-pc-back:hover .map-pc-back__key {
+  color: var(--co-green);
+  border-color: var(--co-green-dim);
+}
+
+.map-pc-back:focus-visible {
+  outline: none;
+  color: #070c08;
+  background: linear-gradient(90deg, #f6c344 0%, #ffd978 100%);
+  border-color: #ffd978;
+}
+
+/* ── Map players: worldspace tabs, filter rail, legend ───────── */
+
+.map-players-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+}
+
+.map-tabs[hidden] {
+  display: none;
+}
+
+.map-tabs {
+  position: absolute;
+  top: calc(28px * var(--co-ui-scale));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: calc(6px * var(--co-ui-scale));
+  pointer-events: auto;
+}
+
+.map-filters {
+  position: absolute;
+  top: calc(28px * var(--co-ui-scale));
+  right: calc(28px * var(--co-ui-scale));
+  display: flex;
+  flex-direction: column;
+  gap: calc(6px * var(--co-ui-scale));
+  pointer-events: auto;
+}
+
+.map-legend {
+  position: absolute;
+  right: calc(28px * var(--co-ui-scale));
+  bottom: calc(84px * var(--co-ui-scale));
+  min-width: calc(180px * var(--co-ui-scale));
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: calc(10px * var(--co-ui-scale)) calc(14px * var(--co-ui-scale));
+  border: 1px solid var(--co-border);
+  background: rgba(6, 12, 8, 0.82);
+  box-shadow:
+    inset 0 0 16px rgba(0, 0, 0, 0.35),
+    0 2px 8px rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+}
+
+.map-tab,
+.map-filter {
+  display: flex;
+  align-items: center;
+  gap: calc(10px * var(--co-ui-scale));
+  padding: calc(6px * var(--co-ui-scale)) calc(12px * var(--co-ui-scale));
+  border: 1px solid var(--co-amber-muted);
+  background: rgba(6, 12, 8, 0.82);
+  color: var(--co-text-muted);
+  font-family: inherit;
+  font-size: calc(13px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  outline: none;
+  transition:
+    color var(--co-transition),
+    border-color var(--co-transition),
+    background var(--co-transition),
+    opacity var(--co-transition);
+}
+
+.map-tab[aria-pressed="true"],
+.map-filter[aria-pressed="true"] {
+  color: var(--co-green);
+  border-color: var(--co-green-dim);
+}
+
+.map-filter--pad {
+  outline: 1px solid #f6c344;
+  outline-offset: 2px;
+}
+
+.map-filter[aria-pressed="false"] {
+  opacity: 0.55;
+}
+
+.map-tab:hover,
+.map-filter:hover {
+  color: var(--co-green);
+  border-color: var(--co-green-dim);
+  background: rgba(8, 18, 10, 0.9);
+}
+
+.map-tab:focus-visible,
+.map-filter:focus-visible {
+  outline: none;
+  color: #070c08;
+  background: linear-gradient(90deg, #f6c344 0%, #ffd978 100%);
+  border-color: #ffd978;
+}
+
+.map-tab__count {
+  min-width: calc(24px * var(--co-ui-scale));
+  padding: calc(2px * var(--co-ui-scale)) calc(6px * var(--co-ui-scale));
+  border: 1px solid var(--co-amber-muted);
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--co-amber);
+  font-size: calc(11px * var(--co-ui-scale));
+  text-align: center;
+}
+
+.map-legend__note {
+  margin: calc(8px * var(--co-ui-scale)) 0 0;
+  color: var(--co-text-pale);
+  font-size: calc(12px * var(--co-ui-scale));
+}
+
+.map-legend__note[hidden] {
+  display: none;
+}
+
+.map-legend__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(6px * var(--co-ui-scale));
+}
+
+.map-legend__item {
+  display: flex;
+  align-items: center;
+  gap: calc(10px * var(--co-ui-scale));
+  color: var(--co-text-pale);
+  font-size: calc(13px * var(--co-ui-scale));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.map-legend__swatch {
+  flex: none;
+  width: calc(12px * var(--co-ui-scale));
+  height: calc(12px * var(--co-ui-scale));
+  clip-path: polygon(50% 0, 100% 100%, 50% 74%, 0 100%);
+  background: var(--co-map-other);
+}
+
+.map-legend__swatch--party {
+  background: var(--co-map-party);
+}
+
+.map-legend__swatch--faction {
+  background: var(--co-map-faction);
+}
+
+.map-legend__swatch--friend {
+  background: var(--co-map-friend);
+}
+
+.map-legend__swatch--hostile {
+  background: var(--co-map-hostile);
+  clip-path: none;
+  border-radius: 50%;
+}
+
+.map-legend__swatch--downed {
+  background: var(--co-map-downed);
+}
+
+.map-legend__count {
+  margin-left: auto;
+  color: var(--co-amber);
+  font-variant-numeric: tabular-nums;
+}
+
+.map-legend__item--party {
+  flex-wrap: wrap;
+}
+
+.map-legend__party {
+  flex: 0 0 100%;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(4px * var(--co-ui-scale));
+  margin: calc(4px * var(--co-ui-scale)) 0 0;
+  padding-left: calc(22px * var(--co-ui-scale));
+  max-height: calc(160px * var(--co-ui-scale));
+  overflow-y: auto;
+}
+
+.map-legend__party[hidden] {
+  display: none;
+}
+
+.map-legend,
+.map-legend__party {
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.map-legend::-webkit-scrollbar,
+.map-legend__party::-webkit-scrollbar {
+  width: calc(4px * var(--co-ui-scale));
+}
+
+.map-legend::-webkit-scrollbar-thumb,
+.map-legend__party::-webkit-scrollbar-thumb {
+  background: var(--co-amber-muted);
+}
+
+.map-legend__party-item {
+  display: flex;
+  align-items: center;
+  gap: calc(8px * var(--co-ui-scale));
+  width: 100%;
+  padding: calc(3px * var(--co-ui-scale)) calc(6px * var(--co-ui-scale));
+  border: 1px solid transparent;
+  background: none;
+  color: var(--co-text-pale);
+  font-family: inherit;
+  font-size: calc(12px * var(--co-ui-scale));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  outline: none;
+}
+
+.map-legend__party-item:hover,
+.map-legend__party-item:focus-visible {
+  color: var(--co-green);
+  border-color: var(--co-green-dim);
+}
+
+.map-legend__party-item:focus-visible {
+  outline: none;
+  color: #070c08;
+  background: linear-gradient(90deg, #f6c344 0%, #ffd978 100%);
+  border-color: #ffd978;
+}
+
+.map-legend__party-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.map-legend__party-tag {
+  flex: none;
+}
+
+.map-legend__party-downed {
+  flex: none;
+  color: var(--co-map-downed);
+}
+
+.map-legend__party-world {
+  flex: none;
+  margin-left: auto;
+  color: var(--co-amber);
+}
+
+.map-legend__party > li {
+  display: flex;
+  align-items: center;
+  gap: calc(6px * var(--co-ui-scale));
+}
+
+.map-legend__party-travel {
+  flex: none;
+  padding: calc(3px * var(--co-ui-scale)) calc(6px * var(--co-ui-scale));
+  border: 1px solid var(--co-green-dim);
+  background: none;
+  color: var(--co-green);
+  font-family: inherit;
+  font-size: calc(11px * var(--co-ui-scale));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* Settings mode: keep pause nav, dim map more, hide server panel */
+/* (Settings panel styles live in ../settings/settings.css) */
+
+.pause-screen.is-settings-mode .left-panel {
+  overflow: hidden;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(8, 14, 10, 0.9) 0%,
+      rgba(8, 14, 10, 0.78) 65%,
+      rgba(8, 14, 10, 0.15) 100%
+    );
+}
+
+.pause-screen.is-settings-mode .server-panel {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.pause-screen.is-settings-mode .map-overlay {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 10, 8, 0.88) 0%,
+      rgba(6, 10, 8, 0.55) 24%,
+      rgba(6, 10, 8, 0.4) 55%,
+      rgba(6, 10, 8, 0.48) 100%
+    ),
+    rgba(4, 8, 6, 0.32);
+}
+
+/* ── Quit confirmation ───────────────────────────────────────── */
+
+.quit-confirm {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(24px * var(--co-ui-scale));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 220ms ease-out,
+    visibility 0ms linear 220ms;
+}
+
+.quit-confirm.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 220ms ease-out,
+    visibility 0ms linear 0ms;
+}
+
+.quit-confirm[hidden] {
+  display: none;
+}
+
+.quit-confirm__dialog {
+  width: min(calc(420px * var(--co-ui-scale)), calc(100vw - 80px * var(--co-ui-scale)));
+  padding:
+    calc(32px * var(--co-ui-scale))
+    calc(36px * var(--co-ui-scale))
+    calc(28px * var(--co-ui-scale));
+  background: rgba(6, 12, 8, 0.9);
+  border: 1px solid rgba(201, 168, 74, 0.35);
+  box-shadow:
+    inset 0 0 28px rgba(0, 0, 0, 0.35),
+    0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.quit-confirm__title {
+  margin-bottom: calc(24px * var(--co-ui-scale));
+  font-size: calc(28px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-align: center;
+  color: var(--co-amber);
+}
+
+.travel-confirm__destination {
+  margin: calc(-12px * var(--co-ui-scale)) 0 calc(22px * var(--co-ui-scale));
+  font-size: calc(18px * var(--co-ui-scale));
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--co-text-pale);
+}
+
+.quit-confirm__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--co-menu-gap);
+}
+
+.quit-confirm__option .menu-item__bar {
+  left: 0;
+  width: 100%;
+}
+
+.quit-confirm__option:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.pause-screen.is-quit-confirm-mode .map-overlay {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 10, 8, 0.92) 0%,
+      rgba(6, 10, 8, 0.72) 35%,
+      rgba(6, 10, 8, 0.55) 60%,
+      rgba(6, 10, 8, 0.65) 100%
+    ),
+    rgba(4, 8, 6, 0.42);
+}
+
+.pause-screen.is-quit-confirm-mode .left-panel,
+.pause-screen.is-quit-confirm-mode .server-panel {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.pause-screen.is-session-lockout-mode .left-panel,
+.pause-screen.is-session-lockout-mode .server-panel,
+.pause-screen.is-session-lockout-mode .prompt-bar,
+.pause-screen.is-session-lockout-mode .map-pc-back {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.pause-screen.is-session-lockout-mode .map-overlay {
+  background: rgba(4, 8, 6, 0.82);
+}
+
+.session-lockout__reason {
+  margin: calc(-8px * var(--co-ui-scale)) 0 calc(24px * var(--co-ui-scale));
+  padding: calc(14px * var(--co-ui-scale)) calc(16px * var(--co-ui-scale));
+  border: 1px solid rgba(201, 168, 74, 0.22);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.session-lockout__reason-heading {
+  margin: 0 0 calc(8px * var(--co-ui-scale));
+  font-size: calc(12px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(201, 168, 74, 0.75);
+}
+
+.session-lockout__reason-text {
+  margin: 0;
+  font-size: calc(16px * var(--co-ui-scale));
+  letter-spacing: 0.04em;
+  line-height: 1.45;
+  color: var(--co-text-pale);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.pause-screen.is-travel-confirm-mode .map-pc-back,
+.pause-screen.is-travel-confirm-mode .map-players-hud * {
+  pointer-events: none;
+}
+
+.pause-screen.is-travel-confirm-mode .map-players-hud,
+.pause-screen.is-travel-confirm-mode .prompt-bar--map-mode {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.pause-screen.is-quitting .quit-confirm__options {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.quit-save-status {
+  margin: calc(8px * var(--co-ui-scale)) 0 calc(16px * var(--co-ui-scale));
+  font-size: calc(16px * var(--co-ui-scale));
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  color: var(--co-text-pale);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.quit-save-status[data-state="failed"] {
+  color: #e07070;
+}
+
+.quit-save-status[data-state="saved"] {
+  color: #8dce8a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quit-confirm {
+    transition: opacity 120ms ease-out, visibility 0ms linear 120ms;
+  }
+
+  .quit-confirm.is-open {
+    transition: opacity 120ms ease-out, visibility 0ms linear 0ms;
+  }
+}
+
+/* ── Responsive tweaks ───────────────────────────────────────── */
+/*
+ * Sizing is already fluid via --co-ui-scale (see :root), which now scales
+ * down for windows smaller than 1920x1080 instead of only scaling up.
+ * No breakpoint overrides needed on top of that for panel width or bar
+ * width; keeping both in sync with one scale avoids them drifting apart
+ * at arbitrary window sizes.
+ */

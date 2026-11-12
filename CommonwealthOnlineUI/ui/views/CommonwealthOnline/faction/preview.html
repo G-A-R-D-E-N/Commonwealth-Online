@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Faction Preview</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+    <link rel="stylesheet" href="../browser/components/keyboard.css" />
+    <style>
+      html,
+      body {
+        background:
+          linear-gradient(165deg, #0b120d 0%, #121810 45%, #080c08 100%) !important;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="faction" id="coFaction"></main>
+    <nav class="faction-preview-switch" aria-label="Preview state">
+      <button type="button" class="faction-btn" data-preview="off">Not available</button>
+      <button type="button" class="faction-btn" data-preview="none">No faction</button>
+      <button type="button" class="faction-btn" data-preview="member">Member</button>
+      <button type="button" class="faction-btn" data-preview="leader">Leader</button>
+    </nav>
+    <script src="../browser/components/keyboard.js"></script>
+    <script src="faction.members.js"></script>
+    <script src="faction.build.js"></script>
+    <script src="faction.ownership.js"></script>
+    <script src="faction.browse.js"></script>
+    <script src="faction.focus.js"></script>
+    <script src="faction.js"></script>
+    <script>
+      (function () {
+        var roster = [
+          { playerId: 3, name: "Nate" },
+          { playerId: 5, name: "Piper" },
+          { playerId: 7, name: "Codsworth" }
+        ];
+        var members = [
+          { profileId: "p1", playerId: 3, name: "Nate", online: true, leader: true },
+          { profileId: "p2", playerId: 7, name: "Codsworth", online: false, leader: false }
+        ];
+        var mocks = {
+          off: { enabled: false },
+          none: {
+            enabled: true,
+            localPlayerId: 9,
+            faction: null,
+            pendingInvites: [{ inviteId: "i-4", factionName: "Atom Cats", fromName: "Zeke", expiresInSeconds: 42 }],
+            roster: roster,
+            lastResult: { op: "create", ok: false, reason: "nameTaken" }
+          },
+          member: {
+            enabled: true,
+            localPlayerId: 7,
+            faction: { factionId: "f-1", name: "Minutemen Remnant", tag: "MMR", description: "Holding the line at Sanctuary Hills.", motd: "Raid on Saturday 8pm - bring stimpaks and ammo. Meet at Sanctuary Hills bridge 15 minutes early. Build rules: no scrapping the red-flagged workshop objects, ask a captain before you move any turrets, and keep the supply lines stocked. Loot is shared evenly after the run, rare legendaries go to whoever has the matching build. New recruits read the pinned guide first, then ping a captain for a trial run. Voice chat is mandatory on raids. Be kind, be useful, and remember we hold the line together.", color: "#3ECF4A", leaderPlayerId: 3, members: members },
+            pendingInvites: [],
+            roster: roster,
+            lastResult: null
+          },
+          leader: {
+            enabled: true,
+            localPlayerId: 3,
+            selfProfileId: "p1",
+            faction: { factionId: "f-1", name: "Minutemen Remnant", tag: "MMR", description: "Holding the line at Sanctuary Hills.", motd: "Raid on Saturday 8pm - bring stimpaks and ammo. Meet at Sanctuary Hills bridge 15 minutes early. Build rules: no scrapping the red-flagged workshop objects, ask a captain before you move any turrets, and keep the supply lines stocked. Loot is shared evenly after the run, rare legendaries go to whoever has the matching build. New recruits read the pinned guide first, then ping a captain for a trial run. Voice chat is mandatory on raids. Be kind, be useful, and remember we hold the line together.", color: "#3ECF4A", leaderPlayerId: 3, members: members },
+            pendingInvites: [],
+            roster: roster,
+            lastResult: { op: "invite", ok: true },
+            factionsLoaded: true,
+            factions: [
+              { id: "f-1", name: "Minutemen Remnant", tag: "MMR", color: "#3ECF4A", description: "Holding the line at Sanctuary Hills.", leader: "Nate", memberCount: 2, onlineCount: 1, yours: true },
+              { id: "f-2", name: "Atom Cats", tag: "CAT", color: "", description: "", leader: "Zeke", memberCount: 5, onlineCount: 4, yours: false },
+              { id: "f-3", name: "Railroad", tag: "", color: "", description: "", leader: "Desdemona", memberCount: 1, onlineCount: 0, yours: false }
+            ],
+            buildAccess: {
+              settlements: [
+                { buildZoneId: 7, ownerProfileId: "p1", allowedProfileIds: ["p2"] },
+                { buildZoneId: 12, ownerProfileId: "p9", allowedProfileIds: [] }
+              ],
+              lastReject: null,
+              truncated: false
+            }
+          }
+        };
+
+        window.coFactionAction = function (payload) {
+          console.log("[CO Faction preview] action", payload);
+        };
+
+        Array.prototype.forEach.call(document.querySelectorAll("[data-preview]"), function (button) {
+          button.addEventListener("click", function () {
+            window.coFactionSetState(mocks[button.getAttribute("data-preview")]);
+          });
+        });
+
+        window.coFactionSetState(mocks.leader);
+      })();
+    </script>
+  </body>
+</html>

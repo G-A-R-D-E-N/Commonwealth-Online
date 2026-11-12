@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" class="is-preview">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Structure HUD Preview</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      html,
+      body {
+        background: linear-gradient(165deg, #0b120d 0%, #121810 45%, #080c08 100%) !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="co-structure-hud" id="coStructureHud" aria-live="off" hidden>
+      <div class="co-structure-row">
+        <span class="co-structure-label">Structure</span>
+        <span class="co-structure-value" id="coStructureValue"></span>
+      </div>
+      <div class="co-structure-bar" id="coStructureBar" role="progressbar" aria-label="Structure" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="co-structure-fill" id="coStructureFill"></div>
+      </div>
+    </div>
+    <script src="structure-hud.js"></script>
+    <script>
+      var samples = [
+        { objectId: 7, health: 920, maxHealth: 1000 },
+        { objectId: 7, health: 420, maxHealth: 1000 },
+        { objectId: 7, health: 160, maxHealth: 1000 },
+        { objectId: 7, health: 0, maxHealth: 1000 }
+      ];
+      var sampleIndex = 0;
+      function showSample() {
+        window.coStructureSetState(JSON.stringify(samples[sampleIndex]));
+        sampleIndex = (sampleIndex + 1) % samples.length;
+      }
+      showSample();
+      setInterval(showSample, 1500);
+    </script>
+  </body>
+</html>

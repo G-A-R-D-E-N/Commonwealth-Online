@@ -1,0 +1,97 @@
+:root {
+  --co-ui-scale: 1;
+  --co-amber: #f6c344;
+  --co-amber-bright: #ffea88;
+  --co-green: #3ecf4a;
+  --co-text-pale: #edf2eb;
+  --co-text-muted: #8fa38f;
+  --co-font: "Futura PT Demibold", "Roboto Condensed", "Bahnschrift", "Arial Narrow", Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;
+  font-family: var(--co-font);
+  font-weight: 600;
+  color: var(--co-text-pale);
+  pointer-events: none;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.chat-feed {
+  position: fixed;
+  right: calc(24px * var(--co-ui-scale, 1));
+  bottom: calc(88px * var(--co-ui-scale, 1));
+  display: flex;
+  flex-direction: column;
+  gap: calc(5px * var(--co-ui-scale, 1));
+  width: min(calc(460px * var(--co-ui-scale, 1)), 36vw);
+  list-style: none;
+  font-size: calc(14px * var(--co-ui-scale, 1));
+  text-shadow: 0 calc(1px * var(--co-ui-scale, 1)) calc(4px * var(--co-ui-scale, 1)) rgba(0, 0, 0, 0.95);
+  pointer-events: none;
+}
+
+.chat-feed-line {
+  display: flex;
+  align-items: baseline;
+  gap: calc(6px * var(--co-ui-scale, 1));
+  overflow-wrap: anywhere;
+  padding: calc(3px * var(--co-ui-scale, 1)) calc(8px * var(--co-ui-scale, 1));
+  background: rgba(6, 14, 9, 0.75);
+  border-left: 2px solid var(--co-amber);
+  border-radius: 0 calc(3px * var(--co-ui-scale, 1)) calc(3px * var(--co-ui-scale, 1)) 0;
+  backdrop-filter: blur(calc(4px * var(--co-ui-scale, 1)));
+  pointer-events: none;
+}
+
+.chat-feed-channel {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: calc(10px * var(--co-ui-scale, 1));
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--co-amber-bright);
+  padding: 0 calc(5px * var(--co-ui-scale, 1));
+  background: rgba(246, 195, 68, 0.22);
+  border: 1px solid rgba(246, 195, 68, 0.45);
+  border-radius: calc(2px * var(--co-ui-scale, 1));
+  pointer-events: none;
+}
+
+.chat-feed-faction-tag {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--co-amber-bright);
+  pointer-events: none;
+}
+
+.chat-feed-name {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--co-amber);
+  pointer-events: none;
+}
+
+.chat-feed-text {
+  flex: 1;
+  word-break: break-word;
+  pointer-events: none;
+}

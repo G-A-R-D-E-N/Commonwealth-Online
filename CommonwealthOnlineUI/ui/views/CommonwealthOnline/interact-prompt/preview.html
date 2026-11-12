@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" class="is-preview">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Interact Prompt Preview</title>
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      html,
+      body {
+        background: linear-gradient(165deg, #0b120d 0%, #121810 45%, #080c08 100%) !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="co-interact-prompt" id="coInteractPrompt" aria-live="polite" hidden>
+      <span class="co-interact-key" id="coInteractKey">ACTIVATE</span>
+      <p class="co-interact-label" id="coInteractLabel"></p>
+    </div>
+    <script src="interact-prompt.js"></script>
+    <script>
+      var samples = [
+        { visible: true, name: "Sole Survivor" },
+        { visible: true, name: "Codsworth Fan Club" },
+        { visible: false }
+      ];
+      var sampleIndex = 0;
+      function showSample() {
+        window.coInteractPromptSetState(JSON.stringify(samples[sampleIndex]));
+        sampleIndex = (sampleIndex + 1) % samples.length;
+        setTimeout(showSample, 3000);
+      }
+      showSample();
+    </script>
+  </body>
+</html>

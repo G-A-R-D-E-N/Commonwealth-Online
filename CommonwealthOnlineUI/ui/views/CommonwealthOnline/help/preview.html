@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Help Operational Directives Preview</title>
+    <link rel="stylesheet" href="../shared/info-panel.css" />
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+    <style>
+      body {
+        background: linear-gradient(180deg, rgba(14, 28, 20, 0.75) 0%, rgba(3, 7, 4, 0.95) 100%),
+                    url('../pause-menu/map.svg') no-repeat center center / cover;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="info" id="coInfo"></main>
+    <script src="../settings/settings-data.js"></script>
+    <script src="help.js"></script>
+    <script>
+      window.coVoiceEvent({
+        kind: "settings",
+        values: {
+          "voice.pushToTalk": true,
+          "voice.pushToTalkKey": "CAPSLOCK",
+          "voice.whisperKey": "LALT",
+          "voice.shoutKey": "V"
+        }
+      });
+    </script>
+  </body>
+</html>

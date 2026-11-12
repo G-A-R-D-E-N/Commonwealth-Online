@@ -1,0 +1,6 @@
+{
+	"name": "hello",
+	"version": "1.0.0",
+	"server": ["index.js"],
+	"permissions": ["players.read", "chat.send", "commands.register", "world.read"]
+}

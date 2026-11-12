@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Report Menu Preview</title>
+    <link rel="stylesheet" href="../shared/info-panel.css" />
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+    <style>
+      body {
+        background: linear-gradient(180deg, rgba(14, 28, 20, 0.75) 0%, rgba(3, 7, 4, 0.95) 100%),
+                    url('../pause-menu/map.svg') no-repeat center center / cover;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="info" id="coInfo"></main>
+    <script src="report.js"></script>
+    <script>
+      window.coInfoAction = function (json) {
+        console.log("coInfoAction:", json);
+        try {
+          var payload = JSON.parse(json);
+          if (payload.action === "submit") {
+            setTimeout(function () {
+              window.coReportEvent({ type: "reportResult", ok: true });
+            }, 300);
+          }
+        } catch (e) {}
+      };
+
+      window.coReportSetState({
+        players: [
+          { playerId: 1, name: "SoleSurvivor_99" },
+          { playerId: 2, name: "PaladinDanse" },
+          { playerId: 3, name: "PiperWright" },
+          { playerId: 4, name: "NickValentine" }
+        ]
+      });
+    </script>
+  </body>
+</html>

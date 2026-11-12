@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Server Offline Preview</title>
+    <link rel="stylesheet" href="../shared/info-panel.css" />
+    <link rel="stylesheet" href="../pipboy-theme.css" />
+    <style>
+      body {
+        background: linear-gradient(180deg, rgba(14, 28, 20, 0.75) 0%, rgba(3, 7, 4, 0.95) 100%),
+                    url('../pause-menu/map.svg') no-repeat center center / cover;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="info" id="coInfo"></main>
+    <script src="server.js"></script>
+    <script>
+      window.coServerSetInfo({ connected: false });
+    </script>
+  </body>
+</html>

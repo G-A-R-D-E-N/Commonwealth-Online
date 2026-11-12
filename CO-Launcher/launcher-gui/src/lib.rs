@@ -1,0 +1,16 @@
+pub mod admin;
+pub mod assets;
+pub mod diagnose;
+pub mod listing;
+pub mod locations;
+pub mod logs;
+pub mod mods;
+pub mod ops;
+pub mod protocol;
+pub mod server;
+pub mod settings;
+pub mod setup;
+pub mod shell;
+pub mod state;
+pub mod troubleshoot;
+pub mod update;
