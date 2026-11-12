@@ -1,0 +1,67 @@
+@font-face {
+  font-family: "Futura PT Demibold";
+  src: url("../../fonts/futura-pt-demibold.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;
+  font-family: var(--co-font);
+  font-weight: 600;
+  color: var(--co-text-pale);
+  pointer-events: none;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* ── Interact Prompt ──────────────────────────────────────────── */
+
+.co-interact-prompt {
+  position: fixed;
+  top: 60vh;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 32px);
+  display: flex;
+  align-items: center;
+  gap: calc(10px * var(--co-ui-scale));
+  padding: calc(7px * var(--co-ui-scale)) calc(16px * var(--co-ui-scale)) calc(7px * var(--co-ui-scale)) calc(7px * var(--co-ui-scale));
+  background: linear-gradient(180deg, rgba(14, 26, 18, 0.94) 0%, rgba(7, 14, 10, 0.96) 100%);
+  border: 1px solid var(--co-border-bright);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.75), var(--co-glow);
+  pointer-events: none;
+}
+
+.co-interact-key {
+  flex: none;
+  padding: calc(3px * var(--co-ui-scale)) calc(9px * var(--co-ui-scale));
+  border: 1px solid var(--co-green);
+  border-bottom-width: 3px;
+  background: rgba(0, 0, 0, 0.6);
+  font-size: calc(11px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--co-green-bright);
+  text-shadow: 0 0 8px var(--co-green-glow);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.8);
+}
+
+.co-interact-label {
+  font-size: calc(15px * var(--co-ui-scale));
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--co-text-pale);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Commonwealth Online — Settings Preview</title>
+  <link rel="stylesheet" href="../pipboy-theme.css">
+  <link rel="stylesheet" href="settings.css">
+  <style>
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(165deg, #070d09 0%, #0c140d 45%, #050805 100%) !important;
+      overflow: hidden;
+      font-family: var(--co-font, "Futura PT Demibold", "Roboto Condensed", sans-serif);
+      color: var(--co-text-pale, #edf2eb);
+    }
+    .preview-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      box-sizing: border-box;
+    }
+    .settings-mount-box {
+      width: min(960px, 92vw);
+      height: min(780px, 90vh);
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-container">
+    <div class="settings-mount-box" id="settingsMount"></div>
+  </div>
+
+  <script src="settings-data.js"></script>
+  <script src="settings-model.js"></script>
+  <script src="settings-native.js"></script>
+  <script src="settings-render.js"></script>
+  <script src="settings-input.js"></script>
+  <script src="settings.js"></script>
+  <script>
+    (function () {
+      var mount = document.getElementById("settingsMount");
+      window.coSettingsAction = function (raw) {
+        console.log("[CO Settings Action]", raw);
+      };
+
+      var settings = window.CO_Settings.create({
+        mount: mount,
+        layout: "standalone",
+        defaultTab: "multiplayer",
+        showHeading: true
+      });
+      settings.show();
+
+      // Mock native settings load
+      setTimeout(function () {
+        settings.handleSettingsEvent({
+          type: "settingsResult",
+          requestId: 1,
+          action: "settingsGetAll",
+          success: true,
+          data: {
+            settings: [
+              { id: "audio.master", label: "Master Volume", category: "audio", type: "float", value: 0.85, minimum: 0, maximum: 1, step: 0.05, uiUsesPercent: true, supported: true, editable: true },
+              { id: "audio.music", label: "Music Volume", category: "audio", type: "float", value: 0.65, minimum: 0, maximum: 1, step: 0.05, uiUsesPercent: true, supported: true, editable: true },
+              { id: "display.quality", label: "Graphics Quality", category: "display", type: "enum", value: "high", supported: true, editable: true, options: [{ value: "low", label: "Low" }, { value: "medium", label: "Medium" }, { value: "high", label: "High" }] }
+            ]
+          }
+        });
+      }, 50);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+.co-keyboard { position: absolute; left: 50%; bottom: 64px; transform: translateX(-50%); z-index: 40; padding: 12px 16px; background: var(--co-panel-bg, #10120f); border: 1px solid var(--co-border); display: flex; flex-direction: column; gap: 6px; }
+.co-keyboard.hidden { display: none; }
+.co-keyboard-row { display: flex; gap: 6px; justify-content: center; }
+.co-key { min-width: 30px; padding: 6px 8px; text-align: center; color: var(--co-text); border: 1px solid transparent; }
+.co-key-wide { min-width: 72px; }
+.co-key.focused { background: var(--co-selected); color: var(--co-selected-text); border-color: var(--co-selected); }

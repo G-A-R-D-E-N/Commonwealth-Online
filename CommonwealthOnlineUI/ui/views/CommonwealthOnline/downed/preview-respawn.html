@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commonwealth Online — Respawn Preview</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        background: linear-gradient(180deg, rgba(20, 10, 8, 0.75) 0%, rgba(5, 2, 2, 0.95) 100%),
+                    url('../pause-menu/map.svg') no-repeat center center / cover;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="co-respawn" id="coRespawn" aria-live="polite"></main>
+    <script src="respawn.js"></script>
+    <script>
+      window.coRespawnSetState({
+        phase: "dead",
+        points: [
+          { id: "checkpoint", label: "Last Auto-Save (Red Rocket)", available: true },
+          { id: "sanctuary", label: "Sanctuary Hills Settlement", available: true },
+          { id: "lastbed", label: "Player Bedroll (Corvega Exterior)", available: false }
+        ],
+        friends: [
+          { id: "p1", name: "Piper Wright" },
+          { id: "p2", name: "Nick Valentine" }
+        ]
+      });
+    </script>
+  </body>
+</html>

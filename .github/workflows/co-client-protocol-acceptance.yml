@@ -1,0 +1,80 @@
+name: Client Protocol Acceptance
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  client-protocol:
+    name: CO-BETA adapter to native server
+    runs-on: windows-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+      - uses: ./.github/actions/co-xmake
+      - name: Restore vcpkg binary cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ~/AppData/Local/vcpkg/archives
+          key: vcpkg-protocol-${{ runner.os }}-${{ hashFiles('CO-BETA/build-gns-bridge.bat', 'CO-BETA/plugin/gns-bridge/vcpkg*.json', 'CO-SERVER/server/scripts/build-gns-bridge.bat', 'CO-SERVER/server/native_transport/vcpkg*.json') }}
+          restore-keys: |
+            vcpkg-protocol-${{ runner.os }}-
+            vcpkg-bridge-${{ hashFiles('CO-BETA/build-gns-bridge.bat', 'CO-BETA/plugin/gns-bridge/vcpkg.json') }}
+      - name: Build server bridge
+        shell: cmd
+        run: CO-SERVER\server\scripts\build-gns-bridge.bat
+      - name: Build client bridge
+        shell: cmd
+        run: CO-BETA\build-gns-bridge.bat
+      - name: Build native server
+        working-directory: CO-SERVER/server-cpp
+        env:
+          CO_GNS_BRIDGE_DIR: ${{ github.workspace }}\CO-SERVER\build\gns-server-bridge-windows\Release
+        run: |
+          xmake f -y -p windows -a x64 -m debug
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          xmake build -y CommonwealthOnlineServerCpp
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Build client adapter acceptance harness
+        working-directory: CO-BETA/ci/protocol-acceptance
+        run: |
+          xmake f -y -p windows -a x64 -m debug
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          xmake build -y CommonwealthOnlineClientProtocolAcceptance
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Run adapter handshakes against native server
+        run: ./CO-BETA/ci/protocol-acceptance/run-windows.ps1
+      - name: Whitespace check
+        if: always()
+        run: git diff --check
+
+  report:
+    name: Report to the private PR
+    needs: [client-protocol]
+    if: always()
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-client-protocol-acceptance
+          needs: ${{ toJSON(needs) }}

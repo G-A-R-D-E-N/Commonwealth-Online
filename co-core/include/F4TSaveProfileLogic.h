@@ -1,0 +1,91 @@
+#pragma once
+
+#include <cstdint>
+#include <functional>
+#include <optional>
+#include <span>
+#include <string>
+#include <string_view>
+
+namespace F4T::SaveProfileLogic
+{
+	std::optional<std::string> ExtractCharacterId(std::string_view a_saveFile);
+	std::optional<std::uint64_t> ExtractSaveTimestamp(std::string_view a_saveFile);
+	std::optional<std::string> FormatSaveTimestamp(std::string_view a_saveFile);
+	bool CharacterIdsEqual(std::string_view a_left, std::string_view a_right);
+	bool EqualsIgnoreCase(std::string_view a_left, std::string_view a_right);
+	std::optional<std::string> ResolveLatestProfileSave(
+		std::string_view a_storedSaveFile,
+		std::string_view a_storedCharacterId,
+		std::span<const std::string> a_saveFiles);
+	bool CanRebindProfileSave(std::string_view a_activeCharacterId, std::string_view a_saveFile);
+
+	struct AttestedSave
+	{
+		std::string saveFile;
+		std::string sha256Hex;
+		std::uint64_t attestedAtUnix{ 0 };
+		std::optional<std::uint32_t> slot{};
+	};
+
+	enum class LineageVerdict
+	{
+		Attested,
+		Unattested,
+		Modified,
+		Unverifiable
+	};
+
+	struct AttestedResolution
+	{
+		std::optional<std::string> saveFile;
+		LineageVerdict verdict{ LineageVerdict::Unverifiable };
+	};
+
+	AttestedResolution ResolveLatestAttestedSave(
+		std::string_view a_characterId,
+		std::span<const std::string> a_saveFiles,
+		std::span<const AttestedSave> a_attested,
+		const std::function<std::optional<std::string>(std::string_view)>& a_hashSaveFile);
+
+	inline constexpr std::string_view SaveNotMultiplayerCode = "save_not_multiplayer";
+
+	struct SaveAdmission
+	{
+		bool allowed{};
+		std::string code;
+		std::string reason;
+		bool recordClaim{};
+		bool readmitted{};
+	};
+
+	struct SaveClaimStanding
+	{
+		bool isAdmin{};
+		bool secretVerified{};
+		bool profileKnown{};
+		bool claimReadmission{};
+	};
+
+	bool SameAttestedSave(const AttestedSave& a_left, const AttestedSave& a_right);
+	bool ContradictsRecordedSave(std::span<const AttestedSave> a_serverHistory, const AttestedSave& a_claim);
+
+	inline constexpr std::string_view SaveContinuityCharacterCode = "save_continuity_character";
+	inline constexpr std::string_view SaveContinuityUnknownParentCode = "save_continuity_unknown_parent";
+	inline constexpr std::string_view SaveContinuityNotNewerCode = "save_continuity_not_newer";
+	inline constexpr std::string_view SaveContinuityNotHeadCode = "save_continuity_not_head";
+
+	bool IsSaveContinuation(std::string_view a_saveFile, std::string_view a_parentSaveFile);
+
+	SaveAdmission AdmitSaveContinuation(
+		std::span<const AttestedSave> a_serverHistory,
+		const AttestedSave& a_save,
+		const AttestedSave& a_parent);
+
+	SaveAdmission AdmitJoinSave(const AttestedResolution& a_resolution, bool a_isAdmin);
+
+	SaveAdmission AdmitAttestedSaveClaim(
+		std::span<const AttestedSave> a_serverHistory,
+		const std::optional<AttestedSave>& a_claim,
+		SaveClaimStanding a_standing);
+}

@@ -1,0 +1,61 @@
+@font-face {
+  font-family: "Futura PT Demibold";
+  src: url("../../fonts/futura-pt-demibold.otf") format("opentype"),
+       url("../../../fonts/futura-pt-demibold.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body {
+  width: 100%; height: 100%; margin: 0; overflow: hidden;
+  background: transparent; color: var(--co-text-pale, #edf2eb);
+  font-family: var(--co-font); font-weight: 600; user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+.wheel {
+  position: fixed; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: clamp(0.6rem, 1.5vh, 1.1rem);
+  pointer-events: none;
+}
+.wheel-header { text-align: center; }
+.wheel-eyebrow { color: var(--co-green, #3ecf4a); font-size: 0.7rem; letter-spacing: 0.22em; }
+.wheel-title {
+  max-width: min(28rem, 80vw); overflow: hidden; margin: 0.2rem 0 0;
+  color: #edf2eb; font-size: clamp(1.1rem, 2.8vh, 1.55rem);
+  letter-spacing: 0.08em; text-overflow: ellipsis; white-space: nowrap;
+}
+.wheel-ring { position: relative; width: min(70vmin, 31rem); height: min(70vmin, 31rem); pointer-events: auto; }
+.wheel-sectors { display: block; width: 100%; height: 100%; overflow: visible; }
+.wheel-sector {
+  fill: rgba(8, 15, 11, 0.91); stroke: rgba(111, 142, 118, 0.38);
+  stroke-width: 1.5; cursor: pointer; transition: fill 120ms ease, stroke 120ms ease;
+}
+.wheel-sector.is-selected, .wheel-sector:hover {
+  fill: rgba(33, 61, 40, 0.96); stroke: var(--co-green, #3ecf4a); stroke-width: 3;
+}
+.wheel-sector.is-disabled { fill: rgba(8, 12, 10, 0.72); stroke: rgba(111, 142, 118, 0.18); cursor: default; }
+.wheel-action {
+  position: absolute; display: grid; width: clamp(2.5rem, 7vmin, 3.5rem);
+  height: clamp(2.5rem, 7vmin, 3.5rem); place-items: center; padding: 0;
+  transform: translate(-50%, -50%); border: 0; border-radius: 50%;
+  background: transparent; color: #bdcdbd; cursor: pointer;
+}
+.wheel-action svg { width: 55%; height: 55%; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+.wheel-action.is-selected { color: var(--co-amber-bright, #ffea88); }
+.wheel-action.is-disabled { color: #637367; cursor: default; }
+.wheel-action:focus-visible { outline: 2px solid var(--co-amber, #f6c344); outline-offset: 3px; }
+.wheel-center {
+  position: absolute; top: 50%; left: 50%; display: flex; width: 42%; height: 42%;
+  transform: translate(-50%, -50%); flex-direction: column; align-items: center;
+  justify-content: center; gap: 0.6rem; border: 1px solid rgba(111, 142, 118, 0.25);
+  border-radius: 50%; background: rgba(6, 11, 8, 0.92); text-align: center; pointer-events: none;
+}
+.wheel-center-mark { color: var(--co-green, #3ecf4a); font-size: 0.8rem; letter-spacing: 0.2em; }
+.wheel-center-label {
+  max-width: 85%; color: #edf2eb; font-size: clamp(0.72rem, 2vmin, 0.95rem);
+  letter-spacing: 0.08em; line-height: 1.2; overflow-wrap: anywhere; text-transform: uppercase;
+}
+.wheel-hint { margin: 0; color: #a3b1a2; font-size: clamp(0.65rem, 1.5vmin, 0.78rem); letter-spacing: 0.04em; text-align: center; }
+.wheel-hint span { color: #edf2eb; letter-spacing: 0.08em; }
+.wheel-hint i { display: inline-block; width: 3px; height: 3px; margin: 0 0.45rem 0.2rem; border-radius: 50%; background: #607267; }

@@ -1,0 +1,29 @@
+:root {
+  --co-ui-scale: 1;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.launcher {
+  position: absolute;
+  top: calc(24px * var(--co-ui-scale));
+  left: calc(28px * var(--co-ui-scale));
+  width: calc(220px * var(--co-ui-scale));
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.launcher img {
+  display: block;
+  width: 100%;
+  height: auto;
+}

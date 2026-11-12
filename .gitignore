@@ -1,0 +1,21 @@
+# Private reverse-engineering workspace — FO76 binary-derived data, Ghidra projects,
+# and the fo76-re-mcp tooling. NEVER commit: struct layouts/offsets/serialization stay local.
+F76-RE-Work/
+
+# Local build output
+build/
+dist/
+.xmake/
+
+# Agent/editor scratch
+.claude/
+.codex/
+__pycache__/
+CommonwealthOnlineUI/ui/views/CommonwealthOnline/shared/icons/
+
+# Player-installed id bins (see CO-BETA/README.md); never commit
+version-*.bin
+versionlib-*.bin
+
+# Operator Steam Web API key written by the server's --setup-steam-key (#499); never commit
+.steam-web-api-key

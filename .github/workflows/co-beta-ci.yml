@@ -1,0 +1,194 @@
+name: Beta CI
+
+on:
+  push:
+    branches: ["ci/**"]
+
+permissions:
+  contents: read
+
+env:
+  COMMONLIB_MIRROR: ${{ vars.COMMONLIB_MIRROR }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  cpp-tests:
+    name: CommonLib checkout recovery
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: CO-BETA
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Initialize canonical CommonLib
+        uses: ./.github/actions/co-commonlib
+        with:
+          path: CO-BETA/plugin/lib/commonlibf4
+
+      - name: Verify reusable CommonLib checkout recovery
+        working-directory: .
+        run: python3 CO-BETA/plugin/tests/F4TCommonLibCheckoutContract.py
+
+  inline-hook-windows:
+    name: Windows filename comparison and optional runtime smoke tests
+    runs-on: windows-latest
+    env:
+      _MSPDBSRV_ENDPOINT_: co-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: CO-BETA/plugin
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Initialize canonical CommonLib
+        uses: ./.github/actions/co-commonlib
+        with:
+          path: CO-BETA/plugin/lib/commonlibf4
+
+      - name: Set up xmake
+        uses: ./.github/actions/co-xmake
+
+      - name: Configure the Windows x64 test target
+        run: xmake f -y -p windows -a x64 -m releasedbg
+
+      - name: Build the inline hook test
+        if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+        run: xmake build -y CommonwealthOnlineInlineHookTests
+
+      - name: Run the inline hook test
+        if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+        run: xmake test -y CommonwealthOnlineInlineHookTests/default || { xmake test -v -y CommonwealthOnlineInlineHookTests/default; exit 1; }
+
+      - name: Build the probe capture test
+        if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+        run: xmake build -y CommonwealthOnlineProbeCaptureTests
+
+      - name: Run the probe capture test
+        if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+        run: xmake test -y CommonwealthOnlineProbeCaptureTests/default || { xmake test -v -y CommonwealthOnlineProbeCaptureTests/default; exit 1; }
+
+      - name: Build the UI API layout test
+        if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+        run: xmake build -y CommonwealthOnlineUIApiLayoutTests
+
+      - name: Run the UI API layout test
+        if: vars.WINDOWS_RUNTIME_SMOKE == 'true'
+        run: xmake test -y CommonwealthOnlineUIApiLayoutTests/default || { xmake test -v -y CommonwealthOnlineUIApiLayoutTests/default; exit 1; }
+
+      - name: Build the Windows filename comparison test
+        run: xmake build -y CoreWindowsCaseFoldTests
+
+      - name: Run the Windows filename comparison test
+        run: xmake test -y CoreWindowsCaseFoldTests/default || { xmake test -v -y CoreWindowsCaseFoldTests/default; exit 1; }
+
+      - name: Build the LAN discovery scan test
+        run: xmake build -y CommonwealthOnlineLanDiscoveryTests
+
+      - name: Run the LAN discovery scan test
+        run: xmake test -y CommonwealthOnlineLanDiscoveryTests/default || { xmake test -v -y CommonwealthOnlineLanDiscoveryTests/default; exit 1; }
+
+      - name: Build the vendor trade escrow test
+        run: xmake build -y CommonwealthOnlineVendorTradeEscrowTests
+
+      - name: Run the vendor trade escrow test
+        run: xmake test -y CommonwealthOnlineVendorTradeEscrowTests/default || { xmake test -v -y CommonwealthOnlineVendorTradeEscrowTests/default; exit 1; }
+
+  script-checks:
+    name: Shell and switch parsing
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: CO-BETA
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Syntax
+        run: bash -n tools/debug-log.sh ci/stage-content.sh
+
+      - name: Run plugin contracts
+        working-directory: .
+        run: python3 scripts/run-python-tests.py --group plugin --exclude CO-BETA/plugin/tests/F4TCommonLibCheckoutContract.py
+
+      - name: Whitespace check
+        run: git diff --check
+
+      - name: Debug switch value matrix
+        run: |
+          set -u
+          fail() { echo "::error::$1"; exit 1; }
+          probe() { COMMONWEALTH_ONLINE_DEBUG="$1" bash -c '. tools/debug-log.sh; co_debug CI msg'; }
+
+          [ -n "$(unset COMMONWEALTH_ONLINE_DEBUG; bash -c '. tools/debug-log.sh; co_debug CI msg')" ] \
+            || fail "unset should fall back to the beta default of on"
+          [ -n "$(probe on)" ] || fail "'on' should log"
+          [ -z "$(probe off)" ] || fail "'off' should be silent"
+          [ -n "$(probe ' ON ')" ] || fail "padded on should log"
+          [ -z "$(probe ' OFF ')" ] || fail "padded off should be silent"
+          [ -z "$(probe disabled)" ] || fail "'disabled' should be silent"
+          [ -n "$(probe maybe)" ] || fail "unrecognised values should fall back to on"
+          echo "all switch values behave as documented"
+
+  report:
+    name: Report to the private PR
+    needs: [cpp-tests, inline-hook-windows, script-checks]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Block Linux compile
+        working-directory: ${{ github.workspace }}
+        run: |
+          shim="$RUNNER_TEMP/no-compile/bin"
+          mkdir -p "$shim"
+          for tool in c++ g++ gcc cc clang clang++ cmake xmake make ninja cargo; do
+            printf '#!/bin/sh\necho "::error::Linux compile is blocked here; only the server and launcher compile on Linux"\nexit 1\n' > "$shim/$tool"
+            chmod +x "$shim/$tool"
+          done
+          echo "$shim" >> "$GITHUB_PATH"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Post the result as a commit status on the private commit
+        uses: ./.github/actions/co-report
+        with:
+          context: public-ci/co-beta-ci
+          needs: ${{ toJSON(needs) }}

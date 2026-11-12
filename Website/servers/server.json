@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "updatedAt": null,
+  "servers": [
+    {
+      "id": "commonwealth-online-official-usa",
+      "name": "Commonwealth Online Official USA",
+      "host": "195.26.244.234",
+      "port": 7777,
+      "description": "Official Commonwealth Online dedicated server, USA.",
+      "region": "North America",
+      "tags": ["commonwealth", "online", "official", "usa"],
+      "password": false,
+      "modlist": "",
+      "discord": ""
+    },
+    {
+      "id": "commonwealth-online-usa-2",
+      "name": "Commonwealth Online USA 2",
+      "host": "195.26.244.234",
+      "port": 7787,
+      "description": "Second official Commonwealth Online dedicated server, USA.",
+      "region": "North America",
+      "tags": ["commonwealth", "online", "official", "usa"],
+      "password": false,
+      "modlist": "",
+      "discord": ""
+    }
+  ]
+}
